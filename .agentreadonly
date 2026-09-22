@@ -1,0 +1,15 @@
+.github/
+.claude/
+opencode.json
+.gitignore
+package-lock.json
+poetry.lock
+Cargo.lock
+pnpm-lock.yaml
+yarn.lock
+mise.toml
+
+$HOME/.private/apis/secrets.prop
+$HOME/Git/m2repo
+$HOME/Git/fluentxml
+$HOME/Git/exotic-datatypes
