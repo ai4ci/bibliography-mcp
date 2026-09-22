@@ -3,8 +3,13 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	
-	<groupId>com.github.terminological</groupId>
-	<version>native-rjava-SNAPSHOT</version>
+	<parent>
+		<groupId>io.github.terminological</groupId>
+		<artifactId>m2repo</artifactId>
+		<version>0.0.5-SNAPSHOT</version>
+	</parent>
+	
+	<version>master-SNAPSHOT</version>
 	<artifactId>bibliographic-api-client</artifactId>
 	<packaging>jar</packaging>
 
@@ -12,16 +17,16 @@
 	
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven.compiler.source>9</maven.compiler.source>
-		<maven.compiler.target>9</maven.compiler.target>
+		<maven.compiler.source>11</maven.compiler.source>
+		<maven.compiler.target>11</maven.compiler.target>
 		<jackson.version.core>2.9.7</jackson.version.core>
 	</properties>
 
 	<dependencies>
 		<dependency>
-			<groupId>com.github.terminological</groupId>
+			<groupId>io.github.terminological</groupId>
 			<artifactId>fluentxml</artifactId>
-			<version>master-SNAPSHOT</version>
+			<version>1.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-lang</groupId>
@@ -31,9 +36,9 @@
 		</dependency>
 		<dependency>
 <!-- 			<groupId>com.github.terminological</groupId> -->
-			<groupId>uk.co.terminological</groupId>
+			<groupId>io.github.terminological</groupId>
 			<artifactId>exotic-datatypes</artifactId>
-			<version>master-SNAPSHOT</version>
+			<version>1.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -50,7 +55,7 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>1.7.7</version>
-			<scope>test</scope>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.sun.jersey</groupId>
@@ -105,14 +110,7 @@
 			<version>2.0.0</version>
 		</dependency>
 		<dependency>
-			<groupId>com.github.terminological</groupId>
-<!-- 			<groupId>uk.co.terminological</groupId> -->
-			<artifactId>r6-generator-runtime</artifactId>
-			<version>master-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-<!-- 			<groupId>com.github.terminological</groupId> -->
-			<groupId>uk.co.terminological</groupId>
+			<groupId>io.github.terminological</groupId>
 			<artifactId>nlp-tools</artifactId>
 			<version>master-SNAPSHOT</version>
 		</dependency>
@@ -127,23 +125,23 @@
 	
 
 	<!-- Resolve maven plugin on github -->
-	<pluginRepositories>
-		<pluginRepository>
-		    <id>jitpack.io</id>
-		    <url>https://jitpack.io</url>
-		</pluginRepository>
-	</pluginRepositories>
+<!--	<pluginRepositories>-->
+<!--		<pluginRepository>-->
+<!--		    <id>jitpack.io</id>-->
+<!--		    <url>https://jitpack.io</url>-->
+<!--		</pluginRepository>-->
+<!--	</pluginRepositories>-->
 	
 	<repositories>
 	<!-- Resolve runtime library on github -->
-		<repository>
-		    <id>jitpack.io</id>
-		    <url>https://jitpack.io</url>
-		</repository>
+<!--		<repository>-->
+<!--		    <id>jitpack.io</id>-->
+<!--		    <url>https://jitpack.io</url>-->
+<!--		</repository>-->
 		<repository>
 			<id>icm</id>
 			<name>ICM repository</name>
-			<url>http://maven.icm.edu.pl/artifactory/repo</url>
+			<url>https://maven.icm.edu.pl/artifactory/repo</url>
 		</repository>
 		<!-- <repository>
 			<id>oss-snapshots-repo</id>
@@ -157,47 +155,6 @@
 	</repositories>
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>com.github.terminological</groupId>
-<!-- 				<groupId>uk.co.terminological</groupId> -->
-				<artifactId>r6-generator-maven-plugin</artifactId>
-				<version>master-SNAPSHOT</version>
-				<configuration>
-					<packageData>
-						<title>Bibliographic Apis</title>
-						<version>0.01</version>
-						<packageName>biblioapi</packageName>
-						<debug>true</debug>
-						<rjavaOpts>
-							<rjavaOpt>-Xmx4096M</rjavaOpt>
-						</rjavaOpts>
-						<useJavadoc>true</useJavadoc>
-						<javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
-<!-- 						<usePkgdown>true</usePkgdown> -->
-						<license>MIT</license>
-						<description>A collection of utilities for interacting with various bibliographic APIs from R</description>
-						<maintainerName>Rob</maintainerName>
-						<maintainerFamilyName>Challen</maintainerFamilyName>
-						<maintainerEmail>rob@terminological.co.uk</maintainerEmail>
-						<maintainerOrganisation>terminological</maintainerOrganisation>
-					</packageData>
-					<outputDirectory>${project.basedir}/r-library</outputDirectory>
-				</configuration>
-				<executions>
-					<execution>
-						<id>compile-java-library</id>
-						<goals>
-							<goal>compile-java-library</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>generate-r-library</id>
-						<goals>
-							<goal>generate-r-library</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
 			<!-- Managed in parent POM -->
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -206,6 +163,38 @@
 					<source>${maven.compiler.source}</source>
 					<target>${maven.compiler.target}</target>
 				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>3.6.2</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<transformers>
+								<transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+								<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+									<mainClass>uk.co.terminological.bibliography.mcp.McpServer</mainClass>
+								</transformer>
+							</transformers>
+							<filters>
+								<filter>
+									<artifact>*:*</artifact>
+									<excludes>
+										<exclude>META-INF/*.SF</exclude>
+										<exclude>META-INF/*.DSA</exclude>
+										<exclude>META-INF/*.RSA</exclude>
+									</excludes>
+								</filter>
+							</filters>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 			
 		</plugins>

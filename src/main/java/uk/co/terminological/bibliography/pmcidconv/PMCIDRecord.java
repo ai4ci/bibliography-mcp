@@ -5,12 +5,15 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import uk.co.terminological.bibliography.record.Builder;
 import uk.co.terminological.bibliography.record.IdType;
 import uk.co.terminological.bibliography.record.ImmutableRecordReference;
 
+// ponytail: ignore unknown fields — idconv API now sends "requested-id" and numbers for pmid
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class PMCIDRecord {
 	@JsonProperty("pmcid") public Optional<String> pmcid = Optional.empty();
 	@JsonProperty("pmid") public Optional<String> pmid = Optional.empty();

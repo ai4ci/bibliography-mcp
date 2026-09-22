@@ -46,7 +46,7 @@ public class PMCIDClient extends CachingApiClient implements IdMapper {
 	
 	private String developerEmail;
 	private String toolName;
-	private static String URL = "https://www.ncbi.nlm.nih.gov/pmc/utils/idconv/v1.0/";
+	private static String URL = "https://pmc.ncbi.nlm.nih.gov/tools/idconv/api/v1/articles/";
 	private ObjectMapper objectMapper = new ObjectMapper().registerModule(new Jdk8Module());
 	
 	public static PMCIDClient create(String developerEmail, String toolName) {

@@ -1,47 +1,86 @@
-# Bibliographic API client
-A Java library and R package exposing clients for various bibliographic APIs through a single format
+# Bibliographic API client (MCP server)
 
-This project is aimed to provide consistent Java clients for the web APIs of various bibliographic databases. It is an early stage and there is no documentation at present. The test directory has some end to end examples of use.
+A Java MCP (Model Context Protocol) server exposing clients for various bibliographic APIs through a single JSON format, plus a plain-Java facade over the same functionality.
 
-Design principles include: 
-* Respecting rate limits and behave appropriately.
-* Multi-thread support.
-* Extensive caching of API results using EHCache, enabling citation network exploration without fear of repeatedly hitting same resources. 
-* Fluent design of Java API to allow natural query construction.
-* Exception free methods with use of Java 8 Optionals as query results, facilitating fault tolerant bulk operations using Java 8 Streams.
-* Arbitrarily large querying with batching to multiple API calls.
-* Verbose debugging mode. 
-* TODO: Unified view of bibliographic reference from different APIs
-* TODO: Integration of citeproc and citation output formats.
-
-## Currently supported:
-* Entrez APIs including Pubmed; eSearch, eFetch and eLinks
+## Currently supported APIs
+* Entrez APIs including PubMed: eSearch, eFetch and eLinks
 * CrossRef API
 * Unpaywall API
+* Europe PMC
+* Open Citations
 * PMC IDConverter API
-* Open access PDF retrieval and analysis including Cermine integration
+* Open access PDF retrieval and reference extraction including Cermine integration
 
-## Example client usage
+Design principles: respecting rate limits; multi-thread support; extensive caching of API results using EHCache; exception-free query results using Java 8 Optionals; arbitrarily large querying with batching to multiple API calls.
+
+## Running the MCP server
+
+Build the shaded jar:
+
+```bash
+mvn package -DskipTests
+```
+
+Register it in an MCP client (stdio transport). The first argument is the
+secrets file path (CrossRef/Entrez/Unpaywall API keys; falls back to the
+`BIBLIO_SECRETS_PATH` environment variable), the optional second argument is
+the EHCache directory:
+
+```json
+{
+  "mcpServers": {
+    "bibliographic-api-client": {
+      "command": "java",
+      "args": [
+        "-jar", "/path/to/target/bibliographic-api-client-master-SNAPSHOT.jar",
+        "/path/to/.private/apis/secrets.prop",
+        "/tmp/ehcache/biblio"
+      ]
+    }
+  }
+}
+```
+
+All logging goes to stderr; stdout is reserved for the protocol.
+
+## Tools
+
+Core (stateless per call):
+* `search` — query crossref / entrez / europepmc with optional date range, limit and API filter
+* `fetch` — full record details for a list of ids (DOI, PMID, PMCID...)
+* `cites` / `cited_by` — citation graph queries
+* `map_ids` — alternate id types via id mapping APIs
+* `references_from_pdf` — download a pdf, extract and match its reference list
+* `citation_styles` — supported citation styles
+
+Session state (a long-lived repository held in memory):
+* `collect_search`, `collect_search_by_api`, `add_records`, `remove_records` — mutate the session
+* `fetch_missing` — fetch details for all ids lacking them
+* `expand_citation_graph` — expand the citation graph up/down with a size limit
+* `find_alternate_ids` — id mappings for all session records
+* `session_status`, `session_records`, `session_citations` — inspect the session
+* `save_repository`, `load_repository` — persist / restore a session
+
+Analysis:
+* `page_rank` — page rank over the session citation graph, joined with titles
+* `topic_model` — LDA topic model over the session records (title + abstract)
+
+## Plain-Java facade
+
+The same functionality is available programmatically without MCP, via
+`uk.co.terminological.bibliography.mcp.BiblioFacade` and `Session`:
 
 ```java
-BibliographicApis biblioApi = BibliographicApis.create(secretsPath);
+BiblioFacade facade = new BiblioFacade(secretsPath, cacheDir);
+Session session = facade.getSession();
+session.collectSearch("machine learning");
+session.expandDownCitationGraph(60);
+session.fetchMissingRecords();
+Map<UUID, Double> rank = Analysis.pageRank(session);
+```
 
-Optional<Search> searchResult = biblioApi.getEntrez()
-		.buildSearchQuery(search)
-					.betweenDates(earliest, latest)
-					.execute();
-					
-\\ Get a list of pubmed links for a List of pubmedIds
-List<Link> tmp = biblioApi.getEntrez()
-	.buildLinksQueryForIdsAndDatabase(listOfPmids, Database.PUBMED)
-	.command(Command.NEIGHBOR_SCORE)
-	.withLinkname("pubmed_pubmed")
-	.searchLinked(searchWithin)
-	.execute().stream()
-	.flatMap(o -> o.stream()).collect(Collectors.toList());
+## Smoke test
 
-\\ Get a single crossref result for a given doi
-Optional<SingleResult> tmp = biblioApi.getCrossref().getByDoi(doi);
-
-				
+```bash
+./scripts/mcp-smoke-test.sh
 ```

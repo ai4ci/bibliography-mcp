@@ -31,13 +31,17 @@ public class OpenCitationsClient extends CachingApiClient implements CitedByMapp
 
 	protected OpenCitationsClient(Optional<Path> optional) {
 		super(optional, TokenBuckets.builder()
-				.withCapacity(50)
-				.withInitialTokens(50)
-				.withFixedIntervalRefillStrategy(50, 1, TimeUnit.SECONDS).build());
-		// There is no acceptable use policy specified but this seems reasonable.
+				.withCapacity(3)
+				.withInitialTokens(3)
+				.withFixedIntervalRefillStrategy(3, 1, TimeUnit.SECONDS).build());
+		// Docs: rate-limited to 180 requests/minute per IP (api.opencitations.net/index/v2).
+		// ponytail: shared 3s read timeout is too short — this API responds in 3-6s
+		this.client.setReadTimeout(30000);
 	}
 
-	static String baseUrl = "https://opencitations.net/index/api/v1/";
+	// ponytail: old opencitations.net/index/api/v1 endpoint now 301-redirects; Jersey 1.12
+	// doesn't follow — use the canonical documented api.opencitations.net/index/v2 endpoint
+	static String baseUrl = "https://api.opencitations.net/index/v2/";
 	static OpenCitationsClient singleton;
 	
 	private ObjectMapper objectMapper = new ObjectMapper();
@@ -98,7 +102,9 @@ public class OpenCitationsClient extends CachingApiClient implements CitedByMapp
 		}*/
 
 		private QueryBuilder(String url, String doi, MultivaluedMap<String, String> defaultParams, OpenCitationsClient client ) {
-			this.url=url+"/"+encode(doi);
+			// v2 requires a scheme prefix on the id (doi:, pmid:, omid:) — client passes bare DOIs
+			String pid = doi.contains(":") ? doi : "doi:" + doi;
+			this.url=url+"/"+encode(pid);
 			this.params=defaultParams;
 			this.client = client;
 
