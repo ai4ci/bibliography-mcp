@@ -75,6 +75,10 @@ Zotero (optional; local API of a running desktop client):
 * `zotero_publish` — create a sub-collection of the configured write target and add
   only the records not already held (≤25 per call); nothing existing is modified
 * `zotero_tag` — union tags onto items inside the configured collection
+* `zotero_cleanup_report` — compare every item in a collection against the APIs,
+  field by field: agreements, gaps, conflicts, and items it could not check
+* `zotero_apply_updates` — apply an explicit `{itemKey, fields}` change set to
+  existing items, overwriting only those fields and reporting the old values
 
 Writes are off by default; see [Zotero configuration](design/external-interfaces/interface-002-configuration-and-secrets.md).
 

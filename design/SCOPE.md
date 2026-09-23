@@ -26,12 +26,15 @@ The R interface was replaced by an MCP server. Historical context:
 * [HAS_FEATURE](/design/features/feat-007-predictable-record-merging.md) - one predictable source of truth when several APIs describe the same work
 * [HAS_FEATURE](/design/features/feat-005-zotero-curated-repository-bridge.md) - read, publish into and tag a curated Zotero library
 
+## v0.3.0 - implemented (unreleased)
+
+* [HAS_FEATURE](/design/features/feat-008-clean-up-collection-metadata.md) - clean up a collection's metadata against the APIs, with the agent deciding conflicts
+
 ## Roadmap
 
 Under consideration, not yet accepted:
 
 * [HAS_FEATURE](/design/features/feat-004-opencitations-meta-enrichment.md) - OpenCitations Meta as an id-mapping source, rescuing non-DOI citation links
-* [HAS_FEATURE](/design/features/feat-008-report-stale-library-metadata.md) - report where the library's metadata has gone stale (dry run)
 * [HAS_FEATURE](/design/features/feat-005-zotero-curated-repository-bridge.md) - read, publish into and maintain a curated Zotero library
 
 <!-- @required: everything described in the ./features directory is linked to here -->

@@ -87,7 +87,7 @@ Implemented, and verified live against the library:
 Not implemented:
 
 - **maintain / enrichment** (the dry-run report and any write-back) — split out as
-  [feat-008](/design/features/feat-008-report-stale-library-metadata.md);
+  [feat-008](/design/features/feat-008-clean-up-collection-metadata.md);
 - attachments and PDF locations, which need child-item lookups and, for uploads, a
   separate Zotero instance to test against;
 - Zotero as a general `search` source in `BiblioFacade`: the library is reachable

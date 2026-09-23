@@ -33,6 +33,7 @@ import uk.co.terminological.bibliography.record.IdType;
 import uk.co.terminological.bibliography.record.ImmutableRecordReference;
 import uk.co.terminological.bibliography.record.Record;
 import uk.co.terminological.bibliography.record.RecordReference;
+import uk.co.terminological.zotero.MetadataComparison;
 import uk.co.terminological.zotero.ZoteroClient;
 import uk.co.terminological.zotero.ZoteroCollection;
 import uk.co.terminological.zotero.ZoteroItem;
@@ -50,6 +51,7 @@ import uk.co.terminological.datatypes.Tuple;
 // [IMPLEMENTS](/design/features/feat-003-analyse-citation-graphs-and-topics.md)
 // [IMPLEMENTS](/design/external-interfaces/interface-001-mcp-stdio-protocol.md)
 // [IMPLEMENTS](/design/features/feat-006-classify-records-by-type-with-provenance.md)
+// [IMPLEMENTS](/design/features/feat-008-clean-up-collection-metadata.md)
 public class McpTools {
 
 	static Logger log = LoggerFactory.getLogger(McpTools.class);
@@ -586,7 +588,8 @@ public class McpTools {
 			"Create a sub-collection of the configured write target and add the session's records that the library does not already hold. Nothing existing is modified: where the API data disagrees with an item already held the item is skipped, so the agent can decide between updating and duplicating. At most 25 items are created per call unless limit is given; anything Zotero refuses is logged.",
 			schema(m, "{\"type\":\"object\",\"properties\":{\"subcollection\":{\"type\":\"string\",\"description\":\"name for the new sub-collection\"},"
 					+ "\"tags\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}},"
-					+ "\"limit\":{\"type\":\"integer\",\"description\":\"most items to create in one call (default 25)\"}},"
+					+ "\"limit\":{\"type\":\"integer\",\"description\":\"most items to create in one call (default 25)\"},"
+					+ "\"includeHeld\":{\"type\":\"boolean\",\"description\":\"create items the library already holds (the duplicate route)\"}},"
 					+ "\"required\":[\"subcollection\"]}"),
 			args -> {
 				ZoteroClient zotero = state.requireZotero();
@@ -603,9 +606,12 @@ public class McpTools {
 				ArrayNode skipped = m.createArrayNode();
 				int alreadyHeld = 0;
 				int overLimit = 0;
+				boolean includeHeld = args.path("includeHeld").asBoolean(false);
 				for (Record record : state.session.get().getRecords().values()) {
 					java.util.Optional<String> existing = index.findKey(record);
-					if (existing.isPresent()) {
+					// includeHeld is the duplicate route: the agent has decided the
+					// disagreement is best left for the user to resolve in Zotero
+					if (existing.isPresent() && !includeHeld) {
 						alreadyHeld++;
 						continue;
 					}
@@ -645,6 +651,95 @@ public class McpTools {
 				result.put("alreadyInLibrary", alreadyHeld);
 				result.put("leftForANextCall", overLimit);
 				result.set("skipped", skipped);
+				return result;
+			}
+		));
+
+		out.add(new Tool(
+			"zotero_cleanup_report",
+			"Compare every item in a Zotero collection against what the bibliographic APIs say, field by field. Reports agreements, gaps the APIs can fill, conflicts where both sides have a value, and items it could not check at all. It never picks a winner: the agent decides what to change, in conversation with the user, and then calls zotero_apply_updates. Read-only.",
+			schema(m, "{\"type\":\"object\",\"properties\":{\"collection\":{\"type\":\"string\",\"description\":\"collection key from zotero_collections\"},"
+					+ "\"limit\":{\"type\":\"integer\",\"description\":\"most items to compare (default 25)\"}},\"required\":[\"collection\"]}"),
+			args -> {
+				ZoteroClient zotero = state.requireZotero();
+				List<ZoteroItem> items = zotero.itemsInCollection(args.get("collection").asText());
+				int limit = optInt(args, "limit").orElse(25);
+				ArrayNode outJson = m.createArrayNode();
+				int reported = 0;
+				int leftForANextCall = 0;
+				for (ZoteroItem item : items) {
+					if (reported >= limit) {
+						leftForANextCall++;
+						continue;
+					}
+					reported++;
+					ObjectNode row = outJson.addObject();
+					row.put("itemKey", item.getKey());
+					item.getTitle().ifPresent(t -> row.put("title", t));
+
+					// fetch by identifier only: a title search would be a guess, and a
+					// guessed comparison is worse than none
+					Set<ImmutableRecordReference> ids = new java.util.LinkedHashSet<>();
+					item.getIdentifier(IdType.DOI).ifPresent(v -> ids.add(Builder.recordReference(IdType.DOI, v)));
+					item.getIdentifier(IdType.ISBN).ifPresent(v -> ids.add(Builder.recordReference(IdType.ISBN, v)));
+					if (ids.isEmpty()) {
+						row.put("status", "no identifier");
+						continue;
+					}
+					Map<String, List<Record>> bySource = state.facade.fetchBySource(ids);
+					List<Record> apiRecords = new ArrayList<>();
+					bySource.values().forEach(apiRecords::addAll);
+					if (apiRecords.isEmpty()) {
+						row.put("status", "no API record");
+						continue;
+					}
+					ObjectNode comparison = MetadataComparison.compare(m, item.getData(), apiRecords);
+					row.put("status", comparison.get("classification").asText());
+					row.set("comparison", comparison);
+					ArrayNode sources = row.putArray("sources");
+					bySource.keySet().forEach(sources::add);
+				}
+				ObjectNode result = m.createObjectNode();
+				result.put("collection", args.get("collection").asText());
+				result.put("considered", items.size());
+				result.put("reported", reported);
+				result.put("leftForANextCall", leftForANextCall);
+				result.set("items", outJson);
+				return result;
+			}
+		));
+
+		out.add(new Tool(
+			"zotero_apply_updates",
+			"Apply explicit field changes to existing Zotero items, overwriting those fields only. Use this after zotero_cleanup_report, once the user has agreed the conflicting changes (the agent should not need to ask about straightforward gaps). Only the fields named are touched; the values they replaced are reported back. To add a duplicate instead, use zotero_publish with includeHeld.",
+			schema(m, "{\"type\":\"object\",\"properties\":{\"updates\":{\"type\":\"array\",\"items\":{\"type\":\"object\","
+					+ "\"properties\":{\"itemKey\":{\"type\":\"string\"},\"fields\":{\"type\":\"object\",\"additionalProperties\":{\"type\":\"string\"}}},"
+					+ "\"required\":[\"itemKey\",\"fields\"]}}},\"required\":[\"updates\"]}"),
+			args -> {
+				ZoteroClient zotero = state.requireZotero();
+				zotero.checkWritesAllowed();
+				Map<String, Map<String, String>> fieldsByItemKey = new java.util.LinkedHashMap<>();
+				for (JsonNode update : args.get("updates")) {
+					Map<String, String> fields = new java.util.LinkedHashMap<>();
+					update.path("fields")
+							.fields()
+							.forEachRemaining(entry -> fields.put(entry.getKey(), entry.getValue().asText()));
+					fieldsByItemKey.put(update.path("itemKey").asText(), fields);
+				}
+				ZoteroClient.WriteResult written = zotero.updateItems(fieldsByItemKey);
+				ObjectNode result = m.createObjectNode();
+				result.put("updatedCount", written.created.size());
+				result.set("updated", m.valueToTree(written.created));
+				ArrayNode changes = result.putArray("changes");
+				written.previous.forEach((itemKey, previous) -> {
+					ObjectNode row = changes.addObject();
+					row.put("itemKey", itemKey);
+					ObjectNode before = row.putObject("previous");
+					previous.forEach((field, value) -> before.put(field, value == null ? "" : value));
+					ObjectNode after = row.putObject("applied");
+					fieldsByItemKey.get(itemKey).forEach(after::put);
+				});
+				if (written.hasFailures()) result.set("failed", m.valueToTree(written.failures));
 				return result;
 			}
 		));

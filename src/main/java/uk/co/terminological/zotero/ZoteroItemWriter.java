@@ -25,6 +25,7 @@ import uk.co.terminological.bibliography.record.Record;
  *
  * [IMPLEMENTS](/design/features/feat-005-zotero-curated-repository-bridge.md)
  */
+// [IMPLEMENTS](/design/features/feat-008-clean-up-collection-metadata.md)
 public class ZoteroItemWriter {
 
 	private static final ObjectMapper MAPPER = new ObjectMapper();
@@ -41,6 +42,9 @@ public class ZoteroItemWriter {
 		record.getAbstract().ifPresent(v -> item.put("abstractNote", v));
 		record.getDate().ifPresent(v -> item.put("date", v.toString()));
 		record.getPublisher().ifPresent(v -> item.put("publisher", v));
+		// the container has a different field name per type, and omitting it entirely
+		// (as this did at first) creates items that have no journal at all
+		record.getContainerTitle().ifPresent(v -> item.put(containerField(item.get("itemType").asText()), v));
 		record.getIdentifier(uk.co.terminological.bibliography.record.IdType.DOI).ifPresent(v -> item.put("DOI", v));
 		record.getIdentifier(uk.co.terminological.bibliography.record.IdType.ISBN).ifPresent(v -> item.put("ISBN", v));
 		// no landing-page field exists in the model; a PDF location is the honest
@@ -91,6 +95,39 @@ public class ZoteroItemWriter {
 		}
 		ArrayNode tagArray = patch.putArray("tags");
 		union.forEach(t -> tagArray.addObject().put("tag", t));
+		return patch;
+	}
+
+	/** which Zotero field holds the container for a given item type */
+	static String containerField(String zoteroItemType) {
+		switch (zoteroItemType) {
+			case "bookSection": return "bookTitle";
+			case "conferencePaper": return "proceedingsTitle";
+			case "encyclopediaArticle": return "encyclopediaTitle";
+			case "dictionaryEntry": return "dictionaryTitle";
+			case "webpage": return "websiteTitle";
+			case "blogPost": return "blogTitle";
+			default: return "publicationTitle";
+		}
+	}
+
+	/**
+	 * The object for an explicit field update: the item key, its version as a
+	 * precondition, and **only the named fields**. A multi-object write follows PATCH
+	 * semantics, so tags, collections, relations and attachments are left alone — the
+	 * provenance of a clean-up is that it touched what it said it touched.
+	 *
+	 * An empty change set is refused rather than sent: a request that changes nothing
+	 * still costs the user a write authorisation.
+	 */
+	public static ObjectNode updatePatch(String itemKey, long version, java.util.Map<String, String> fields) {
+		if (fields == null || fields.isEmpty()) {
+			throw new IllegalArgumentException("an update needs at least one field to change");
+		}
+		ObjectNode patch = MAPPER.createObjectNode();
+		patch.put("key", itemKey);
+		patch.put("version", version);
+		fields.forEach((field, value) -> patch.put(field, value == null ? "" : value));
 		return patch;
 	}
 

@@ -26,6 +26,7 @@ import uk.co.terminological.bibliography.record.RecordReference;
  * The item is created inside one collection: the configured write target.
  *
  * [TESTS](/design/test-scripts/test-003-zotero-bridge-tests.md)
+ * [TESTS](/design/test-scripts/test-004-metadata-cleanup-tests.md)
  */
 public class TestZoteroItemWriter {
 
@@ -138,6 +139,42 @@ public class TestZoteroItemWriter {
 
 		assertTrue(result.created.isEmpty());
 		assertTrue(result.failures.isEmpty());
+	}
+
+	@Test
+	public void anUpdateCarriesOnlyTheNamedFields() throws Exception {
+		var patch = ZoteroItemWriter.updatePatch("AAAA1111", 7,
+				new java.util.LinkedHashMap<>(java.util.Map.of("abstractNote", "Filled from Europe PMC", "date", "2019-01-01")));
+
+		assertEquals("AAAA1111", patch.get("key").asText());
+		assertEquals(7, patch.get("version").asInt());
+		assertEquals(4, patch.size()); // key, version and the two fields, nothing else
+		assertEquals("Filled from Europe PMC", patch.get("abstractNote").asText());
+		assertEquals("2019-01-01", patch.get("date").asText());
+		// tags, collections and relations are absent, so PATCH semantics leave them alone
+		assertTrue(patch.get("tags") == null && patch.get("collections") == null && patch.get("relations") == null);
+	}
+
+	@Test
+	public void anUpdateWithNoFieldsIsRefused() {
+		try {
+			ZoteroItemWriter.updatePatch("AAAA1111", 7, java.util.Map.of());
+			throw new AssertionError("expected a refusal");
+		} catch (IllegalArgumentException expected) {
+			assertTrue(expected.getMessage().contains("at least one field"));
+		}
+	}
+
+	@Test
+	public void theContainerGoesIntoTheFieldItsTypeUses() throws Exception {
+		var article = mapper.readTree("{\"type\":\"article-journal\",\"title\":\"T\",\"containerTitle\":\"Gaceta Sanitaria\"}");
+		var chapter = mapper.readTree("{\"type\":\"chapter\",\"title\":\"T\",\"containerTitle\":\"The book\"}");
+
+		// the types map to different Zotero fields, and omitting the container
+		// altogether (which this writer did at first) leaves the item with no journal
+		assertEquals("publicationTitle", ZoteroItemWriter.containerField("journalArticle"));
+		assertEquals("bookTitle", ZoteroItemWriter.containerField("bookSection"));
+		assertEquals("proceedingsTitle", ZoteroItemWriter.containerField("conferencePaper"));
 	}
 
 	@Test

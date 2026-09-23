@@ -10,7 +10,9 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -36,6 +38,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  *
  * [IMPLEMENTS](/design/features/feat-005-zotero-curated-repository-bridge.md)
  */
+// [IMPLEMENTS](/design/features/feat-008-clean-up-collection-metadata.md)
 public class ZoteroClient {
 
 	/** a Zotero-specific failure, with a message that says what to do about it */
@@ -214,6 +217,8 @@ public class ZoteroClient {
 	public static class WriteResult {
 		public final List<String> created = new ArrayList<>();
 		public final List<String> failures = new ArrayList<>();
+		/** for an update, the values that were there before, per item key */
+		public final Map<String, Map<String, String>> previous = new LinkedHashMap<>();
 
 		public boolean hasFailures() { return !failures.isEmpty(); }
 	}
@@ -228,6 +233,44 @@ public class ZoteroClient {
 			collect(write("POST", userPath("/items"), body.toString()), result);
 		}
 		return result;
+	}
+
+	/**
+	 * Apply explicit field changes to existing items, in one request for up to 50.
+	 *
+	 * This is the *overwrite* path, and it exists because clean-up is a legitimate
+	 * reason to overwrite: the agent has the user's agreement (or has judged the
+	 * change uncontroversial), and the tool's job is to do exactly what it is told.
+	 * Only the named fields change — a multi-object write follows PATCH semantics, so
+	 * tags, collections, relations and attachments are untouched — and the values that
+	 * were there before are reported back so the change is reviewable.
+	 */
+	public WriteResult updateItems(Map<String, Map<String, String>> fieldsByItemKey) {
+		for (String itemKey : fieldsByItemKey.keySet()) {
+			checkWriteTarget(itemKeyCollection(itemKey));
+		}
+		WriteResult result = new WriteResult();
+		List<String> keys = new ArrayList<>(fieldsByItemKey.keySet());
+		for (int start = 0; start < keys.size(); start += MAX_PER_WRITE) {
+			List<String> batch = keys.subList(start, Math.min(keys.size(), start + MAX_PER_WRITE));
+			ArrayNode body = mapper.createArrayNode();
+			for (String itemKey : batch) {
+				Map<String, String> fields = fieldsByItemKey.get(itemKey);
+				ZoteroItem current = item(itemKey)
+						.orElseThrow(() -> new ZoteroException("no such Zotero item: " + itemKey));
+				Map<String, String> previous = new LinkedHashMap<>();
+				fields.keySet().forEach(field -> previous.put(field, previousValue(current.getData(), field)));
+				result.previous.put(itemKey, previous);
+				body.add(ZoteroItemWriter.updatePatch(itemKey, current.getData().path("version").asLong(0), fields));
+			}
+			collect(write("POST", userPath("/items"), body.toString()), result);
+		}
+		return result;
+	}
+
+	private static String previousValue(JsonNode itemData, String field) {
+		JsonNode node = itemData.get(field);
+		return node == null || node.isNull() ? null : node.asText();
 	}
 
 	/**

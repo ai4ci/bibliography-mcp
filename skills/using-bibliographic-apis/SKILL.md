@@ -181,6 +181,29 @@ with an item already held, the item is skipped and the choice (update it, or add
 duplicate and let Zotero's duplicate detection resolve it) belongs to the agent
 and the user — see the write rules in the feature's design record.
 
+### Workflow G: clean up a collection's metadata
+
+The user opens a collection and asks for the metadata to be tidied.
+
+1. `zotero_cleanup_report` with the `collection` key. Per field it gives the Zotero
+   value, what each API says (attributed by source), and a class: `agree`,
+   `fillable` (Zotero is empty and an API has a value), `conflict` (both have
+   values and they differ), or `zotero-only`. Items with no identifier, or that no
+   API knows, are reported as such rather than skipped quietly.
+2. **You decide, not the tool.** Field names in the report are the ones Zotero
+   uses, so a value can be copied straight into an update. Where an API offers
+   something the item lacks, that is usually worth taking without asking. Where
+   both sides have a value, judge whether it is substance or precision — `2019`
+   against `2019-01-01` is a judgement call, and the user may want to be asked.
+   Markup is already stripped from the values the report offers, so you are
+   comparing content.
+3. `zotero_apply_updates` with the change set you decided on — only the named
+   fields are written, and the previous values are reported back so the change is
+   reviewable. Writes are off unless configured, and confined to one collection.
+4. If a difference cannot be resolved, prefer `zotero_publish` with `includeHeld`
+   to add the API version as a duplicate: Zotero's own duplicate view is where the
+   user can then choose between them.
+
 ### Workflow E: id mapping (stateless)
 
 `map_ids` with `ids` — alternate id types via the PMC IDConverter.

@@ -1,23 +1,23 @@
 path	modified	status	target_version	tags
 AGENTS.md	1790158827	NA	NA	NA
 LICENSE	1590593512	NA	NA	NA
-README.md	1790171526	NA	NA	NA
+README.md	1790174428	NA	NA	NA
 architecture/FRAMEWORK.md	1790159628	NA	NA	NA
 architecture/STANDARDS.md	1790159864	NA	NA	NA
 architecture/decision-records/adr-001-replace-r-interface-with-mcp-server.md	1790159638	final	0.1.0	NA
 architecture/decision-records/adr-002-hand-rolled-mcp-protocol.md	1790159638	final	0.1.0	NA
 architecture/decision-records/adr-003-opencitations-index-v2.md	1790159638	final	0.1.0	NA
-design/SCOPE.md	1790171476	NA	NA	NA
+design/SCOPE.md	1790174393	NA	NA	NA
 design/external-interfaces/interface-001-mcp-stdio-protocol.md	1790159870	final	0.1.0	mcp, protocol
 design/external-interfaces/interface-002-configuration-and-secrets.md	1790172750	final	0.1.0	config, secrets
 design/features/feat-001-expose-bibliographic-apis-over-mcp.md	1790159864	final	0.1.0	mcp, api-client
 design/features/feat-002-explore-citation-networks-in-a-session.md	1790159808	final	0.1.0	mcp, citations, session
 design/features/feat-003-analyse-citation-graphs-and-topics.md	1790159808	final	0.1.0	mcp, analysis
 design/features/feat-004-opencitations-meta-enrichment.md	1790159808	draft	0.2.0	opencitations, id-mapping, proposed
-design/features/feat-005-zotero-curated-repository-bridge.md	1790171546	final	0.2.0	zotero, repository, workflow
+design/features/feat-005-zotero-curated-repository-bridge.md	1790173868	final	0.2.0	zotero, repository, workflow
 design/features/feat-006-classify-records-by-type-with-provenance.md	1790168418	final	0.2.0	model, provenance, zotero, accepted
 design/features/feat-007-predictable-record-merging.md	1790168418	final	0.2.0	model, merge, accepted
-design/features/feat-008-report-stale-library-metadata.md	1790171442	draft	0.2.0	zotero, enrichment, proposed
+design/features/feat-008-clean-up-collection-metadata.md	1790174367	final	0.3.0	zotero, enrichment, metadata
 design/implementation/debt/debt-001-session-persistence-uses-java-serialization.md	1790159628	open	0.3.0	persistence, serialization
 design/implementation/debt/debt-002-opencitations-queries-dois-only.md	1790159628	open	0.2.0	opencitations, id-types
 design/implementation/debt/debt-003-analysis-recomputes-topic-model-per-call.md	1790159628	open	0.3.0	analysis, performance
@@ -33,16 +33,18 @@ design/implementation/plans/plan-001-opencitations-meta-idmap.md	1790159808	draf
 design/implementation/plans/plan-002-record-type-publisher-provenance.md	1790168418	final	0.2.0	model, provenance, zotero
 design/implementation/plans/plan-003-record-merge-policy.md	1790168418	final	0.2.0	model, merge
 design/implementation/plans/plan-004-zotero-bridge.md	1790172910	final	0.2.0	zotero, mcp, repository
+design/implementation/plans/plan-005-metadata-cleanup.md	1790174367	final	0.3.0	zotero, enrichment, metadata
 design/prototypes/prototype-001-opencitations-meta-pids.md	1790159877	draft	0.2.0	opencitations, id-mapping, prototype
-design/roadmap.md	1790171481	draft	0.1.0	roadmap, mcp, opencitations, bibliographic-apis
+design/roadmap.md	1790174367	draft	0.1.0	roadmap, mcp, opencitations, bibliographic-apis
 design/test-scripts/test-001-mcp-protocol-smoke-test.md	1790159864	final	0.1.0	mcp, smoke-test
 design/test-scripts/test-002-api-behaviour-tests.md	1790168418	final	0.1.0	api-client, citations, analysis, parsing
 design/test-scripts/test-003-zotero-bridge-tests.md	1790171442	final	0.2.0	zotero, mcp, integration
+design/test-scripts/test-004-metadata-cleanup-tests.md	1790174367	final	0.3.0	zotero, enrichment, metadata
 pom.xml	1790091122	NA	NA	NA
 scripts/mcp-smoke-test.sh	1790159692	NA	NA	NA
-skills/using-bibliographic-apis/SKILL.md	1790171514	NA	NA	NA
-skills/using-bibliographic-apis/SKILL.md	1790171514	NA	NA	NA
-skills/using-bibliographic-apis/references/mcp-call-sequences.md	1790171520	NA	NA	NA
+skills/using-bibliographic-apis/SKILL.md	1790174428	NA	NA	NA
+skills/using-bibliographic-apis/SKILL.md	1790174428	NA	NA	NA
+skills/using-bibliographic-apis/references/mcp-call-sequences.md	1790174428	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/BibliographicApiException.java	1590593512	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/BibliographicApis.java	1600335819	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/BinaryData.java	1790170286	NA	NA	NA
@@ -85,9 +87,9 @@ src/main/java/uk/co/terminological/bibliography/jats/JatsCitedAuthor.java	163050
 src/main/java/uk/co/terminological/bibliography/jats/JatsEntry.java	1630505806	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/jats/JatsReference.java	1630505794	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/mcp/Analysis.java	1790159689	NA	NA	NA
-src/main/java/uk/co/terminological/bibliography/mcp/BiblioFacade.java	1790159689	NA	NA	NA
+src/main/java/uk/co/terminological/bibliography/mcp/BiblioFacade.java	1790174008	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/mcp/McpServer.java	1790170854	NA	NA	NA
-src/main/java/uk/co/terminological/bibliography/mcp/McpTools.java	1790172529	NA	NA	NA
+src/main/java/uk/co/terminological/bibliography/mcp/McpTools.java	1790174367	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/mcp/Session.java	1790159689	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/medrxiv/MedrxivAuthor.java	1630417196	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/medrxiv/MedrxivClient.java	1630413447	NA	NA	NA
@@ -130,11 +132,12 @@ src/main/java/uk/co/terminological/bibliography/unpaywall/UnpaywallAuthor.java	1
 src/main/java/uk/co/terminological/bibliography/unpaywall/UnpaywallClient.java	1600359188	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/unpaywall/UnpaywallResult.java	1790168418	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/zotero/ZoteroClient.java	1630413180	NA	NA	NA
-src/main/java/uk/co/terminological/zotero/ZoteroClient.java	1790172899	NA	NA	NA
+src/main/java/uk/co/terminological/zotero/MetadataComparison.java	1790174327	NA	NA	NA
+src/main/java/uk/co/terminological/zotero/ZoteroClient.java	1790174367	NA	NA	NA
 src/main/java/uk/co/terminological/zotero/ZoteroCollection.java	1790170650	NA	NA	NA
 src/main/java/uk/co/terminological/zotero/ZoteroConfig.java	1790171588	NA	NA	NA
 src/main/java/uk/co/terminological/zotero/ZoteroItem.java	1790170594	NA	NA	NA
-src/main/java/uk/co/terminological/zotero/ZoteroItemWriter.java	1790172448	NA	NA	NA
+src/main/java/uk/co/terminological/zotero/ZoteroItemWriter.java	1790174367	NA	NA	NA
 src/main/java/uk/co/terminological/zotero/ZoteroLibraryIndex.java	1790170650	NA	NA	NA
 src/main/java/uk/co/terminological/zotero/ZoteroMatching.java	1790170579	NA	NA	NA
 src/main/resources/schema/elink.dtd	1590593512	NA	NA	NA
@@ -160,7 +163,8 @@ src/test/java/uk/co/terminological/pubmedclient/TestPubMedRestClient.java	178350
 src/test/java/uk/co/terminological/pubmedclient/TestRecordMerge.java	1790168418	NA	NA	NA
 src/test/java/uk/co/terminological/pubmedclient/TestRecordModel.java	1790168418	NA	NA	NA
 src/test/java/uk/co/terminological/pubmedclient/TestUnpaywallParsing.java	1590593512	NA	NA	NA
-src/test/java/uk/co/terminological/zotero/TestZoteroItemWriter.java	1790172899	NA	NA	NA
+src/test/java/uk/co/terminological/zotero/TestMetadataComparison.java	1790174343	NA	NA	NA
+src/test/java/uk/co/terminological/zotero/TestZoteroItemWriter.java	1790174400	NA	NA	NA
 src/test/java/uk/co/terminological/zotero/TestZoteroLibraryIndex.java	1790170611	NA	NA	NA
 src/test/java/uk/co/terminological/zotero/TestZoteroMapping.java	1790170541	NA	NA	NA
 src/test/resources/biorxivApiResponse.json	1630493959	NA	NA	NA

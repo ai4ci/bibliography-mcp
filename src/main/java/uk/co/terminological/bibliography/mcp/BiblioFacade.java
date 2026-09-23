@@ -239,6 +239,35 @@ public class BiblioFacade
 		return out;
 	}
 
+	/**
+	 * The per-API records, unmerged, keyed by source name. The merged view is what
+	 * most callers want, but it keeps only the winning value and one provenance, so a
+	 * caller that needs to attribute each value to the API that asserted it (the
+	 * metadata clean-up report, for instance) needs the contributions separately.
+	 */
+	public Map<String, List<Record>> fetchBySource(Collection<? extends RecordReference> ids) {
+		Map<String, List<Record>> out = new LinkedHashMap<>();
+		this.fetchApis.forEach(fetchApi -> {
+			Map<ImmutableRecordReference, ? extends Record> fetched;
+			if (fetchApi.equals("crossref")) {
+				fetched = this.api.getCrossref().fetch(ids);
+			} else if (fetchApi.equals("entrez")) {
+				fetched = this.api.getEntrez().fetch(ids);
+			} else if (fetchApi.equals("europepmc")) {
+				fetched = this.api.getEuropePMC().fetch(ids);
+			} else if (fetchApi.equals("unpaywall")) {
+				fetched = this.api.getUnpaywall().fetch(ids);
+			} else {
+				fetched = new HashMap<>();
+			}
+			List<Record> records = new ArrayList<>();
+			fetched.values().forEach(records::add);
+			if (!records.isEmpty()) out.put(fetchApi, records);
+		});
+		log.info("Unmerged fetch returned {} sources for {} ids", out.size(), ids.size());
+		return out;
+	}
+
 	@Override
 	public Set<RecordReferenceMapping> mappings(
 			Collection<? extends RecordReference> ids
