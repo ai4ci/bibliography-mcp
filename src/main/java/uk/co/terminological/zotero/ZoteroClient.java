@@ -255,16 +255,27 @@ public class ZoteroClient {
 		return result;
 	}
 
-	/** split Zotero's per-object verdict into what landed and what did not */
-	private static void collect(JsonNode response, WriteResult result) {
+	/** split Zotero's per-object verdict into what landed and what did not (package-private for testing) */
+	static void collect(JsonNode response, WriteResult result) {
 		for (String status : List.of("successful", "unchanged")) {
 			response.path(status)
 					.fields()
-					.forEachRemaining(entry -> result.created.add(entry.getValue().asText()));
+					.forEachRemaining(entry -> {
+						// Zotero answers either with the key as a string or with an object
+						// carrying the key and its new version: `asText()` on the object form
+						// yields an empty string, which is useless to a caller that wants to
+						// tag the item it just created
+						JsonNode value = entry.getValue();
+						String key = value.isTextual() ? value.asText() : value.path("key").asText(null);
+						result.created.add(key == null || key.isEmpty() ? entry.getKey() : key);
+					});
 		}
 		response.path("failed")
 				.fields()
 				.forEachRemaining(entry -> result.failures.add(truncate(entry.getValue().toString())));
+		if (result.created.isEmpty() && result.failures.isEmpty()) {
+			log.warn("Zotero accepted a write but reported nothing: {}", truncate(response.toString()));
+		}
 	}
 
 	private JsonNode itemData(String itemKey) {

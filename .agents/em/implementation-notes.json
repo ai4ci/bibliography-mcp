@@ -633,10 +633,10 @@
     "percent": 0
   },
   "src/main/java/uk/co/terminological/zotero/ZoteroClient.java": {
-    "modified": 1790172701,
+    "modified": 1790172899,
     "comments": [],
     "anchors": [],
-    "count_lines": 480,
+    "count_lines": 491,
     "percent": 0
   },
   "src/main/java/uk/co/terminological/zotero/ZoteroCollection.java": {
@@ -843,10 +843,10 @@
     "percent": 0
   },
   "src/test/java/uk/co/terminological/zotero/TestZoteroItemWriter.java": {
-    "modified": 1790172439,
+    "modified": 1790172899,
     "comments": [],
     "anchors": [],
-    "count_lines": 176,
+    "count_lines": 200,
     "percent": 0
   },
   "src/test/java/uk/co/terminological/zotero/TestZoteroLibraryIndex.java": {

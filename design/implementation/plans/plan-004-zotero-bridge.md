@@ -73,9 +73,10 @@ Design context: [roadmap idea 2](/design/roadmap.md).
       guarantee that a `document` never becomes an `attachment`.
 - [x] Live verification (read): imported a real 48-item collection; all 48 were
       recognised as already held.
-- [ ] Live verification of the batched tag write is pending the permission dialog
-      being approved: an attempt timed out after two minutes waiting and wrote
-      nothing. The request building itself is unit-tested (`tagPatch`).
+- [x] Live verification of the batched tag write: **two items tagged in one call, with
+      one authorisation** (`taggedCount: 2`, real keys returned, existing tags kept),
+      and `zotero_status` reporting `writeAuthorisation=remembered` afterwards. A
+      second run was granted its key immediately, with no further dialog.
 - [x] Live verification (write): an all-held publish created nothing and left no
       empty folder; a second created exactly the 2 requested items in a new
       sub-collection of `api-test`, tagged, reporting 48 held and 92 left for a

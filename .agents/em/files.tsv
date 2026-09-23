@@ -32,7 +32,7 @@ design/implementation/issues/issue-004-truncated-responses-are-cached-as-empty.m
 design/implementation/plans/plan-001-opencitations-meta-idmap.md	1790159808	draft	0.2.0	opencitations, id-mapping, mcp
 design/implementation/plans/plan-002-record-type-publisher-provenance.md	1790168418	final	0.2.0	model, provenance, zotero
 design/implementation/plans/plan-003-record-merge-policy.md	1790168418	final	0.2.0	model, merge
-design/implementation/plans/plan-004-zotero-bridge.md	1790172743	final	0.2.0	zotero, mcp, repository
+design/implementation/plans/plan-004-zotero-bridge.md	1790172910	final	0.2.0	zotero, mcp, repository
 design/prototypes/prototype-001-opencitations-meta-pids.md	1790159877	draft	0.2.0	opencitations, id-mapping, prototype
 design/roadmap.md	1790171481	draft	0.1.0	roadmap, mcp, opencitations, bibliographic-apis
 design/test-scripts/test-001-mcp-protocol-smoke-test.md	1790159864	final	0.1.0	mcp, smoke-test
@@ -130,7 +130,7 @@ src/main/java/uk/co/terminological/bibliography/unpaywall/UnpaywallAuthor.java	1
 src/main/java/uk/co/terminological/bibliography/unpaywall/UnpaywallClient.java	1600359188	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/unpaywall/UnpaywallResult.java	1790168418	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/zotero/ZoteroClient.java	1630413180	NA	NA	NA
-src/main/java/uk/co/terminological/zotero/ZoteroClient.java	1790172701	NA	NA	NA
+src/main/java/uk/co/terminological/zotero/ZoteroClient.java	1790172899	NA	NA	NA
 src/main/java/uk/co/terminological/zotero/ZoteroCollection.java	1790170650	NA	NA	NA
 src/main/java/uk/co/terminological/zotero/ZoteroConfig.java	1790171588	NA	NA	NA
 src/main/java/uk/co/terminological/zotero/ZoteroItem.java	1790170594	NA	NA	NA
@@ -160,7 +160,7 @@ src/test/java/uk/co/terminological/pubmedclient/TestPubMedRestClient.java	178350
 src/test/java/uk/co/terminological/pubmedclient/TestRecordMerge.java	1790168418	NA	NA	NA
 src/test/java/uk/co/terminological/pubmedclient/TestRecordModel.java	1790168418	NA	NA	NA
 src/test/java/uk/co/terminological/pubmedclient/TestUnpaywallParsing.java	1590593512	NA	NA	NA
-src/test/java/uk/co/terminological/zotero/TestZoteroItemWriter.java	1790172439	NA	NA	NA
+src/test/java/uk/co/terminological/zotero/TestZoteroItemWriter.java	1790172899	NA	NA	NA
 src/test/java/uk/co/terminological/zotero/TestZoteroLibraryIndex.java	1790170611	NA	NA	NA
 src/test/java/uk/co/terminological/zotero/TestZoteroMapping.java	1790170541	NA	NA	NA
 src/test/resources/biorxivApiResponse.json	1630493959	NA	NA	NA

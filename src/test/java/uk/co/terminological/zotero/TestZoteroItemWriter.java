@@ -117,6 +117,30 @@ public class TestZoteroItemWriter {
 	}
 
 	@Test
+	public void writeResultsAreReadFromBothOfZoterosReplyShapes() throws Exception {
+		// Zotero answers a multi-object write either with the key as a string or with an
+		// object carrying key and version; asText() on the object form is an empty
+		// string, which is no use to a caller that wants to tag what it just created
+		var result = new ZoteroClient.WriteResult();
+		ZoteroClient.collect(mapper.readTree("{\"successful\":{\"0\":{\"key\":\"AAAA1111\",\"version\":3},"
+				+ "\"1\":\"BBBB2222\"},\"unchanged\":{\"2\":{\"key\":\"CCCC3333\",\"version\":9}},"
+				+ "\"failed\":{\"3\":{\"code\":400,\"message\":\"nope\"}}}"), result);
+
+		assertEquals(List.of("AAAA1111", "BBBB2222", "CCCC3333"), result.created);
+		assertEquals(1, result.failures.size());
+		assertTrue(result.hasFailures());
+	}
+
+	@Test
+	public void anEmptyReplyIsNotSilentlySuccess() throws Exception {
+		var result = new ZoteroClient.WriteResult();
+		ZoteroClient.collect(mapper.readTree("{\"successful\":{},\"unchanged\":{},\"failed\":{}}"), result);
+
+		assertTrue(result.created.isEmpty());
+		assertTrue(result.failures.isEmpty());
+	}
+
+	@Test
 	public void anItemWithNoTitleIsRefused() {
 		Record noTitle = record("report", null, null, null, null, null, List.of(), null);
 		try {
