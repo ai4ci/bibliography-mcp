@@ -100,7 +100,7 @@ response.
 {"jsonrpc":"2.0","id":18,"method":"ping"}
 {"jsonrpc":"2.0","id":18,"result":{}}
 
-{"jsonrpc":"2.0","id":19,"method":"tools/list"} // all 21 tools with inputSchema
+{"jsonrpc":"2.0","id":19,"method":"tools/list"} // all 27 tools with inputSchema
 ```
 
 ## Reference implementation

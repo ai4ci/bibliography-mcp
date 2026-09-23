@@ -10,6 +10,7 @@ A Java MCP (Model Context Protocol) server exposing clients for various bibliogr
 * Open Citations
 * PMC IDConverter API
 * Open access PDF retrieval and reference extraction including Cermine integration
+* Zotero — read and annotate the user's curated library through the desktop client's local API
 
 Design principles: respecting rate limits; multi-thread support; extensive caching of API results using EHCache; exception-free query results using Java 8 Optionals; arbitrarily large querying with batching to multiple API calls.
 
@@ -64,6 +65,18 @@ Session state (a long-lived repository held in memory):
 Analysis:
 * `page_rank` — page rank over the session citation graph, joined with titles
 * `topic_model` — LDA topic model over the session records (title + abstract)
+
+Zotero (optional; local API of a running desktop client):
+
+* `zotero_status`, `zotero_collections` — what library is on the other end
+* `zotero_import` — bring a collection, a search or the library into the session
+* `zotero_check` — which records the library already holds (DOI, ISBN, or
+  normalised title+year)
+* `zotero_publish` — create a sub-collection of the configured write target and add
+  only the records not already held (≤25 per call); nothing existing is modified
+* `zotero_tag` — union tags onto items inside the configured collection
+
+Writes are off by default; see [Zotero configuration](design/external-interfaces/interface-002-configuration-and-secrets.md).
 
 ## Plain-Java facade
 

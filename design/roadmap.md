@@ -132,7 +132,7 @@ Related records:
 
 ---
 
-## 2. Zotero as a curated repository — `proposed`, effort L
+## 2. Zotero as a curated repository — `in-progress`, effort L
 
 ### Context
 
@@ -338,6 +338,11 @@ publishing into a sub-collection.
 ### Linked artefacts
 
 - [HAS_FEATURE](/design/features/feat-005-zotero-curated-repository-bridge.md)
+- [HAS_TEST](/design/test-scripts/test-003-zotero-bridge-tests.md)
+
+Option **E1** (the dry-run enrichment report) is split out as
+[HAS_FEATURE](/design/features/feat-008-report-stale-library-metadata.md);
+option **C** (the full Meta client with author traversal) remains unstarted.
 
 ---
 

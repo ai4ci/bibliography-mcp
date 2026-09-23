@@ -134,6 +134,48 @@ public class PublicationTypes {
 			Map.entry("journal article", ARTICLE_JOURNAL),
 			Map.entry("research-article", ARTICLE_JOURNAL));
 
+	/**
+	 * The Zotero item type to create for a CSL type. An unmapped type becomes
+	 * {@code document}, Zotero's own generic type: better to create something
+	 * unclassifiable-but-visible than to guess at a category.
+	 *
+	 * An explicit table rather than a reverse lookup, because two Zotero types map
+	 * onto the same CSL type (`document` and `attachment` both mean `document`) and
+	 * their order in a map is not defined.
+	 */
+	private static final Map<String, String> CSL_TO_ZOTERO = Map.ofEntries(
+			Map.entry(ARTICLE_JOURNAL, "journalArticle"),
+			Map.entry(CHAPTER, "bookSection"),
+			Map.entry(PAPER_CONFERENCE, "conferencePaper"),
+			Map.entry(BOOK, "book"),
+			Map.entry(REPORT, "report"),
+			Map.entry(THESIS, "thesis"),
+			Map.entry(DATASET, "dataset"),
+			Map.entry(SOFTWARE, "computerProgram"),
+			Map.entry(WEBPAGE, "webpage"),
+			Map.entry(POST_WE_BLOG, "blogPost"),
+			Map.entry(ARTICLE_NEWSPAPER, "newspaperArticle"),
+			Map.entry(ARTICLE_MAGAZINE, "magazineArticle"),
+			Map.entry(ENTRY_ENCYCLOPEDIA, "encyclopediaArticle"),
+			Map.entry(ENTRY_DICTIONARY, "dictionaryEntry"),
+			Map.entry(ENTRY, "document"),
+			Map.entry(MANUSCRIPT, "manuscript"),
+			Map.entry(POSTED_CONTENT, "preprint"),
+			Map.entry(DOCUMENT, "document"),
+			Map.entry(OTHER, "document"),
+			Map.entry(PATENT, "patent"),
+			Map.entry(STANDARD, "standard"),
+			Map.entry(MAP, "map"),
+			Map.entry(GRAPHIC, "artwork"),
+			Map.entry(SPEECH, "presentation"),
+			Map.entry("interview", "interview"),
+			Map.entry(PERSONAL_COMMUNICATION, "letter"));
+
+	public static String toZotero(String cslType) {
+		if (cslType == null) return DOCUMENT;
+		return CSL_TO_ZOTERO.getOrDefault(cslType, DOCUMENT);
+	}
+
 	public static Optional<String> fromCrossRef(String nativeType) {
 		return lookup(CROSSREF, nativeType);
 	}

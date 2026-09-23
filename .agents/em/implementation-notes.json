@@ -7,17 +7,17 @@
     "percent": 0
   },
   "skills/using-bibliographic-apis/references/mcp-call-sequences.md": {
-    "modified": 1790169420,
+    "modified": 1790171520,
     "comments": [],
     "anchors": [],
     "count_lines": 110,
     "percent": 0
   },
   "skills/using-bibliographic-apis/SKILL.md": {
-    "modified": 1790169428,
+    "modified": 1790171514,
     "comments": [],
     "anchors": [],
-    "count_lines": 213,
+    "count_lines": 240,
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/arxiv/ArxivClient.java": {
@@ -318,17 +318,17 @@
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/mcp/McpServer.java": {
-    "modified": 1790159836,
+    "modified": 1790170854,
     "comments": [],
     "anchors": [],
-    "count_lines": 204,
+    "count_lines": 223,
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/mcp/McpTools.java": {
-    "modified": 1790168418,
+    "modified": 1790171252,
     "comments": [],
     "anchors": [],
-    "count_lines": 463,
+    "count_lines": 685,
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/mcp/Session.java": {
@@ -549,10 +549,10 @@
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/record/PublicationTypes.java": {
-    "modified": 1790168418,
+    "modified": 1790171052,
     "comments": [],
     "anchors": [],
-    "count_lines": 161,
+    "count_lines": 203,
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/record/Raw.java": {
@@ -630,6 +630,55 @@
     "comments": [],
     "anchors": [],
     "count_lines": 5,
+    "percent": 0
+  },
+  "src/main/java/uk/co/terminological/zotero/ZoteroClient.java": {
+    "modified": 1790171171,
+    "comments": [],
+    "anchors": [],
+    "count_lines": 448,
+    "percent": 0
+  },
+  "src/main/java/uk/co/terminological/zotero/ZoteroCollection.java": {
+    "modified": 1790170650,
+    "comments": [],
+    "anchors": [],
+    "count_lines": 30,
+    "percent": 0
+  },
+  "src/main/java/uk/co/terminological/zotero/ZoteroConfig.java": {
+    "modified": 1790171588,
+    "comments": [],
+    "anchors": [],
+    "count_lines": 62,
+    "percent": 0
+  },
+  "src/main/java/uk/co/terminological/zotero/ZoteroItem.java": {
+    "modified": 1790170594,
+    "comments": [],
+    "anchors": [],
+    "count_lines": 229,
+    "percent": 0
+  },
+  "src/main/java/uk/co/terminological/zotero/ZoteroItemWriter.java": {
+    "modified": 1790170690,
+    "comments": [],
+    "anchors": [],
+    "count_lines": 90,
+    "percent": 0
+  },
+  "src/main/java/uk/co/terminological/zotero/ZoteroLibraryIndex.java": {
+    "modified": 1790170650,
+    "comments": [],
+    "anchors": [],
+    "count_lines": 88,
+    "percent": 0
+  },
+  "src/main/java/uk/co/terminological/zotero/ZoteroMatching.java": {
+    "modified": 1790170579,
+    "comments": [],
+    "anchors": [],
+    "count_lines": 47,
     "percent": 0
   },
   "src/main/resources/schema/elink.dtd": {
@@ -791,6 +840,27 @@
     "comments": [],
     "anchors": [],
     "count_lines": 63,
+    "percent": 0
+  },
+  "src/test/java/uk/co/terminological/zotero/TestZoteroItemWriter.java": {
+    "modified": 1790171025,
+    "comments": [],
+    "anchors": [],
+    "count_lines": 150,
+    "percent": 0
+  },
+  "src/test/java/uk/co/terminological/zotero/TestZoteroLibraryIndex.java": {
+    "modified": 1790170611,
+    "comments": [],
+    "anchors": [],
+    "count_lines": 127,
+    "percent": 0
+  },
+  "src/test/java/uk/co/terminological/zotero/TestZoteroMapping.java": {
+    "modified": 1790170541,
+    "comments": [],
+    "anchors": [],
+    "count_lines": 122,
     "percent": 0
   },
   "src/test/resources/biorxivApiResponse.json": {

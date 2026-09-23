@@ -154,6 +154,33 @@ After workflow B has collected a session:
 reference list (Cermine) and matches references to CrossRef works. Slow
 (requests hit CrossRef per reference string); use for a single PDF, not bulk.
 
+### Workflow F: the curated Zotero library (the snowball workflow)
+
+The point of the Zotero tools: *"here is a collection I built; find related work
+and add the best of it into a sub-collection"*.
+
+1. `zotero_status` — is the local API reachable, and are writes enabled? Writes are
+   off by default and confined to one configured collection.
+2. `zotero_collections` — find the seed collection's key.
+3. `zotero_import` with that `collection` key — the seed records enter the session
+   (they bring no citation links; Zotero has no citation graph).
+4. Expand and rank as in workflows B and C: `expand_citation_graph`, `page_rank`,
+   `topic_model`. Weigh the scores yourself, with the user.
+5. `zotero_check` — which candidates the library already holds. Matching is DOI,
+   then ISBN, then normalised title+year, so it works for the ~47% of the library
+   with no DOI. **Check before publishing**: it is what stops a duplicate flood.
+6. `zotero_publish` with a `subcollection` name (and `tags`) — creates the
+   sub-collection under the configured target and adds only the records that are
+   not already held, at most 25 per call. It reports what it held back and what it
+   left for a next call.
+7. `zotero_tag` — record why items were added, for items inside the configured
+   collection. Tags are unioned, never replaced.
+
+Nothing in the library is ever overwritten with API data. When the API disagrees
+with an item already held, the item is skipped and the choice (update it, or add a
+duplicate and let Zotero's duplicate detection resolve it) belongs to the agent
+and the user — see the write rules in the feature's design record.
+
 ### Workflow E: id mapping (stateless)
 
 `map_ids` with `ids` — alternate id types via the PMC IDConverter.

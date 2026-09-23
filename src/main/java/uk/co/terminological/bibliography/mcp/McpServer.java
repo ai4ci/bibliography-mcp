@@ -2,17 +2,23 @@ package uk.co.terminological.bibliography.mcp;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+
+import uk.co.terminological.zotero.ZoteroClient;
+import uk.co.terminological.zotero.ZoteroConfig;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.ConsoleAppender;
@@ -59,8 +65,21 @@ public class McpServer {
 						Paths.get(secretsPath.replaceFirst("^~", System.getProperty("user.home"))),
 						Paths.get(cacheDir.replaceFirst("^~", System.getProperty("user.home"))));
 
+		// the same properties file carries the API credentials and the Zotero settings
+		Properties properties = new Properties();
+		java.nio.file.Path configPath = Paths.get(secretsPath.replaceFirst("^~", System.getProperty("user.home")));
+		try (InputStream in = Files.newInputStream(configPath)) {
+			properties.load(in);
+		} catch (IOException e) {
+			log.warn("could not read the properties file at {}: {}", configPath, e.getMessage());
+		}
+		// Zotero is optional and checked lazily: a missing Zotero must not stop the
+		// server, only the Zotero tools
+		ZoteroConfig zoteroConfig = ZoteroConfig.from(properties);
+		ZoteroClient zotero = zoteroConfig.isEnabled() ? new ZoteroClient(zoteroConfig) : null;
+
 		ObjectMapper mapper = new ObjectMapper().registerModule(new Jdk8Module());
-		McpTools.State state = new McpTools.State(facade, mapper);
+		McpTools.State state = new McpTools.State(facade, mapper, zotero);
 		List<McpTools.Tool> tools = McpTools.all(state);
 
 		BufferedReader in = new BufferedReader(

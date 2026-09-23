@@ -1,7 +1,7 @@
 ---
-status: draft
+status: final
 target-version: 0.2.0
-tags: zotero, repository, workflow, proposed
+tags: zotero, repository, workflow
 ---
 <!-- @required: status one of draft|final|deprecated -->
 <!-- @required: target-version specified -->
@@ -64,6 +64,51 @@ Scope boundaries:
 Options, trade-offs and the recommended order are recorded in
 [roadmap idea 2](/design/roadmap.md). This is a proposal pending sign-off, not
 an accepted plan.
+
+## What is implemented, and what is not
+
+Implemented, and verified live against the library:
+
+- **read**: `zotero_status`, `zotero_collections`, `zotero_import` (a collection,
+  a search, or the library) into the session, with items mapped to records
+  (`ZoteroItem`), matched by DOI, ISBN or normalised title+year
+  (`ZoteroLibraryIndex`);
+- **novelty**: `zotero_check` reports which records the library already holds —
+  measured live, 48 of 48 records imported from a collection were recognised even
+  though they carried no Zotero key in the session;
+- **publish**: `zotero_publish` creates a sub-collection of the configured write
+  target and adds only the records the library does not hold, capped at 25 items
+  per call, reporting what was held and what was left; nothing existing is
+  modified, and an all-held publish leaves no empty folder behind;
+- **annotate**: `zotero_tag` unions tags onto items, keeping the ones already
+  there, with the item's version as a precondition and one retry on a concurrent
+  edit. Only items inside the configured write collection may be tagged.
+
+Not implemented:
+
+- **maintain / enrichment** (the dry-run report and any write-back) — split out as
+  [feat-008](/design/features/feat-008-report-stale-library-metadata.md);
+- attachments and PDF locations, which need child-item lookups and, for uploads, a
+  separate Zotero instance to test against;
+- Zotero as a general `search` source in `BiblioFacade`: the library is reachable
+  through Zotero-specific tools instead, so the meaning of the existing tools does
+  not change;
+- group libraries (local API only), and the web API.
+
+## Linked artefacts
+
+- [HAS_PLAN](/design/implementation/plans/plan-004-zotero-bridge.md)
+- [HAS_TEST](/design/test-scripts/test-003-zotero-bridge-tests.md)
+
+## Implemented by
+
+- [IMPLEMENTED_BY](/src/main/java/uk/co/terminological/zotero/ZoteroClient.java)
+- [IMPLEMENTED_BY](/src/main/java/uk/co/terminological/zotero/ZoteroItem.java)
+- [IMPLEMENTED_BY](/src/main/java/uk/co/terminological/zotero/ZoteroLibraryIndex.java)
+- [IMPLEMENTED_BY](/src/main/java/uk/co/terminological/zotero/ZoteroItemWriter.java)
+- [IMPLEMENTED_BY](/src/main/java/uk/co/terminological/zotero/ZoteroConfig.java)
+- [IMPLEMENTED_BY](/src/main/java/uk/co/terminological/zotero/ZoteroCollection.java)
+- [IMPLEMENTED_BY](/src/main/java/uk/co/terminological/zotero/ZoteroMatching.java)
 
 ## Related records
 

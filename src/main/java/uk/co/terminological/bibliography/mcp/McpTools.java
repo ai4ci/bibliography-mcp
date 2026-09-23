@@ -2,6 +2,7 @@ package uk.co.terminological.bibliography.mcp;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,6 +33,11 @@ import uk.co.terminological.bibliography.record.IdType;
 import uk.co.terminological.bibliography.record.ImmutableRecordReference;
 import uk.co.terminological.bibliography.record.Record;
 import uk.co.terminological.bibliography.record.RecordReference;
+import uk.co.terminological.zotero.ZoteroClient;
+import uk.co.terminological.zotero.ZoteroCollection;
+import uk.co.terminological.zotero.ZoteroItem;
+import uk.co.terminological.zotero.ZoteroItemWriter;
+import uk.co.terminological.zotero.ZoteroLibraryIndex;
 import uk.co.terminological.datatypes.Tuple;
 
 /**
@@ -53,11 +59,32 @@ public class McpTools {
 		public final BiblioFacade facade;
 		public final ObjectMapper mapper;
 		public final AtomicReference<Session> session;
+		/** the Zotero bridge, or null when Zotero support is switched off */
+		public final ZoteroClient zotero;
+		/** the library match index, built on first use and dropped after a write */
+		public final AtomicReference<ZoteroLibraryIndex> libraryIndex = new AtomicReference<>();
 
-		public State(BiblioFacade facade, ObjectMapper mapper) {
+		public State(BiblioFacade facade, ObjectMapper mapper, ZoteroClient zotero) {
 			this.facade = facade;
 			this.mapper = mapper;
 			this.session = new AtomicReference<>(facade.getSession());
+			this.zotero = zotero;
+		}
+
+		public ZoteroClient requireZotero() {
+			if (zotero == null) throw new IllegalStateException(
+					"Zotero support is switched off (zotero-mode=off in the properties file)");
+			zotero.checkAvailable();
+			return zotero;
+		}
+
+		public ZoteroLibraryIndex requireIndex() {
+			ZoteroLibraryIndex current = libraryIndex.get();
+			if (current == null) {
+				current = requireZotero().buildIndex();
+				libraryIndex.set(current);
+			}
+			return current;
 		}
 	}
 
@@ -136,6 +163,8 @@ public class McpTools {
 				}
 			}
 		}
+
+
 		return out;
 	}
 
@@ -446,6 +475,199 @@ public class McpTools {
 				optInt(args, "topics").orElse(10),
 				args.has("alpha") ? args.get("alpha").asDouble() : 0.10,
 				args.has("beta") ? args.get("beta").asDouble() : 0.1)
+		));
+
+		// ---- Zotero: the curated library ------------------------------------------
+
+		out.add(new Tool(
+			"zotero_status",
+			"State of the Zotero bridge: whether the local API is reachable, the library identity and version, and whether writes are enabled and where.",
+			emptySchema(m),
+			args -> {
+				ObjectNode status = m.createObjectNode();
+				ZoteroClient zotero = state.zotero;
+				if (zotero == null) {
+					status.put("enabled", false);
+					return status;
+				}
+				status.put("enabled", zotero.getConfig().isEnabled());
+				status.put("baseUrl", zotero.getConfig().getBaseUrl());
+				boolean reachable = zotero.isReachable();
+				status.put("reachable", reachable);
+				if (reachable) {
+					status.put("serverId", zotero.getServerId());
+					status.put("apiVersion", zotero.getApiVersion());
+					status.put("schemaVersion", zotero.getSchemaVersion());
+					// read before reporting the version: the header arrives with the data
+					status.put("items", zotero.itemsTop().size());
+					status.put("collections", zotero.collections().size());
+					status.put("libraryVersion", zotero.getLastLibraryVersion());
+				}
+				status.put("writesEnabled", zotero.getConfig().isAllowWrites());
+				status.put("writeCollection", zotero.getConfig().getWriteCollection());
+				ZoteroLibraryIndex index = state.libraryIndex.get();
+				if (index != null) {
+					status.put("indexSize", index.size());
+					status.put("indexLibraryVersion", index.getLibraryVersion());
+				}
+				return status;
+			}
+		));
+
+		out.add(new Tool(
+			"zotero_collections",
+			"List the collections in the Zotero library (folders; sub-collections have a parent key).",
+			emptySchema(m),
+			args -> {
+				ZoteroClient zotero = state.requireZotero();
+				ArrayNode outJson = m.createArrayNode();
+				for (ZoteroCollection collection : zotero.collections()) {
+					ObjectNode c = outJson.addObject();
+					c.put("key", collection.getKey());
+					c.put("name", collection.getName());
+					if (collection.getParentCollection() != null) {
+						c.put("parentCollection", collection.getParentCollection());
+					}
+				}
+				return outJson;
+			}
+		));
+
+		out.add(new Tool(
+			"zotero_import",
+			"Read the user's curated library into the session: a collection, a search, or the most recently modified items. This is the entry point for a snowball search — import the seed collection, then expand and rank it with the other tools.",
+			schema(m, "{\"type\":\"object\",\"properties\":{\"collection\":{\"type\":\"string\",\"description\":\"collection key from zotero_collections\"},\"query\":{\"type\":\"string\"},\"limit\":{\"type\":\"integer\"}}}"),
+			args -> {
+				ZoteroClient zotero = state.requireZotero();
+				List<ZoteroItem> items;
+				if (args.has("collection")) {
+					items = zotero.itemsInCollection(args.get("collection").asText());
+				} else if (args.has("query")) {
+					items = zotero.search(args.get("query").asText());
+				} else {
+					items = zotero.itemsTop();
+				}
+				int limit = optInt(args, "limit").orElse(Integer.MAX_VALUE);
+				int imported = 0;
+				for (ZoteroItem item : items) {
+					if (imported >= limit) break;
+					state.session.get().add(item);
+					imported++;
+				}
+				return state.session.get().status();
+			}
+		));
+
+		out.add(new Tool(
+			"zotero_check",
+			"Which of these records the library already holds. Uses DOI, then ISBN, then a normalised title+year match, so an item with no identifier at all can still be recognised. Defaults to the session's records.",
+			schema(m, IDS_SCHEMA),
+			args -> {
+				ZoteroLibraryIndex index = state.requireIndex();
+				Collection<? extends Record> records = ids(args).isEmpty()
+						? state.session.get().getRecords().values()
+						: state.facade.fetch(ids(args)).values();
+				ArrayNode outJson = m.createArrayNode();
+				for (Record record : records) {
+					ObjectNode row = outJson.addObject();
+					record.getIdentifier().ifPresent(v -> row.put("id", v));
+					record.getTitle().ifPresent(v -> row.put("title", v));
+					java.util.Optional<String> key = index.findKey(record);
+					row.put("inLibrary", key.isPresent());
+					key.ifPresent(v -> row.put("zoteroKey", v));
+				}
+				return outJson;
+			}
+		));
+
+		out.add(new Tool(
+			"zotero_publish",
+			"Create a sub-collection of the configured write target and add the session's records that the library does not already hold. Nothing existing is modified: where the API data disagrees with an item already held the item is skipped, so the agent can decide between updating and duplicating. At most 25 items are created per call unless limit is given; anything Zotero refuses is logged.",
+			schema(m, "{\"type\":\"object\",\"properties\":{\"subcollection\":{\"type\":\"string\",\"description\":\"name for the new sub-collection\"},"
+					+ "\"tags\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}},"
+					+ "\"limit\":{\"type\":\"integer\",\"description\":\"most items to create in one call (default 25)\"}},"
+					+ "\"required\":[\"subcollection\"]}"),
+			args -> {
+				ZoteroClient zotero = state.requireZotero();
+				zotero.checkWritesAllowed();
+				ZoteroLibraryIndex index = state.requireIndex();
+				List<String> tags = optStringList(args, "tags").orElse(List.of());
+				// a publish can create a lot of items in someone real library, so it stops
+				// at a modest number and reports what it left behind
+				int limit = optInt(args, "limit").orElse(25);
+
+				// select first: nothing is created in the library until we know there is
+				// something to write
+				List<Record> selected = new ArrayList<>();
+				ArrayNode skipped = m.createArrayNode();
+				int alreadyHeld = 0;
+				int overLimit = 0;
+				for (Record record : state.session.get().getRecords().values()) {
+					java.util.Optional<String> existing = index.findKey(record);
+					if (existing.isPresent()) {
+						alreadyHeld++;
+						continue;
+					}
+					if (selected.size() >= limit) {
+						overLimit++;
+						continue;
+					}
+					try {
+						ZoteroItemWriter.toItem(record, null, tags); // refuses an item without a title
+						selected.add(record);
+					} catch (IllegalArgumentException e) {
+						ObjectNode row = skipped.addObject();
+						record.getTitle().ifPresent(v -> row.put("title", v));
+						row.put("reason", e.getMessage());
+					}
+				}
+
+				String target = null;
+				ArrayNode created = m.createArrayNode();
+				int createdCount = 0;
+				if (!selected.isEmpty()) {
+					target = zotero.createSubCollection(args.get("subcollection").asText());
+					List<com.fasterxml.jackson.databind.JsonNode> items = new ArrayList<>();
+					for (Record record : selected) {
+						items.add(ZoteroItemWriter.toItem(record, target, tags));
+						record.getTitle().ifPresent(created::add);
+					}
+					createdCount = zotero.createItems(items, target).size();
+					state.libraryIndex.set(null); // the library changed
+				}
+
+				ObjectNode result = m.createObjectNode();
+				result.put("collection", target == null ? "(nothing to publish)" : target);
+				result.put("submittedCount", selected.size());
+				result.put("createdCount", createdCount);
+				result.set("submitted", created);
+				result.put("alreadyInLibrary", alreadyHeld);
+				result.put("leftForANextCall", overLimit);
+				result.set("skipped", skipped);
+				return result;
+			}
+		));
+
+		out.add(new Tool(
+			"zotero_tag",
+			"Add tags to Zotero items, keeping the tags they already have. Only items inside the configured write collection may be tagged. Use this to record decisions (why an item was added, what it relates to).",
+			schema(m, "{\"type\":\"object\",\"properties\":{\"itemKeys\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}},"
+					+ "\"tags\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}}},\"required\":[\"itemKeys\",\"tags\"]}"),
+			args -> {
+				ZoteroClient zotero = state.requireZotero();
+				List<String> tags = optStringList(args, "tags").orElse(List.of());
+				ArrayNode outJson = m.createArrayNode();
+				for (JsonNode keyNode : args.get("itemKeys")) {
+					ObjectNode row = outJson.addObject();
+					row.put("itemKey", keyNode.asText());
+					try {
+						row.set("tags", m.valueToTree(zotero.addTags(keyNode.asText(), tags)));
+					} catch (RuntimeException e) {
+						row.put("error", e.getMessage());
+					}
+				}
+				return outJson;
+			}
 		));
 
 		return out;
