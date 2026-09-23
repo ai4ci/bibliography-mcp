@@ -53,6 +53,12 @@ Design context: [roadmap idea 2](/design/roadmap.md).
       (union tags, version-preconditioned, retry once on 412).
 - [ ] `zotero_enrich_report` (dry-run gaps report, no writes) — moved to
       [feat-008](/design/features/feat-008-report-stale-library-metadata.md).
+- [x] Batch the tagging: tags are applied to up to 50 items in **one** request,
+      because a Zotero write authorisation is usually single-use and each request is
+      a permission prompt (Zotero allows five prompts a minute).
+- [x] Record `remember` from the authorisation response and report it as
+      `writeAuthorisation` in `zotero_status`, so an agent can suggest "Always Allow"
+      when a session will need several writes.
 - [x] Write authorisation: on `401` call `POST /local/authorize` with
       `Zotero-Server-ID` and the app name (the user sees a dialog), retry with the
       returned key; surface `403 denied` and `429` (dialog spam limit) clearly.
@@ -67,6 +73,9 @@ Design context: [roadmap idea 2](/design/roadmap.md).
       guarantee that a `document` never becomes an `attachment`.
 - [x] Live verification (read): imported a real 48-item collection; all 48 were
       recognised as already held.
+- [ ] Live verification of the batched tag write is pending the permission dialog
+      being approved: an attempt timed out after two minutes waiting and wrote
+      nothing. The request building itself is unit-tested (`tagPatch`).
 - [x] Live verification (write): an all-held publish created nothing and left no
       empty folder; a second created exactly the 2 requested items in a new
       sub-collection of `api-test`, tagged, reporting 48 held and 92 left for a

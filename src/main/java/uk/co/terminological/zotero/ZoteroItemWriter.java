@@ -72,6 +72,28 @@ public class ZoteroItemWriter {
 		return item;
 	}
 
+	/**
+	 * The object for a multi-item tag write: the item key, its version as a
+	 * precondition, and the union of the tags it already has with the new ones.
+	 *
+	 * One request can carry up to 50 of these, which matters because a Zotero write
+	 * authorisation is usually single-use: one request per item would ask the user to
+	 * approve every single item, and Zotero allows only five permission prompts a
+	 * minute.
+	 */
+	public static ObjectNode tagPatch(String itemKey, long version, JsonNode itemData, List<String> newTags) {
+		ObjectNode patch = MAPPER.createObjectNode();
+		patch.put("key", itemKey);
+		patch.put("version", version);
+		java.util.LinkedHashSet<String> union = new java.util.LinkedHashSet<>(tagNames(itemData));
+		for (String tag : newTags) {
+			if (tag != null && !tag.trim().isEmpty()) union.add(tag.trim());
+		}
+		ArrayNode tagArray = patch.putArray("tags");
+		union.forEach(t -> tagArray.addObject().put("tag", t));
+		return patch;
+	}
+
 	/** the item's existing tags, for a union update that never drops one */
 	public static List<String> tagNames(JsonNode itemData) {
 		List<String> out = new java.util.ArrayList<>();

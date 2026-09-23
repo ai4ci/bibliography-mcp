@@ -60,6 +60,8 @@ public class ZoteroClient {
 	private String schemaVersion;
 	private long lastLibraryVersion = -1L;
 	private String writeKey;
+	/** whether Zotero will let the key above be reused, or expects a fresh prompt */
+	private Boolean writeKeyRemembered;
 
 	public ZoteroClient(ZoteroConfig config) {
 		this.config = config;
@@ -85,6 +87,12 @@ public class ZoteroClient {
 			throw new ZoteroException("Zotero support is switched off (zotero-mode=off in the properties file)");
 		}
 		request("GET", "/", null, null, false, false);
+	}
+
+	/** how a write would be authorised right now, so a caller can advise the user */
+	public String getWriteAuthorisation() {
+		if (writeKey == null) return "not asked yet";
+		return Boolean.TRUE.equals(writeKeyRemembered) ? "remembered" : "single-use";
 	}
 
 	public String getServerId() { return serverId; }
@@ -202,51 +210,67 @@ public class ZoteroClient {
 	}
 
 	/** create items in the given collection, in batches Zotero accepts (≤50) */
-	public List<String> createItems(List<JsonNode> items, String collectionKey) {
+	/** what a batch write actually did, so a partial success is never lost */
+	public static class WriteResult {
+		public final List<String> created = new ArrayList<>();
+		public final List<String> failures = new ArrayList<>();
+
+		public boolean hasFailures() { return !failures.isEmpty(); }
+	}
+
+	public WriteResult createItems(List<JsonNode> items, String collectionKey) {
 		checkWriteTarget(collectionKey);
-		List<String> created = new ArrayList<>();
+		WriteResult result = new WriteResult();
 		for (int start = 0; start < items.size(); start += MAX_PER_WRITE) {
 			List<JsonNode> batch = items.subList(start, Math.min(items.size(), start + MAX_PER_WRITE));
 			ArrayNode body = mapper.createArrayNode();
 			batch.forEach(body::add);
-			JsonNode response = write("POST", userPath("/items"), body.toString());
-			response.path("successful")
-					.fields()
-					.forEachRemaining(entry -> created.add(entry.getValue().asText()));
-			// Zotero judges each item separately: log a refusal and let the rest of the
-			// batch land, rather than discarding a partial success
-			response.path("failed")
-					.fields()
-					.forEachRemaining(entry -> log.warn("Zotero refused an item: {}", truncate(entry.getValue().toString())));
+			collect(write("POST", userPath("/items"), body.toString()), result);
 		}
-		return created;
+		return result;
 	}
 
 	/**
-	 * Add tags to an item, keeping the ones it already has. Arrays in a PATCH are a
-	 * complete replacement, so this is a read-merge-write with the item's version as
-	 * a precondition: a concurrent edit returns 412 and is retried once from a fresh
-	 * read rather than clobbering it.
+	 * Tag many items in as few requests as Zotero allows (up to 50 objects each).
+	 * A write authorisation is usually single-use, so one request per item would ask
+	 * the user to approve every item and would hit Zotero's limit of five permission
+	 * prompts a minute; batching makes a whole tagging call one prompt.
+	 *
+	 * Tags are a complete replacement in a write, so each item's tags are read,
+	 * unioned with the new ones and written back with the version that was read as a
+	 * precondition: a concurrent edit fails that item rather than clobbering it.
 	 */
-	public List<String> addTags(String itemKey, List<String> tags) {
-		checkWriteTarget(itemKeyCollection(itemKey));
-		for (int attempt = 0; attempt < 2; attempt++) {
-			ZoteroItem item = item(itemKey).orElseThrow(() -> new ZoteroException("no such Zotero item: " + itemKey));
-			long version = item.getData().path("version").asLong(0);
-			java.util.LinkedHashSet<String> union = new java.util.LinkedHashSet<>(ZoteroItemWriter.tagNames(item.getData()));
-			for (String tag : tags) {
-				if (tag != null && !tag.trim().isEmpty()) union.add(tag.trim());
+	public WriteResult addTags(List<String> itemKeys, List<String> tags) {
+		for (String itemKey : itemKeys) checkWriteTarget(itemKeyCollection(itemKey));
+		WriteResult result = new WriteResult();
+		for (int start = 0; start < itemKeys.size(); start += MAX_PER_WRITE) {
+			List<String> batch = itemKeys.subList(start, Math.min(itemKeys.size(), start + MAX_PER_WRITE));
+			ArrayNode body = mapper.createArrayNode();
+			for (String itemKey : batch) {
+				body.add(ZoteroItemWriter.tagPatch(itemKey, itemData(itemKey).path("version").asLong(0),
+						itemData(itemKey), tags));
 			}
-			ObjectNode patch = mapper.createObjectNode();
-			ArrayNode tagArray = patch.putArray("tags");
-			union.forEach(t -> tagArray.addObject().put("tag", t));
-			HttpResponse<String> response = send("PATCH", userPath("/items/" + itemKey), null,
-					patch.toString(), true, true, version);
-			if (response.statusCode() == 412 && attempt == 0) continue; // someone else edited it; re-read and re-merge
-			requireSuccess(response, "tagging item " + itemKey);
-			return new ArrayList<>(union);
+			collect(write("POST", userPath("/items"), body.toString()), result);
 		}
-		throw new ZoteroException("could not tag " + itemKey + ": the item keeps changing underneath us");
+		return result;
+	}
+
+	/** split Zotero's per-object verdict into what landed and what did not */
+	private static void collect(JsonNode response, WriteResult result) {
+		for (String status : List.of("successful", "unchanged")) {
+			response.path(status)
+					.fields()
+					.forEachRemaining(entry -> result.created.add(entry.getValue().asText()));
+		}
+		response.path("failed")
+				.fields()
+				.forEachRemaining(entry -> result.failures.add(truncate(entry.getValue().toString())));
+	}
+
+	private JsonNode itemData(String itemKey) {
+		return item(itemKey)
+				.orElseThrow(() -> new ZoteroException("no such Zotero item: " + itemKey))
+				.getData();
 	}
 
 	private String itemKeyCollection(String itemKey) {
@@ -371,6 +395,9 @@ public class ZoteroClient {
 		HttpResponse<String> response;
 		try {
 			response = http.send(request, HttpResponse.BodyHandlers.ofString());
+		} catch (java.net.http.HttpTimeoutException e) {
+			throw new ZoteroException("waiting for the Zotero write permission dialog timed out after "
+					+ "two minutes; approve the dialog in Zotero and ask again (nothing was written)", e);
 		} catch (Exception e) {
 			if (e instanceof InterruptedException) Thread.currentThread().interrupt();
 			throw new ZoteroException("could not ask Zotero for write permission", e);
@@ -386,11 +413,16 @@ public class ZoteroClient {
 					+ truncate(response.body()));
 		}
 		try {
-			writeKey = mapper.readTree(response.body()).path("key").asText(null);
+			JsonNode authorisation = mapper.readTree(response.body());
+			writeKey = authorisation.path("key").asText(null);
+			writeKeyRemembered = authorisation.path("remember").asBoolean(false);
 		} catch (Exception e) {
 			throw new ZoteroException("could not read the key Zotero returned for writes", e);
 		}
 		if (writeKey == null) throw new ZoteroException("Zotero returned no write key");
+		log.info("Zotero granted a {} write key", Boolean.TRUE.equals(writeKeyRemembered)
+				? "reusable (\"Always Allow\")"
+				: "single-use: this request will succeed and the next one will ask again unless the user chooses \"Always Allow\"");
 	}
 
 	private void captureHeaders(HttpResponse<String> response) {

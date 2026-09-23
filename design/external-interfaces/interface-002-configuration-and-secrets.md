@@ -53,9 +53,17 @@ startup. Keys in the same properties file:
 | `zotero-write-collection` | (none) | the **only** collection writes may touch; a sub-collection created by the bridge is always a child of it |
 
 Local write permission is not a key you can put here: Zotero asks the user at
-runtime (`POST /api/local/authorize`), naming the application, and the key it
-returns is single-use unless the user chooses "Always Allow". A refused request
-returns `403`, and more than five permission prompts a minute returns `429`.
+runtime (`POST /api/local/authorize`), naming the application. The key it returns
+is **single-use** unless the user chooses "Always Allow", in which case it can be
+reused indefinitely until the user clears the write authorisations in Zotero
+(Settings → Advanced). The bridge holds it in memory for the session and never
+writes it to disk. A refused request returns `403`, more than five permission
+prompts a minute returns `429`, and a dialog left unanswered times out after two
+minutes with nothing written.
+
+Because each **request** normally costs one prompt, writes are batched: tags are
+applied to up to 50 items in one request, and created items go in batches of 50.
+Tagging six items one at a time would otherwise need six prompts and hit the limit.
 
 When the local API preference is off, every Zotero request returns `403` and the
 tool message says which setting to change (Zotero Settings → Advanced → "Allow

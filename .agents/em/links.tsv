@@ -15,10 +15,10 @@ design/external-interfaces/interface-001-mcp-stdio-protocol.md	78	HAS_TEST	desig
 design/external-interfaces/interface-001-mcp-stdio-protocol.md	79	HAS_TEST	design/test-scripts/test-002-api-behaviour-tests.md	NA
 design/external-interfaces/interface-001-mcp-stdio-protocol.md	70	IMPLEMENTED_BY	src/main/java/uk/co/terminological/bibliography/mcp/McpServer.java	NA
 design/external-interfaces/interface-001-mcp-stdio-protocol.md	71	IMPLEMENTED_BY	src/main/java/uk/co/terminological/bibliography/mcp/McpTools.java	NA
-design/external-interfaces/interface-002-configuration-and-secrets.md	79	HAS_FEATURE	design/features/feat-001-expose-bibliographic-apis-over-mcp.md	NA
-design/external-interfaces/interface-002-configuration-and-secrets.md	74	IMPLEMENTED_BY	src/main/java/uk/co/terminological/bibliography/mcp/BiblioFacade.java	NA
-design/external-interfaces/interface-002-configuration-and-secrets.md	73	IMPLEMENTED_BY	src/main/java/uk/co/terminological/bibliography/mcp/McpServer.java	NA
-design/external-interfaces/interface-002-configuration-and-secrets.md	75	IMPLEMENTED_BY	src/main/java/uk/co/terminological/zotero/ZoteroConfig.java	NA
+design/external-interfaces/interface-002-configuration-and-secrets.md	87	HAS_FEATURE	design/features/feat-001-expose-bibliographic-apis-over-mcp.md	NA
+design/external-interfaces/interface-002-configuration-and-secrets.md	82	IMPLEMENTED_BY	src/main/java/uk/co/terminological/bibliography/mcp/BiblioFacade.java	NA
+design/external-interfaces/interface-002-configuration-and-secrets.md	81	IMPLEMENTED_BY	src/main/java/uk/co/terminological/bibliography/mcp/McpServer.java	NA
+design/external-interfaces/interface-002-configuration-and-secrets.md	83	IMPLEMENTED_BY	src/main/java/uk/co/terminological/zotero/ZoteroConfig.java	NA
 design/features/feat-001-expose-bibliographic-apis-over-mcp.md	23	HAS_INTERFACE	design/external-interfaces/interface-001-mcp-stdio-protocol.md	NA
 design/features/feat-001-expose-bibliographic-apis-over-mcp.md	24	HAS_INTERFACE	design/external-interfaces/interface-002-configuration-and-secrets.md	NA
 design/features/feat-001-expose-bibliographic-apis-over-mcp.md	25	HAS_TEST	design/test-scripts/test-001-mcp-protocol-smoke-test.md	NA

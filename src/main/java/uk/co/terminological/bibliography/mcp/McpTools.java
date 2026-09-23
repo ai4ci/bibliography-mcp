@@ -505,6 +505,7 @@ public class McpTools {
 				}
 				status.put("writesEnabled", zotero.getConfig().isAllowWrites());
 				status.put("writeCollection", zotero.getConfig().getWriteCollection());
+				status.put("writeAuthorisation", zotero.getWriteAuthorisation());
 				ZoteroLibraryIndex index = state.libraryIndex.get();
 				if (index != null) {
 					status.put("indexSize", index.size());
@@ -632,7 +633,7 @@ public class McpTools {
 						items.add(ZoteroItemWriter.toItem(record, target, tags));
 						record.getTitle().ifPresent(created::add);
 					}
-					createdCount = zotero.createItems(items, target).size();
+					createdCount = zotero.createItems(items, target).created.size();
 					state.libraryIndex.set(null); // the library changed
 				}
 
@@ -650,23 +651,20 @@ public class McpTools {
 
 		out.add(new Tool(
 			"zotero_tag",
-			"Add tags to Zotero items, keeping the tags they already have. Only items inside the configured write collection may be tagged. Use this to record decisions (why an item was added, what it relates to).",
+			"Add tags to Zotero items, keeping the tags they already have. Only items inside the configured write collection may be tagged. Use this to record decisions (why an item was added, what it relates to). All the items are tagged in one request, because a Zotero write authorisation is usually single-use and each request is a permission prompt.",
 			schema(m, "{\"type\":\"object\",\"properties\":{\"itemKeys\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}},"
 					+ "\"tags\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}}},\"required\":[\"itemKeys\",\"tags\"]}"),
 			args -> {
 				ZoteroClient zotero = state.requireZotero();
 				List<String> tags = optStringList(args, "tags").orElse(List.of());
-				ArrayNode outJson = m.createArrayNode();
-				for (JsonNode keyNode : args.get("itemKeys")) {
-					ObjectNode row = outJson.addObject();
-					row.put("itemKey", keyNode.asText());
-					try {
-						row.set("tags", m.valueToTree(zotero.addTags(keyNode.asText(), tags)));
-					} catch (RuntimeException e) {
-						row.put("error", e.getMessage());
-					}
-				}
-				return outJson;
+				List<String> itemKeys = new ArrayList<>();
+				args.get("itemKeys").forEach(key -> itemKeys.add(key.asText()));
+				ZoteroClient.WriteResult written = zotero.addTags(itemKeys, tags);
+				ObjectNode result = m.createObjectNode();
+				result.put("taggedCount", written.created.size());
+				result.set("tagged", m.valueToTree(written.created));
+				if (written.hasFailures()) result.set("failed", m.valueToTree(written.failures));
+				return result;
 			}
 		));
 

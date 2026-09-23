@@ -91,6 +91,32 @@ public class TestZoteroItemWriter {
 	}
 
 	@Test
+	public void aTagPatchUnionsTagsAndCarriesTheVersion() throws Exception {
+		// one request can carry up to 50 of these: a write authorisation is usually
+		// single-use, so one request per item would ask the user for every item
+		var item = mapper.readTree("{\"key\":\"AAAA1111\",\"version\":7,"
+				+ "\"tags\":[{\"tag\":\"existing\"},{\"tag\":\"shared\"},{\"tag\":\"auto\",\"type\":1}]}");
+
+		var patch = ZoteroItemWriter.tagPatch("AAAA1111", 7, item, List.of("shared", " agent-added ", ""));
+
+		assertEquals("AAAA1111", patch.get("key").asText());
+		assertEquals(7, patch.get("version").asInt());
+		List<String> tags = new java.util.ArrayList<>();
+		patch.get("tags").forEach(t -> tags.add(t.get("tag").asText()));
+		// existing tags kept and deduplicated, new ones trimmed, blanks ignored
+		assertEquals(List.of("existing", "shared", "auto", "agent-added"), tags);
+	}
+
+	@Test
+	public void aTagPatchOnAnItemWithNoTagsWorks() throws Exception {
+		var item = mapper.readTree("{\"key\":\"BBBB2222\",\"version\":1}");
+
+		var patch = ZoteroItemWriter.tagPatch("BBBB2222", 1, item, List.of("first"));
+
+		assertEquals("first", patch.get("tags").get(0).get("tag").asText());
+	}
+
+	@Test
 	public void anItemWithNoTitleIsRefused() {
 		Record noTitle = record("report", null, null, null, null, null, List.of(), null);
 		try {

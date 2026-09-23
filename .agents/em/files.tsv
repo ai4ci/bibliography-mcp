@@ -9,7 +9,7 @@ architecture/decision-records/adr-002-hand-rolled-mcp-protocol.md	1790159638	fin
 architecture/decision-records/adr-003-opencitations-index-v2.md	1790159638	final	0.1.0	NA
 design/SCOPE.md	1790171476	NA	NA	NA
 design/external-interfaces/interface-001-mcp-stdio-protocol.md	1790159870	final	0.1.0	mcp, protocol
-design/external-interfaces/interface-002-configuration-and-secrets.md	1790171552	final	0.1.0	config, secrets
+design/external-interfaces/interface-002-configuration-and-secrets.md	1790172750	final	0.1.0	config, secrets
 design/features/feat-001-expose-bibliographic-apis-over-mcp.md	1790159864	final	0.1.0	mcp, api-client
 design/features/feat-002-explore-citation-networks-in-a-session.md	1790159808	final	0.1.0	mcp, citations, session
 design/features/feat-003-analyse-citation-graphs-and-topics.md	1790159808	final	0.1.0	mcp, analysis
@@ -32,7 +32,7 @@ design/implementation/issues/issue-004-truncated-responses-are-cached-as-empty.m
 design/implementation/plans/plan-001-opencitations-meta-idmap.md	1790159808	draft	0.2.0	opencitations, id-mapping, mcp
 design/implementation/plans/plan-002-record-type-publisher-provenance.md	1790168418	final	0.2.0	model, provenance, zotero
 design/implementation/plans/plan-003-record-merge-policy.md	1790168418	final	0.2.0	model, merge
-design/implementation/plans/plan-004-zotero-bridge.md	1790171501	final	0.2.0	zotero, mcp, repository
+design/implementation/plans/plan-004-zotero-bridge.md	1790172743	final	0.2.0	zotero, mcp, repository
 design/prototypes/prototype-001-opencitations-meta-pids.md	1790159877	draft	0.2.0	opencitations, id-mapping, prototype
 design/roadmap.md	1790171481	draft	0.1.0	roadmap, mcp, opencitations, bibliographic-apis
 design/test-scripts/test-001-mcp-protocol-smoke-test.md	1790159864	final	0.1.0	mcp, smoke-test
@@ -87,7 +87,7 @@ src/main/java/uk/co/terminological/bibliography/jats/JatsReference.java	16305057
 src/main/java/uk/co/terminological/bibliography/mcp/Analysis.java	1790159689	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/mcp/BiblioFacade.java	1790159689	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/mcp/McpServer.java	1790170854	NA	NA	NA
-src/main/java/uk/co/terminological/bibliography/mcp/McpTools.java	1790171252	NA	NA	NA
+src/main/java/uk/co/terminological/bibliography/mcp/McpTools.java	1790172529	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/mcp/Session.java	1790159689	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/medrxiv/MedrxivAuthor.java	1630417196	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/medrxiv/MedrxivClient.java	1630413447	NA	NA	NA
@@ -130,11 +130,11 @@ src/main/java/uk/co/terminological/bibliography/unpaywall/UnpaywallAuthor.java	1
 src/main/java/uk/co/terminological/bibliography/unpaywall/UnpaywallClient.java	1600359188	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/unpaywall/UnpaywallResult.java	1790168418	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/zotero/ZoteroClient.java	1630413180	NA	NA	NA
-src/main/java/uk/co/terminological/zotero/ZoteroClient.java	1790171171	NA	NA	NA
+src/main/java/uk/co/terminological/zotero/ZoteroClient.java	1790172701	NA	NA	NA
 src/main/java/uk/co/terminological/zotero/ZoteroCollection.java	1790170650	NA	NA	NA
 src/main/java/uk/co/terminological/zotero/ZoteroConfig.java	1790171588	NA	NA	NA
 src/main/java/uk/co/terminological/zotero/ZoteroItem.java	1790170594	NA	NA	NA
-src/main/java/uk/co/terminological/zotero/ZoteroItemWriter.java	1790170690	NA	NA	NA
+src/main/java/uk/co/terminological/zotero/ZoteroItemWriter.java	1790172448	NA	NA	NA
 src/main/java/uk/co/terminological/zotero/ZoteroLibraryIndex.java	1790170650	NA	NA	NA
 src/main/java/uk/co/terminological/zotero/ZoteroMatching.java	1790170579	NA	NA	NA
 src/main/resources/schema/elink.dtd	1590593512	NA	NA	NA
@@ -160,7 +160,7 @@ src/test/java/uk/co/terminological/pubmedclient/TestPubMedRestClient.java	178350
 src/test/java/uk/co/terminological/pubmedclient/TestRecordMerge.java	1790168418	NA	NA	NA
 src/test/java/uk/co/terminological/pubmedclient/TestRecordModel.java	1790168418	NA	NA	NA
 src/test/java/uk/co/terminological/pubmedclient/TestUnpaywallParsing.java	1590593512	NA	NA	NA
-src/test/java/uk/co/terminological/zotero/TestZoteroItemWriter.java	1790171025	NA	NA	NA
+src/test/java/uk/co/terminological/zotero/TestZoteroItemWriter.java	1790172439	NA	NA	NA
 src/test/java/uk/co/terminological/zotero/TestZoteroLibraryIndex.java	1790170611	NA	NA	NA
 src/test/java/uk/co/terminological/zotero/TestZoteroMapping.java	1790170541	NA	NA	NA
 src/test/resources/biorxivApiResponse.json	1630493959	NA	NA	NA
