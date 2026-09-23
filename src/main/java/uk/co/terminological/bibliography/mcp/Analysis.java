@@ -23,6 +23,7 @@ import uk.co.terminological.nlptools.TopicModelResult;
  * modelling over the session records using nlp-tools. (Salvaged from the
  * rjavaapi CitationAnalyser and TopicModelAnalyser, minus the R interface.)
  */
+// [IMPLEMENTS](/design/features/feat-003-analyse-citation-graphs-and-topics.md)
 public class Analysis {
 
 	/**

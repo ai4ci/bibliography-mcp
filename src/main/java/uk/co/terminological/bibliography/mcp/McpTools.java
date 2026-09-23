@@ -39,6 +39,10 @@ import uk.co.terminological.datatypes.Tuple;
  * takes an ObjectNode of arguments and returns a Jackson node / list for
  * serialisation into the tool response.
  */
+// [IMPLEMENTS](/design/features/feat-001-expose-bibliographic-apis-over-mcp.md)
+// [IMPLEMENTS](/design/features/feat-002-explore-citation-networks-in-a-session.md)
+// [IMPLEMENTS](/design/features/feat-003-analyse-citation-graphs-and-topics.md)
+// [IMPLEMENTS](/design/external-interfaces/interface-001-mcp-stdio-protocol.md)
 public class McpTools {
 
 	static Logger log = LoggerFactory.getLogger(McpTools.class);

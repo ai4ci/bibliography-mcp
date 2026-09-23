@@ -15,6 +15,7 @@ import uk.co.terminological.bibliography.record.CitationLink;
 import uk.co.terminological.bibliography.record.IdType;
 
 public class TestCombinedApi {
+	// [TESTS](/design/test-scripts/test-002-api-behaviour-tests.md)
 
 	public static void main(String[] args) throws IOException,
 			ClassNotFoundException {

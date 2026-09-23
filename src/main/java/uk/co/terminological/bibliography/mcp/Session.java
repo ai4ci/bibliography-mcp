@@ -1,9 +1,7 @@
 package uk.co.terminological.bibliography.mcp;
 
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
@@ -44,6 +42,7 @@ import uk.co.terminological.datatypes.Tuple;
  * interface.) Long-lived; held in memory for the lifetime of an MCP server
  * session, persisted via save/load.
  */
+// [IMPLEMENTS](/design/features/feat-002-explore-citation-networks-in-a-session.md)
 public class Session implements Serializable {
 
 	static Logger log = LoggerFactory.getLogger(Session.class);
@@ -339,18 +338,6 @@ public class Session implements Serializable {
 			.values()
 			.forEach(this::add);
 		return this;
-	}
-
-	// used by load via BiblioFacade.loadSession
-	@SuppressWarnings("unused")
-	private static Session load(String filename)
-			throws IOException, ClassNotFoundException {
-		filename = filename.replaceFirst("^~", System.getProperty("user.home"));
-		var in = new FileInputStream(filename);
-		var s = new ObjectInputStream(in);
-		var out = (Session) s.readObject();
-		in.close();
-		return out;
 	}
 
 }

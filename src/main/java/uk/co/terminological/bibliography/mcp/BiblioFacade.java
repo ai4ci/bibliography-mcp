@@ -38,6 +38,8 @@ import uk.co.terminological.bibliography.record.RecordReferenceMapping;
  * fetch / id-mapping queries across the configured APIs and merges results.
  * (Salvaged from the rjavaapi ApiClient, minus the R interface.)
  */
+// [IMPLEMENTS](/design/features/feat-001-expose-bibliographic-apis-over-mcp.md)
+// [IMPLEMENTS](/design/external-interfaces/interface-002-configuration-and-secrets.md)
 public class BiblioFacade
 		implements Searcher, CitedByMapper, CitesMapper, RecordFetcher, IdMapper {
 
@@ -87,6 +89,23 @@ public class BiblioFacade
 			multiSearch.put(api, search);
 		}
 		return this.multiSearch(multiSearch, from, to, limit);
+	}
+
+	// the no-argument variants fall back to the configured dates/limit, matching the
+	// behaviour of the R-era client these were salvaged from
+	@Override
+	public Collection<? extends Record> search(String search) {
+		return this.search(search, this.from, this.to, this.limit);
+	}
+
+	@Override
+	public Collection<? extends Record> search(String search, Integer limit) {
+		return this.search(search, this.from, this.to, Optional.of(limit));
+	}
+
+	@Override
+	public Collection<? extends Record> search(String search, LocalDate from, LocalDate to) {
+		return this.search(search, Optional.of(from), Optional.of(to), this.limit);
 	}
 
 	public Collection<Record> multiSearch(

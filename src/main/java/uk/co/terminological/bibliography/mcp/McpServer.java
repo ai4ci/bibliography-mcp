@@ -29,6 +29,9 @@ import org.slf4j.LoggerFactory;
  * ponytail: minimal protocol subset (initialize, ping, tools/list, tools/call)
  * — no resources, prompts or subscriptions; add if an MCP client asks for them.
  */
+// [IMPLEMENTS](/design/features/feat-001-expose-bibliographic-apis-over-mcp.md)
+// [IMPLEMENTS](/design/external-interfaces/interface-001-mcp-stdio-protocol.md)
+// [IMPLEMENTS](/design/external-interfaces/interface-002-configuration-and-secrets.md)
 public class McpServer {
 
 	static Logger log = LoggerFactory.getLogger(McpServer.class);

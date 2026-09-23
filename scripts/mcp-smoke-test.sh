@@ -1,4 +1,5 @@
 #!/bin/bash
+# [TESTS](/design/test-scripts/test-001-mcp-protocol-smoke-test.md)
 # Smoke test for the MCP stdio server: runs offline protocol round trips
 # against the shaded jar and asserts valid JSON-RPC responses.
 # Usage: scripts/mcp-smoke-test.sh [path-to-jar] [secrets-path]
