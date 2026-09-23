@@ -166,6 +166,10 @@ Session-wide equivalent: `find_alternate_ids`.
   duplicate API hits.
 - `publicationType` distinguishes kinds of work (a chapter is not a journal
   article); where it matters, prefer records whose `provenance.source` you trust.
+- **CrossRef and Unpaywall are DOI-keyed.** CrossRef has no `pmid` filter at all, so
+  if a record is only known by PMID/PMCID, call `map_ids` first and fetch by the DOI
+  it returns — or fetch through Europe PMC, which accepts all three id types.
+  Otherwise those sources silently contribute nothing to the merged record.
 - Records use a unified format regardless of source API. Treat `id`/`idType`
   as the canonical reference; `PMID`/`DOI`/`PMCID` are convenience lookups.
 - Dates are `YYYY-MM-DD`; `limit` caps results per API.

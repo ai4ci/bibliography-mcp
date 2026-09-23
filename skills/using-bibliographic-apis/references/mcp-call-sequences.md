@@ -80,6 +80,9 @@ response.
 
 ```jsonc
 {"jsonrpc":"2.0","id":15,"method":"tools/call","params":{"name":"map_ids","arguments":{"ids":[{"idType":"DOI","id":"10.1136/bmjqs-2018-008370"}]}}}
+// CrossRef and Unpaywall are DOI-keyed (CrossRef has no pmid filter at all), so when a
+// record is only known by PMID/PMCID, map_ids first and fetch by the DOI it returns.
+// Europe PMC accepts all three id types directly.
 // [{"sourceId":"10.1136/bmjqs-2018-008370","sourceIdType":"DOI","targetId":"30636200","targetIdType":"PMID"}]
 ```
 
