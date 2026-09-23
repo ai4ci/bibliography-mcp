@@ -148,22 +148,35 @@ public class TestRecordMerge {
 	// ---- curated records are authoritative and kept distinct ----
 
 	@Test
-	public void curatedValuesAreNotOverriddenByApiValues() {
+	public void aZoteroRecordIsNotTreatedAsAuthoritative() {
+		// A zotero item may be scraped from a publisher page and broken, or hand
+		// repaired; we cannot tell which, so it is ranked by the same per-field
+		// policy as every other source rather than winning unconditionally.
 		Record api = record("crossref", "journal-article", "Title from CrossRef", "Abstract from CrossRef");
-		Record curated = curated("User curated title", null);
+		Record zotero = curated("Zotero title", null);
 
-		MergedRecord merged = MergedRecord.from(api).merge(curated);
+		MergedRecord merged = MergedRecord.from(api).merge(zotero);
 
-		// CrossRef outranks everything for a title, but not the user's own curation
-		assertEquals("User curated title", merged.getTitle().orElse(null));
+		assertEquals("Title from CrossRef", merged.getTitle().orElse(null));
+	}
+
+	@Test
+	public void aZoteroOnlyValueIsStillUsed() {
+		// ...but nothing is thrown away: where the APIs have no value, zotero's stands
+		Record api = record("crossref", "journal-article", "Title from CrossRef", null);
+		Record zotero = curated("Zotero title", "Zotero abstract");
+
+		MergedRecord merged = MergedRecord.from(api).merge(zotero);
+
+		assertEquals("Zotero abstract", merged.getAbstract().orElse(null));
 	}
 
 	@Test
 	public void curatedGapsAreFilledFromApis() {
 		Record api = record("crossref", "journal-article", "Title from CrossRef", "Abstract from CrossRef");
-		Record curated = curated("User curated title", null); // no abstract of its own
+		Record zotero = curated(null, null); // zotero has no abstract of its own
 
-		MergedRecord merged = MergedRecord.from(api).merge(curated);
+		MergedRecord merged = MergedRecord.from(api).merge(zotero);
 
 		assertEquals("Abstract from CrossRef", merged.getAbstract().orElse(null));
 	}

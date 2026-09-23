@@ -507,17 +507,17 @@
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/record/MergedRecord.java": {
-    "modified": 1790167550,
+    "modified": 1790168365,
     "comments": [],
     "anchors": [],
-    "count_lines": 300,
+    "count_lines": 303,
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/record/MergePolicy.java": {
-    "modified": 1790167289,
+    "modified": 1790168365,
     "comments": [],
     "anchors": [],
-    "count_lines": 84,
+    "count_lines": 81,
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/record/PrintRecord.java": {
@@ -773,10 +773,10 @@
     "percent": 0
   },
   "src/test/java/uk/co/terminological/pubmedclient/TestRecordMerge.java": {
-    "modified": 1790167550,
+    "modified": 1790168353,
     "comments": [],
     "anchors": [],
-    "count_lines": 249,
+    "count_lines": 262,
     "percent": 0
   },
   "src/test/java/uk/co/terminological/pubmedclient/TestRecordModel.java": {

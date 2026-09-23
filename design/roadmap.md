@@ -228,10 +228,19 @@ These are settled; the options below only cover how to implement them.
   before creating, then accepts what it cannot match; tools report
   disagreements rather than silently choosing a winner. `Zotero.itemKey` is
   treated as **linkage/provenance**, not as an identifier of the work, because
-  it is scoped to one Zotero instance, and curated records are **excluded from
-  merging** entirely. This does *not* relax the discovery path: records from
-  several APIs still have to merge into one predictable source of truth, which
-  is fixed up front in [idea 5](/design/roadmap.md).
+  it is scoped to one Zotero instance. This does *not* relax the discovery path:
+  records from several APIs still have to merge into one predictable source of
+  truth, fixed up front in [idea 5](/design/roadmap.md).
+- **Never overwrite a Zotero item with API-fetched values — that is where
+  curation is enforced.** An item may be scraped from a publisher page and broken,
+  or hand repaired, and the data does not say which: `libraryCatalog` names a
+  publisher web page for 240 of a 300-item sample and `dateModified` differs from
+  `dateAdded` on 89/300, but neither attributes the edit to a person. So on the
+  write path: where the API data **agrees** with the item, additional fields may
+  be filled in; where it **disagrees**, import the API record as a new item and
+  let Zotero's duplicate detection and the user resolve it. A Zotero record
+  therefore competes on the same per-field merge table as any other source
+  rather than winning by virtue of being curated.
 - **The model change is the fundamental blocker** — see [idea 3](/design/roadmap.md)
   for the minimum field set that supports ~90% of the library's content.
 

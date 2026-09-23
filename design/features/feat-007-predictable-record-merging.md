@@ -35,18 +35,26 @@ documented **per-field priority order** over sources instead of `findAny()`,
 retention of every contributing record so disagreements can be reported rather
 than hidden, and exclusion of curated records from merging.
 
-## Curated records: what was implemented, and what was not
+## A Zotero record is not authoritative either
 
-Implemented: a curated value is **authoritative** — it is never overridden by an
-API value, and API values only fill the gaps it leaves. Its provenance (and so
-the Zotero item it came from) is retained and identifiable, so write-back can
-still find it.
+An earlier draft of this feature made a curated value win unconditionally. That
+was wrong, and the library data shows why: `libraryCatalog` names a *publisher
+web page* for 240 of a 300-item sample (ScienceDirect, www.nature.com, Springer
+Link, PLoS Journals, Silverchair, …) — metadata scraped by the Zotero connector —
+and `dateModified` differs from `dateAdded` on 89/300. Neither tells you whether
+an item was scraped and left broken or was hand-repaired afterwards, and no other
+field does either. So a Zotero record is ranked by the same per-field policy as
+every other source, and its provenance is retained so the item it came from
+remains identifiable.
 
-**Not** implemented: giving a curated record its own entry in the session so it
-never shares a merged view at all. That needs `Session`'s identifier→uuid map to
-hold two work identities for one identifier, which is a data-model change rather
-than a merge-policy change. Worth confirming which behaviour is wanted before
-anyone builds it.
+Curation therefore belongs to the **write** path, not to field precedence:
+
+- never overwrite a Zotero item with API-fetched values;
+- where the API data **agrees** with the item, additional fields may be filled in;
+- where it **disagrees**, import the API record as a new item and let Zotero's own
+  duplicate detection and the user resolve it.
+
+See [feat-005](/design/features/feat-005-zotero-curated-repository-bridge.md).
 
 ## Linked artefacts
 

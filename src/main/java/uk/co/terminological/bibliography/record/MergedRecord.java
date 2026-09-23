@@ -69,22 +69,25 @@ public class MergedRecord implements RecordWithCitations, Serializable {
 	// ---- resolution ----------------------------------------------------------
 
 	/**
-	 * Pick a single value for a field. A curated value is authoritative and is
-	 * never overridden by an API; API values only fill the gaps it leaves.
+	 * Pick a single value for a field by the documented per-field priority.
+	 *
+	 * Every source is ranked the same way, including a Zotero item: a zotero
+	 * record may be scraped from a publisher page and broken, or hand repaired,
+	 * and nothing in the data reliably distinguishes the two. Where sources
+	 * disagree the loser is not discarded — provenance and the contributing
+	 * records are both retained so the disagreement can be reported (and, for
+	 * write-back, refused rather than overwritten).
+	 *
 	 * Ties are broken by the value itself, so the outcome is reproducible rather
 	 * than merely stable under insertion order.
 	 */
 	private <T> Optional<T> resolve(String field, Function<Record, Optional<T>> getter) {
-		List<Map.Entry<Integer, T>> curated = new ArrayList<>();
-		List<Map.Entry<Integer, T>> discovered = new ArrayList<>();
-		for (Record record : records) {
-			Optional<T> value = getter.apply(record);
-			if (!value.isPresent() || value.get() == null) continue;
-			Map.Entry<Integer, T> candidate = Map.entry(policy.rank(field, record), value.get());
-			if (policy.isCurated(record)) curated.add(candidate); else discovered.add(candidate);
-		}
-		List<Map.Entry<Integer, T>> pool = curated.isEmpty() ? discovered : curated;
-		return pool.stream()
+		return records.stream()
+				.map(record -> getter.apply(record)
+						.filter(value -> value != null)
+						.map(value -> Map.entry(policy.rank(field, record), value)))
+				.filter(Optional::isPresent)
+				.map(Optional::get)
 				.min(Comparator.<Map.Entry<Integer, T>, Integer>comparing(Map.Entry::getKey)
 						.thenComparing(entry -> String.valueOf(entry.getValue())))
 				.map(Map.Entry::getValue);

@@ -44,6 +44,13 @@ Scope boundaries:
   a selection, never a wholesale sync.
 - Writes are **disabled by default** and, when enabled, restricted to a
   configured target collection. The library is live and syncs to zotero.org.
+- **A Zotero item is never overwritten with API-fetched values.** Where the API
+  data **agrees** with the item, additional fields may be filled in; where it
+  **disagrees**, the API record is imported as a new item and the user resolves
+  the duplicate in Zotero. This is the only reliable place to enforce curation: an
+  item may be scraped and broken or hand repaired, and the data does not say which
+  (`libraryCatalog` names a publisher page for most items; `dateModified` shows
+  *that* something was edited, not by whom).
 - Enrichment writes **fill gaps rather than overwrite**; replacing `creators` or
   `tags` is a separate, explicit action with a dry-run diff, since both can hold
   the user's own curation.

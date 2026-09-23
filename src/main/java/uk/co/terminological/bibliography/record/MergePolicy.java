@@ -12,10 +12,11 @@ import java.util.Map;
  * no heuristics: "longest abstract wins" would be deterministic in letter but
  * unpredictable in spirit, whereas an explicit table can be read and argued with.
  *
- * Curated records (a user's Zotero item) are authoritative: where they have a
- * value it is never overridden by an API, and where they leave a gap the APIs
- * fill it. Curated records also keep their own provenance, so which item a value
- * came from stays recoverable for write-back.
+ * Every source is ranked the same way, including a Zotero item. A zotero record
+ * may be scraped and broken or hand repaired, and nothing reliably distinguishes
+ * the two, so curation lives in the write-back rules (never overwrite a zotero
+ * item — see feat-005) rather than in field precedence here. A curated record
+ * keeps its own provenance so the item it came from stays recoverable.
  *
  * [IMPLEMENTS](/design/features/feat-007-predictable-record-merging.md)
  */
@@ -72,10 +73,6 @@ public class MergePolicy implements Serializable {
 	public int rank(String field, Record record) {
 		int index = priorityFor(field).indexOf(sourceOf(record));
 		return index < 0 ? Integer.MAX_VALUE : index;
-	}
-
-	public boolean isCurated(Record record) {
-		return record.getProvenance().map(Provenance::isCurated).orElse(false);
 	}
 
 	public static String sourceOf(Record record) {

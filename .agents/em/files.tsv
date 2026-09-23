@@ -14,20 +14,21 @@ design/features/feat-001-expose-bibliographic-apis-over-mcp.md	1790159864	final	
 design/features/feat-002-explore-citation-networks-in-a-session.md	1790159808	final	0.1.0	mcp, citations, session
 design/features/feat-003-analyse-citation-graphs-and-topics.md	1790159808	final	0.1.0	mcp, analysis
 design/features/feat-004-opencitations-meta-enrichment.md	1790159808	draft	0.2.0	opencitations, id-mapping, proposed
-design/features/feat-005-zotero-curated-repository-bridge.md	1790162378	draft	0.2.0	zotero, repository, workflow, proposed
+design/features/feat-005-zotero-curated-repository-bridge.md	1790168410	draft	0.2.0	zotero, repository, workflow, proposed
 design/features/feat-006-classify-records-by-type-with-provenance.md	1790166964	final	0.2.0	model, provenance, zotero, accepted
-design/features/feat-007-predictable-record-merging.md	1790167597	final	0.2.0	model, merge, accepted
+design/features/feat-007-predictable-record-merging.md	1790168393	final	0.2.0	model, merge, accepted
 design/implementation/debt/debt-001-session-persistence-uses-java-serialization.md	1790159628	open	0.3.0	persistence, serialization
 design/implementation/debt/debt-002-opencitations-queries-dois-only.md	1790159628	open	0.2.0	opencitations, id-types
 design/implementation/debt/debt-003-analysis-recomputes-topic-model-per-call.md	1790159628	open	0.3.0	analysis, performance
+design/implementation/debt/debt-005-fetch-is-incomplete-by-id-type.md	1790168410	open	0.3.0	api-client, id-types
 design/implementation/issues/issue-001-non-doi-citation-links-dropped.md	1790159818	open	0.2.0	opencitations, citations, data-loss
 design/implementation/issues/issue-002-third-party-api-endpoint-drift.md	1790159818	open	0.2.0	maintenance, api-drift
 design/implementation/issues/issue-003-merged-record-resolution-is-non-deterministic.md	1790167597	closed	0.2.0	model, merge, data-integrity
 design/implementation/plans/plan-001-opencitations-meta-idmap.md	1790159808	draft	0.2.0	opencitations, id-mapping, mcp
 design/implementation/plans/plan-002-record-type-publisher-provenance.md	1790166964	final	0.2.0	model, provenance, zotero
-design/implementation/plans/plan-003-record-merge-policy.md	1790167597	final	0.2.0	model, merge
+design/implementation/plans/plan-003-record-merge-policy.md	1790168410	final	0.2.0	model, merge
 design/prototypes/prototype-001-opencitations-meta-pids.md	1790159877	draft	0.2.0	opencitations, id-mapping, prototype
-design/roadmap.md	1790167597	draft	0.1.0	roadmap, mcp, opencitations, bibliographic-apis
+design/roadmap.md	1790168410	draft	0.1.0	roadmap, mcp, opencitations, bibliographic-apis
 design/test-scripts/test-001-mcp-protocol-smoke-test.md	1790159864	final	0.1.0	mcp, smoke-test
 design/test-scripts/test-002-api-behaviour-tests.md	1790167597	final	0.1.0	api-client, citations, analysis, parsing
 pom.xml	1790091122	NA	NA	NA
@@ -104,8 +105,8 @@ src/main/java/uk/co/terminological/bibliography/record/ImmutablePrintReference.j
 src/main/java/uk/co/terminological/bibliography/record/ImmutableRecord.java	1790166970	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/record/ImmutableRecordReference.java	1600429802	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/record/ImmutableRecordReferenceMapping.java	1600353238	NA	NA	NA
-src/main/java/uk/co/terminological/bibliography/record/MergePolicy.java	1790167289	NA	NA	NA
-src/main/java/uk/co/terminological/bibliography/record/MergedRecord.java	1790167550	NA	NA	NA
+src/main/java/uk/co/terminological/bibliography/record/MergePolicy.java	1790168365	NA	NA	NA
+src/main/java/uk/co/terminological/bibliography/record/MergedRecord.java	1790168365	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/record/PrintRecord.java	1600347995	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/record/PrintRecordWithCitations.java	1590593512	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/record/PrintReference.java	1600347995	NA	NA	NA
@@ -142,7 +143,7 @@ src/test/java/uk/co/terminological/pubmedclient/TestMedrxivParsing.java	17834984
 src/test/java/uk/co/terminological/pubmedclient/TestOpenCitations.java	1590593512	NA	NA	NA
 src/test/java/uk/co/terminological/pubmedclient/TestPdfUtil.java	1590593512	NA	NA	NA
 src/test/java/uk/co/terminological/pubmedclient/TestPubMedRestClient.java	1783506996	NA	NA	NA
-src/test/java/uk/co/terminological/pubmedclient/TestRecordMerge.java	1790167550	NA	NA	NA
+src/test/java/uk/co/terminological/pubmedclient/TestRecordMerge.java	1790168353	NA	NA	NA
 src/test/java/uk/co/terminological/pubmedclient/TestRecordModel.java	1790166930	NA	NA	NA
 src/test/java/uk/co/terminological/pubmedclient/TestUnpaywallParsing.java	1590593512	NA	NA	NA
 src/test/resources/biorxivApiResponse.json	1630493959	NA	NA	NA

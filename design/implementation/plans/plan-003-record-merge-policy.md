@@ -21,10 +21,12 @@ Terse implementation checklist. Depends on
 
 1. **Grouping unchanged**: records sharing any identifier are one work
    (`Session.merge` already groups by `ImmutableRecordReference`).
-2. **Exclude curated records**: a record whose provenance marks it curated
-   (Zotero) is *not* merged into the API-derived record. Both remain attached to
-   the same work node (the graph node is identifier-based and shared), and are
-   distinguishable by provenance.
+2. **Zotero is ranked, not privileged**: a curated record competes on the same
+   per-field table as everything else — last in the fallback order, first for
+   publisher/type where its own vocabulary is the target. Nothing in the data
+   distinguishes a scraped item from a hand-repaired one, so curation is enforced
+   on the *write* path (feat-005: never overwrite; agree → fill gaps; disagree →
+   new item) rather than in field precedence.
 3. **Per-field resolution by documented priority**, replacing `findAny()`:
    highest-priority non-empty value wins, where priority is a fixed table, e.g.
 
@@ -57,12 +59,11 @@ Terse implementation checklist. Depends on
 - [x] Rewrite the `MergedRecord` accessors to resolve through the policy
       (ordered reduction over contributing records) instead of `findAny()`.
 - [x] De-duplicate authors (ORCID, else normalised name); keep source order.
-- [x] Exclude curated-provenance records from *being overridden*: a curated value is
-      authoritative and API values only fill the gaps it leaves (see the note below).
-- [ ] (not done) Keep a curated record as its own work entry — needs the session
-      id-map change, see the note below. Original step: exclude curated-provenance records from the merge in `Session.add` /
-      `MergedRecord.merge`, whichever is the single choke point — verify which,
-      and keep it to one place.
+- [x] Zotero competes on the same per-field table as every other source (not
+      privileged); curation is enforced on the write path instead.
+- [x] Verified the single choke point for contributions: `MergedRecord.merge` —
+      which also had to absorb an incoming `MergedRecord`'s contributions rather
+      than flattening them into one.
 - [x] Removed the two stale `//TODO: Check for duplicates` / `//TODO: resolve
       duplicates` comments once they are true.
 - [x] Expose contributing provenances (from feat-006) so a caller can see who
@@ -76,7 +77,8 @@ Terse implementation checklist. Depends on
       **identical** merged output (this is the failing-then-passing acceptance
       test for issue-003).
 - [x] Authors from two sources appear once.
-- [x] A curated (Zotero-provenance) value is never overridden by an API value.
+- [x] A Zotero record is not authoritative: the per-field policy decides, and a
+      Zotero-only value is still used rather than discarded.
 - [x] Priority: with title present only in the lower-priority source, that value
       is still used (non-empty beats priority).
 
