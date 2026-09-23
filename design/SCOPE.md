@@ -30,6 +30,10 @@ The R interface was replaced by an MCP server. Historical context:
 
 * [HAS_FEATURE](/design/features/feat-008-clean-up-collection-metadata.md) - clean up a collection's metadata against the APIs, with the agent deciding conflicts
 
+## v0.4.0 - planned
+
+* [HAS_FEATURE](/design/features/feat-009-preprint-clients.md) - medRxiv/bioRxiv and arXiv as search and fetch sources
+
 ## Roadmap
 
 Under consideration, not yet accepted:

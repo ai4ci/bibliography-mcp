@@ -655,9 +655,16 @@ DOIs, and interacts with the JATS question in
 [debt-008](/design/implementation/debt/debt-008-jats-package-is-unused.md): a direct
 medRxiv/bioRxiv route is also the only one that yields the preprint's JATS.
 
-### Linked artefacts
+### Resolution
 
-Nothing yet — a question to answer before it becomes work.
+Answered by measuring more of the picture: Europe PMC does index preprints
+(`source: PPR`) and already supplies their **references and citations** (sample
+`PPR285723`: 31 and 10), but medRxiv/bioRxiv's own API is the only source of the
+server's metadata (version, license, category, funder), the `jatsxml` full text and
+the explicit **preprint→published mapping**. So both are worth having, for
+different jobs, and the coverage question is folded into
+[HAS_FEATURE](/design/features/feat-009-preprint-clients.md) rather than decided
+here.
 
 ---
 
