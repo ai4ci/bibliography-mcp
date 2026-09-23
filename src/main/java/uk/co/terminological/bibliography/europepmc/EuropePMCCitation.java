@@ -35,7 +35,12 @@ public class EuropePMCCitation extends ExtensibleJson implements PrintReference,
 	
 	public Optional<String> getIdentifier() {return this.asString("id").map(s->s.replaceAll("^PMC", ""));}
 	public Optional<DataSources> getSource() {return this.asString("source").map(DataSources::valueOf);}
-	public Optional<String> getTitle() {return this.asString("title");}
+	/** the title, or the raw citation string when the citing work could not be matched */
+	public Optional<String> getTitle() {
+		return this.asString("title")
+				.or(() -> this.asString("unstructuredInformation"))
+				.map(uk.co.terminological.bibliography.record.PlainText::of);
+	}
 	public Optional<String> getAuthorString() {return this.asString("authorString");}
 	public Optional<String> getJournal() {return this.asString("journalAbbreviation");}
 	public Optional<String> getIssue() {return this.asString("issue");}

@@ -22,7 +22,16 @@ public class CrossRefReference extends ExtensibleJson implements RecordReference
 	public CrossRefReference(JsonNode node) { super(node); }
 	
 	public Optional<String> getIdentifier() {return this.asString("DOI").map(s->s.replaceAll("^PMC", ""));}
-	public Optional<String> getTitle() {return this.asString("article-title");}
+	/**
+	 * Crossref reference entries carry an `article-title` only sometimes: measured on a
+	 * real preprint, 17 of 31 carry an `unstructured` citation string instead, and many
+	 * carry only a DOI. Reading the title alone left those references unnamed.
+	 */
+	public Optional<String> getTitle() {
+		return this.asString("article-title")
+				.or(() -> this.asString("unstructured"))
+				.map(uk.co.terminological.bibliography.record.PlainText::of);
+	}
 	public Optional<String> getFirstAuthorName() {return this.asString("author");}
 	public Optional<String> getJournal() {return this.asString("journal-title");}
 	public Optional<String> getVolume() {return this.asString("volume");}
@@ -32,7 +41,9 @@ public class CrossRefReference extends ExtensibleJson implements RecordReference
 
 	@Override
 	public IdType getIdentifierType() {
-		return this.asString("DOI").isPresent() ? IdType.DOI : IdType.MID;
+		// MID is a manuscript identifier, not a "something else" bucket: a reference
+		// with no identifier should say so rather than claim an unrelated scheme
+		return this.asString("DOI").isPresent() ? IdType.DOI : IdType.UNK;
 	}
 
 	@Override

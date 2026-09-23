@@ -100,12 +100,33 @@ lost whenever its reference list had titles too; `JatsReference.getTitle()` comp
 strings by identity, so no reference had a title; and `JatsReference.getDate()` threw
 on a year that was not a number.
 
-Still to do: the arXiv client (parked — a different shape of source), the medRxiv
-date-window Searcher, the preprint-to-published mapping, and Zotero's
-`repository`/`archiveID` mapping for preprints. A separate gap that is **not** the
-JATS: some citation links from CrossRef's reference entries and OpenCitations still
-carry neither an identifier nor a title (33 of 80 links in the recorded run), so they
-cannot be deduplicated precisely or shown usefully.
+- **Search** is a **date window**, because that is what the API offers: it lists what
+  was posted between two dates, cursor-paged, and has no keyword search at all. A term
+  is therefore applied client-side, requiring **every word** to appear in the title or
+  abstract — a phrase-as-substring filter made a two-word query return nothing in a
+  window holding 1498 preprints. With no dates the last 30 days are used, and when a
+  window holds more than the page budget the log says how much was scanned ("300 of
+  1498 records"), so a partial answer cannot look like an empty one.
+- **The published version** is read from `/pubs` and exposed as an **id mapping**, so
+  `map_ids` answers "was this preprint published?" with the journal DOI. A session
+  holding both will therefore treat them as one work: right for a citation graph, and a
+  deliberate choice recorded here rather than a side effect.
+- Zotero's preprint item type holds its container in **`repository`** rather than
+  `publicationTitle`, so the writer now maps it there and the clean-up report looks
+  there — without it a published preprint had no repository and its container was
+  reported as a gap on every item.
+
+**Also fixed, in the other citation sources** (they were the source of the links with
+neither an identifier nor a title): Crossref reference entries often carry only an
+`unstructured` citation string, which is now the title, and no longer claim `IdType.MID`
+when they have no identifier; OpenCitations PID lists with no `doi:` token keep their
+`omid` handle as an identifier, so the link is complete rather than dropped; and Europe
+PMC's unmatched reference rows carry `unstructuredInformation`, which is now read.
+Measured live: links with neither identifier nor title went from **33 of 80 to 0**, and
+the total fell to 64 because they now deduplicate properly.
+
+Still to do: the arXiv client (parked — a different shape of source) and, with it,
+Zotero's `archiveID` for an arXiv identifier.
 
 ## Open question: is the PMC-first priority right for preprints?
 

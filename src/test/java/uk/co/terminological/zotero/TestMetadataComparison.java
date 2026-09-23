@@ -188,6 +188,18 @@ public class TestMetadataComparison {
 	}
 
 	@Test
+	public void aPreprintsContainerIsItsRepository() throws Exception {
+		// a Zotero preprint holds the server in `repository`, not publicationTitle, so
+		// comparing against publicationTitle reported the container as a gap
+		var report = MetadataComparison.compare(mapper,
+				item("{\"key\":\"K14\",\"itemType\":\"preprint\",\"title\":\"T\",\"repository\":\"medRxiv\"}"),
+				List.of(containerRecord("medrxiv", "medRxiv")));
+
+		assertEquals("agree", report.get("fields").get("repository").get("class").asText());
+		assertTrue(report.get("fields").get("publicationTitle") == null);
+	}
+
+	@Test
 	public void creatorsAreComparedBySurnameAndCountOnly() throws Exception {
 		var report = MetadataComparison.compare(mapper,
 				item("{\"key\":\"K6\",\"itemType\":\"journalArticle\",\"title\":\"T\","

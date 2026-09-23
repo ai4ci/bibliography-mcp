@@ -26,9 +26,12 @@ attempted (arXiv references).
       construction (term → `all:`, `from`/`to` → `submittedDate`), `id_list` batching
       keyed by the requested reference, and error-entry detection that fails loudly
       rather than returning no results.
-- [x] `MedrxivClient implements RecordFetcher, CitesMapper`: `/details/{server}/{doi}`
-      for both servers (latest version), and references from the JATS full text. The
-      date-window Searcher and the `/pubs` mapping are still to do.
+- [x] `MedrxivClient implements Searcher, RecordFetcher, CitesMapper, IdMapper`:
+      `/details/{server}/{doi}` for both servers (latest version), references from the
+      JATS full text, a **date-window** search (the API has no keyword search, so a term
+      is applied client-side requiring every word; the last 30 days is the default
+      window, and the page budget is reported when a window is too busy to read in
+      full), and `/pubs` as a **preprint-to-published** id mapping.
 - [x] Rate limits: a token bucket, and a raised read timeout — the shared 3s default
       times out on api.biorxiv.org, which looks exactly like "this preprint has no
       data" (the same trap as OpenCitations; see debt-009).
@@ -58,6 +61,12 @@ attempted (arXiv references).
       because the parser compared a string attribute by identity. A reference is named
       by `article-title`, `collab` (reports and web pages) or `source`; PMIDs travel as
       other identifiers; an unusable year yields no date rather than throwing.
+- [x] Zotero's preprint item type: the writer puts the server in `repository` (not
+      `publicationTitle`) and the clean-up report looks there.
+- [x] Fixed the citation sources that produced links with neither an identifier nor a
+      title: Crossref's `unstructured` reference strings, Europe PMC's
+      `unstructuredInformation` on unmatched rows, and OpenCitations' `omid` handles.
+      Measured live: 33 of 80 links had neither, now 0.
 - [ ] Docs: README supported-APIs list, skill (preprint searching), SCOPE,
       `feat-009` status, roadmap idea 6 (which asked whether the medRxiv client is
       still needed — the answer is that it is, for coverage and for the published

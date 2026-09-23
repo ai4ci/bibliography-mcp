@@ -1,4 +1,4 @@
-package uk.co.terminological.medrxiv;
+package uk.co.terminological.bibliography.medrxiv;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -15,8 +15,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 
 import uk.co.terminological.bibliography.jats.JatsEntry;
-import uk.co.terminological.bibliography.medrxiv.MedrxivClient;
-import uk.co.terminological.bibliography.medrxiv.MedrxivRecord;
 import uk.co.terminological.bibliography.record.Author;
 import uk.co.terminological.bibliography.record.CitationLink;
 import uk.co.terminological.bibliography.record.IdType;
@@ -87,6 +85,41 @@ public class TestMedrxivRecords {
 		assertTrue(MedrxivClient.isPreprintDoi(" 10.1101/x "));
 		assertFalse(MedrxivClient.isPreprintDoi("10.1136/bmj.n579"));
 		assertFalse(MedrxivClient.isPreprintDoi(null));
+	}
+
+	@Test
+	public void thePublishedVersionMappingIsReadFromThePubsEndpoint() throws Exception {
+		var mapping = MedrxivClient.mappingFromPubs(
+				mapper.readTree("{\"collection\":[{\"preprint_doi\":\"10.1101/2021.01.01.12345678\","
+						+ "\"published_doi\":\"10.1136/bmj.n579\",\"published_journal\":\"BMJ\"}]}"),
+				"10.1101/2021.01.01.12345678").orElseThrow();
+
+		assertEquals("10.1101/2021.01.01.12345678", mapping.getSource().getIdentifier().orElse(null));
+		assertEquals("10.1136/bmj.n579", mapping.getTarget().getIdentifier().orElse(null));
+	}
+
+	@Test
+	public void anUnpublishedPreprintHasNoMapping() throws Exception {
+		assertTrue(MedrxivClient.mappingFromPubs(
+				mapper.readTree("{\"collection\":[]}"), "10.1101/x").isEmpty());
+		assertTrue(MedrxivClient.mappingFromPubs(
+				mapper.readTree("{\"collection\":[{\"preprint_doi\":\"10.1101/x\"}]}"), "10.1101/x").isEmpty());
+	}
+
+	@Test
+	public void aTermIsMatchedAgainstTitleAndAbstractBecauseTheApiCannot() throws Exception {
+		MedrxivRecord record = version("{\"doi\":\"10.1101/x\",\"title\":\"Causal inference in practice\","
+				+ "\"abstract\":\"A study of target trial emulation.\"}");
+
+		// every word must appear, not the phrase as one substring: a phrase match made a
+		// two-word query return nothing in a window holding 1498 preprints
+		assertTrue(MedrxivClient.matches(record, "causal inference"));
+		assertTrue(MedrxivClient.matches(record, "TRIAL EMULATION"));
+		assertTrue(MedrxivClient.matches(record, "inference target"));
+		assertFalse(MedrxivClient.matches(record, "causal genomics"));
+		assertFalse(MedrxivClient.matches(record, "genomics"));
+		// no term means the whole window
+		assertTrue(MedrxivClient.matches(record, ""));
 	}
 
 	/** the reference list, which is the whole point of option B */

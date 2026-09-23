@@ -103,6 +103,8 @@ public class ZoteroItemWriter {
 	/** which Zotero field holds the container for a given item type */
 	static String containerField(String zoteroItemType) {
 		switch (zoteroItemType) {
+			// Zotero's preprint type has no publicationTitle: the server goes in repository
+			case "preprint": return "repository";
 			case "bookSection": return "bookTitle";
 			case "conferencePaper": return "proceedingsTitle";
 			case "encyclopediaArticle": return "encyclopediaTitle";

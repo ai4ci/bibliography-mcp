@@ -219,6 +219,11 @@ Session-wide equivalent: `find_alternate_ids`.
   duplicate API hits.
 - `publicationType` distinguishes kinds of work (a chapter is not a journal
   article); where it matters, prefer records whose `provenance.source` you trust.
+- **medRxiv/bioRxiv search by date, not by words.** `search` includes preprints, but
+  that API lists what was posted in a window: with no dates it uses the last 30 days,
+  every word of the query must appear in the title or abstract, and a busy window is
+  scanned only as far as the page budget (the log says how much was covered). Date
+  your queries, and use `map_ids` to find out which journal article a preprint became.
 - **CrossRef and Unpaywall are DOI-keyed.** CrossRef has no `pmid` filter at all, so
   if a record is only known by PMID/PMCID, call `map_ids` first and fetch by the DOI
   it returns — or fetch through Europe PMC, which accepts all three id types.

@@ -133,7 +133,7 @@ public class MetadataComparison {
 
 	private static final String[] CONTAINER_FIELDS = {
 			"publicationTitle", "bookTitle", "proceedingsTitle", "encyclopediaTitle",
-			"dictionaryTitle", "websiteTitle", "blogTitle" };
+			"dictionaryTitle", "websiteTitle", "blogTitle", "repository" };
 
 	private static String valueOf(JsonNode data, String fieldName, boolean clean) {
 		JsonNode node = data.get(fieldName);
@@ -236,8 +236,10 @@ public class MetadataComparison {
 	private static boolean isPlaceholder(String surname) {
 		String normalised = ZoteroMatching.text(surname);
 		if (normalised == null) return true;
-		return java.util.Set.of("unknown", "unknowns", "na", "none", "anonymous", "noname")
-				.contains(normalised);
+		// "AUTHOR UNKNOWN" (Europe PMC's placeholder for an unmatched reference) and
+		// friends are not names
+		if (normalised.contains("unknown")) return true;
+		return java.util.Set.of("na", "none", "anonymous", "noname").contains(normalised);
 	}
 
 	private static List<String> zoteroSurnames(JsonNode data) {

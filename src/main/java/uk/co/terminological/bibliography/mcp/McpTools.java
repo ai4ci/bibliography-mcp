@@ -248,7 +248,7 @@ public class McpTools {
 					+ "\"from\":{\"type\":\"string\",\"description\":\"earliest date YYYY-MM-DD\"},"
 					+ "\"to\":{\"type\":\"string\",\"description\":\"latest date YYYY-MM-DD\"},"
 					+ "\"limit\":{\"type\":\"integer\"},"
-					+ "\"apis\":{\"type\":\"array\",\"items\":{\"type\":\"string\",\"enum\":[\"crossref\",\"entrez\",\"europepmc\"]}}},"
+					+ "\"apis\":{\"type\":\"array\",\"items\":{\"type\":\"string\",\"enum\":[\"crossref\",\"entrez\",\"europepmc\",\"medrxiv\"]}}},"
 					+ "\"required\":[\"query\"]}"),
 			args -> {
 				optStringList(args, "apis").ifPresent(facade::withSearchApis);

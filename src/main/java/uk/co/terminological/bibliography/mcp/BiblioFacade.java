@@ -61,13 +61,14 @@ public class BiblioFacade
 
 	public static Map<String, List<String>> defaultApis() {
 		Map<String, List<String>> out = new LinkedHashMap<>();
-		out.put("search", List.of("crossref", "entrez", "europepmc"));
+		out.put("search", List.of("crossref", "entrez", "europepmc", "medrxiv"));
 		// medRxiv joins the citation sources as the only route to a preprint's own
 		// reference list, and ignores anything that is not a 10.1101 DOI
 		out.put("cites", List.of("crossref", "entrez", "europepmc", "opencitations", "medrxiv"));
 		out.put("citedBy", List.of("opencitations", "entrez", "europepmc"));
 		out.put("fetch", List.of("crossref", "entrez", "europepmc", "unpaywall", "medrxiv"));
-		out.put("idMap", List.of("pmcid"));
+		// the preprint-to-published-article mapping
+		out.put("idMap", List.of("pmcid", "medrxiv"));
 		return out;
 	}
 
@@ -127,6 +128,11 @@ public class BiblioFacade
 					.search(search, from, to, limit);
 			} else if (searchApi.equals("europepmc")) {
 				tmp = this.api.getEuropePMC()
+					.search(search, from, to, limit);
+			} else if (searchApi.equals("medrxiv")) {
+				// its API lists a date window rather than searching: without dates this
+				// is the last month
+				tmp = this.api.getMedrxiv()
 					.search(search, from, to, limit);
 			}
 			log.info(
@@ -346,6 +352,9 @@ public class BiblioFacade
 					.mappings(ids);
 			} else if (idMapApi.equals("pmcid")) {
 				tmp = this.api.getPmcIdConv()
+					.mappings(ids);
+			} else if (idMapApi.equals("medrxiv")) {
+				tmp = this.api.getMedrxiv()
 					.mappings(ids);
 			}
 			log.info(

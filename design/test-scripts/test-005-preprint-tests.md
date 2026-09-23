@@ -25,7 +25,7 @@ tags: medrxiv, preprint, jats
     position, and a reference without a DOI is still a (incomplete) citation.
  4. Cleanup: none — offline.
 
-[TESTED_BY](/src/test/java/uk/co/terminological/medrxiv/TestMedrxivRecords.java)
+[TESTED_BY](/src/test/java/uk/co/terminological/bibliography/medrxiv/TestMedrxivRecords.java)
 
 ### 2) The reference-list parser (offline)
 
@@ -55,7 +55,36 @@ tags: medrxiv, preprint, jats
 
 [TESTED_BY](/src/test/java/uk/co/terminological/bibliography/mcp/TestCitationDedupe.java)
 
-### 4) Live, read-only
+### 4) Searching a window, and the published version (offline)
+
+ 1. Setup: a `/pubs` response that maps a preprint to a journal article, one that maps
+    nothing, and a preprint record.
+ 2. Execution: read the mapping; match a term against the record.
+ 3. Expectation: the mapping gives preprint DOI to published DOI, and an unpublished
+    preprint gives no mapping; a term matches when **every word** appears in the title
+    or abstract (a phrase-as-substring filter made a two-word query return nothing in a
+    window holding 1498 preprints), and an empty term matches everything.
+ 4. Cleanup: none — offline.
+
+[TESTED_BY](/src/test/java/uk/co/terminological/bibliography/medrxiv/TestMedrxivRecords.java)
+
+### 5) The citation sources whose links were unusable (offline)
+
+ 1. Setup: JSON rows modelled on what the APIs really return — a Crossref reference
+    with only an `unstructured` string, one with only a DOI, an OpenCitations PID list
+    with no `doi:` token, and a Europe PMC reference that could not be matched.
+ 2. Execution: parse each into a citation link or reference.
+ 3. Expectation: the unstructured string becomes the title; a reference with no
+    identifier says `IdType.UNK` rather than claiming a manuscript identifier;
+    OpenCitations keeps the `omid` handle as an identifier so the link is complete;
+    Europe PMC's unmatched rows are named by `unstructuredInformation`. Measured
+    live: citations with neither an identifier nor a title went from 33 of 80 to **0**,
+    and the total fell to 64 because the links now deduplicate properly.
+ 4. Cleanup: none — offline.
+
+[TESTED_BY](/src/test/java/uk/co/terminological/citations/TestCitationLinkParsing.java)
+
+### 6) Live, read-only
 
  1. Setup: a medRxiv DOI (`10.1101/2021.02.09.21250937`) and the MCP server.
  2. Execution: `cites` and `cited_by` with that DOI.

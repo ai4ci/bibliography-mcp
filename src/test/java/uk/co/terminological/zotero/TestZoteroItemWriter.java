@@ -175,6 +175,8 @@ public class TestZoteroItemWriter {
 		assertEquals("publicationTitle", ZoteroItemWriter.containerField("journalArticle"));
 		assertEquals("bookTitle", ZoteroItemWriter.containerField("bookSection"));
 		assertEquals("proceedingsTitle", ZoteroItemWriter.containerField("conferencePaper"));
+		// Zotero's preprint type has no publicationTitle: the server goes in repository
+		assertEquals("repository", ZoteroItemWriter.containerField("preprint"));
 	}
 
 	@Test

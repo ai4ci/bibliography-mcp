@@ -33,7 +33,17 @@ public class EuropePMCReference extends ExtensibleJson implements PrintReference
 	
 	public Optional<String> getIdentifier() {return this.asString("id").map(s->s.replaceAll("^PMC", ""));}
 	public Optional<DataSources> getSource() {return this.asString("source").map(DataSources::valueOf);}
-	public Optional<String> getTitle() {return this.asString("title");}
+	/**
+	 * The title, or the raw citation string when Europe PMC could not match the
+	 * reference to a record. Unmatched rows carry `unstructuredInformation` and
+	 * `match: N`, and reading only `title` left 17 of 31 references of a real preprint
+	 * with no way to describe them.
+	 */
+	public Optional<String> getTitle() {
+		return this.asString("title")
+				.or(() -> this.asString("unstructuredInformation"))
+				.map(uk.co.terminological.bibliography.record.PlainText::of);
+	}
 	public Optional<String> getAuthorString() {return this.asString("authorString");}
 	public Optional<String> getJournal() {return this.asString("journalAbbreviation");}
 	public Optional<String> getIssue() {return this.asString("issue");}

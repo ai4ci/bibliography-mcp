@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.time.LocalDate;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -27,13 +29,17 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
 
 import uk.co.terminological.bibliography.CachingApiClient;
 import uk.co.terminological.bibliography.client.CitesMapper;
+import uk.co.terminological.bibliography.client.IdMapper;
+import uk.co.terminological.bibliography.client.Searcher;
 import uk.co.terminological.bibliography.client.RecordFetcher;
 import uk.co.terminological.bibliography.jats.JatsEntry;
 import uk.co.terminological.bibliography.record.Builder;
 import uk.co.terminological.bibliography.record.CitationLink;
 import uk.co.terminological.bibliography.record.IdType;
 import uk.co.terminological.bibliography.record.ImmutableRecordReference;
+import uk.co.terminological.bibliography.record.ImmutableRecordReferenceMapping;
 import uk.co.terminological.bibliography.record.Record;
+import uk.co.terminological.bibliography.record.RecordReferenceMapping;
 import uk.co.terminological.bibliography.record.RecordReference;
 import uk.co.terminological.fluentxml.Xml;
 
@@ -55,7 +61,7 @@ import uk.co.terminological.fluentxml.Xml;
  *
  * [IMPLEMENTS](/design/features/feat-009-preprint-clients.md)
  */
-public class MedrxivClient extends CachingApiClient implements RecordFetcher, CitesMapper {
+public class MedrxivClient extends CachingApiClient implements Searcher, RecordFetcher, CitesMapper, IdMapper {
 
 	static Logger log = LoggerFactory.getLogger(MedrxivClient.class);
 
@@ -194,5 +200,127 @@ public class MedrxivClient extends CachingApiClient implements RecordFetcher, Ci
 		} finally {
 			if (connection != null) connection.disconnect();
 		}
+	}
+	// ---- search: the API lists a date window, it does not search words ----------
+
+	/** used when a caller gives no window: preprints matter most when they are new */
+	public static final int DEFAULT_WINDOW_DAYS = 30;
+	private static final int MAX_PAGES = 10;
+
+	/**
+	 * The dates are the API's natural axis: `api.biorxiv.org` lists what was posted in
+	 * a window, cursor-paged, and has no keyword search at all. A term is therefore
+	 * applied to what comes back rather than sent to the server, which is worth knowing
+	 * when results look narrower than expected — Europe PMC indexes preprints *and*
+	 * searches words.
+	 */
+	@Override
+	public Collection<? extends Record> search(String term, Optional<LocalDate> from,
+			Optional<LocalDate> to, Optional<Integer> limit) {
+		LocalDate end = to.orElse(LocalDate.now());
+		LocalDate start = from.orElse(end.minusDays(DEFAULT_WINDOW_DAYS));
+		int wanted = limit.orElse(50);
+		List<Record> out = new ArrayList<>();
+		for (String server : SERVERS) {
+			out.addAll(window(server, start, end, term, wanted - out.size()));
+			if (out.size() >= wanted) break;
+		}
+		log.info("medRxiv window {}..{} for '{}' gave {} records", start, end, term, out.size());
+		return out;
+	}
+
+	private List<Record> window(String server, LocalDate from, LocalDate to, String term, int wanted) {
+		List<Record> out = new ArrayList<>();
+		int cursor = 0;
+		int windowTotal = Integer.MAX_VALUE;
+		for (int page = 0; page < MAX_PAGES && out.size() < wanted; page++) {
+			Optional<JsonNode> response = windowJson(server, from, to, cursor);
+			if (!response.isPresent()) break;
+			JsonNode collection = response.get().path("collection");
+			if (!collection.isArray() || collection.size() == 0) break;
+			for (JsonNode version : collection) {
+				MedrxivRecord record = new MedrxivRecord(version, server);
+				if (matches(record, term)) out.add(record);
+			}
+			cursor += collection.size();
+			windowTotal = response.get().path("messages").path(0).path("total").asInt(cursor);
+		}
+		if (cursor < windowTotal) {
+			// a month can hold thousands of preprints and the API pages thirty at a
+			// time, so a search of a busy window is partial by construction: say so
+			log.info("medRxiv {}: scanned {} of {} records in the window; narrow the dates for fuller coverage",
+					server, cursor, windowTotal);
+		}
+		return out.size() > wanted ? out.subList(0, wanted) : out;
+	}
+
+	private Optional<JsonNode> windowJson(String server, LocalDate from, LocalDate to, int cursor) {
+		return this.buildCall(API + "/details/" + server + "/" + from + "/" + to + "/" + cursor, JsonNode.class)
+				.withParams(defaultApiParams())
+				.withOperation(is -> mapper.readTree(is))
+				.get();
+	}
+
+	/**
+	 * Whether a record matches the term. Every word must appear somewhere in the title
+	 * or the abstract: a whole phrase as one substring almost never matches, which made
+	 * a two-word query return nothing at all in a window holding 1498 preprints.
+	 */
+	static boolean matches(MedrxivRecord record, String term) {
+		if (term == null || term.trim().isEmpty()) return true;
+		String haystack = (record.getTitle().orElse("") + " " + record.getAbstract().orElse(""))
+				.toLowerCase(java.util.Locale.ROOT);
+		for (String word : term.trim().toLowerCase(java.util.Locale.ROOT).split("\\s+")) {
+			if (word.length() < 2) continue;
+			if (!haystack.contains(word)) return false;
+		}
+		return true;
+	}
+
+	// ---- mapping: a preprint and its published version --------------------------
+
+	/**
+	 * `api.biorxiv.org` records which journal article a preprint became. Exposed as an
+	 * id mapping, which means a session holding both will treat them as one work — the
+	 * right answer for a citation graph (one paper, cited once) and a deliberate choice
+	 * rather than a side effect.
+	 */
+	@Override
+	public Set<? extends RecordReferenceMapping> mappings(Collection<? extends RecordReference> refs) {
+		Set<RecordReferenceMapping> out = new LinkedHashSet<>();
+		for (RecordReference ref : refs) {
+			if (!ref.getIdentifierType().equals(IdType.DOI) || !ref.getIdentifier().isPresent()) continue;
+			if (!isPreprintDoi(ref.getIdentifier().get())) continue; // not ours: no request
+			publishedAs(ref.getIdentifier().get()).ifPresent(out::add);
+		}
+		return out;
+	}
+
+	/** the published-version mapping for one preprint, from the `/pubs` endpoint */
+	public Optional<RecordReferenceMapping> publishedAs(String preprintDoi) {
+		if (!isPreprintDoi(preprintDoi)) return Optional.empty();
+		for (String server : SERVERS) {
+			Optional<JsonNode> response = this
+					.buildCall(API + "/pubs/" + server + "/" + preprintDoi.trim(), JsonNode.class)
+					.withParams(defaultApiParams())
+					.withOperation(is -> mapper.readTree(is))
+					.get();
+			Optional<RecordReferenceMapping> mapping = response.flatMap(json -> mappingFromPubs(json, preprintDoi));
+			if (mapping.isPresent()) return mapping;
+		}
+		return Optional.empty();
+	}
+
+	/** the preprint-to-published pair in a `/pubs` response, if it holds one */
+	static Optional<RecordReferenceMapping> mappingFromPubs(JsonNode response, String preprintDoi) {
+		JsonNode collection = response.path("collection");
+		if (!collection.isArray() || collection.size() == 0) return Optional.empty();
+		JsonNode first = collection.get(0);
+		String published = first.path("published_doi").asText(null);
+		String preprint = first.hasNonNull("preprint_doi") ? first.get("preprint_doi").asText() : preprintDoi;
+		if (published == null || published.trim().isEmpty() || preprint == null) return Optional.empty();
+		return Optional.of(new ImmutableRecordReferenceMapping(
+				Builder.recordReference(IdType.DOI, preprint),
+				Builder.recordReference(IdType.DOI, published.trim())));
 	}
 }

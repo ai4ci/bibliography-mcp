@@ -39,10 +39,10 @@
     "percent": 0
   },
   "skills/using-bibliographic-apis/SKILL.md": {
-    "modified": 1790176785,
+    "modified": 1790181839,
     "comments": [],
     "anchors": [],
-    "count_lines": 266,
+    "count_lines": 271,
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/arxiv/ArxivClient.java": {
@@ -158,10 +158,10 @@
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/crossref/CrossRefReference.java": {
-    "modified": 1604393361,
+    "modified": 1790180990,
     "comments": [],
     "anchors": [],
-    "count_lines": 117,
+    "count_lines": 128,
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/crossref/CrossRefSingleResult.java": {
@@ -249,10 +249,10 @@
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/europepmc/EuropePMCCitation.java": {
-    "modified": 1600427607,
+    "modified": 1790181187,
     "comments": [],
     "anchors": [],
-    "count_lines": 63,
+    "count_lines": 68,
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/europepmc/EuropePMCClient.java": {
@@ -287,10 +287,10 @@
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/europepmc/EuropePMCReference.java": {
-    "modified": 1600427607,
+    "modified": 1790181187,
     "comments": [],
     "anchors": [],
-    "count_lines": 60,
+    "count_lines": 70,
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/ExtensibleJson.java": {
@@ -336,10 +336,10 @@
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/mcp/BiblioFacade.java": {
-    "modified": 1790179529,
+    "modified": 1790181335,
     "comments": [],
     "anchors": [],
-    "count_lines": 460,
+    "count_lines": 469,
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/mcp/McpServer.java": {
@@ -350,7 +350,7 @@
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/mcp/McpTools.java": {
-    "modified": 1790176785,
+    "modified": 1790181335,
     "comments": [],
     "anchors": [],
     "count_lines": 778,
@@ -371,10 +371,10 @@
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/medrxiv/MedrxivClient.java": {
-    "modified": 1790178938,
+    "modified": 1790181715,
     "comments": [],
     "anchors": [],
-    "count_lines": 198,
+    "count_lines": 326,
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/medrxiv/MedrxivRecord.java": {
@@ -399,10 +399,10 @@
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/opencitations/OpenCitationsCitation.java": {
-    "modified": 1790092947,
+    "modified": 1790181002,
     "comments": [],
     "anchors": [],
-    "count_lines": 76,
+    "count_lines": 116,
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/opencitations/OpenCitationsClient.java": {
@@ -672,10 +672,10 @@
     "percent": 0
   },
   "src/main/java/uk/co/terminological/zotero/MetadataComparison.java": {
-    "modified": 1790176612,
+    "modified": 1790181276,
     "comments": [],
     "anchors": [],
-    "count_lines": 260,
+    "count_lines": 262,
     "percent": 0
   },
   "src/main/java/uk/co/terminological/zotero/ZoteroClient.java": {
@@ -707,10 +707,10 @@
     "percent": 0
   },
   "src/main/java/uk/co/terminological/zotero/ZoteroItemWriter.java": {
-    "modified": 1790176612,
+    "modified": 1790181276,
     "comments": [],
     "anchors": [],
-    "count_lines": 151,
+    "count_lines": 153,
     "percent": 0
   },
   "src/main/java/uk/co/terminological/zotero/ZoteroLibraryIndex.java": {
@@ -790,11 +790,25 @@
     "count_lines": 99,
     "percent": 0
   },
+  "src/test/java/uk/co/terminological/bibliography/medrxiv/TestMedrxivRecords.java": {
+    "modified": 1790181715,
+    "comments": [],
+    "anchors": [],
+    "count_lines": 188,
+    "percent": 0
+  },
   "src/test/java/uk/co/terminological/bibliography/record/TestPlainText.java": {
     "modified": 1790176785,
     "comments": [],
     "anchors": [],
     "count_lines": 61,
+    "percent": 0
+  },
+  "src/test/java/uk/co/terminological/citations/TestCitationLinkParsing.java": {
+    "modified": 1790181187,
+    "comments": [],
+    "anchors": [],
+    "count_lines": 96,
     "percent": 0
   },
   "src/test/java/uk/co/terminological/jats/TestJatsReferences.java": {
@@ -812,10 +826,10 @@
     "percent": 0
   },
   "src/test/java/uk/co/terminological/pubmedclient/TestApiDriftParsing.java": {
-    "modified": 1790170176,
+    "modified": 1790181210,
     "comments": [],
     "anchors": [],
-    "count_lines": 115,
+    "count_lines": 117,
     "percent": 0
   },
   "src/test/java/uk/co/terminological/pubmedclient/TestCombinedApi.java": {
@@ -917,17 +931,17 @@
     "percent": 0
   },
   "src/test/java/uk/co/terminological/zotero/TestMetadataComparison.java": {
-    "modified": 1790176626,
+    "modified": 1790181335,
     "comments": [],
     "anchors": [],
-    "count_lines": 253,
+    "count_lines": 265,
     "percent": 0
   },
   "src/test/java/uk/co/terminological/zotero/TestZoteroItemWriter.java": {
-    "modified": 1790176626,
+    "modified": 1790181335,
     "comments": [],
     "anchors": [],
-    "count_lines": 249,
+    "count_lines": 251,
     "percent": 0
   },
   "src/test/java/uk/co/terminological/zotero/TestZoteroLibraryIndex.java": {

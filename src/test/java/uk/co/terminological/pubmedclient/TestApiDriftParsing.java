@@ -100,16 +100,18 @@ public class TestApiDriftParsing {
 	}
 
 	@Test
-	public void openCitationsOmidOnlyLinkIsIncomplete() throws Exception {
-		// reproduces issue-001: without a doi token the CitationLink cannot be
-		// represented, so the session drops it. This expectation must change when
-		// feat-004 adds an id-mapping source that resolves omid-only endpoints.
+	public void openCitationsOmidOnlyLinkKeepsItsOmidAsAnIdentifier() throws Exception {
+		// this used to be an incomplete link with no identifier and no title, so a
+		// session dropped the citation entirely. The handle is a real identifier, we
+		// simply do not model its scheme (IdType.UNK).
 		OpenCitationsCitation citation = new OpenCitationsCitation(mapper.readTree(
 				"{\"citing\":\"omid:br/061603886611 openalex:W4384133663\","
 						+ "\"cited\":\"omid:br/061301957054\"}"));
 
 		assertFalse(citation.getCitingDoi().isPresent());
 		assertFalse(citation.getCitedDoi().isPresent());
-		assertFalse(citation.isComplete());
+		assertTrue(citation.isComplete());
+		assertEquals("omid:br/061603886611",
+				citation.getSource().getIdentifier().get().getIdentifier().orElse(null));
 	}
 }
