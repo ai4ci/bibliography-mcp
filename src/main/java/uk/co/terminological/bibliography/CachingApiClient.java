@@ -126,6 +126,19 @@ public abstract class CachingApiClient {
 	protected Client client;
 	private TokenBucket rateLimiter;
 
+	/**
+	 * Raise the read timeout for an API that answers slowly.
+	 *
+	 * The shared default is deliberately short — most bibliographic APIs answer in well
+	 * under a second, and one hung request should not stall a batch — but several take
+	 * 3-6 seconds (OpenCitations, api.biorxiv.org, the arXiv API). A client that forgets
+	 * this does not fail loudly: every call times out, the API looks like it has no
+	 * data, and the first symptom is an empty result set.
+	 */
+	protected void setReadTimeout(int millis) {
+		client.setReadTimeout(millis);
+	}
+
 	protected void rateLimit() {rateLimiter.consume();}
 
 	/**

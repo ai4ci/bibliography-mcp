@@ -1,5 +1,5 @@
 ---
-status: open
+status: closed
 since-version: 0.1.0
 target-version: 0.4.0
 tags: dead-code, jats
@@ -8,6 +8,14 @@ tags: dead-code, jats
 <!-- @required: target-version specified -->
 <!-- @optional: since-version specified -->
 <!-- @optional: tags containing comma separated list of tags. -->
+
+## Resolution
+
+Closed 2026-09-28: the package is now used. `MedrxivClient` fetches a preprint's JATS
+full text and turns it into a `JatsEntry`, whose `getCitations()` supplies the
+reference list — the only route to the references of a preprint that Europe PMC does
+not index. Two defects in it were fixed in the process (`getTitle()` scoped to the
+front matter, and the dropped citation index in `ImmutableCitationLink`).
 
 ## Debt desc
 

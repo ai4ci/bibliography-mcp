@@ -41,6 +41,12 @@ public class MergePolicy implements Serializable {
 			Provenance.EUROPEPMC,
 			Provenance.ENTREZ,
 			Provenance.UNPAYWALL,
+			// the preprint servers come after the indexed services: a preprint's copy
+			// of its own abstract is authoritative, but a PMC record of the same work
+			// is the better source where both exist
+			Provenance.MEDRXIV,
+			Provenance.BIORXIV,
+			Provenance.ARXIV,
 			Provenance.ZOTERO);
 
 	private final Map<String, List<String>> fieldPriority;
@@ -53,12 +59,17 @@ public class MergePolicy implements Serializable {
 		return new MergePolicy(Map.of(
 				// a registration agency is the best source of a title and date;
 				// abstracts are better in Europe PMC and Entrez
-				TITLE, List.of(Provenance.CROSSREF, Provenance.EUROPEPMC, Provenance.ENTREZ),
-				ABSTRACT, List.of(Provenance.EUROPEPMC, Provenance.ENTREZ, Provenance.CROSSREF),
-				CONTAINER, List.of(Provenance.CROSSREF, Provenance.EUROPEPMC, Provenance.ENTREZ),
-				DATE, List.of(Provenance.CROSSREF, Provenance.ENTREZ, Provenance.EUROPEPMC),
+				TITLE, List.of(Provenance.CROSSREF, Provenance.EUROPEPMC, Provenance.ENTREZ,
+						Provenance.MEDRXIV, Provenance.BIORXIV, Provenance.ARXIV),
+				ABSTRACT, List.of(Provenance.EUROPEPMC, Provenance.ENTREZ, Provenance.CROSSREF,
+						Provenance.MEDRXIV, Provenance.BIORXIV, Provenance.ARXIV),
+				CONTAINER, List.of(Provenance.CROSSREF, Provenance.EUROPEPMC, Provenance.ENTREZ,
+						Provenance.MEDRXIV, Provenance.BIORXIV, Provenance.ARXIV),
+				DATE, List.of(Provenance.CROSSREF, Provenance.ENTREZ, Provenance.EUROPEPMC,
+						Provenance.MEDRXIV, Provenance.BIORXIV, Provenance.ARXIV),
 				PDF, List.of(Provenance.UNPAYWALL, Provenance.EUROPEPMC, Provenance.CROSSREF),
-				PUBLICATION_TYPE, List.of(Provenance.CROSSREF, Provenance.EUROPEPMC, Provenance.ZOTERO),
+				PUBLICATION_TYPE, List.of(Provenance.CROSSREF, Provenance.EUROPEPMC, Provenance.MEDRXIV,
+						Provenance.BIORXIV, Provenance.ARXIV, Provenance.ZOTERO),
 				PUBLISHER, List.of(Provenance.CROSSREF, Provenance.ZOTERO),
 				AUTHORS, FALLBACK,
 				LICENCES, FALLBACK,

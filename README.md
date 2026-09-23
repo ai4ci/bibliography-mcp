@@ -10,6 +10,7 @@ A Java MCP (Model Context Protocol) server exposing clients for various bibliogr
 * Open Citations
 * PMC IDConverter API
 * Open access PDF retrieval and reference extraction including Cermine integration
+* medRxiv and bioRxiv — preprint metadata, and their reference lists from the JATS full text
 * Zotero — read and annotate the user's curated library through the desktop client's local API
 
 Design principles: respecting rate limits; multi-thread support; extensive caching of API results using EHCache; exception-free query results using Java 8 Optionals; arbitrarily large querying with batching to multiple API calls.

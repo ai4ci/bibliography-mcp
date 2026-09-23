@@ -1,74 +1,74 @@
-![API logo](https://info.arxiv.org/help/api/arXiv_api_xml.png)
+API logo: https://info.arxiv.org/help/api/arXiv_api_xml.png
 
-Please review the [Terms of Use for arXiv APIs](https://info.arxiv.org/help/api/tou.html) before using the arXiv API.
+Please review the Terms of Use for arXiv APIs: https://info.arxiv.org/help/api/tou.html before using the arXiv API.
 
 ### Table of Contents
 
-[1\. Preface](#_preface)  
-[2\. API QuickStart](#Quickstart)  
-[3\. Structure of the API](#Architecture)  
-[3.1. Calling the API](#_calling_the_api)  
-[3.1.1. Query Interface](#_query_interface)  
-[3.1.1.1. search\_query and id\_list logic](#search_query_and_id_list)  
-[3.1.1.2. start and max\_results paging](#paging)  
-[3.1.1.3. sort order for return results](#sort)  
-[3.2. The API Response](#api_response)  
-[3.3. Outline of an Atom feed](#atom_feed_outline)  
-[3.3.1. Feed Metadata](#_feed_metadata)  
-[3.3.1.1. \<title>, \<id>, \<link> and \<updated>](#_lt_title_gt_lt_id_gt_lt_link_gt_and_lt_updated_gt)  
-[3.3.1.2. OpenSearch Extension Elements](#_opensearch_extension_elements)  
-[3.3.2. Entry Metadata](#_entry_metadata)  
-[3.3.2.1. \<title>, \<id>, \<published>, and \<updated>](#title_id_published_updated)  
-[3.3.2.1. \<summary>, \<author> and \<category>](#_lt_summary_gt_lt_author_gt_and_lt_category_gt)  
-[3.3.2.3. \<link>'s](#entry_links)  
-[3.3.2.4. \<arxiv> extension elements](#extension_elements)  
-[3.4. Errors](#errors)  
-[4\. Examples](#Examples)  
-[4.1. Simple Examples](#_simple_examples)  
-[4.1.1. Perl](#perl_simple_example)  
-[4.1.2. Python](#python_simple_example)  
-[4.1.3. Ruby](#ruby_simple_example)  
-[4.1.4. PHP](#php_simple_example)  
-[4.2. Detailed Parsing Examples](#detailed_examples)  
-[5\. Appendices](#Appendices)  
-[5.1. Details of Query Construction](#query_details)  
-[5.1.1. A Note on Article Versions](#_a_note_on_article_versions)  
-[5.2. Details of Atom Results Returned](#_details_of_atom_results_returned)  
-[5.3. Subject Classifications](#subject_classifications)
+1\. Preface  
+2\. API QuickStart  
+3\. Structure of the API  
+3.1. Calling the API  
+3.1.1. Query Interface  
+3.1.1.1. search\_query and id\_list logic  
+3.1.1.2. start and max\_results paging  
+3.1.1.3. sort order for return results  
+3.2. The API Response  
+3.3. Outline of an Atom feed  
+3.3.1. Feed Metadata  
+3.3.1.1. \<title>, \<id>, \<link> and \<updated>  
+3.3.1.2. OpenSearch Extension Elements  
+3.3.2. Entry Metadata  
+3.3.2.1. \<title>, \<id>, \<published>, and \<updated>  
+3.3.2.1. \<summary>, \<author> and \<category>  
+3.3.2.3. \<link>'s  
+3.3.2.4. \<arxiv> extension elements  
+3.4. Errors  
+4\. Examples  
+4.1. Simple Examples  
+4.1.1. Perl  
+4.1.2. Python  
+4.1.3. Ruby  
+4.1.4. PHP  
+4.2. Detailed Parsing Examples  
+5\. Appendices  
+5.1. Details of Query Construction  
+5.1.1. A Note on Article Versions  
+5.2. Details of Atom Results Returned  
+5.3. Subject Classifications
 
 ## 1\. Preface
 
-The arXiv API allows programmatic access to the hundreds of thousands of e-prints hosted on [arXiv.org](http://arxiv.org/).
+The arXiv API allows programmatic access to the hundreds of thousands of e-prints hosted on arXiv.org: http://arxiv.org/.
 
-This manual is meant to provide an introduction to using the API, as well as documentation describing its details, and as such is meant to be read by both beginning and advanced users. To get a flavor for how the API works, see the [API Quickstart](#Quickstart). For more detailed information, see [Structure of the API](#Architecture).
+This manual is meant to provide an introduction to using the API, as well as documentation describing its details, and as such is meant to be read by both beginning and advanced users. To get a flavor for how the API works, see the API Quickstart. For more detailed information, see Structure of the API.
 
-For examples of using the API from several popular programming languages including perl, python and ruby, see the [Examples](#Examples) section.
+For examples of using the API from several popular programming languages including perl, python and ruby, see the Examples section.
 
-Finally, the [Appendices](#Appendices) contain an explanation of all input parameters to the API, as well as the output format.
+Finally, the Appendices contain an explanation of all input parameters to the API, as well as the output format.
 
 ## 2\. API QuickStart
 
-The easiest place to start with the API is by accessing it through a web browser. For examples of accessing the API through common programming languages, see the [Examples](#Examples) section.
+The easiest place to start with the API is by accessing it through a web browser. For examples of accessing the API through common programming languages, see the Examples section.
 
 Most everyone that has read or submitted e-prints on the arXiv is familiar with the arXiv human web interface. These HTML pages can be accessed by opening up your web browser, and entering the following url in your web browser
 
-[http://arxiv.org](http://arxiv.org/)
+http://arxiv.org: http://arxiv.org/
 
-From there, the article listings can be browsed by clicking on one of the many links, or you can search for articles using the search box in the upper right hand side of the page. For example, if I wanted to search for articles that contain the word `electron` in the title or abstract, I would type `electron` in the search box, and click `Go`. If you follow my example, you will see [something like this](http://arxiv.org/find/all/1/all:+electron/0/1/0/all/0/1): a web page listing the title and authors of each result, with links to the abstract page, pdf, etc.
+From there, the article listings can be browsed by clicking on one of the many links, or you can search for articles using the search box in the upper right hand side of the page. For example, if I wanted to search for articles that contain the word `electron` in the title or abstract, I would type `electron` in the search box, and click `Go`. If you follow my example, you will see something like this: http://arxiv.org/find/all/1/all:+electron/0/1/0/all/0/1: a web page listing the title and authors of each result, with links to the abstract page, pdf, etc.
 
 In its simplest form, the API can be used in exactly the same way. However, it uses a few shortcuts so there is less clicking involved. For example, you can see the same search results for `electron` by entering the url
 
-[http://export.arxiv.org/api/query?search\_query=all:electron](http://export.arxiv.org/api/query?search_query=all:electron).
+http://export.arxiv.org/api/query?search\_query=all:electron: http://export.arxiv.org/api/query?search_query=all:electron.
 
 Alternatively, you can search for articles that contain `electron` *AND* `proton` with the API by entering
 
-[http://export.arxiv.org/api/query?search\_query=all:electron+AND+all:proton](http://export.arxiv.org/api/query?search_query=all:electron+AND+all:proton)
+http://export.arxiv.org/api/query?search\_query=all:electron+AND+all:proton: http://export.arxiv.org/api/query?search_query=all:electron+AND+all:proton
 
 What you see will look different from the HTML interface, but it contains the same information as the search done with the human interface. The reason why the results look different is that the API returns results in the Atom 1.0 format, and not HTML. Since Atom is defined as an XML grammar, it is much easier to digest for programs than HTML. The API is not intended to be used inside a web browser by itself, but this is a particularly simple way to debug a program that does use the API.
 
-You might notice that your web browser has asked you if you want to “subscribe to this feed” after you enter the API url. This is because Atom is one of the formats used by web sites to syndicate their content. These feeds are usually read with feed reader software, and are what is generated by the existing [arXiv rss feeds](http://arxiv.org/help/rss). The current arXiv feeds only give you updates on new papers within the category you specify. One immediately useful thing to do with the API then is to generate your own feed, based on a custom query!
+You might notice that your web browser has asked you if you want to “subscribe to this feed” after you enter the API url. This is because Atom is one of the formats used by web sites to syndicate their content. These feeds are usually read with feed reader software, and are what is generated by the existing arXiv rss feeds: http://arxiv.org/help/rss. The current arXiv feeds only give you updates on new papers within the category you specify. One immediately useful thing to do with the API then is to generate your own feed, based on a custom query!
 
-To learn more about how to construct custom search queries with the API, see the appendix on the [details of query construction](#query_details). To learn about what information is returned by the API, see the section on [the API response](#api_response). To learn more about writing programs to call the API, and digest the responses, we suggest starting with the section on [Structure of the API](#Architecture).
+To learn more about how to construct custom search queries with the API, see the appendix on the details of query construction. To learn about what information is returned by the API, see the section on the API response. To learn more about writing programs to call the API, and digest the responses, we suggest starting with the section on Structure of the API.
 
 ## 3\. Structure of the API
 
@@ -89,7 +89,7 @@ API server processes the request and sends the response
 Response received by client.  (2)
 ```
 1. The request can be made via HTTP GET, in which the parameters are encoded in the url, or via an HTTP POST in which the parameters are encoded in the HTTP request header. Most client libraries support both methods.
-2. If all goes well, the HTTP header will show a 200 OK status, and the response body will contain the Atom response content as shown in the [example response](#response_example).
+2. If all goes well, the HTTP header will show a 200 OK status, and the response body will contain the Atom response content as shown in the example response.
 
 ### 3.1. Calling the API
 
@@ -116,7 +116,7 @@ The API query interface has `method_name=query`. The table below outlines the pa
 
 ##### 3.1.1.1. search\_query and id\_list logic
 
-We have already seen the use of `search_query` in the [quickstart](#Quickstart) section. The `search_query` takes a string that represents a search query used to find articles. The construction of `search_query` is described in the [search query construction appendix](#query_details). The `id_list` contains a comma-delimited list of arXiv id's.
+We have already seen the use of `search_query` in the quickstart section. The `search_query` takes a string that represents a search query used to find articles. The construction of `search_query` is described in the search query construction appendix. The `id_list` contains a comma-delimited list of arXiv id's.
 
 The logic of these two parameters is as follows:
 
@@ -146,19 +146,19 @@ http://export.arxiv.org/api/query?search_query=all:electron&start=20&max_results
 2. Get results 10-19
 3. Get results 20-29
 
-Detailed examples of how to perform paging in a variety of programming languages can be found in the [examples](#detailed_examples) section.
+Detailed examples of how to perform paging in a variety of programming languages can be found in the examples section.
 
-In cases where the API needs to be called multiple times in a row, we encourage you to play nice and incorporate a 3 second delay in your code. The [detailed examples](#detailed_examples) below illustrate how to do this in a variety of languages.
+In cases where the API needs to be called multiple times in a row, we encourage you to play nice and incorporate a 3 second delay in your code. The detailed examples below illustrate how to do this in a variety of languages.
 
 Because of speed limitations in our implementation of the API, the maximum number of results returned from a single call (`max_results`) is limited to 30000 in slices of at most 2000 at a time, using the `max_results` and `start` query parameters. For example to retrieve matches 6001-8000: http://export.arxiv.org/api/query?search\_query=all:electron&start=6000&max\_results=2000
 
-Large result sets put considerable load on the server and also take a long time to render. We recommend to refine queries which return more than 1,000 results, or at least request smaller slices. For bulk metadata harvesting or set information, etc., the [OAI-PMH](https://info.arxiv.org/help/oa/index.html) interface is more suitable. A request with `max_results` >30,000 will result in an HTTP 400 error code with appropriate explanation. A request for 30000 results will typically take a little over 2 minutes to return a response of over 15MB. Requests for fewer results are much faster and correspondingly smaller.
+Large result sets put considerable load on the server and also take a long time to render. We recommend to refine queries which return more than 1,000 results, or at least request smaller slices. For bulk metadata harvesting or set information, etc., the OAI-PMH: https://info.arxiv.org/help/oa/index.html interface is more suitable. A request with `max_results` >30,000 will result in an HTTP 400 error code with appropriate explanation. A request for 30000 results will typically take a little over 2 minutes to return a response of over 15MB. Requests for fewer results are much faster and correspondingly smaller.
 
 ##### 3.1.1.3. sort order for return results
 
 There are two options for for the result set to the API search, `sortBy` and `sortOrder`.
 
-`sortBy` can be "relevance" (Apache Lucene's default [RELEVANCE](https://lucene.apache.org/core/3_0_3/api/core/org/apache/lucene/search/Sort.html) ordering), "lastUpdatedDate", "submittedDate"
+`sortBy` can be "relevance" (Apache Lucene's default RELEVANCE: https://lucene.apache.org/core/3_0_3/api/core/org/apache/lucene/search/Sort.html ordering), "lastUpdatedDate", "submittedDate"
 
 `sortOrder` can be either "ascending" or "descending"
 
@@ -170,13 +170,13 @@ http://export.arxiv.org/api/query?search_query=ti:"electron thermal conductivity
 
 ### 3.2. The API Response
 
-Everything returned by the API in the body of the HTTP responses is Atom 1.0, including [errors](#errors). Atom is a grammar of XML that is popular in the world of content syndication, and is very similar to RSS for this purpose. Typically web sites with dynamic content such as news sites and blogs will publish their content as Atom or RSS feeds. However, Atom is a general format that embodies the concept of a list of items, and thus is well-suited to returning the arXiv search results.
+Everything returned by the API in the body of the HTTP responses is Atom 1.0, including errors. Atom is a grammar of XML that is popular in the world of content syndication, and is very similar to RSS for this purpose. Typically web sites with dynamic content such as news sites and blogs will publish their content as Atom or RSS feeds. However, Atom is a general format that embodies the concept of a list of items, and thus is well-suited to returning the arXiv search results.
 
 ### 3.3. Outline of an Atom feed
 
-In this section we will discuss the contents of the Atom documents returned by the API. To see the full explanation of the Atom 1.0 format, please see the [Atom specification](http://www.ietf.org/rfc/rfc4287.txt).
+In this section we will discuss the contents of the Atom documents returned by the API. To see the full explanation of the Atom 1.0 format, please see the Atom specification: http://www.ietf.org/rfc/rfc4287.txt.
 
-An API response consists of an Atom `<feed>` element which contains metadata about the API call performed, as well as child `<entry>` elements which embody the metadata for each of the returned results. Below we explain each of the elements and attributes. We will base our discussion on the [sample results feed](#response_example) discussed in the examples section.
+An API response consists of an Atom `<feed>` element which contains metadata about the API call performed, as well as child `<entry>` elements which embody the metadata for each of the returned results. Below we explain each of the elements and attributes. We will base our discussion on the sample results feed discussed in the examples section.
 
 <sup>You may notice that the results from the API are ordered differently that the results given by the <a href="http://arxiv.org/find">HTML arXiv search interface</a>. The HTML interface automatically sorts results in descending order based on the date of their submission, while the API returns results according to relevancy from the internal search engine. Thus when debugging a search query, we encourage you to use the API within a web browser, rather than the HTML search interface. If you want sorting by date, you can always do this within your programs by reading the <code>&lt;published&gt;</code> tag for each entry as explained <a href="#title_id_published_updated">below</a>.</sup>
 
@@ -244,7 +244,7 @@ There are several extension elements defined in the OpenSearch namespace
 http://a9.com/-/spec/opensearch/1.1/
 ```
 
-[OpenSearch](http://www.opensearch.org/Home) is a lightweight technology that acts in a similar way as the Web Services Description Language. The OpenSearch elements we have included allow OpenSearch enabled clients to digest our results. Such clients often include search result aggregators and browser pluggins that allow searching from a variety of sources.
+OpenSearch: http://www.opensearch.org/Home is a lightweight technology that acts in a similar way as the Web Services Description Language. The OpenSearch elements we have included allow OpenSearch enabled clients to digest our results. Such clients often include search result aggregators and browser pluggins that allow searching from a variety of sources.
 
 The OpenSearch extension elements can still be useful to you even if you are not writing one of these applications. The `<opensearch:totalResults>` element lists how many results are in the result set for the query:
 
@@ -254,7 +254,7 @@ The OpenSearch extension elements can still be useful to you even if you are not
 </opensearch:totalResults>
 ```
 
-This can be very useful when implementing [paging of search results](#paging). The other two elements `<opensearch:startIndex>`, and `<opensearch:itemsPerPage>` are analogous to `start`, and `max_results` [discussed above](#paging).
+This can be very useful when implementing paging of search results. The other two elements `<opensearch:startIndex>`, and `<opensearch:itemsPerPage>` are analogous to `start`, and `max_results` discussed above.
 
 ```js
 <opensearch:startIndex xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/">
@@ -267,7 +267,7 @@ This can be very useful when implementing [paging of search results](#paging). T
 
 #### 3.3.2. Entry Metadata
 
-If there are no errors, the `<feed>` element contains 0 or more child `<entry>` elements with each `<entry>` representing an article in the returned results set. As explained in the [errors](#errors) section, if there are errors, a single `<entry>` element representing the error is returned. Below the element description describes the elements for `<entry>` 's representing arXiv articles. For a general discussion of arXiv metadata, see the [arXiv metadata explanation](https://info.arxiv.org/help/prep.html).
+If there are no errors, the `<feed>` element contains 0 or more child `<entry>` elements with each `<entry>` representing an article in the returned results set. As explained in the errors section, if there are errors, a single `<entry>` element representing the error is returned. Below the element description describes the elements for `<entry>` 's representing arXiv articles. For a general discussion of arXiv metadata, see the arXiv metadata explanation: https://info.arxiv.org/help/prep.html.
 
 ##### 3.3.2.1. \<title>, \<id>, \<published>, and \<updated>
 
@@ -289,7 +289,7 @@ The `<id>` element contains a url that resolves to the abstract page for that ar
 
 If you want only the arXiv id for the article, you can remove the leading `http://arxiv.org/abs/` in the `<id>`.
 
-The `<published>` tag contains the date in which the `first` version of this article was submitted and processed. The `<updated>` element contains the date on which the retrieved article was submitted and processed. If the version is version 1, then `<published> == <updated>`, otherwise they are different. In the example below, the article retrieved was version 2, so `<updated>` and `<published>` are different (see the [original query](http://export.arxiv.org/api/query?id_list=cond-mat/0702661v2)).
+The `<published>` tag contains the date in which the `first` version of this article was submitted and processed. The `<updated>` element contains the date on which the retrieved article was submitted and processed. If the version is version 1, then `<published> == <updated>`, otherwise they are different. In the example below, the article retrieved was version 2, so `<updated>` and `<published>` are different (see the original query: http://export.arxiv.org/api/query?id_list=cond-mat/0702661v2).
 
 ```js
 <published xmlns="http://www.w3.org/2005/Atom">
@@ -327,9 +327,9 @@ There is one `<author>` element for each author of the paper in order of authors
 </author>
 ```
 
-If author affiliation is present, it is included as an `<arxiv:affiliation>` subelement of the `<author>` element as discussed [below](#extension_elements).
+If author affiliation is present, it is included as an `<arxiv:affiliation>` subelement of the `<author>` element as discussed below.
 
-The `<category>` element is used to describe either an arXiv, ACM, or MSC classification. See the [arXiv metadata explanation](http://arxiv.org/help/prep) for more details about these classifications. The `<category>` element has two attributes, `scheme`, which is the categorization scheme, and `term` which is the term used in the categorization. Here is an example from the query [http://export.arxiv.org/api/query?id\_list=cs/9901002v1](http://export.arxiv.org/api/query?id_list=cs/9901002v1)
+The `<category>` element is used to describe either an arXiv, ACM, or MSC classification. See the arXiv metadata explanation: http://arxiv.org/help/prep for more details about these classifications. The `<category>` element has two attributes, `scheme`, which is the categorization scheme, and `term` which is the term used in the categorization. Here is an example from the query http://export.arxiv.org/api/query?id\_list=cs/9901002v1: http://export.arxiv.org/api/query?id_list=cs/9901002v1
 
 ```js
 <category xmlns="http://www.w3.org/2005/Atom" term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
@@ -337,7 +337,7 @@ The `<category>` element is used to describe either an arXiv, ACM, or MSC classi
 <category xmlns="http://www.w3.org/2005/Atom" term="I.2.6" scheme="http://arxiv.org/schemas/atom"/>
 ```
 
-Note that in this example, there are 3 category elements, one for each category. The first two correspond to arXiv categories, and the last one to an ACM category. See [\<arxiv> extension elements](#extension_elements) below for information on how to identify the arXiv primary category.
+Note that in this example, there are 3 category elements, one for each category. The first two correspond to arXiv categories, and the last one to an ACM category. See \<arxiv> extension elements below for information on how to identify the arXiv primary category.
 
 ##### 3.3.2.3. \<link>'s
 
@@ -360,13 +360,13 @@ For example:
 
 ##### 3.3.2.4. \<arxiv> extension elements
 
-There are several pieces of [arXiv metadata](http://arxiv.org/help/prep) that are not able to be mapped onto the standard Atom specification. We have therefore defined several extension elements which live in the `arxiv` namespace
+There are several pieces of arXiv metadata: http://arxiv.org/help/prep that are not able to be mapped onto the standard Atom specification. We have therefore defined several extension elements which live in the `arxiv` namespace
 
 ```js
 http://arxiv.org/schemas/atom
 ```
 
-The arXiv classification system supports multiple \<category> tags, as well as a primary classification. The primary classification is a replica of an Atom \<category> tag, except it has the name `<arxiv:primary_category>`. For example, from the query [http://export.arxiv.org/api/query?id\_list=cs/9901002v1](http://export.arxiv.org/api/query?id_list=cs/9901002v1), we have
+The arXiv classification system supports multiple \<category> tags, as well as a primary classification. The primary classification is a replica of an Atom \<category> tag, except it has the name `<arxiv:primary_category>`. For example, from the query http://export.arxiv.org/api/query?id\_list=cs/9901002v1: http://export.arxiv.org/api/query?id_list=cs/9901002v1, we have
 
 ```js
 <arxiv:primary_category xmlns:arxiv="http://arxiv.org/schemas/atom" term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
@@ -382,7 +382,7 @@ The `<arxiv:comment>` element contains the typical author comments found on most
 </arxiv:comment>
 ```
 
-If the author has supplied affiliation information, then this is included as an `<arxiv:affiliation>` subelement of the standard Atom `<author>` element. For example, from the query [http://export.arxiv.org/api/query?id\_list=0710.5765v1](http://export.arxiv.org/api/query?id_list=0710.5765v1), we have
+If the author has supplied affiliation information, then this is included as an `<arxiv:affiliation>` subelement of the standard Atom `<author>` element. For example, from the query http://export.arxiv.org/api/query?id\_list=0710.5765v1: http://export.arxiv.org/api/query?id_list=0710.5765v1, we have
 
 ```js
 <author>
@@ -411,7 +411,7 @@ If the author has provided a DOI for the article, then there will be a `<arxiv:d
 
 Errors are returned as Atom feeds with a single entry representing the error. The `<summary>` for the error contains a helpful error message, and the `<link>` element contains a url to a more detailed explanation of the message.
 
-For example, the API call [http://export.arxiv.org/api/query?id\_list=1234.12345](http://export.arxiv.org/api/query?id_list=1234.12345) contains a malformed id, and results in the error
+For example, the API call http://export.arxiv.org/api/query?id\_list=1234.12345: http://export.arxiv.org/api/query?id_list=1234.12345 contains a malformed id, and results in the error
 
 ```js
 <?xml version="1.0" encoding="utf-8"?>
@@ -443,21 +443,21 @@ The following table gives information on errors that might occur.
 |  |  |
 | --- | --- |
 | **Sample query** | **Error Explanation** |
-| [http://export.arxiv.org/api/query?start=not\_an\_int](http://export.arxiv.org/api/query?start=not_an_int) | `start` must be an integer |
-| [http://export.arxiv.org/api/query?start=-1](http://export.arxiv.org/api/query?start=-1) | `start` must be >= 0 |
-| [http://export.arxiv.org/api/query?max\_results=not\_an\_int](http://export.arxiv.org/api/query?max_results=not_an_int) | `max_results` must be an integer |
-| [http://export.arxiv.org/api/query?max\_results=-1](http://export.arxiv.org/api/query?max_results=-1) | `max_results` must be >= 0 |
-| [http://export.arxiv.org/api/query?id\_list=1234.1234](http://export.arxiv.org/api/query?id_list=1234.1234) | malformed id - see [arxiv identifier explanation](http://arxiv.org/help/arxiv_identifier#new) |
-| [http://export.arxiv.org/api/query?id\_list=cond—mat/0709123](http://export.arxiv.org/api/query?id_list=cond%E2%80%94mat/0709123) | malformed id - see [arxiv identifier explanation](http://arxiv.org/help/arxiv_identifier#new) |
+| http://export.arxiv.org/api/query?start=not\_an\_int: http://export.arxiv.org/api/query?start=not_an_int | `start` must be an integer |
+| http://export.arxiv.org/api/query?start=-1: http://export.arxiv.org/api/query?start=-1 | `start` must be >= 0 |
+| http://export.arxiv.org/api/query?max\_results=not\_an\_int: http://export.arxiv.org/api/query?max_results=not_an_int | `max_results` must be an integer |
+| http://export.arxiv.org/api/query?max\_results=-1: http://export.arxiv.org/api/query?max_results=-1 | `max_results` must be >= 0 |
+| http://export.arxiv.org/api/query?id\_list=1234.1234: http://export.arxiv.org/api/query?id_list=1234.1234 | malformed id - see arxiv identifier explanation: http://arxiv.org/help/arxiv_identifier#new |
+| http://export.arxiv.org/api/query?id\_list=cond—mat/0709123: http://export.arxiv.org/api/query?id_list=cond%E2%80%94mat/0709123 | malformed id - see arxiv identifier explanation: http://arxiv.org/help/arxiv_identifier#new |
 
 ## 4\. Examples
 
 Once you have familiarized yourself with the API, you should be able to easily write programs that call the API automatically. Most programming languages, if not all, have libraries that allow you to make HTTP requests. Since Atom is growing, not all languages have libraries that support Atom parsing, so most of the programming effort will be in digesting the responses you receive. The languages that we know of that can easily handle calling the api via HTTP and parsing the results include:
 
-- [Perl](http://www.perl.org/) (via [LWP](http://search.cpan.org/~gaas/libwww-perl-5.808/lib/LWP.pm)) ([example](#perl_simple_example))
-- [Python](http://www.python.org/) (via [urllib](https://docs.python.org/3/library/index.html)) ([example](#python_simple_example))
-- [Ruby](http://www.ruby-lang.org/) (via [uri](https://ruby-doc.org/stdlib-2.5.1/libdoc/uri/rdoc/URI.html) and [net::http](https://ruby-doc.org/stdlib-2.7.0/libdoc/net/http/rdoc/Net/HTTP.html)) ([example](#ruby_simple_example))
-- [PHP](http://www.php.net/) (via file\_get\_contents()) ([example](#php_simple_example))
+- Perl: http://www.perl.org/ (via LWP: http://search.cpan.org/~gaas/libwww-perl-5.808/lib/LWP.pm) (example)
+- Python: http://www.python.org/ (via urllib: https://docs.python.org/3/library/index.html) (example)
+- Ruby: http://www.ruby-lang.org/ (via uri: https://ruby-doc.org/stdlib-2.5.1/libdoc/uri/rdoc/URI.html and net::http: https://ruby-doc.org/stdlib-2.7.0/libdoc/net/http/rdoc/Net/HTTP.html) (example)
+- PHP: http://www.php.net/ (via file\_get\_contents()) (example)
 
 ### 4.1. Simple Examples
 
@@ -508,7 +508,7 @@ of 0.30 \pm 0.04 and 0.23 \pm 0.04, respectively.
 
 #### 4.1.1. Perl
 
-[LWP](http://search.cpan.org/%3Csub%3Egaas/libwww-perl-5.808/lib/LWP.pm) is in the default perl installation on most platforms. It can be downloaded and installed from [CPAN](http://search.cpan.org/%3C/sub%3Egaas/libwww-perl-5.808/lib/LWP.pm). Sample code to produce the above output is:
+LWP: http://search.cpan.org/%3Csub%3Egaas/libwww-perl-5.808/lib/LWP.pm is in the default perl installation on most platforms. It can be downloaded and installed from CPAN: http://search.cpan.org/%3C/sub%3Egaas/libwww-perl-5.808/lib/LWP.pm. Sample code to produce the above output is:
 
 ```perl
 use LWP;
@@ -522,7 +522,7 @@ print $response->content();
 
 #### 4.1.2. Python
 
-The [urllib](http://docs.python.org/lib/module-urllib.html) module is part of the [python standard library](http://docs.python.org/lib/lib.html), and is included in any default installation of python. Sample code to produce the above output in Python 2.7 is:
+The urllib: http://docs.python.org/lib/module-urllib.html module is part of the python standard library: http://docs.python.org/lib/lib.html, and is included in any default installation of python. Sample code to produce the above output in Python 2.7 is:
 
 ```python
 import urllib
@@ -542,7 +542,7 @@ print(r)
 
 #### 4.1.3. Ruby
 
-The [net/http](http://www.ruby-doc.org/stdlib/libdoc/net/http/rdoc/index.html) and [uri](http://www.ruby-doc.org/stdlib/libdoc/uri/rdoc/) modules are part of the [ruby standard library](http://www.ruby-doc.org/stdlib/), and are included in any default installation of ruby. Sample code to produce the above output is:
+The net/http: http://www.ruby-doc.org/stdlib/libdoc/net/http/rdoc/index.html and uri: http://www.ruby-doc.org/stdlib/libdoc/uri/rdoc/ modules are part of the ruby standard library: http://www.ruby-doc.org/stdlib/, and are included in any default installation of ruby. Sample code to produce the above output is:
 
 ```ruby
 require 'net/http'
@@ -571,20 +571,20 @@ The examples above don't cover how to parse the Atom results returned to extract
 |  |  |  |  |
 | --- | --- | --- | --- |
 | Language | Library | Parsing Example | Paging Example |
-| Perl | [XML::Atom](http://search.cpan.org/~miyagawa/XML-Atom-0.27/) | [parsing](https://info.arxiv.org/help/api/examples/perl_arXiv_parsing_example.txt) | [paging](https://info.arxiv.org/help/api/examples/perl_arXiv_paging_example.txt) |
-| Python | [feedparser](https://github.com/kurtmckee/feedparser) | [parsing](https://info.arxiv.org/help/api/examples/python_arXiv_parsing_example.txt) | [paging](https://info.arxiv.org/help/api/examples/python_arXiv_paging_example.txt) |
-| Ruby | [feedtools](http://sporkmonger.com/2005/08/11/tutorial) | [parsing](https://info.arxiv.org/help/api/examples/ruby_arXiv_parsing_example.txt) | [paging](https://info.arxiv.org/help/api/examples/ruby_arXiv_paging_example.txt) |
-| PHP | [SimplePie](http://simplepie.org/) | [parsing](https://info.arxiv.org/help/api/examples/php_arXiv_parsing_example.txt) | [paging](https://info.arxiv.org/help/api/examples/php_arXiv_paging_example.txt) |
+| Perl | XML::Atom: http://search.cpan.org/~miyagawa/XML-Atom-0.27/ | parsing: https://info.arxiv.org/help/api/examples/perl_arXiv_parsing_example.txt | paging: https://info.arxiv.org/help/api/examples/perl_arXiv_paging_example.txt |
+| Python | feedparser: https://github.com/kurtmckee/feedparser | parsing: https://info.arxiv.org/help/api/examples/python_arXiv_parsing_example.txt | paging: https://info.arxiv.org/help/api/examples/python_arXiv_paging_example.txt |
+| Ruby | feedtools: http://sporkmonger.com/2005/08/11/tutorial | parsing: https://info.arxiv.org/help/api/examples/ruby_arXiv_parsing_example.txt | paging: https://info.arxiv.org/help/api/examples/ruby_arXiv_paging_example.txt |
+| PHP | SimplePie: http://simplepie.org/ | parsing: https://info.arxiv.org/help/api/examples/php_arXiv_parsing_example.txt | paging: https://info.arxiv.org/help/api/examples/php_arXiv_paging_example.txt |
 
 ## 5\. Appendices
 
 ### 5.1. Details of Query Construction
 
-As outlined in the [Structure of the API](#Architecture) section, the interface to the API is quite simple. This simplicity, combined with `search_query` construction, and result set filtering through `id_list` makes the API a powerful tool for harvesting data from the arXiv. In this section, we outline the possibilities for constructing `search_query` 's to retrieve our desired article lists. We outlined how to use the `id_list` parameter to filter results sets in [search\_query and id\_list logic](#search_query_and_id_list).
+As outlined in the Structure of the API section, the interface to the API is quite simple. This simplicity, combined with `search_query` construction, and result set filtering through `id_list` makes the API a powerful tool for harvesting data from the arXiv. In this section, we outline the possibilities for constructing `search_query` 's to retrieve our desired article lists. We outlined how to use the `id_list` parameter to filter results sets in search\_query and id\_list logic.
 
 In the arXiv search engine, each article is divided up into a number of fields that can individually be searched. For example, the titles of an article can be searched, as well as the author list, abstracts, comments and journal reference. To search one of these fields, we simply prepend the field prefix followed by a colon to our search term. For example, suppose we wanted to find all articles by the author `Adrian Del Maestro`. We could construct the following query
 
-[http://export.arxiv.org/api/query?search\_query=au:del\_maestro](http://export.arxiv.org/api/query?search_query=au:del_maestro)
+http://export.arxiv.org/api/query?search\_query=au:del\_maestro: http://export.arxiv.org/api/query?search_query=au:del_maestro
 
 This returns nine results. The following table lists the field prefixes for all the fields that can be searched.
 
@@ -609,7 +609,7 @@ The API provides one date filter, `submittedDate`, that allow you to select data
 
 The API allows advanced query construction by combining these search fields with Boolean operators. For example, suppose we want to find all articles by the author `Adrian DelMaestro` that also contain the word `checkerboard` in the title. We could construct the following query, using the `AND` operator:
 
-[http://export.arxiv.org/api/query?search\_query=au:del\_maestro+AND+ti:checkerboard](http://export.arxiv.org/api/query?search_query=au:del_maestro+AND+ti:checkerboard)
+http://export.arxiv.org/api/query?search\_query=au:del\_maestro+AND+ti:checkerboard: http://export.arxiv.org/api/query?search_query=au:del_maestro+AND+ti:checkerboard
 
 As expected, this query picked out the one of the nine previous results with `checkerboard` in the title. Note that we included `+` signs in the urls to the API. In a url, a `+` sign encodes a space, which is useful since spaces are not allowed in url's. It is always a good idea to escape the characters in your url's, which is a common feature in most programming libraries that deal with url's. Note that the `<title>` of the returned feed has spaces in the query constructed. It is a good idea to look at `<title>` to see if you have escaped your url correctly.
 
@@ -623,19 +623,19 @@ The following table lists the three possible Boolean operators.
 
 The `ANDNOT` Boolean operator is particularly useful, as it allows us to filter search results based on certain fields. For example, if we wanted all of the articles by the author `Adrian DelMaestro` with titles that *did not* contain the word `checkerboard`, we could construct the following query:
 
-[http://export.arxiv.org/api/query?search\_query=au:del\_maestro+ANDNOT+ti:checkerboard](http://export.arxiv.org/api/query?search_query=au:del_maestro+ANDNOT+ti:checkerboard)
+http://export.arxiv.org/api/query?search\_query=au:del\_maestro+ANDNOT+ti:checkerboard: http://export.arxiv.org/api/query?search_query=au:del_maestro+ANDNOT+ti:checkerboard
 
 As expected, this query returns eight results.
 
 Finally, even more complex queries can be used by using parentheses for grouping the Boolean expressions. To include parentheses in in a url, use `%28` for a left-parens `(`, and `%29` for a right-parens `)`. For example, if we wanted all of the articles by the author `Adrian DelMaestro` with titles that *did not* contain the words `checkerboard`, OR `Pyrochore`, we could construct the following query:
 
-[http://export.arxiv.org/api/query?search\_query=au:del\_maestro+ANDNOT+%28ti:checkerboard+OR+ti:Pyrochlore%29](http://export.arxiv.org/api/query?search_query=au:del_maestro+ANDNOT+%28ti:checkerboard+OR+ti:Pyrochlore%29)
+http://export.arxiv.org/api/query?search\_query=au:del\_maestro+ANDNOT+%28ti:checkerboard+OR+ti:Pyrochlore%29: http://export.arxiv.org/api/query?search_query=au:del_maestro+ANDNOT+%28ti:checkerboard+OR+ti:Pyrochlore%29
 
 This query returns three results. Notice that the `<title>` element displays the parenthesis correctly meaning that we used the correct url escaping.
 
 So far we have only used single words as the field terms to search for. You can include entire phrases by enclosing the phrase in double quotes, escaped by `%22`. For example, if we wanted all of the articles by the author `Adrian DelMaestro` with titles that contain `quantum criticality`, we could construct the following query:
 
-[http://export.arxiv.org/api/query?search\_query=au:del\_maestro+AND+ti:%22quantum+criticality%22](http://export.arxiv.org/api/query?search_query=au:del_maestro+AND+ti:%22quantum+criticality%22)
+http://export.arxiv.org/api/query?search\_query=au:del\_maestro+AND+ti:%22quantum+criticality%22: http://export.arxiv.org/api/query?search_query=au:del_maestro+AND+ti:%22quantum+criticality%22
 
 This query returns one result, and notice that the feed `<title>` contains double quotes as expected. The table below lists the two grouping operators used in the API.
 
@@ -652,11 +652,11 @@ Each arXiv article has a version associated with it. The first time an article i
 
 When using the API, if you want to retrieve the latest version of an article, you may simply enter the arxiv id in the `id_list` parameter. If you want to retrieve information about a specific version, you can do this by appending `vn` to the id, where `n` is the version number you are interested in.
 
-For example, to retrieve the latest version of `cond-mat/0207270`, you could use the query [http://export.arxiv.org/api/query?id\_list=cond-mat/0207270](http://export.arxiv.org/api/query?id_list=cond-mat/0207270). To retrieve the very first version of this article, you could use the query [http://export.arxiv.org/api/query?id\_list=cond-mat/0207270v1](http://export.arxiv.org/api/query?id_list=cond-mat/0207270v1)
+For example, to retrieve the latest version of `cond-mat/0207270`, you could use the query http://export.arxiv.org/api/query?id\_list=cond-mat/0207270: http://export.arxiv.org/api/query?id_list=cond-mat/0207270. To retrieve the very first version of this article, you could use the query http://export.arxiv.org/api/query?id\_list=cond-mat/0207270v1: http://export.arxiv.org/api/query?id_list=cond-mat/0207270v1
 
 ### 5.2. Details of Atom Results Returned
 
-The following table lists each element of the returned Atom results. For a more detailed explanation see [Outline of an Atom Feed](#atom_feed_outline).
+The following table lists each element of the returned Atom results. For a more detailed explanation see Outline of an Atom Feed.
 
 |  |  |
 | --- | --- |

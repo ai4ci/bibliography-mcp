@@ -36,7 +36,7 @@ public class OpenCitationsClient extends CachingApiClient implements CitedByMapp
 				.withFixedIntervalRefillStrategy(3, 1, TimeUnit.SECONDS).build());
 		// Docs: rate-limited to 180 requests/minute per IP (api.opencitations.net/index/v2).
 		// ponytail: shared 3s read timeout is too short — this API responds in 3-6s
-		this.client.setReadTimeout(30000);
+		this.setReadTimeout(30_000);
 	}
 
 	// ponytail: old opencitations.net/index/api/v1 endpoint now 301-redirects; Jersey 1.12

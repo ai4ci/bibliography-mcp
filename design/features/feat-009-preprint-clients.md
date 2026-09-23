@@ -73,6 +73,27 @@ clients fill is *metadata* (and, for medRxiv, the published-version link).
   [issue-004](/design/implementation/issues/issue-004-truncated-responses-are-cached-as-empty.md),
   so the parser detects it and fails loudly.
 
+## Implemented so far (option B, medRxiv)
+
+- `MedrxivRecord` and a real `MedrxivClient` (`RecordFetcher` + `CitesMapper`), wired
+  into `BiblioFacade`'s `fetch` and `cites` lists so the existing tools gained
+  preprint coverage with no new tool surface.
+- References come from the preprint's JATS full text: **31 references extracted for
+  the sample preprint**, live.
+- Merge priority puts the preprint servers below the indexed services, as requested:
+  a PMC record of the same work wins, and a preprint supplies only what the indexed
+  services lack.
+- Two pre-existing defects were turned up by the tests and fixed:
+  `ImmutableCitationLink` accepted a citation index and dropped it, and
+  `JatsEntry.getTitle()` matched `article-title` outside the front matter, so a JATS
+  article's own title was lost whenever its reference list had titles too.
+
+Still to do: the arXiv client (option A's other half), the medRxiv date-window
+Searcher, the preprint-to-published mapping, and Zotero's `repository`/`archiveID`
+mapping for preprints. Some JATS references resolve only partially (no DOI and no
+title) because `JatsReference` reads only part of a `citation` element — worth
+extending to `source`, `year`, `volume` and `fpage`.
+
 ## Options for the references question
 
 | # | Option | Effort | Notes |
@@ -105,3 +126,9 @@ already exists.
 ## Linked artefacts
 
 - [HAS_PLAN](/design/implementation/plans/plan-006-preprint-clients.md)
+- [HAS_TEST](/design/test-scripts/test-005-preprint-tests.md)
+
+## Implemented by
+
+- [IMPLEMENTED_BY](/src/main/java/uk/co/terminological/bibliography/medrxiv/MedrxivClient.java)
+- [IMPLEMENTED_BY](/src/main/java/uk/co/terminological/bibliography/medrxiv/MedrxivRecord.java)

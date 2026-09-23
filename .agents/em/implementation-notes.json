@@ -1,6 +1,6 @@
 {
   "docs/references/arXiv API User's Manual.md": {
-    "modified": 1790177867,
+    "modified": 1790178617,
     "comments": [],
     "anchors": {
       "3.1.1.": 104,
@@ -60,10 +60,10 @@
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/BibliographicApis.java": {
-    "modified": 1600335819,
+    "modified": 1790178764,
     "comments": [],
     "anchors": [],
-    "count_lines": 177,
+    "count_lines": 187,
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/BinaryData.java": {
@@ -74,10 +74,10 @@
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/CachingApiClient.java": {
-    "modified": 1790170286,
+    "modified": 1790178938,
     "comments": [],
     "anchors": [],
-    "count_lines": 345,
+    "count_lines": 358,
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/CiteProcProvider.java": {
@@ -315,10 +315,10 @@
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/jats/JatsEntry.java": {
-    "modified": 1630505806,
+    "modified": 1790178735,
     "comments": [],
     "anchors": [],
-    "count_lines": 193,
+    "count_lines": 196,
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/jats/JatsReference.java": {
@@ -336,10 +336,10 @@
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/mcp/BiblioFacade.java": {
-    "modified": 1790174008,
+    "modified": 1790179066,
     "comments": [],
     "anchors": [],
-    "count_lines": 395,
+    "count_lines": 446,
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/mcp/McpServer.java": {
@@ -371,10 +371,17 @@
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/medrxiv/MedrxivClient.java": {
-    "modified": 1630413447,
+    "modified": 1790178938,
     "comments": [],
     "anchors": [],
-    "count_lines": 10,
+    "count_lines": 198,
+    "percent": 0
+  },
+  "src/main/java/uk/co/terminological/bibliography/medrxiv/MedrxivRecord.java": {
+    "modified": 1790178651,
+    "comments": [],
+    "anchors": [],
+    "count_lines": 155,
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/medrxiv/MedrxivSearch.java": {
@@ -399,7 +406,7 @@
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/opencitations/OpenCitationsClient.java": {
-    "modified": 1790093064,
+    "modified": 1790178938,
     "comments": [],
     "anchors": [],
     "count_lines": 173,
@@ -490,10 +497,10 @@
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/record/ImmutableCitationLink.java": {
-    "modified": 1600353519,
+    "modified": 1790178726,
     "comments": [],
     "anchors": [],
-    "count_lines": 41,
+    "count_lines": 44,
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/record/ImmutableCitationReference.java": {
@@ -539,10 +546,10 @@
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/record/MergePolicy.java": {
-    "modified": 1790168418,
+    "modified": 1790178617,
     "comments": [],
     "anchors": [],
-    "count_lines": 81,
+    "count_lines": 92,
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/record/PlainText.java": {
@@ -574,10 +581,10 @@
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/record/Provenance.java": {
-    "modified": 1790168418,
+    "modified": 1790178617,
     "comments": [],
     "anchors": [],
-    "count_lines": 85,
+    "count_lines": 88,
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/record/PublicationTypes.java": {
@@ -776,11 +783,25 @@
     "count_lines": 1,
     "percent": 0
   },
+  "src/test/java/uk/co/terminological/bibliography/mcp/TestCitationDedupe.java": {
+    "modified": 1790179014,
+    "comments": [],
+    "anchors": [],
+    "count_lines": 86,
+    "percent": 0
+  },
   "src/test/java/uk/co/terminological/bibliography/record/TestPlainText.java": {
     "modified": 1790176785,
     "comments": [],
     "anchors": [],
     "count_lines": 61,
+    "percent": 0
+  },
+  "src/test/java/uk/co/terminological/medrxiv/TestMedrxivRecords.java": {
+    "modified": 1790178690,
+    "comments": [],
+    "anchors": [],
+    "count_lines": 155,
     "percent": 0
   },
   "src/test/java/uk/co/terminological/pubmedclient/TestApiDriftParsing.java": {
@@ -868,10 +889,10 @@
     "percent": 0
   },
   "src/test/java/uk/co/terminological/pubmedclient/TestRecordMerge.java": {
-    "modified": 1790168418,
+    "modified": 1790178617,
     "comments": [],
     "anchors": [],
-    "count_lines": 262,
+    "count_lines": 283,
     "percent": 0
   },
   "src/test/java/uk/co/terminological/pubmedclient/TestRecordModel.java": {

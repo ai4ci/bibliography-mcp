@@ -30,9 +30,12 @@ public class JatsEntry implements RecordWithCitations, Raw<XmlElement> {
 
 	public Optional<String> getTitle() {
 		try {
-			return raw.doXpath(".//article-title").getOne(XmlElement.class).getTextContent();
+			// scoped to the front matter: a JATS reference list also contains
+			// <article-title>, so an unscoped match finds the wrong thing or several
+			return raw.doXpath(".//front//article-title").getManyAsStream(XmlElement.class)
+					.flatMap(el -> el.getTextContent().stream())
+					.findFirst();
 		} catch (XmlException e) {
-			// log.debug("could not find title in entrez record");
 			return Optional.empty();
 		}
 	}
@@ -91,7 +94,7 @@ public class JatsEntry implements RecordWithCitations, Raw<XmlElement> {
 
 	private Optional<String> getAbstract(final boolean labelled) {
 		try {
-			String tmp = raw.doXpath(".//abstract").getManyAsStream(XmlElement.class)
+			String tmp = raw.doXpath(".//front//abstract").getManyAsStream(XmlElement.class)
 					.map(el -> el.getTextContent().orElse(""))
 					.collect(Collectors.joining("\n"));
 			return tmp.isEmpty() ? Optional.empty(): Optional.of(tmp);

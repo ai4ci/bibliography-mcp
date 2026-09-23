@@ -22,6 +22,9 @@ public class Provenance implements Serializable {
 	public static final String ENTREZ = "entrez";
 	public static final String EUROPEPMC = "europepmc";
 	public static final String UNPAYWALL = "unpaywall";
+	public static final String MEDRXIV = "medrxiv";
+	public static final String BIORXIV = "biorxiv";
+	public static final String ARXIV = "arxiv";
 	public static final String ZOTERO = "zotero";
 
 	private final String source;

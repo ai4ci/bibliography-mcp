@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -27,6 +28,7 @@ import uk.co.terminological.bibliography.client.RecordFetcher;
 import uk.co.terminological.bibliography.client.Searcher;
 import uk.co.terminological.bibliography.crossref.CrossRefWork;
 import uk.co.terminological.bibliography.record.CitationLink;
+import uk.co.terminological.bibliography.record.CitationReference;
 import uk.co.terminological.bibliography.record.ImmutableRecordReference;
 import uk.co.terminological.bibliography.record.MergedRecord;
 import uk.co.terminological.bibliography.record.Record;
@@ -60,9 +62,11 @@ public class BiblioFacade
 	public static Map<String, List<String>> defaultApis() {
 		Map<String, List<String>> out = new LinkedHashMap<>();
 		out.put("search", List.of("crossref", "entrez", "europepmc"));
-		out.put("cites", List.of("crossref", "entrez", "europepmc", "opencitations"));
+		// medRxiv joins the citation sources as the only route to a preprint's own
+		// reference list, and ignores anything that is not a 10.1101 DOI
+		out.put("cites", List.of("crossref", "entrez", "europepmc", "opencitations", "medrxiv"));
 		out.put("citedBy", List.of("opencitations", "entrez", "europepmc"));
-		out.put("fetch", List.of("crossref", "entrez", "europepmc", "unpaywall"));
+		out.put("fetch", List.of("crossref", "entrez", "europepmc", "unpaywall", "medrxiv"));
 		out.put("idMap", List.of("pmcid"));
 		return out;
 	}
@@ -143,8 +147,49 @@ public class BiblioFacade
 	) {
 		Collection<CitationLink> out = new ArrayList<>();
 		this.citesApiLoop(refs, out);
+		return dedupeCitations(out);
+	}
+
+	/**
+	 * One citation reported by two APIs is one citation. Without this the counts an
+	 * agent sees are inflated by however many sources happen to cover the same
+	 * reference list — which is now the normal case for a preprint, whose references
+	 * come from both Europe PMC and its own JATS.
+	 *
+	 * An endpoint is identified by its identifier, falling back to its title. When
+	 * neither is available the link is **kept as it stands** rather than collapsed:
+	 * a shared "unknown" key would quietly merge every unidentified reference into
+	 * one, which is worse than a duplicate.
+	 */
+	static Collection<CitationLink> dedupeCitations(Collection<? extends CitationLink> links) {
+		List<CitationLink> out = new ArrayList<>();
+		Set<String> seen = new LinkedHashSet<>();
+		for (CitationLink link : links) {
+			String key = pairKey(link);
+			if (key == null) {
+				out.add(link);
+				continue;
+			}
+			if (seen.add(key)) out.add(link);
+		}
 		return out;
 	}
+
+	private static String pairKey(CitationLink link) {
+		Optional<String> source = identifiable(link.getSource());
+		Optional<String> target = identifiable(link.getTarget());
+		if (!source.isPresent() || !target.isPresent()) return null;
+		return source.get() + "->" + target.get();
+	}
+
+	/** an endpoint by identifier, or by title when it has no identifier */
+	private static Optional<String> identifiable(CitationReference reference) {
+		return reference.getIdentifier()
+				.flatMap(RecordReference::getIdentifier)
+				.map(Optional::of)
+				.orElseGet(reference::getTitle);
+	}
+
 
 	private void citesApiLoop(
 			Collection<? extends RecordReference> refs, Collection<CitationLink> out
@@ -162,6 +207,9 @@ public class BiblioFacade
 					.citesReferences(refs);
 			} else if (citesApi.equals("opencitations")) {
 				tmp = this.api.getOpenCitationsClient()
+					.citesReferences(refs);
+			} else if (citesApi.equals("medrxiv")) {
+				tmp = this.api.getMedrxiv()
 					.citesReferences(refs);
 			}
 			log.info(
@@ -224,6 +272,9 @@ public class BiblioFacade
 					.fetch(ids);
 			} else if (fetchApi.equals("unpaywall")) {
 				tmp = this.api.getUnpaywall()
+					.fetch(ids);
+			} else if (fetchApi.equals("medrxiv")) {
+				tmp = this.api.getMedrxiv()
 					.fetch(ids);
 			}
 			log.info(

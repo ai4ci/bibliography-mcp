@@ -70,7 +70,10 @@ design/features/feat-008-clean-up-collection-metadata.md	122	IMPLEMENTED_BY	src/
 design/features/feat-008-clean-up-collection-metadata.md	121	IMPLEMENTED_BY	src/main/java/uk/co/terminological/zotero/MetadataComparison.java	NA
 design/features/feat-008-clean-up-collection-metadata.md	124	IMPLEMENTED_BY	src/main/java/uk/co/terminological/zotero/ZoteroClient.java	NA
 design/features/feat-008-clean-up-collection-metadata.md	125	IMPLEMENTED_BY	src/main/java/uk/co/terminological/zotero/ZoteroItemWriter.java	NA
-design/features/feat-009-preprint-clients.md	107	HAS_PLAN	design/implementation/plans/plan-006-preprint-clients.md	NA
+design/features/feat-009-preprint-clients.md	128	HAS_PLAN	design/implementation/plans/plan-006-preprint-clients.md	NA
+design/features/feat-009-preprint-clients.md	129	HAS_TEST	design/test-scripts/test-005-preprint-tests.md	NA
+design/features/feat-009-preprint-clients.md	133	IMPLEMENTED_BY	src/main/java/uk/co/terminological/bibliography/medrxiv/MedrxivClient.java	NA
+design/features/feat-009-preprint-clients.md	134	IMPLEMENTED_BY	src/main/java/uk/co/terminological/bibliography/medrxiv/MedrxivRecord.java	NA
 design/implementation/debt/debt-001-session-persistence-uses-java-serialization.md	30	IMPACTS	src/main/java/uk/co/terminological/bibliography/mcp/Session.java	NA
 design/implementation/debt/debt-002-opencitations-queries-dois-only.md	32	IMPACTS	src/main/java/uk/co/terminological/bibliography/mcp/BiblioFacade.java	NA
 design/implementation/debt/debt-002-opencitations-queries-dois-only.md	31	IMPACTS	src/main/java/uk/co/terminological/bibliography/opencitations/OpenCitationsClient.java	NA
@@ -82,7 +85,8 @@ design/implementation/debt/debt-006-cached-answers-are-never-invalidated.md	46	I
 design/implementation/debt/debt-006-cached-answers-have-no-invalidation-path.md	45	IMPACTS	src/main/java/uk/co/terminological/bibliography/CachingApiClient.java	NA
 design/implementation/debt/debt-007-cache-stores-break-on-cached-class-changes.md	43	IMPACTS	src/main/java/uk/co/terminological/bibliography/BinaryData.java	NA
 design/implementation/debt/debt-007-cache-stores-break-on-cached-class-changes.md	42	IMPACTS	src/main/java/uk/co/terminological/bibliography/CachingApiClient.java	NA
-design/implementation/debt/debt-008-jats-package-is-unused.md	33	IMPACTS	src/main/java/uk/co/terminological/bibliography/jats/JatsEntry.java	NA
+design/implementation/debt/debt-008-jats-package-is-unused.md	41	IMPACTS	src/main/java/uk/co/terminological/bibliography/jats/JatsEntry.java	NA
+design/implementation/debt/debt-009-shared-read-timeout-is-a-trap.md	39	IMPACTS	src/main/java/uk/co/terminological/bibliography/CachingApiClient.java	NA
 design/implementation/issues/issue-001-non-doi-citation-links-dropped.md	28	TESTED_BY	src/test/java/uk/co/terminological/pubmedclient/TestApiDriftParsing.java	NA
 design/implementation/issues/issue-002-third-party-api-endpoint-drift.md	31	TESTED_BY	src/test/java/uk/co/terminological/pubmedclient/TestApiDriftParsing.java	NA
 design/implementation/issues/issue-003-merged-record-resolution-is-non-deterministic.md	38	TESTED_BY	src/test/java/uk/co/terminological/pubmedclient/TestRecordMerge.java	NA
@@ -127,18 +131,17 @@ design/test-scripts/test-004-metadata-cleanup-tests.md	49	HAS_FEATURE	design/fea
 design/test-scripts/test-004-metadata-cleanup-tests.md	30	TESTED_BY	src/test/java/uk/co/terminological/bibliography/record/TestPlainText.java	NA
 design/test-scripts/test-004-metadata-cleanup-tests.md	28	TESTED_BY	src/test/java/uk/co/terminological/zotero/TestMetadataComparison.java	NA
 design/test-scripts/test-004-metadata-cleanup-tests.md	29	TESTED_BY	src/test/java/uk/co/terminological/zotero/TestZoteroItemWriter.java	NA
-docs/references/arXiv API User's Manual.md	511	LWP	docs/references/http:/search.cpan.org/%3C/sub%3Egaas/libwww-perl-5.808/lib/LWP.pm	NA
-docs/references/arXiv API User's Manual.md	457	LWP	docs/references/http:/search.cpan.org/~gaas/libwww-perl-5.808/lib/LWP.pm	NA
-docs/references/arXiv API User's Manual.md	460	PHP	docs/references/http:/www.php.net	NA
-docs/references/arXiv API User's Manual.md	161	RELEVANCE	docs/references/https:/lucene.apache.org/core/3_0_3/api/core/org/apache/lucene/search/Sort.html	NA
+design/test-scripts/test-005-preprint-tests.md	53	HAS_FEATURE	design/features/feat-009-preprint-clients.md	NA
+design/test-scripts/test-005-preprint-tests.md	40	TESTED_BY	src/test/java/uk/co/terminological/bibliography/mcp/TestCitationDedupe.java	NA
+design/test-scripts/test-005-preprint-tests.md	28	TESTED_BY	src/test/java/uk/co/terminological/medrxiv/TestMedrxivRecords.java	NA
 scripts/mcp-smoke-test.sh	2	TESTS	design/test-scripts/test-001-mcp-protocol-smoke-test.md	NA
 src/main/java/uk/co/terminological/bibliography/crossref/CrossRefWork.java	28	IMPLEMENTS	design/features/feat-006-classify-records-by-type-with-provenance.md	NA
 src/main/java/uk/co/terminological/bibliography/crossref/CrossRefWork.java	29	IMPLEMENTS	design/features/feat-008-clean-up-collection-metadata.md	NA
 src/main/java/uk/co/terminological/bibliography/entrez/EntrezEntry.java	23	IMPLEMENTS	design/features/feat-007-predictable-record-merging.md	NA
 src/main/java/uk/co/terminological/bibliography/europepmc/EuropePMCLiteResult.java	54	IMPLEMENTS	design/features/feat-006-classify-records-by-type-with-provenance.md	NA
 src/main/java/uk/co/terminological/bibliography/mcp/Analysis.java	26	IMPLEMENTS	design/features/feat-003-analyse-citation-graphs-and-topics.md	NA
-src/main/java/uk/co/terminological/bibliography/mcp/BiblioFacade.java	42	IMPLEMENTS	design/external-interfaces/interface-002-configuration-and-secrets.md	NA
-src/main/java/uk/co/terminological/bibliography/mcp/BiblioFacade.java	41	IMPLEMENTS	design/features/feat-001-expose-bibliographic-apis-over-mcp.md	NA
+src/main/java/uk/co/terminological/bibliography/mcp/BiblioFacade.java	44	IMPLEMENTS	design/external-interfaces/interface-002-configuration-and-secrets.md	NA
+src/main/java/uk/co/terminological/bibliography/mcp/BiblioFacade.java	43	IMPLEMENTS	design/features/feat-001-expose-bibliographic-apis-over-mcp.md	NA
 src/main/java/uk/co/terminological/bibliography/mcp/McpServer.java	39	IMPLEMENTS	design/external-interfaces/interface-001-mcp-stdio-protocol.md	NA
 src/main/java/uk/co/terminological/bibliography/mcp/McpServer.java	40	IMPLEMENTS	design/external-interfaces/interface-002-configuration-and-secrets.md	NA
 src/main/java/uk/co/terminological/bibliography/mcp/McpServer.java	38	IMPLEMENTS	design/features/feat-001-expose-bibliographic-apis-over-mcp.md	NA
@@ -149,6 +152,8 @@ src/main/java/uk/co/terminological/bibliography/mcp/McpTools.java	51	IMPLEMENTS	
 src/main/java/uk/co/terminological/bibliography/mcp/McpTools.java	53	IMPLEMENTS	design/features/feat-006-classify-records-by-type-with-provenance.md	NA
 src/main/java/uk/co/terminological/bibliography/mcp/McpTools.java	54	IMPLEMENTS	design/features/feat-008-clean-up-collection-metadata.md	NA
 src/main/java/uk/co/terminological/bibliography/mcp/Session.java	45	IMPLEMENTS	design/features/feat-002-explore-citation-networks-in-a-session.md	NA
+src/main/java/uk/co/terminological/bibliography/medrxiv/MedrxivClient.java	56	IMPLEMENTS	design/features/feat-009-preprint-clients.md	NA
+src/main/java/uk/co/terminological/bibliography/medrxiv/MedrxivRecord.java	30	IMPLEMENTS	design/features/feat-009-preprint-clients.md	NA
 src/main/java/uk/co/terminological/bibliography/record/ImmutableRecord.java	15	IMPLEMENTS	design/features/feat-006-classify-records-by-type-with-provenance.md	NA
 src/main/java/uk/co/terminological/bibliography/record/MergePolicy.java	21	IMPLEMENTS	design/features/feat-007-predictable-record-merging.md	NA
 src/main/java/uk/co/terminological/bibliography/record/MergedRecord.java	23	IMPLEMENTS	design/features/feat-006-classify-records-by-type-with-provenance.md	NA
@@ -169,7 +174,9 @@ src/main/java/uk/co/terminological/zotero/ZoteroItemWriter.java	27	IMPLEMENTS	de
 src/main/java/uk/co/terminological/zotero/ZoteroItemWriter.java	29	IMPLEMENTS	design/features/feat-008-clean-up-collection-metadata.md	NA
 src/main/java/uk/co/terminological/zotero/ZoteroLibraryIndex.java	26	IMPLEMENTS	design/features/feat-005-zotero-curated-repository-bridge.md	NA
 src/main/java/uk/co/terminological/zotero/ZoteroMatching.java	14	IMPLEMENTS	design/features/feat-005-zotero-curated-repository-bridge.md	NA
+src/test/java/uk/co/terminological/bibliography/mcp/TestCitationDedupe.java	21	TESTS	design/test-scripts/test-005-preprint-tests.md	NA
 src/test/java/uk/co/terminological/bibliography/record/TestPlainText.java	13	TESTS	design/test-scripts/test-004-metadata-cleanup-tests.md	NA
+src/test/java/uk/co/terminological/medrxiv/TestMedrxivRecords.java	36	TESTS	design/test-scripts/test-005-preprint-tests.md	NA
 src/test/java/uk/co/terminological/pubmedclient/TestApiDriftParsing.java	18	TESTS	design/implementation/issues/issue-001-non-doi-citation-links-dropped.md	NA
 src/test/java/uk/co/terminological/pubmedclient/TestApiDriftParsing.java	19	TESTS	design/implementation/issues/issue-002-third-party-api-endpoint-drift.md	NA
 src/test/java/uk/co/terminological/pubmedclient/TestApiDriftParsing.java	20	TESTS	design/implementation/issues/issue-004-truncated-responses-are-cached-as-empty.md	NA

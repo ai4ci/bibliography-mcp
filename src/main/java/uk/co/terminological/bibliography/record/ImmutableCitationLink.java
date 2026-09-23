@@ -21,6 +21,9 @@ public class ImmutableCitationLink implements Serializable, CitationLink {
 			Optional<Integer> of) {
 		this.source = Builder.citationReference(source);
 		this.target = Builder.citationReference(target);
+		// the index was accepted and dropped, which lost the position of every
+		// reference in a citation list
+		this.index = of.orElse(null);
 	}
 
 	@Override

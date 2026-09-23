@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import uk.co.terminological.bibliography.crossref.CrossRefClient;
 import uk.co.terminological.bibliography.entrez.EntrezClient;
 import uk.co.terminological.bibliography.europepmc.EuropePMCClient;
+import uk.co.terminological.bibliography.medrxiv.MedrxivClient;
 import uk.co.terminological.bibliography.opencitations.OpenCitationsClient;
 import uk.co.terminological.bibliography.pmcidconv.PMCIDClient;
 import uk.co.terminological.bibliography.unpaywall.UnpaywallClient;
@@ -84,6 +85,7 @@ public class BibliographicApis {
 	private PdfFetcher pdfFetcher;
 	private EuropePMCClient europepmc;
 	private OpenCitationsClient opencitations;
+	private MedrxivClient medrxiv;
 
 	private BibliographicApis(String appId, String developerEmail, String xrefToken, String pubmedApiToken, Optional<Path> cacheDir) {
 
@@ -103,6 +105,8 @@ public class BibliographicApis {
 				cacheDir.map(o -> o.resolve("europepmc")).orElse(null));
 		opencitations = OpenCitationsClient.create(
 				cacheDir.map(o -> o.resolve("opencitations")).orElse(null));
+		medrxiv = MedrxivClient.create(
+				cacheDir.map(o -> o.resolve("medrxiv")).orElse(null));
 	}
 
 	public BibliographicApis debugMode() {
@@ -112,6 +116,7 @@ public class BibliographicApis {
 		unpaywall.debugMode();
 		europepmc.debugMode();
 		opencitations.debugMode();
+		medrxiv.debugMode();
 		return this;
 	}
 	
@@ -122,6 +127,7 @@ public class BibliographicApis {
 		unpaywall.shutdown();
 		europepmc.shutdown();
 		opencitations.shutdown();
+		medrxiv.shutdown();
 		return this;
 	}
 	
@@ -149,6 +155,10 @@ public class BibliographicApis {
 		return europepmc;
 	}
 	
+	public MedrxivClient getMedrxiv() {
+		return medrxiv;
+	}
+
 	public OpenCitationsClient getOpenCitationsClient() {
 		return opencitations;
 	}

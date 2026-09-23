@@ -145,6 +145,27 @@ public class TestRecordMerge {
 		assertEquals("https://example.org/oa.pdf", merged.getPdfUri().map(URI::toString).orElse(null));
 	}
 
+	@Test
+	public void anIndexedServiceOutranksAPreprintServer() {
+		Record preprint = record("medrxiv", "posted-content", "Title from medRxiv", "Abstract from medRxiv");
+		Record indexed = record("europepmc", "Journal Article", "Title from Europe PMC", "Abstract from Europe PMC");
+
+		MergedRecord merged = MergedRecord.from(preprint).merge(indexed);
+
+		assertEquals("Title from Europe PMC", merged.getTitle().orElse(null));
+		assertEquals("Abstract from Europe PMC", merged.getAbstract().orElse(null));
+	}
+
+	@Test
+	public void aPreprintStillSuppliesWhatTheIndexedServicesLack() {
+		Record preprint = record("medrxiv", "posted-content", "Title from medRxiv", "Abstract from medRxiv");
+		Record indexed = recordWithout("europepmc", "Journal Article", "Title from Europe PMC", null);
+
+		MergedRecord merged = MergedRecord.from(preprint).merge(indexed);
+
+		assertEquals("Abstract from medRxiv", merged.getAbstract().orElse(null));
+	}
+
 	// ---- curated records are authoritative and kept distinct ----
 
 	@Test

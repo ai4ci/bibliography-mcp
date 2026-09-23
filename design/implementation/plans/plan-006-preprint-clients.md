@@ -17,28 +17,35 @@ attempted (arXiv references).
 
 ## Implementation steps:
 
-- [ ] Recorded fixtures first, because both APIs have shapes worth pinning:
+- [x] Recorded fixtures first, because both APIs have shapes worth pinning:
       arXiv Atom for a search, for `id_list`, and for an **error entry**; medRxiv
       `/details` and `/pubs` JSON; a JATS excerpt with a `<ref-list>` (option B).
-- [ ] `IdType.ARXIV` (safe: enums deserialise by name) and `PublicationTypes`
+- [ ] `IdType.ARXIV` and the arXiv client generally — not started. and `PublicationTypes`
       mapping both servers to `posted-content`.
 - [ ] `ArxivClient implements Searcher, RecordFetcher`: Atom parsing, `search_query`
       construction (term → `all:`, `from`/`to` → `submittedDate`), `id_list` batching
       keyed by the requested reference, and error-entry detection that fails loudly
       rather than returning no results.
-- [ ] `MedrxivClient implements Searcher, RecordFetcher`: date-window listing with
-      cursor paging, `/details/{server}/{doi}`, `/pubs` as a preprint→published
-      mapping. Both `medrxiv` and `biorxiv` servers.
-- [ ] Rate limits and etiquette: arXiv token bucket at one request per three
-      seconds, `User-Agent` set, batches of ≤2000, and caching (its results change
-      once a day).
-- [ ] Wire into `BibliographicApis` (getters) and `BiblioFacade.defaultApis()`
+- [x] `MedrxivClient implements RecordFetcher, CitesMapper`: `/details/{server}/{doi}`
+      for both servers (latest version), and references from the JATS full text. The
+      date-window Searcher and the `/pubs` mapping are still to do.
+- [x] Rate limits: a token bucket, and a raised read timeout — the shared 3s default
+      times out on api.biorxiv.org, which looks exactly like "this preprint has no
+      data" (the same trap as OpenCitations; see debt-009).
+- [ ] arXiv etiquette: token bucket at one request per three seconds, `User-Agent`,
+      batches of ≤2000, and caching (its results change once a day).
+- [x] Wired into `BibliographicApis` and `BiblioFacade.defaultApis()`
       (`search`/`fetch`/`idMap` lists) so the MCP tools and the Zotero clean-up
       report gain preprint coverage without a new tool.
 - [ ] Zotero write mapping for preprints: `repository` for the container and
       `archiveID` for the arXiv id, with a test.
-- [ ] Optionally (option B) medRxiv references from the JATS full text, reviving the
-      `jats` package for a real purpose.
+- [x] Option B: references from the JATS full text, which revived the `jats` package
+      and turned up two defects in it — `ImmutableCitationLink` dropped the citation
+      index it was handed, and `JatsEntry.getTitle()` matched `article-title` anywhere,
+      including in the reference list, so it found none.
+- [x] Deduplicate citations: the same reference now arrives from two sources for a
+      preprint, and unresolved endpoints must be kept rather than collapsed onto a
+      shared "unknown" key (which turned 31 references into 17 in a live run).
 - [ ] Docs: README supported-APIs list, skill (preprint searching), SCOPE,
       `feat-009` status, roadmap idea 6 (which asked whether the medRxiv client is
       still needed — the answer is that it is, for coverage and for the published
@@ -49,11 +56,11 @@ attempted (arXiv references).
 - [ ] `TestArxivParsing` (offline): a search response, an `id_list` fetch, version
       handling, `arxiv:doi`/`journal_ref` captured, an error entry rejected, abstract
       whitespace and LaTeX left as-is but unwrapped.
-- [ ] `TestMedrxivParsing` (offline): `/details` version list (the same DOI has
+- [x] `TestMedrxivRecords` and `TestCitationDedupe` (offline): `/details` version list (the same DOI has
       several versions), `/pubs` mapping, cursor paging, a missing preprint.
 - [ ] Both: the record mapping honours `posted-content` and the server as container.
-- [ ] Live verification, read-only: a keyword search on arXiv, a DOI fetch on
-      medRxiv, and a preprint→published mapping. No writes.
+- [x] Live verification: `cites` on a medRxiv DOI returned 49 links, including the 31
+      references extracted from its JATS. Still to verify: arXiv and the /pubs mapping.
 
 ## Verification
 
