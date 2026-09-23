@@ -256,13 +256,13 @@
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/europepmc/EuropePMCClient.java": {
-    "modified": 1790170209,
+    "modified": 1790180071,
     "comments": [],
     "anchors": {
-      "####": 43,
+      "####": 45,
       "####.1": 82
     },
-    "count_lines": 343,
+    "count_lines": 404,
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/europepmc/EuropePMCCoreResult.java": {
@@ -546,10 +546,10 @@
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/record/MergePolicy.java": {
-    "modified": 1790178617,
+    "modified": 1790179982,
     "comments": [],
     "anchors": [],
-    "count_lines": 92,
+    "count_lines": 112,
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/record/PlainText.java": {
@@ -889,10 +889,10 @@
     "percent": 0
   },
   "src/test/java/uk/co/terminological/pubmedclient/TestRecordMerge.java": {
-    "modified": 1790178617,
+    "modified": 1790180005,
     "comments": [],
     "anchors": [],
-    "count_lines": 283,
+    "count_lines": 300,
     "percent": 0
   },
   "src/test/java/uk/co/terminological/pubmedclient/TestRecordModel.java": {

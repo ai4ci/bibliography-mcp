@@ -114,21 +114,22 @@ captured at indexing time. With the current order a PMC record of the same work 
 so the correction does not show through in the merged view. For a *published* work the
 opposite is true and PMC is the better record, which is why the rule was asked for.
 
-Options:
+**Decided: option B.** A preprint server now ranks before every other source *for a
+`posted-content` record*, and the usual order stands for a published work — pinned by
+two tests, one for each direction. Implementing it exposed one more thing: the
+preprint servers are only promoted for their own kind of record, so a session that
+merges a preprint server's record into a *journal article* still prefers the indexed
+services.
 
-| # | Option | Effort | Notes |
-|---|--------|--------|-------|
-| A | Keep PMC-first everywhere | — | Simple, and right for published works. Preprint corrections are visible in the provenance but do not win |
-| B | Type-aware: for a `posted-content` work rank the publishing server above the indexed services | S | `MergePolicy.rank` already sees the record, so this is a targeted special case. Matches who owns the record |
-| C | Keep PMC-first, and let an agent ask for the server's view explicitly | — | Already possible: fetching the preprint DOI returns the server's record with its own provenance |
-
-**Recommendation:** B, but decided from a real case — a preprint with a v2 correction
-that a PMC copy contradicts — rather than in the abstract.
-
-**Also worth fixing separately:** Europe PMC's client returns no references for a
-preprint DOI (`10.1101/2021.02.09.21250937`) even though its API has 31 for the
-corresponding `PPR` record. The lookup does not resolve a preprint DOI to its PPR
-record, so the medRxiv route is currently the only one that works for preprints.
+**Also fixed (found while verifying):** Europe PMC's client returned no references for
+a preprint DOI, even though its API has 31 for the corresponding `PPR` record. Its
+`citesReferences` and `referencesCiting` had branches for `PMID` and `PMCID` and
+**none for `DOI`** — a DOI reference was ignored entirely — although its `DataSources`
+enum already listed `PPR`. A DOI is now resolved to Europe PMC's own source and id
+(`MED` for a journal article, `PPR` for a preprint) before its reference list is
+asked for, verified live: 31 references where there were none. The same pass fixed
+the loop's index counter, which was declared and never incremented, so every
+reference had claimed position 0 in the four places it appeared.
 
 ## Options for the references question
 

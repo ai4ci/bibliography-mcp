@@ -18,7 +18,7 @@ design/features/feat-005-zotero-curated-repository-bridge.md	1790173868	final	0.
 design/features/feat-006-classify-records-by-type-with-provenance.md	1790168418	final	0.2.0	model, provenance, zotero, accepted
 design/features/feat-007-predictable-record-merging.md	1790168418	final	0.2.0	model, merge, accepted
 design/features/feat-008-clean-up-collection-metadata.md	1790176785	final	0.3.0	zotero, enrichment, metadata
-design/features/feat-009-preprint-clients.md	1790179548	draft	0.4.0	arxiv, medrxiv, preprints, proposed
+design/features/feat-009-preprint-clients.md	1790180178	draft	0.4.0	arxiv, medrxiv, preprints, proposed
 design/implementation/debt/debt-001-session-persistence-uses-java-serialization.md	1790159628	open	0.3.0	persistence, serialization
 design/implementation/debt/debt-002-opencitations-queries-dois-only.md	1790159628	open	0.2.0	opencitations, id-types
 design/implementation/debt/debt-003-analysis-recomputes-topic-model-per-call.md	1790159628	open	0.3.0	analysis, performance
@@ -28,6 +28,7 @@ design/implementation/debt/debt-006-cached-answers-have-no-invalidation-path.md	
 design/implementation/debt/debt-007-cache-stores-break-on-cached-class-changes.md	1790170382	open	0.3.0	cache, serialization
 design/implementation/debt/debt-008-jats-package-is-unused.md	1790179145	closed	0.4.0	dead-code, jats
 design/implementation/debt/debt-009-shared-read-timeout-is-a-trap.md	1790179145	open	0.4.0	api-client, timeouts
+design/implementation/debt/debt-010-europepmc-duplicates-its-citation-loops.md	1790180178	open	0.5.0	duplication, europepmc
 design/implementation/issues/issue-001-non-doi-citation-links-dropped.md	1790159818	open	0.2.0	opencitations, citations, data-loss
 design/implementation/issues/issue-002-third-party-api-endpoint-drift.md	1790159818	open	0.2.0	maintenance, api-drift
 design/implementation/issues/issue-003-merged-record-resolution-is-non-deterministic.md	1790168418	closed	0.2.0	model, merge, data-integrity
@@ -37,14 +38,14 @@ design/implementation/plans/plan-002-record-type-publisher-provenance.md	1790168
 design/implementation/plans/plan-003-record-merge-policy.md	1790168418	final	0.2.0	model, merge
 design/implementation/plans/plan-004-zotero-bridge.md	1790172910	final	0.2.0	zotero, mcp, repository
 design/implementation/plans/plan-005-metadata-cleanup.md	1790176785	final	0.3.0	zotero, enrichment, metadata
-design/implementation/plans/plan-006-preprint-clients.md	1790179145	draft	0.4.0	arxiv, medrxiv, preprints
+design/implementation/plans/plan-006-preprint-clients.md	1790180178	draft	0.4.0	arxiv, medrxiv, preprints
 design/prototypes/prototype-001-opencitations-meta-pids.md	1790159877	draft	0.2.0	opencitations, id-mapping, prototype
 design/roadmap.md	1790178044	draft	0.1.0	roadmap, mcp, opencitations, bibliographic-apis
 design/test-scripts/test-001-mcp-protocol-smoke-test.md	1790159864	final	0.1.0	mcp, smoke-test
 design/test-scripts/test-002-api-behaviour-tests.md	1790168418	final	0.1.0	api-client, citations, analysis, parsing
 design/test-scripts/test-003-zotero-bridge-tests.md	1790171442	final	0.2.0	zotero, mcp, integration
 design/test-scripts/test-004-metadata-cleanup-tests.md	1790176785	final	0.3.0	zotero, enrichment, metadata
-design/test-scripts/test-005-preprint-tests.md	1790179117	final	0.4.0	medrxiv, preprint, jats
+design/test-scripts/test-005-preprint-tests.md	1790180178	final	0.4.0	medrxiv, preprint, jats
 docs/references/arXiv API User's Manual.md	1790178617	NA	NA	NA
 pom.xml	1790091122	NA	NA	NA
 scripts/mcp-smoke-test.sh	1790159692	NA	NA	NA
@@ -83,7 +84,7 @@ src/main/java/uk/co/terminological/bibliography/entrez/EntrezMeshHeading.java	15
 src/main/java/uk/co/terminological/bibliography/entrez/EntrezSearch.java	1600159711	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/europepmc/EuropePMCAuthor.java	1590593512	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/europepmc/EuropePMCCitation.java	1600427607	NA	NA	NA
-src/main/java/uk/co/terminological/bibliography/europepmc/EuropePMCClient.java	1790170209	NA	NA	NA
+src/main/java/uk/co/terminological/bibliography/europepmc/EuropePMCClient.java	1790180071	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/europepmc/EuropePMCCoreResult.java	1600552948	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/europepmc/EuropePMCListResult.java	1790170397	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/europepmc/EuropePMCLiteResult.java	1790168418	NA	NA	NA
@@ -121,7 +122,7 @@ src/main/java/uk/co/terminological/bibliography/record/ImmutablePrintReference.j
 src/main/java/uk/co/terminological/bibliography/record/ImmutableRecord.java	1790168418	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/record/ImmutableRecordReference.java	1600429802	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/record/ImmutableRecordReferenceMapping.java	1600353238	NA	NA	NA
-src/main/java/uk/co/terminological/bibliography/record/MergePolicy.java	1790178617	NA	NA	NA
+src/main/java/uk/co/terminological/bibliography/record/MergePolicy.java	1790179982	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/record/MergedRecord.java	1790168418	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/record/PlainText.java	1790176596	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/record/PrintRecord.java	1600347995	NA	NA	NA
@@ -171,7 +172,7 @@ src/test/java/uk/co/terminological/pubmedclient/TestMedrxivParsing.java	17834984
 src/test/java/uk/co/terminological/pubmedclient/TestOpenCitations.java	1590593512	NA	NA	NA
 src/test/java/uk/co/terminological/pubmedclient/TestPdfUtil.java	1590593512	NA	NA	NA
 src/test/java/uk/co/terminological/pubmedclient/TestPubMedRestClient.java	1783506996	NA	NA	NA
-src/test/java/uk/co/terminological/pubmedclient/TestRecordMerge.java	1790178617	NA	NA	NA
+src/test/java/uk/co/terminological/pubmedclient/TestRecordMerge.java	1790180005	NA	NA	NA
 src/test/java/uk/co/terminological/pubmedclient/TestRecordModel.java	1790176626	NA	NA	NA
 src/test/java/uk/co/terminological/pubmedclient/TestUnpaywallParsing.java	1590593512	NA	NA	NA
 src/test/java/uk/co/terminological/zotero/TestMetadataComparison.java	1790176626	NA	NA	NA

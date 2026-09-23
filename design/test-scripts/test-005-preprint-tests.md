@@ -42,10 +42,13 @@ tags: medrxiv, preprint, jats
 ### 3) Live, read-only
 
  1. Setup: a medRxiv DOI (`10.1101/2021.02.09.21250937`) and the MCP server.
- 2. Execution: `cites` with that DOI.
+ 2. Execution: `cites` and `cited_by` with that DOI.
  3. Expectation: the log shows the JATS yielding its references (31 for that
-    preprint) alongside the other sources, and the merged, deduplicated result
-    contains them. Also exercised: `fetch` by the same DOI.
+    preprint) **and** Europe PMC yielding its own 31 for the same work by resolving
+    the DOI to `PPR285723`; the merged, deduplicated result contains them (80 distinct
+    links in the recorded run), each with an incrementing citation index rather than
+    every one claiming position 0; `cited_by` finds the works that cite it. Also
+    exercised: `fetch` by the same DOI.
  4. Cleanup: none.
 
 ## Features

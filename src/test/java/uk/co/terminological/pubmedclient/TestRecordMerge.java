@@ -146,11 +146,25 @@ public class TestRecordMerge {
 	}
 
 	@Test
-	public void anIndexedServiceOutranksAPreprintServer() {
+	public void aPostedContentRecordIsOwnedByItsPreprintServer() {
+		// the server is the source of record for its own preprint and it updates
+		// first, so it wins even though the indexed services usually outrank it
 		Record preprint = record("medrxiv", "posted-content", "Title from medRxiv", "Abstract from medRxiv");
-		Record indexed = record("europepmc", "Journal Article", "Title from Europe PMC", "Abstract from Europe PMC");
+		Record indexed = record("europepmc", "posted-content", "Title from Europe PMC", "Abstract from Europe PMC");
 
 		MergedRecord merged = MergedRecord.from(preprint).merge(indexed);
+
+		assertEquals("Title from medRxiv", merged.getTitle().orElse(null));
+		assertEquals("Abstract from medRxiv", merged.getAbstract().orElse(null));
+	}
+
+	@Test
+	public void anIndexedServiceStillOutranksAPreprintServerForAPublishedWork() {
+		// the preprint servers are only promoted for their own kind of record
+		Record serverRecord = record("medrxiv", "journal-article", "Title from the server", "Abstract from the server");
+		Record indexed = record("europepmc", "Journal Article", "Title from Europe PMC", "Abstract from Europe PMC");
+
+		MergedRecord merged = MergedRecord.from(serverRecord).merge(indexed);
 
 		assertEquals("Title from Europe PMC", merged.getTitle().orElse(null));
 		assertEquals("Abstract from Europe PMC", merged.getAbstract().orElse(null));
@@ -250,6 +264,7 @@ public class TestRecordMerge {
 
 	static class Stub implements Record {
 		private final Provenance provenance;
+		private final String publicationType;
 		private final String title;
 		private final String abstractText;
 		private final List<Author> authors;
@@ -260,6 +275,7 @@ public class TestRecordMerge {
 		Stub(String source, String nativeType, String title, String abstractText,
 				List<Author> authors, boolean curated, String journal, String id) {
 			this.provenance = curated ? Provenance.curated(source) : Provenance.of(source, nativeType);
+			this.publicationType = nativeType;
 			this.title = title;
 			this.abstractText = abstractText;
 			this.authors = authors;
@@ -278,6 +294,7 @@ public class TestRecordMerge {
 		public Optional<LocalDate> getDate() { return Optional.of(LocalDate.of(2019, 1, 12)); }
 		public Optional<URI> getPdfUri() { return pdf == null ? Optional.empty() : Optional.of(URI.create(pdf)); }
 		public Optional<Provenance> getProvenance() { return Optional.of(provenance); }
+		public Optional<String> getPublicationType() { return Optional.ofNullable(publicationType); }
 		Stub withPdf(String url) { this.pdf = url; return this; }
 	}
 }

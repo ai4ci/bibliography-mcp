@@ -6,6 +6,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -26,6 +27,7 @@ import uk.co.terminological.bibliography.client.CitesMapper;
 import uk.co.terminological.bibliography.client.RecordFetcher;
 import uk.co.terminological.bibliography.client.Searcher;
 import uk.co.terminological.bibliography.record.Builder;
+import uk.co.terminological.datatypes.Tuple;
 import uk.co.terminological.bibliography.record.CitationLink;
 import uk.co.terminological.bibliography.record.IdType;
 import uk.co.terminological.bibliography.record.ImmutableCitationLink;
@@ -247,6 +249,47 @@ public class EuropePMCClient extends CachingApiClient implements Searcher,Record
 		AGR, CBA, CTX, ETH, HIR, MED, NBK, PAT, PMC, PPR
 	}
 
+	/**
+	 * The references of a work known by DOI.
+	 *
+	 * Europe PMC indexes preprints as `PPR` and journal articles as `MED`, so a DOI
+	 * has to be resolved to EPMC's own source and id before its reference list can be
+	 * asked for. A DOI reference used to be ignored entirely, which made a preprint's
+	 * references look absent even though the API held them.
+	 */
+	private List<EuropePMCReference> referencesForDoi(String doi) {
+		return resolveDoi(doi)
+				.map(resolved -> references(resolved.getFirst(), resolved.getSecond())
+						.getItems()
+						.collect(Collectors.toList()))
+				.orElseGet(List::of);
+	}
+
+	private List<EuropePMCCitation> citationsForDoi(String doi) {
+		return resolveDoi(doi)
+				.map(resolved -> citations(resolved.getFirst(), resolved.getSecond())
+						.getItems()
+						.collect(Collectors.toList()))
+				.orElseGet(List::of);
+	}
+
+	/** EPMC's own source and id for a work known by DOI, or empty if it has neither */
+	private Optional<Tuple<DataSources, String>> resolveDoi(String doi) {
+		return fullSearch("DOI:" + doi).getItems()
+				.findFirst()
+				.flatMap(item -> item.getSource()
+						.flatMap(source -> item.asString("id")
+								.map(id -> Tuple.create(source, id))));
+	}
+
+	/**
+	 * Whether EPMC knows this DOI at all, and under which source. Exposed because the
+	 * difference between "no references" and "not indexed here" matters to a caller.
+	 */
+	public Optional<String> resolveDoiSource(String doi) {
+		return resolveDoi(doi).map(resolved -> resolved.getFirst().toString());
+	}
+
 	@Override
 	public Collection<? extends CitationLink> citesReferences(Collection<? extends RecordReference> ref) {
 		
@@ -265,17 +308,26 @@ public class EuropePMCClient extends CachingApiClient implements Searcher,Record
 					out.add(new ImmutableCitationLink(
 							new ImmutableCitationReference(r, title, print), 
 							new ImmutableCitationReference(r2, r2.getTitle().orElse(null), null), 
-							Optional.of(i)));
+							Optional.of(i++)));
 				}
 			}
 			
+			if (r.getIdentifierType().equals(IdType.DOI)) {
+				int i = 0;
+				for (EuropePMCReference r2: referencesForDoi(r.getIdentifier().get())) {
+					out.add(new ImmutableCitationLink(
+							new ImmutableCitationReference(r, title, print),
+							new ImmutableCitationReference(r2, r2.getTitle().orElse(null), null),
+							Optional.of(i++)));
+				}
+			}
 			if (r.getIdentifierType().equals(IdType.PMCID)) {
 				int i = 0;
 				for (EuropePMCReference r2: references(DataSources.PMC,r.getIdentifier().get()).getItems().collect(Collectors.toList())) {
 					out.add(new ImmutableCitationLink(
 							new ImmutableCitationReference(r, title, print), 
 							new ImmutableCitationReference(r2, r2.getTitle().orElse(null), null), 
-							Optional.of(i)));
+							Optional.of(i++)));
 				}
 			}
 		}
@@ -302,17 +354,26 @@ public class EuropePMCClient extends CachingApiClient implements Searcher,Record
 					out.add(new ImmutableCitationLink(
 							new ImmutableCitationReference(r2, r2.getTitle().orElse(null), null),
 							new ImmutableCitationReference(r, title, print), 
-							Optional.of(i)));
+							Optional.of(i++)));
 				}
 			}
 			
+			if (r.getIdentifierType().equals(IdType.DOI)) {
+				int i = 0;
+				for (EuropePMCCitation r2: citationsForDoi(r.getIdentifier().get())) {
+					out.add(new ImmutableCitationLink(
+							new ImmutableCitationReference(r2, r2.getTitle().orElse(null), null),
+							new ImmutableCitationReference(r, title, print),
+							Optional.of(i++)));
+				}
+			}
 			if (r.getIdentifierType().equals(IdType.PMCID)) {
 				int i = 0;
 				for (EuropePMCCitation r2: citations(DataSources.PMC,r.getIdentifier().get()).getItems().collect(Collectors.toList())) {
 					out.add(new ImmutableCitationLink(
 							new ImmutableCitationReference(r2, r2.getTitle().orElse(null), null),
 							new ImmutableCitationReference(r, title, print), 
-							Optional.of(i)));
+							Optional.of(i++)));
 				}
 			}
 		}

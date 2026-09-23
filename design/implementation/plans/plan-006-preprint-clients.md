@@ -46,6 +46,13 @@ attempted (arXiv references).
 - [x] Deduplicate citations: the same reference now arrives from two sources for a
       preprint, and unresolved endpoints must be kept rather than collapsed onto a
       shared "unknown" key (which turned 31 references into 17 in a live run).
+- [x] Merge priority decided and implemented: for a `posted-content` record a
+      preprint server outranks the indexed services (the server owns its own record
+      and updates first), and for anything else the usual order stands.
+- [x] Fixed the Europe PMC gap found while verifying: its citation methods had no
+      `DOI` branch at all, so a preprint's references were reported as absent even
+      though its API held them (`PPR`). Also fixed the citation index counter, which
+      was never incremented in any of those loops.
 - [ ] Docs: README supported-APIs list, skill (preprint searching), SCOPE,
       `feat-009` status, roadmap idea 6 (which asked whether the medRxiv client is
       still needed — the answer is that it is, for coverage and for the published

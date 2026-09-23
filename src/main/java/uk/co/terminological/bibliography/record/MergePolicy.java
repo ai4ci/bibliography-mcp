@@ -80,10 +80,30 @@ public class MergePolicy implements Serializable {
 		return fieldPriority.getOrDefault(field, FALLBACK);
 	}
 
+	/** ranked before everything else, for the record a preprint server owns */
+	private static final int PREPRINT_SERVER_RANK = -1;
+
 	/** Lower is better; an unknown source ranks last rather than being dropped. */
 	public int rank(String field, Record record) {
-		int index = priorityFor(field).indexOf(sourceOf(record));
+		String source = sourceOf(record);
+		// A preprint server is the source of record for its own preprint and it
+		// updates first — a v2 correction appears there while the indexed services
+		// hold whatever they captured at indexing time — so for a posted-content
+		// record the server outranks them. For a published work the usual order
+		// stands, and the server has no publisher to offer anyway.
+		if (isPreprintServer(source) && isPostedContent(record)) return PREPRINT_SERVER_RANK;
+		int index = priorityFor(field).indexOf(source);
 		return index < 0 ? Integer.MAX_VALUE : index;
+	}
+
+	private static boolean isPreprintServer(String source) {
+		return List.of(Provenance.MEDRXIV, Provenance.BIORXIV, Provenance.ARXIV).contains(source);
+	}
+
+	private static boolean isPostedContent(Record record) {
+		return record.getPublicationType()
+				.map(PublicationTypes.POSTED_CONTENT::equals)
+				.orElse(false);
 	}
 
 	public static String sourceOf(Record record) {
