@@ -70,10 +70,10 @@ design/features/feat-008-clean-up-collection-metadata.md	122	IMPLEMENTED_BY	src/
 design/features/feat-008-clean-up-collection-metadata.md	121	IMPLEMENTED_BY	src/main/java/uk/co/terminological/zotero/MetadataComparison.java	NA
 design/features/feat-008-clean-up-collection-metadata.md	124	IMPLEMENTED_BY	src/main/java/uk/co/terminological/zotero/ZoteroClient.java	NA
 design/features/feat-008-clean-up-collection-metadata.md	125	IMPLEMENTED_BY	src/main/java/uk/co/terminological/zotero/ZoteroItemWriter.java	NA
-design/features/feat-009-preprint-clients.md	128	HAS_PLAN	design/implementation/plans/plan-006-preprint-clients.md	NA
-design/features/feat-009-preprint-clients.md	129	HAS_TEST	design/test-scripts/test-005-preprint-tests.md	NA
-design/features/feat-009-preprint-clients.md	133	IMPLEMENTED_BY	src/main/java/uk/co/terminological/bibliography/medrxiv/MedrxivClient.java	NA
-design/features/feat-009-preprint-clients.md	134	IMPLEMENTED_BY	src/main/java/uk/co/terminological/bibliography/medrxiv/MedrxivRecord.java	NA
+design/features/feat-009-preprint-clients.md	164	HAS_PLAN	design/implementation/plans/plan-006-preprint-clients.md	NA
+design/features/feat-009-preprint-clients.md	165	HAS_TEST	design/test-scripts/test-005-preprint-tests.md	NA
+design/features/feat-009-preprint-clients.md	169	IMPLEMENTED_BY	src/main/java/uk/co/terminological/bibliography/medrxiv/MedrxivClient.java	NA
+design/features/feat-009-preprint-clients.md	170	IMPLEMENTED_BY	src/main/java/uk/co/terminological/bibliography/medrxiv/MedrxivRecord.java	NA
 design/implementation/debt/debt-001-session-persistence-uses-java-serialization.md	30	IMPACTS	src/main/java/uk/co/terminological/bibliography/mcp/Session.java	NA
 design/implementation/debt/debt-002-opencitations-queries-dois-only.md	32	IMPACTS	src/main/java/uk/co/terminological/bibliography/mcp/BiblioFacade.java	NA
 design/implementation/debt/debt-002-opencitations-queries-dois-only.md	31	IMPACTS	src/main/java/uk/co/terminological/bibliography/opencitations/OpenCitationsClient.java	NA

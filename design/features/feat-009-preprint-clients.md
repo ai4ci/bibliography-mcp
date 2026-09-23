@@ -94,6 +94,42 @@ mapping for preprints. Some JATS references resolve only partially (no DOI and n
 title) because `JatsReference` reads only part of a `citation` element — worth
 extending to `source`, `year`, `volume` and `fpage`.
 
+## Open question: is the PMC-first priority right for preprints?
+
+Asked by the developer, and it is worth writing down because the answer differs
+between the two things people mean by "priority".
+
+**Citations are not suppressed.** The merge priority applies to *record fields*
+(title, date, abstract, publisher, container, type, authors, licences) and never sees
+a citation link. Links accumulate, and the deduplication added with this feature only
+collapses the *same* source-to-target pair, keeping the richer of the two descriptions
+of it. So medRxiv's 31 JATS references were added alongside Europe PMC's, and the live
+run returned 49 distinct links; for that preprint Europe PMC contributed **zero**
+references anyway (see below), so nothing was suppressed at all.
+
+**Record metadata is suppressed, and that cuts the wrong way for a preprint.** A
+preprint server is the source of record for its own preprint and it updates first: a
+v2 with a corrected abstract or date appears there, while Europe PMC holds whatever it
+captured at indexing time. With the current order a PMC record of the same work wins,
+so the correction does not show through in the merged view. For a *published* work the
+opposite is true and PMC is the better record, which is why the rule was asked for.
+
+Options:
+
+| # | Option | Effort | Notes |
+|---|--------|--------|-------|
+| A | Keep PMC-first everywhere | — | Simple, and right for published works. Preprint corrections are visible in the provenance but do not win |
+| B | Type-aware: for a `posted-content` work rank the publishing server above the indexed services | S | `MergePolicy.rank` already sees the record, so this is a targeted special case. Matches who owns the record |
+| C | Keep PMC-first, and let an agent ask for the server's view explicitly | — | Already possible: fetching the preprint DOI returns the server's record with its own provenance |
+
+**Recommendation:** B, but decided from a real case — a preprint with a v2 correction
+that a PMC copy contradicts — rather than in the abstract.
+
+**Also worth fixing separately:** Europe PMC's client returns no references for a
+preprint DOI (`10.1101/2021.02.09.21250937`) even though its API has 31 for the
+corresponding `PPR` record. The lookup does not resolve a preprint DOI to its PPR
+record, so the medRxiv route is currently the only one that works for preprints.
+
 ## Options for the references question
 
 | # | Option | Effort | Notes |

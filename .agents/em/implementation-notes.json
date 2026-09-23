@@ -336,10 +336,10 @@
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/mcp/BiblioFacade.java": {
-    "modified": 1790179066,
+    "modified": 1790179529,
     "comments": [],
     "anchors": [],
-    "count_lines": 446,
+    "count_lines": 460,
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/mcp/McpServer.java": {
@@ -784,10 +784,10 @@
     "percent": 0
   },
   "src/test/java/uk/co/terminological/bibliography/mcp/TestCitationDedupe.java": {
-    "modified": 1790179014,
+    "modified": 1790179529,
     "comments": [],
     "anchors": [],
-    "count_lines": 86,
+    "count_lines": 99,
     "percent": 0
   },
   "src/test/java/uk/co/terminological/bibliography/record/TestPlainText.java": {

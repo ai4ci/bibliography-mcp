@@ -163,16 +163,30 @@ public class BiblioFacade
 	 */
 	static Collection<CitationLink> dedupeCitations(Collection<? extends CitationLink> links) {
 		List<CitationLink> out = new ArrayList<>();
-		Set<String> seen = new LinkedHashSet<>();
+		Map<String, CitationLink> byPair = new LinkedHashMap<>();
 		for (CitationLink link : links) {
 			String key = pairKey(link);
 			if (key == null) {
 				out.add(link);
 				continue;
 			}
-			if (seen.add(key)) out.add(link);
+			// keep the richest version of the pair: two APIs may describe the same
+			// citation and one of them may have no title or no target identifier,
+			// and taking whichever came first would throw the better one away
+			byPair.merge(key, link, (first, second) -> richness(second) > richness(first) ? second : first);
 		}
+		out.addAll(byPair.values());
 		return out;
+	}
+
+	/** how much a link tells us, for choosing between two descriptions of one citation */
+	private static int richness(CitationLink link) {
+		int score = 0;
+		if (identifiable(link.getTarget()).isPresent()) score += 2;
+		if (link.getTarget().getTitle().isPresent()) score += 1;
+		if (link.getSource().getTitle().isPresent()) score += 1;
+		if (link.getIndex().isPresent()) score += 1;
+		return score;
 	}
 
 	private static String pairKey(CitationLink link) {

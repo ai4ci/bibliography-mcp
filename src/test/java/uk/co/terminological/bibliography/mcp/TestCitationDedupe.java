@@ -60,6 +60,19 @@ public class TestCitationDedupe {
 	}
 
 	@Test
+	public void theRicherDescriptionOfTheSameCitationIsTheOneKept() {
+		// Europe PMC may describe a citation with no title while the preprint's own
+		// JATS describes the same one fully; whichever came first must not decide
+		CitationLink thin = link("10.1/preprint", "10.1136/a", null);
+		CitationLink rich = link("10.1/preprint", "10.1136/a", "A title");
+
+		var deduped = BiblioFacade.dedupeCitations(List.of(thin, rich));
+
+		assertEquals(1, deduped.size());
+		assertEquals("A title", deduped.iterator().next().getTarget().getTitle().orElse(null));
+	}
+
+	@Test
 	public void linksWithNeitherIdentifierNorTitleAreKeptRatherThanCollapsed() {
 		// this bit in a live run: an "unknown" dedupe key merged every unidentified
 		// reference into one, turning 31 references into 17

@@ -18,7 +18,7 @@ design/features/feat-005-zotero-curated-repository-bridge.md	1790173868	final	0.
 design/features/feat-006-classify-records-by-type-with-provenance.md	1790168418	final	0.2.0	model, provenance, zotero, accepted
 design/features/feat-007-predictable-record-merging.md	1790168418	final	0.2.0	model, merge, accepted
 design/features/feat-008-clean-up-collection-metadata.md	1790176785	final	0.3.0	zotero, enrichment, metadata
-design/features/feat-009-preprint-clients.md	1790179145	draft	0.4.0	arxiv, medrxiv, preprints, proposed
+design/features/feat-009-preprint-clients.md	1790179548	draft	0.4.0	arxiv, medrxiv, preprints, proposed
 design/implementation/debt/debt-001-session-persistence-uses-java-serialization.md	1790159628	open	0.3.0	persistence, serialization
 design/implementation/debt/debt-002-opencitations-queries-dois-only.md	1790159628	open	0.2.0	opencitations, id-types
 design/implementation/debt/debt-003-analysis-recomputes-topic-model-per-call.md	1790159628	open	0.3.0	analysis, performance
@@ -93,7 +93,7 @@ src/main/java/uk/co/terminological/bibliography/jats/JatsCitedAuthor.java	163050
 src/main/java/uk/co/terminological/bibliography/jats/JatsEntry.java	1790178735	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/jats/JatsReference.java	1630505794	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/mcp/Analysis.java	1790159689	NA	NA	NA
-src/main/java/uk/co/terminological/bibliography/mcp/BiblioFacade.java	1790179066	NA	NA	NA
+src/main/java/uk/co/terminological/bibliography/mcp/BiblioFacade.java	1790179529	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/mcp/McpServer.java	1790170854	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/mcp/McpTools.java	1790176785	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/mcp/Session.java	1790159689	NA	NA	NA
@@ -156,7 +156,7 @@ src/main/resources/schema/nlm-articleset-2.0.dtd	1590593512	NA	NA	NA
 src/main/resources/schema/pubmed_180101.dtd	1590593512	NA	NA	NA
 src/main/resources/schema/pubmed_190101.dtd	1590593512	NA	NA	NA
 src/test/debug.jpage	1600157958	NA	NA	NA
-src/test/java/uk/co/terminological/bibliography/mcp/TestCitationDedupe.java	1790179014	NA	NA	NA
+src/test/java/uk/co/terminological/bibliography/mcp/TestCitationDedupe.java	1790179529	NA	NA	NA
 src/test/java/uk/co/terminological/bibliography/record/TestPlainText.java	1790176785	NA	NA	NA
 src/test/java/uk/co/terminological/medrxiv/TestMedrxivRecords.java	1790178690	NA	NA	NA
 src/test/java/uk/co/terminological/pubmedclient/TestApiDriftParsing.java	1790170176	NA	NA	NA
