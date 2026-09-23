@@ -20,7 +20,7 @@ The R interface was replaced by an MCP server. Historical context:
 * [HAS_FEATURE](/design/features/feat-002-explore-citation-networks-in-a-session.md) - collect, merge and expand a citation network across tool calls
 * [HAS_FEATURE](/design/features/feat-003-analyse-citation-graphs-and-topics.md) - page rank and topic modelling over a session
 
-## v0.2.0 - planned
+## v0.2.0 - implemented (unreleased)
 
 * [HAS_FEATURE](/design/features/feat-006-classify-records-by-type-with-provenance.md) - publication type, publisher and provenance on records
 * [HAS_FEATURE](/design/features/feat-007-predictable-record-merging.md) - one predictable source of truth when several APIs describe the same work

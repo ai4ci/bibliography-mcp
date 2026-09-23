@@ -332,7 +332,7 @@ publishing into a sub-collection.
 
 ---
 
-## 3. Minimum data model change to support curated-library content — `accepted`, effort S–M
+## 3. Minimum data model change to support curated-library content — `done`, effort S–M
 
 Draft thoughts, written after reading `Record` against the developer's actual
 Zotero library. The goal is the **smallest** model change that supports ~90% of
@@ -555,7 +555,7 @@ without changing the MCP tool contract or the session model.
 
 ---
 
-## 5. Predictable merging across discovery APIs — `accepted`, effort M
+## 5. Predictable merging across discovery APIs — `done`, effort M
 
 ### Context
 

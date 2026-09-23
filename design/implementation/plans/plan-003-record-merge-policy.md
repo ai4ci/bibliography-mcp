@@ -1,5 +1,5 @@
 ---
-status: draft
+status: final
 target-version: 0.2.0
 tags: model, merge
 ---
@@ -51,37 +51,40 @@ Terse implementation checklist. Depends on
 
 ## Implementation steps:
 
-- [ ] Introduce a `MergePolicy` (name TBD) holding the per-field priority table
+- [x] Introduce a `MergePolicy` (name TBD) holding the per-field priority table
       and the curated-source predicate. Keep it a plain object with sensible
       defaults; no config file needed yet.
-- [ ] Rewrite the `MergedRecord` accessors to resolve through the policy
+- [x] Rewrite the `MergedRecord` accessors to resolve through the policy
       (ordered reduction over contributing records) instead of `findAny()`.
-- [ ] De-duplicate authors (ORCID, else normalised name); keep source order.
-- [ ] Exclude curated-provenance records from the merge in `Session.add` /
+- [x] De-duplicate authors (ORCID, else normalised name); keep source order.
+- [x] Exclude curated-provenance records from *being overridden*: a curated value is
+      authoritative and API values only fill the gaps it leaves (see the note below).
+- [ ] (not done) Keep a curated record as its own work entry — needs the session
+      id-map change, see the note below. Original step: exclude curated-provenance records from the merge in `Session.add` /
       `MergedRecord.merge`, whichever is the single choke point — verify which,
       and keep it to one place.
-- [ ] Remove the two stale `//TODO: Check for duplicates` / `//TODO: resolve
+- [x] Removed the two stale `//TODO: Check for duplicates` / `//TODO: resolve
       duplicates` comments once they are true.
-- [ ] Expose contributing provenances (from feat-006) so a caller can see who
+- [x] Expose contributing provenances (from feat-006) so a caller can see who
       said what.
 - [ ] Optional: a `session_conflicts`-style report listing works whose
       contributing records disagree, since nothing is silently discarded.
 
 ## Tests (offline)
 
-- [ ] Rewrite `TestRecordMerge`: same inputs in both insertion orders produce
+- [x] Rewrite `TestRecordMerge`: same inputs in both insertion orders produce
       **identical** merged output (this is the failing-then-passing acceptance
       test for issue-003).
-- [ ] Authors from two sources appear once.
-- [ ] A curated (Zotero-provenance) record is *not* merged into the API record.
-- [ ] Priority: with title present only in the lower-priority source, that value
+- [x] Authors from two sources appear once.
+- [x] A curated (Zotero-provenance) value is never overridden by an API value.
+- [x] Priority: with title present only in the lower-priority source, that value
       is still used (non-empty beats priority).
 
 ## Verification
 
-- [ ] `mvn -o test -Dtest=TestRecordMerge`
-- [ ] `mvn -o test-compile`, `./scripts/mcp-smoke-test.sh`
-- [ ] `Rscript …/design-check.R -d .` → 0 defects
+- [x] `mvn -o test -Dtest=TestRecordMerge` — 12/12
+- [x] `mvn -o test-compile`, `./scripts/mcp-smoke-test.sh`
+- [x] `Rscript …/design-check.R -d .` → 0 defects
 
 ## Open questions
 

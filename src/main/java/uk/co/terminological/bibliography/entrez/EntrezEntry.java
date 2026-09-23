@@ -13,13 +13,17 @@ import java.util.stream.Stream;
 
 import uk.co.terminological.bibliography.record.IdType;
 import uk.co.terminological.bibliography.record.PrintRecord;
+import uk.co.terminological.bibliography.record.Provenance;
 import uk.co.terminological.bibliography.record.Raw;
 import uk.co.terminological.bibliography.record.RecordReference;
 import uk.co.terminological.fluentxml.XmlElement;
 import uk.co.terminological.fluentxml.XmlException;
 import uk.co.terminological.fluentxml.XmlList;
 
+// [IMPLEMENTS](/design/features/feat-007-predictable-record-merging.md)
 public class EntrezEntry implements PrintRecord, Raw<XmlElement> {
+	// provenance lets the merge policy rank this source; the native publication type is not parsed yet
+	public Optional<Provenance> getProvenance() { return Optional.of(Provenance.of(Provenance.ENTREZ, null)); }
 
 	private XmlElement raw; //PubmedArticle
 

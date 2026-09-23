@@ -1,0 +1,84 @@
+package uk.co.terminological.bibliography.record;
+
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * How merged records resolve conflicting field values.
+ *
+ * A documented per-field priority order over sources, so the same inputs always
+ * produce the same record no matter which order the APIs answered in. There are
+ * no heuristics: "longest abstract wins" would be deterministic in letter but
+ * unpredictable in spirit, whereas an explicit table can be read and argued with.
+ *
+ * Curated records (a user's Zotero item) are authoritative: where they have a
+ * value it is never overridden by an API, and where they leave a gap the APIs
+ * fill it. Curated records also keep their own provenance, so which item a value
+ * came from stays recoverable for write-back.
+ *
+ * [IMPLEMENTS](/design/features/feat-007-predictable-record-merging.md)
+ */
+public class MergePolicy implements Serializable {
+
+	private static final long serialVersionUID = 1L;
+
+	public static final String TITLE = "title";
+	public static final String ABSTRACT = "abstract";
+	public static final String CONTAINER = "containerTitle";
+	public static final String DATE = "date";
+	public static final String PDF = "pdfUri";
+	public static final String PUBLICATION_TYPE = "publicationType";
+	public static final String PUBLISHER = "publisher";
+	public static final String AUTHORS = "authors";
+	public static final String LICENCES = "licences";
+	public static final String CITATIONS = "citations";
+
+	/** used for fields with no explicit table entry, and to order list-valued fields */
+	private static final List<String> FALLBACK = List.of(
+			Provenance.CROSSREF,
+			Provenance.EUROPEPMC,
+			Provenance.ENTREZ,
+			Provenance.UNPAYWALL,
+			Provenance.ZOTERO);
+
+	private final Map<String, List<String>> fieldPriority;
+
+	private MergePolicy(Map<String, List<String>> fieldPriority) {
+		this.fieldPriority = fieldPriority;
+	}
+
+	public static MergePolicy standard() {
+		return new MergePolicy(Map.of(
+				// a registration agency is the best source of a title and date;
+				// abstracts are better in Europe PMC and Entrez
+				TITLE, List.of(Provenance.CROSSREF, Provenance.EUROPEPMC, Provenance.ENTREZ),
+				ABSTRACT, List.of(Provenance.EUROPEPMC, Provenance.ENTREZ, Provenance.CROSSREF),
+				CONTAINER, List.of(Provenance.CROSSREF, Provenance.EUROPEPMC, Provenance.ENTREZ),
+				DATE, List.of(Provenance.CROSSREF, Provenance.ENTREZ, Provenance.EUROPEPMC),
+				PDF, List.of(Provenance.UNPAYWALL, Provenance.EUROPEPMC, Provenance.CROSSREF),
+				PUBLICATION_TYPE, List.of(Provenance.CROSSREF, Provenance.EUROPEPMC, Provenance.ZOTERO),
+				PUBLISHER, List.of(Provenance.CROSSREF, Provenance.ZOTERO),
+				AUTHORS, FALLBACK,
+				LICENCES, FALLBACK,
+				CITATIONS, FALLBACK));
+	}
+
+	public List<String> priorityFor(String field) {
+		return fieldPriority.getOrDefault(field, FALLBACK);
+	}
+
+	/** Lower is better; an unknown source ranks last rather than being dropped. */
+	public int rank(String field, Record record) {
+		int index = priorityFor(field).indexOf(sourceOf(record));
+		return index < 0 ? Integer.MAX_VALUE : index;
+	}
+
+	public boolean isCurated(Record record) {
+		return record.getProvenance().map(Provenance::isCurated).orElse(false);
+	}
+
+	public static String sourceOf(Record record) {
+		return record.getProvenance().map(Provenance::getSource).orElse("");
+	}
+}

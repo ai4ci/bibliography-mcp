@@ -13,10 +13,14 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import uk.co.terminological.bibliography.ExtensibleJson;
 import uk.co.terminological.bibliography.record.IdType;
+import uk.co.terminological.bibliography.record.Provenance;
 import uk.co.terminological.bibliography.record.Record;
 import uk.co.terminological.bibliography.record.RecordReference;
 
+// [IMPLEMENTS](/design/features/feat-007-predictable-record-merging.md)
 public class UnpaywallResult extends ExtensibleJson implements Record {
+	// provenance lets the merge policy rank this source (it is preferred for pdf/open-access locations)
+	public Optional<Provenance> getProvenance() { return Optional.of(Provenance.of(Provenance.UNPAYWALL, null)); }
 	public UnpaywallResult(JsonNode node) {super(node);}
 	
 	public Optional<String> getIdentifier() {return this.asString("doi").map(s->s.replaceAll("^PMC", ""));}

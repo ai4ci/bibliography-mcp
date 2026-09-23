@@ -175,10 +175,10 @@
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/entrez/EntrezEntry.java": {
-    "modified": 1600552703,
+    "modified": 1790167550,
     "comments": [],
     "anchors": [],
-    "count_lines": 212,
+    "count_lines": 216,
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/entrez/EntrezLink.java": {
@@ -507,10 +507,17 @@
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/record/MergedRecord.java": {
-    "modified": 1790166970,
+    "modified": 1790167550,
     "comments": [],
     "anchors": [],
-    "count_lines": 179,
+    "count_lines": 300,
+    "percent": 0
+  },
+  "src/main/java/uk/co/terminological/bibliography/record/MergePolicy.java": {
+    "modified": 1790167289,
+    "comments": [],
+    "anchors": [],
+    "count_lines": 84,
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/record/PrintRecord.java": {
@@ -612,10 +619,10 @@
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/unpaywall/UnpaywallResult.java": {
-    "modified": 1600427607,
+    "modified": 1790167550,
     "comments": [],
     "anchors": [],
-    "count_lines": 69,
+    "count_lines": 73,
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/zotero/ZoteroClient.java": {
@@ -766,10 +773,10 @@
     "percent": 0
   },
   "src/test/java/uk/co/terminological/pubmedclient/TestRecordMerge.java": {
-    "modified": 1790165893,
+    "modified": 1790167550,
     "comments": [],
     "anchors": [],
-    "count_lines": 103,
+    "count_lines": 249,
     "percent": 0
   },
   "src/test/java/uk/co/terminological/pubmedclient/TestRecordModel.java": {

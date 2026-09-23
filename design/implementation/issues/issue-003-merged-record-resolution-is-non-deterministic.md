@@ -1,5 +1,5 @@
 ---
-status: open
+status: closed
 since-version: 0.1.0
 target-version: 0.2.0
 tags: model, merge, data-integrity
@@ -36,6 +36,15 @@ which recorded this as deferred debt when it should have been a defect.
 ## Reproduced by
 
 [TESTED_BY](/src/test/java/uk/co/terminological/pubmedclient/TestRecordMerge.java)
+
+## Resolution
+
+Fixed by [feat-007](/design/features/feat-007-predictable-record-merging.md) /
+[plan-003](/design/implementation/plans/plan-003-record-merge-policy.md): deterministic
+per-field priority resolution, author de-duplication, unions for list-valued
+fields, and curated values treated as authoritative. Fixed a second defect found
+while doing so: merging a `MergedRecord` into another flattened it to a single
+record, silently discarding every contribution but the first.
 
 ## Fix
 

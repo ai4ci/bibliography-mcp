@@ -60,12 +60,29 @@ design.
 
 [TESTED_BY](/src/test/java/uk/co/terminological/pubmedclient/TestRecordModel.java)
 
+### 4) Record merging: predictable and robust
+
+ 1. Setup: stub records carrying provenance, authors and a PDF location, merged
+    in both insertion orders.
+ 2. Execution: merge two or three records and compare the resolved title,
+    abstract, journal, date, authors, identifiers, licences and provenance.
+ 3. Expectation: the same inputs give the same result regardless of order; the
+    documented per-field priority decides each field; a lower-priority source
+    still fills a gap; authors are de-duplicated (by ORCID when present); unions
+    are used for identifiers and licences; a curated value is never overridden by
+    an API value but API values fill its gaps; and merging an already-merged
+    record absorbs its contributions instead of flattening them.
+ 4. Cleanup: none — offline.
+
+[TESTED_BY](/src/test/java/uk/co/terminological/pubmedclient/TestRecordMerge.java)
+
 ## Features
 
 - [HAS_FEATURE](/design/features/feat-001-expose-bibliographic-apis-over-mcp.md)
 - [HAS_FEATURE](/design/features/feat-002-explore-citation-networks-in-a-session.md)
 - [HAS_FEATURE](/design/features/feat-003-analyse-citation-graphs-and-topics.md)
 - [HAS_FEATURE](/design/features/feat-006-classify-records-by-type-with-provenance.md)
+- [HAS_FEATURE](/design/features/feat-007-predictable-record-merging.md)
 
 ## Interfaces
 
