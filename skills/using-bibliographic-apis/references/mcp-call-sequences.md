@@ -23,7 +23,12 @@ response.
 {"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"search","arguments":{"query":"machine learning clinical safety","from":"2019-01-01","to":"2023-01-01","limit":10}}}
 // result.content[0].text is a JSON array of unified records:
 // [{"id":"10.1136/bmjqs-2018-008370","idType":"DOI","title":"...","abstract":"...",
-//   "journal":"...","date":"2019-03-01","PMID":"30636200","DOI":"10.1136/...","PMCID":"PMC6560460"}]
+//   "journal":"...","date":"2019-03-01","PMID":"30636200","DOI":"10.1136/...","PMCID":"PMC6560460",
+//   "publicationType":"article-journal","publisher":"BMJ",
+//   "provenance":{"source":"crossref","nativeType":"journal-article"}}]
+// publicationType uses the CSL vocabulary (article-journal, chapter, report, posted-content,
+// book, dataset, ...) and is absent when the source did not say; ISBN appears for books.
+// provenance records which API asserted the record and its native type for that API.
 
 {"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"fetch","arguments":{"ids":[{"idType":"DOI","id":"10.1136/bmjqs-2018-008370"},{"idType":"PMID","id":"30636200"}]}}}
 ```

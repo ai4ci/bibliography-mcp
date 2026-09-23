@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -15,6 +16,7 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+// [IMPLEMENTS](/design/features/feat-006-classify-records-by-type-with-provenance.md)
 public class MergedRecord implements RecordWithCitations, Serializable {
 
 	List<ImmutableRecord> records = new ArrayList<>();
@@ -45,6 +47,7 @@ public class MergedRecord implements RecordWithCitations, Serializable {
 		return getIdentifier(IdType.DOI)
 				.or(() -> getIdentifier(IdType.PMID))
 				.or(() -> getIdentifier(IdType.PMCID).map(s -> s.replaceAll("^PMC", "")))
+				.or(() -> getIdentifier(IdType.ISBN))
 				.or(() -> getIdentifiers().stream().flatMap(i -> i.getIdentifier().stream()).findFirst());
 	}
 
@@ -53,6 +56,7 @@ public class MergedRecord implements RecordWithCitations, Serializable {
 		if(getIdentifier(IdType.DOI).isPresent()) return IdType.DOI;
 		if(getIdentifier(IdType.PMID).isPresent()) return IdType.PMID;
 		if(getIdentifier(IdType.PMCID).isPresent()) return IdType.PMCID;
+		if(getIdentifier(IdType.ISBN).isPresent()) return IdType.ISBN;
 		return IdType.UNK;
 	}
 
@@ -95,6 +99,34 @@ public class MergedRecord implements RecordWithCitations, Serializable {
 	@Override
 	public Optional<URI> getPdfUri() {
 		return records.stream().flatMap(r -> r.getPdfUri().stream()).filter(s -> s != null).findAny();
+	}
+
+	// feat-006: first non-empty for now. feat-007 replaces these with the
+	// documented per-field priority policy (plan-003) — do not rely on which
+	// contributing record wins until then.
+	@Override
+	public Optional<String> getPublicationType() {
+		return records.stream().flatMap(r -> r.getPublicationType().stream()).filter(s -> s != null).findFirst();
+	}
+
+	@Override
+	public Optional<String> getPublisher() {
+		return records.stream().flatMap(r -> r.getPublisher().stream()).filter(s -> s != null).findFirst();
+	}
+
+	@Override
+	public Optional<Provenance> getProvenance() {
+		return getProvenances().stream().findFirst();
+	}
+
+	/** Every contributing source, de-duplicated by source, so provenance survives merging. */
+	public List<Provenance> getProvenances() {
+		return records.stream()
+				.flatMap(r -> r.getProvenance().stream())
+				.collect(Collectors.toMap(Provenance::getSource, p -> p, (a, b) -> a, LinkedHashMap::new))
+				.values()
+				.stream()
+				.collect(Collectors.toList());
 	}
 
 	public static Collector<Record,List<Record>,Optional<MergedRecord>> collector() {

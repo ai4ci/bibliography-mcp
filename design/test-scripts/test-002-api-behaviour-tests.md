@@ -43,11 +43,29 @@ design.
 
 [TESTED_BY](/src/test/java/uk/co/terminological/pubmedclient/TestApiDriftParsing.java)
 
+### 3) Record model: type, publisher, provenance
+
+ 1. Setup: recorded payloads inline, a Jackson mapper with the Jdk8 module.
+ 2. Execution: build records from CrossRef and Europe PMC payloads (lite
+    `pubType` string and core `pubTypeList.pubType` array), merge records with
+    different provenances, build an ISBN-only record, and serialise a record for
+    MCP (`McpTools.recordJson`).
+ 3. Expectation: native vocabularies map to the CSL vocabulary
+    (`journal-article`→`article-journal`, `book-chapter`→`chapter`, a systematic
+    review→`review`), an unknown type passes through unchanged, `containerTitle`
+    falls back to `journal`, every contributing provenance survives the merge,
+    an ISBN-only record reports `IdType.ISBN`, and the MCP JSON carries
+    `publicationType`/`publisher`/`provenance` while omitting absent fields.
+ 4. Cleanup: none — offline.
+
+[TESTED_BY](/src/test/java/uk/co/terminological/pubmedclient/TestRecordModel.java)
+
 ## Features
 
 - [HAS_FEATURE](/design/features/feat-001-expose-bibliographic-apis-over-mcp.md)
 - [HAS_FEATURE](/design/features/feat-002-explore-citation-networks-in-a-session.md)
 - [HAS_FEATURE](/design/features/feat-003-analyse-citation-graphs-and-topics.md)
+- [HAS_FEATURE](/design/features/feat-006-classify-records-by-type-with-provenance.md)
 
 ## Interfaces
 

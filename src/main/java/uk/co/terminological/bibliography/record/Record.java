@@ -13,9 +13,30 @@ import java.util.stream.Stream;
 import uk.co.terminological.bibliography.CiteProcProvider;
 import uk.co.terminological.bibliography.CiteProcProvider.Format;
 
+// [IMPLEMENTS](/design/features/feat-006-classify-records-by-type-with-provenance.md)
 public interface Record extends RecordReference {
 
 	public List<? extends RecordReference> getOtherIdentifiers();
+
+	/**
+	 * The kind of work, in the CSL item-type vocabulary (see {@link PublicationTypes}).
+	 * A string rather than an enum so unknown values survive; sources pass their
+	 * own value through when no mapping exists. Defaults to empty so that the
+	 * existing implementations keep compiling.
+	 */
+	public default Optional<String> getPublicationType() { return Optional.empty(); }
+
+	/** The publisher or issuing body: a journal's publisher, a book's publisher, a report's institution. */
+	public default Optional<String> getPublisher() { return Optional.empty(); }
+
+	/** Where this record's claims came from. */
+	public default Optional<Provenance> getProvenance() { return Optional.empty(); }
+
+	/**
+	 * The title of the container this work appears in: journal, book, proceedings.
+	 * Defaults to {@link #getJournal()} for records that only know that one field.
+	 */
+	public default Optional<String> getContainerTitle() { return getJournal(); }
 	
 	public default Optional<? extends Author> getFirstAuthor() {
 		if (getAuthors().isEmpty()) return Optional.empty();

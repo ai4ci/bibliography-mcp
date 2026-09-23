@@ -15,7 +15,7 @@ design/features/feat-002-explore-citation-networks-in-a-session.md	1790159808	fi
 design/features/feat-003-analyse-citation-graphs-and-topics.md	1790159808	final	0.1.0	mcp, analysis
 design/features/feat-004-opencitations-meta-enrichment.md	1790159808	draft	0.2.0	opencitations, id-mapping, proposed
 design/features/feat-005-zotero-curated-repository-bridge.md	1790162378	draft	0.2.0	zotero, repository, workflow, proposed
-design/features/feat-006-classify-records-by-type-with-provenance.md	1790165882	draft	0.2.0	model, provenance, zotero, accepted
+design/features/feat-006-classify-records-by-type-with-provenance.md	1790166964	final	0.2.0	model, provenance, zotero, accepted
 design/features/feat-007-predictable-record-merging.md	1790165882	draft	0.2.0	model, merge, accepted
 design/implementation/debt/debt-001-session-persistence-uses-java-serialization.md	1790159628	open	0.3.0	persistence, serialization
 design/implementation/debt/debt-002-opencitations-queries-dois-only.md	1790159628	open	0.2.0	opencitations, id-types
@@ -24,17 +24,17 @@ design/implementation/issues/issue-001-non-doi-citation-links-dropped.md	1790159
 design/implementation/issues/issue-002-third-party-api-endpoint-drift.md	1790159818	open	0.2.0	maintenance, api-drift
 design/implementation/issues/issue-003-merged-record-resolution-is-non-deterministic.md	1790165882	open	0.2.0	model, merge, data-integrity
 design/implementation/plans/plan-001-opencitations-meta-idmap.md	1790159808	draft	0.2.0	opencitations, id-mapping, mcp
-design/implementation/plans/plan-002-record-type-publisher-provenance.md	1790164948	draft	0.2.0	model, provenance, zotero
+design/implementation/plans/plan-002-record-type-publisher-provenance.md	1790166964	final	0.2.0	model, provenance, zotero
 design/implementation/plans/plan-003-record-merge-policy.md	1790165882	draft	0.2.0	model, merge
 design/prototypes/prototype-001-opencitations-meta-pids.md	1790159877	draft	0.2.0	opencitations, id-mapping, prototype
 design/roadmap.md	1790165882	draft	0.1.0	roadmap, mcp, opencitations, bibliographic-apis
 design/test-scripts/test-001-mcp-protocol-smoke-test.md	1790159864	final	0.1.0	mcp, smoke-test
-design/test-scripts/test-002-api-behaviour-tests.md	1790159818	final	0.1.0	api-client, citations, analysis, parsing
+design/test-scripts/test-002-api-behaviour-tests.md	1790166964	final	0.1.0	api-client, citations, analysis, parsing
 pom.xml	1790091122	NA	NA	NA
 scripts/mcp-smoke-test.sh	1790159692	NA	NA	NA
-skills/using-bibliographic-apis/SKILL.md	1790093655	NA	NA	NA
-skills/using-bibliographic-apis/SKILL.md	1790093655	NA	NA	NA
-skills/using-bibliographic-apis/references/mcp-call-sequences.md	1790093676	NA	NA	NA
+skills/using-bibliographic-apis/SKILL.md	1790166964	NA	NA	NA
+skills/using-bibliographic-apis/SKILL.md	1790166964	NA	NA	NA
+skills/using-bibliographic-apis/references/mcp-call-sequences.md	1790166964	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/BibliographicApiException.java	1590593512	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/BibliographicApis.java	1600335819	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/BinaryData.java	1590593512	NA	NA	NA
@@ -55,7 +55,7 @@ src/main/java/uk/co/terminological/bibliography/crossref/CrossRefListResult.java
 src/main/java/uk/co/terminological/bibliography/crossref/CrossRefMessage.java	1590593512	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/crossref/CrossRefReference.java	1604393361	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/crossref/CrossRefSingleResult.java	1590593512	NA	NA	NA
-src/main/java/uk/co/terminological/bibliography/crossref/CrossRefWork.java	1630501264	NA	NA	NA
+src/main/java/uk/co/terminological/bibliography/crossref/CrossRefWork.java	1790166970	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/entrez/EntrezAuthor.java	1590593512	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/entrez/EntrezClient.java	1783588766	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/entrez/EntrezEntries.java	1590593512	NA	NA	NA
@@ -70,7 +70,7 @@ src/main/java/uk/co/terminological/bibliography/europepmc/EuropePMCCitation.java
 src/main/java/uk/co/terminological/bibliography/europepmc/EuropePMCClient.java	1600699140	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/europepmc/EuropePMCCoreResult.java	1600552948	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/europepmc/EuropePMCListResult.java	1600698983	NA	NA	NA
-src/main/java/uk/co/terminological/bibliography/europepmc/EuropePMCLiteResult.java	1600552997	NA	NA	NA
+src/main/java/uk/co/terminological/bibliography/europepmc/EuropePMCLiteResult.java	1790166970	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/europepmc/EuropePMCReference.java	1600427607	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/jats/JatsAuthor.java	1630502889	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/jats/JatsCitedAuthor.java	1630503747	NA	NA	NA
@@ -79,7 +79,7 @@ src/main/java/uk/co/terminological/bibliography/jats/JatsReference.java	16305057
 src/main/java/uk/co/terminological/bibliography/mcp/Analysis.java	1790159689	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/mcp/BiblioFacade.java	1790159689	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/mcp/McpServer.java	1790159836	NA	NA	NA
-src/main/java/uk/co/terminological/bibliography/mcp/McpTools.java	1790159836	NA	NA	NA
+src/main/java/uk/co/terminological/bibliography/mcp/McpTools.java	1790166970	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/mcp/Session.java	1790159689	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/medrxiv/MedrxivAuthor.java	1630417196	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/medrxiv/MedrxivClient.java	1630413447	NA	NA	NA
@@ -96,20 +96,22 @@ src/main/java/uk/co/terminological/bibliography/record/Author.java	1600183347	NA
 src/main/java/uk/co/terminological/bibliography/record/Builder.java	1630505754	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/record/CitationLink.java	1600272376	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/record/CitationReference.java	1600347995	NA	NA	NA
-src/main/java/uk/co/terminological/bibliography/record/IdType.java	1590593512	NA	NA	NA
+src/main/java/uk/co/terminological/bibliography/record/IdType.java	1790166930	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/record/ImmutableAuthor.java	1600343240	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/record/ImmutableCitationLink.java	1600353519	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/record/ImmutableCitationReference.java	1630505685	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/record/ImmutablePrintReference.java	1600351916	NA	NA	NA
-src/main/java/uk/co/terminological/bibliography/record/ImmutableRecord.java	1600427607	NA	NA	NA
+src/main/java/uk/co/terminological/bibliography/record/ImmutableRecord.java	1790166970	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/record/ImmutableRecordReference.java	1600429802	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/record/ImmutableRecordReferenceMapping.java	1600353238	NA	NA	NA
-src/main/java/uk/co/terminological/bibliography/record/MergedRecord.java	1600386554	NA	NA	NA
+src/main/java/uk/co/terminological/bibliography/record/MergedRecord.java	1790166970	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/record/PrintRecord.java	1600347995	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/record/PrintRecordWithCitations.java	1590593512	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/record/PrintReference.java	1600347995	NA	NA	NA
+src/main/java/uk/co/terminological/bibliography/record/Provenance.java	1790166930	NA	NA	NA
+src/main/java/uk/co/terminological/bibliography/record/PublicationTypes.java	1790166930	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/record/Raw.java	1590593512	NA	NA	NA
-src/main/java/uk/co/terminological/bibliography/record/Record.java	1600361644	NA	NA	NA
+src/main/java/uk/co/terminological/bibliography/record/Record.java	1790166970	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/record/RecordReference.java	1600359188	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/record/RecordReferenceMapping.java	1600354280	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/record/RecordWithCitations.java	1599839002	NA	NA	NA
@@ -140,6 +142,7 @@ src/test/java/uk/co/terminological/pubmedclient/TestOpenCitations.java	159059351
 src/test/java/uk/co/terminological/pubmedclient/TestPdfUtil.java	1590593512	NA	NA	NA
 src/test/java/uk/co/terminological/pubmedclient/TestPubMedRestClient.java	1783506996	NA	NA	NA
 src/test/java/uk/co/terminological/pubmedclient/TestRecordMerge.java	1790165893	NA	NA	NA
+src/test/java/uk/co/terminological/pubmedclient/TestRecordModel.java	1790166930	NA	NA	NA
 src/test/java/uk/co/terminological/pubmedclient/TestUnpaywallParsing.java	1590593512	NA	NA	NA
 src/test/resources/biorxivApiResponse.json	1630493959	NA	NA	NA
 src/test/resources/efetch.xml	1590593512	NA	NA	NA

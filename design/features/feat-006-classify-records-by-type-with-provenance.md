@@ -1,5 +1,5 @@
 ---
-status: draft
+status: final
 target-version: 0.2.0
 tags: model, provenance, zotero, accepted
 ---
@@ -52,6 +52,22 @@ fetched, and only one of four citation sources carries a type at all.
 ## Linked artefacts
 
 - [HAS_PLAN](/design/implementation/plans/plan-002-record-type-publisher-provenance.md)
+- [HAS_TEST](/design/test-scripts/test-002-api-behaviour-tests.md)
+
+## Implemented by
+
+- [IMPLEMENTED_BY](/src/main/java/uk/co/terminological/bibliography/record/Provenance.java)
+- [IMPLEMENTED_BY](/src/main/java/uk/co/terminological/bibliography/record/PublicationTypes.java)
+- [IMPLEMENTED_BY](/src/main/java/uk/co/terminological/bibliography/record/Record.java)
+- [IMPLEMENTED_BY](/src/main/java/uk/co/terminological/bibliography/record/ImmutableRecord.java)
+- [IMPLEMENTED_BY](/src/main/java/uk/co/terminological/bibliography/record/MergedRecord.java)
+- [IMPLEMENTED_BY](/src/main/java/uk/co/terminological/bibliography/crossref/CrossRefWork.java)
+- [IMPLEMENTED_BY](/src/main/java/uk/co/terminological/bibliography/europepmc/EuropePMCLiteResult.java)
+- [IMPLEMENTED_BY](/src/main/java/uk/co/terminological/bibliography/mcp/McpTools.java)
+
+The Zotero-side population (itemType, institution/publisher) lands with
+[feat-005](/design/features/feat-005-zotero-curated-repository-bridge.md);
+Entrez `PublicationTypeList` is deliberately left unparsed.
 
 ## Related records
 

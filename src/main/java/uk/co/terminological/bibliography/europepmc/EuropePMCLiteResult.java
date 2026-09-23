@@ -1,5 +1,6 @@
 package uk.co.terminological.bibliography.europepmc;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -8,6 +9,8 @@ import uk.co.terminological.bibliography.ExtensibleJson;
 import uk.co.terminological.bibliography.europepmc.EuropePMCClient.DataSources;
 import uk.co.terminological.bibliography.record.IdType;
 import uk.co.terminological.bibliography.record.PrintReference;
+import uk.co.terminological.bibliography.record.Provenance;
+import uk.co.terminological.bibliography.record.PublicationTypes;
 import uk.co.terminological.bibliography.record.RecordReference;
 import static uk.co.terminological.datatypes.StreamExceptions.*;
 
@@ -48,6 +51,7 @@ firstIndexDate: "2010-12-03",
 firstPublicationDate: "2010-10-01"
  */
 
+// [IMPLEMENTS](/design/features/feat-006-classify-records-by-type-with-provenance.md)
 public class EuropePMCLiteResult extends ExtensibleJson implements RecordReference, PrintReference {
 
 	public EuropePMCLiteResult(JsonNode node) { super(node); }
@@ -63,6 +67,29 @@ public class EuropePMCLiteResult extends ExtensibleJson implements RecordReferen
 	public Optional<String> getPage() {return this.asString("pageInfo");}
 	// public Optional<String> getEssn() {return this.asString("essn");}
 	public Optional<String> getIssn() {return this.asString("journalIssn");}
+
+	/**
+	 * The native PubMed publication types, whichever shape the response used:
+	 * lite responses carry {@code pubType} as a semicolon-separated string, core
+	 * responses carry {@code pubTypeList.pubType} as an array (verified live).
+	 */
+	public Optional<String> getNativePubTypes() {
+		return this.asString("pubType")
+				.or(() -> this.streamPath("pubTypeList", "pubType")
+						.map(e -> e.asString())
+						.reduce((a, b) -> a + "; " + b));
+	}
+
+	public Optional<String> getPublicationType() {
+		Optional<String> nativeTypes = getNativePubTypes();
+		Optional<String> mapped = nativeTypes.flatMap(s -> PublicationTypes.fromPubMed(Arrays.asList(s.split(";"))));
+		// an unrecognised vocabulary is passed through rather than dropped
+		return mapped.isPresent() ? mapped : nativeTypes;
+	}
+
+	public Optional<Provenance> getProvenance() {
+		return Optional.of(Provenance.of(Provenance.EUROPEPMC, getNativePubTypes().orElse(null)));
+	}
 	
 	public Optional<Long> getCitedByCount() {return this.asLong("citedByCount");}
 	

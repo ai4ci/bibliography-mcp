@@ -43,6 +43,7 @@ import uk.co.terminological.datatypes.Tuple;
 // [IMPLEMENTS](/design/features/feat-002-explore-citation-networks-in-a-session.md)
 // [IMPLEMENTS](/design/features/feat-003-analyse-citation-graphs-and-topics.md)
 // [IMPLEMENTS](/design/external-interfaces/interface-001-mcp-stdio-protocol.md)
+// [IMPLEMENTS](/design/features/feat-006-classify-records-by-type-with-provenance.md)
 public class McpTools {
 
 	static Logger log = LoggerFactory.getLogger(McpTools.class);
@@ -144,7 +145,8 @@ public class McpTools {
 		return out;
 	}
 
-	private static ObjectNode recordJson(ObjectMapper m, BiblioFacade f, Record r) {
+	// public so the offline tests can assert the agent-visible shape
+	public static ObjectNode recordJson(ObjectMapper m, BiblioFacade f, Record r) {
 		ObjectNode n = m.createObjectNode();
 		r.getIdentifier().ifPresent(v -> n.put("id", v));
 		n.put("idType", r.getIdentifierType().toString());
@@ -156,6 +158,15 @@ public class McpTools {
 		r.getIdentifier(IdType.PMID).ifPresent(v -> n.put("PMID", v));
 		r.getIdentifier(IdType.DOI).ifPresent(v -> n.put("DOI", v));
 		r.getIdentifier(IdType.PMCID).ifPresent(v -> n.put("PMCID", v));
+		r.getIdentifier(IdType.ISBN).ifPresent(v -> n.put("ISBN", v));
+		r.getPublicationType().ifPresent(v -> n.put("publicationType", v));
+		r.getPublisher().ifPresent(v -> n.put("publisher", v));
+		r.getProvenance().ifPresent(p -> {
+			ObjectNode pn = n.putObject("provenance");
+			pn.put("source", p.getSource());
+			p.getNativeType().ifPresent(t -> pn.put("nativeType", t));
+			if (p.isCurated()) pn.put("curated", true);
+		});
 		if (f != null && f.citationStyle != null)
 			r.render(f.citationStyle).ifPresent(v -> n.put("citation", v));
 		return n;

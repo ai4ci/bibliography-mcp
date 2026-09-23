@@ -7,17 +7,17 @@
     "percent": 0
   },
   "skills/using-bibliographic-apis/references/mcp-call-sequences.md": {
-    "modified": 1790093676,
+    "modified": 1790166964,
     "comments": [],
     "anchors": [],
-    "count_lines": 102,
+    "count_lines": 107,
     "percent": 0
   },
   "skills/using-bibliographic-apis/SKILL.md": {
-    "modified": 1790093655,
+    "modified": 1790166964,
     "comments": [],
     "anchors": [],
-    "count_lines": 203,
+    "count_lines": 209,
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/arxiv/ArxivClient.java": {
@@ -147,10 +147,10 @@
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/crossref/CrossRefWork.java": {
-    "modified": 1630501264,
+    "modified": 1790166970,
     "comments": [],
     "anchors": [],
-    "count_lines": 162,
+    "count_lines": 170,
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/entrez/EntrezAuthor.java": {
@@ -255,10 +255,10 @@
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/europepmc/EuropePMCLiteResult.java": {
-    "modified": 1600552997,
+    "modified": 1790166970,
     "comments": [],
     "anchors": [],
-    "count_lines": 94,
+    "count_lines": 121,
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/europepmc/EuropePMCReference.java": {
@@ -325,10 +325,10 @@
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/mcp/McpTools.java": {
-    "modified": 1790159836,
+    "modified": 1790166970,
     "comments": [],
     "anchors": [],
-    "count_lines": 452,
+    "count_lines": 463,
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/mcp/Session.java": {
@@ -451,10 +451,10 @@
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/record/IdType.java": {
-    "modified": 1590593512,
+    "modified": 1790166930,
     "comments": [],
     "anchors": [],
-    "count_lines": 9,
+    "count_lines": 10,
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/record/ImmutableAuthor.java": {
@@ -486,10 +486,10 @@
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/record/ImmutableRecord.java": {
-    "modified": 1600427607,
+    "modified": 1790166970,
     "comments": [],
     "anchors": [],
-    "count_lines": 119,
+    "count_lines": 141,
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/record/ImmutableRecordReference.java": {
@@ -507,10 +507,10 @@
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/record/MergedRecord.java": {
-    "modified": 1600386554,
+    "modified": 1790166970,
     "comments": [],
     "anchors": [],
-    "count_lines": 147,
+    "count_lines": 179,
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/record/PrintRecord.java": {
@@ -534,6 +534,20 @@
     "count_lines": 15,
     "percent": 0
   },
+  "src/main/java/uk/co/terminological/bibliography/record/Provenance.java": {
+    "modified": 1790166930,
+    "comments": [],
+    "anchors": [],
+    "count_lines": 85,
+    "percent": 0
+  },
+  "src/main/java/uk/co/terminological/bibliography/record/PublicationTypes.java": {
+    "modified": 1790166930,
+    "comments": [],
+    "anchors": [],
+    "count_lines": 161,
+    "percent": 0
+  },
   "src/main/java/uk/co/terminological/bibliography/record/Raw.java": {
     "modified": 1590593512,
     "comments": [],
@@ -542,10 +556,10 @@
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/record/Record.java": {
-    "modified": 1600361644,
+    "modified": 1790166970,
     "comments": [],
     "anchors": [],
-    "count_lines": 89,
+    "count_lines": 110,
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/record/RecordReference.java": {
@@ -756,6 +770,13 @@
     "comments": [],
     "anchors": [],
     "count_lines": 103,
+    "percent": 0
+  },
+  "src/test/java/uk/co/terminological/pubmedclient/TestRecordModel.java": {
+    "modified": 1790166930,
+    "comments": [],
+    "anchors": [],
+    "count_lines": 203,
     "percent": 0
   },
   "src/test/java/uk/co/terminological/pubmedclient/TestUnpaywallParsing.java": {

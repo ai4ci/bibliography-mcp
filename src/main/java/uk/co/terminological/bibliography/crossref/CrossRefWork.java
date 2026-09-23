@@ -19,14 +19,22 @@ import uk.co.terminological.bibliography.record.ImmutableCitationLink;
 import uk.co.terminological.bibliography.record.ImmutableCitationReference;
 import uk.co.terminological.bibliography.record.PrintReference;
 import uk.co.terminological.bibliography.record.RecordReference;
+import uk.co.terminological.bibliography.record.Provenance;
+import uk.co.terminological.bibliography.record.PublicationTypes;
 import uk.co.terminological.bibliography.record.RecordWithCitations;
 import uk.co.terminological.datatypes.StreamExceptions;
 
+// [IMPLEMENTS](/design/features/feat-006-classify-records-by-type-with-provenance.md)
 public class CrossRefWork extends ExtensibleJson implements PrintReference, RecordWithCitations {
 	public CrossRefWork(JsonNode node) {super(node);}
 	
 	public Optional<String> getIdentifier() {return this.asString("DOI").map(s->s.replaceAll("^PMC", ""));}
 	public IdType getIdentifierType() {return IdType.DOI;}
+	// CrossRef's vocabulary is close to CSL but not identical (journal-article vs
+	// article-journal); an unmapped value is passed through unchanged.
+	public Optional<String> getPublicationType() {return this.asString("type").map(t -> PublicationTypes.fromCrossRef(t).orElse(t));}
+	public Optional<String> getPublisher() {return this.asString("publisher");}
+	public Optional<Provenance> getProvenance() {return Optional.of(Provenance.of(Provenance.CROSSREF, this.asString("type").orElse(null)));}
 	public Optional<String> getTitle() {return this.streamPath("title").findFirst().map(n -> n.asString());}
 	public Optional<String> getFirstAuthorName() {
 		return this.getFirstAuthor().map(o -> o.getLastName());

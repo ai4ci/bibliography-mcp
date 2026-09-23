@@ -110,7 +110,11 @@ examples live in [references/mcp-call-sequences.md](references/mcp-call-sequence
 
 - `search` with `query` (plus optional `from`/`to` dates `YYYY-MM-DD`,
   `limit`, `apis` filter). Returns unified records (id, idType, title,
-  abstract, journal, date, PMID, DOI, PMCID, url).
+  abstract, journal, date, PMID, DOI, PMCID, ISBN, url, publicationType,
+  publisher, provenance). `publicationType` is a CSL type
+  (`article-journal`, `chapter`, `report`, `posted-content`, `book`, ...) and is
+  absent when the source did not state one, so treat it as a hint rather than a
+  guarantee; `provenance.source` says which API the record came from.
 - `fetch` with `ids: [{idType, id}]` for full details of known records.
 
 Use when the agent just needs search results — no session state involved.
@@ -160,6 +164,8 @@ Session-wide equivalent: `find_alternate_ids`.
 - Prefer the session workflows (B/C) over repeated stateless calls when
   exploring — the session merges records across APIs and caches, so fewer
   duplicate API hits.
+- `publicationType` distinguishes kinds of work (a chapter is not a journal
+  article); where it matters, prefer records whose `provenance.source` you trust.
 - Records use a unified format regardless of source API. Treat `id`/`idType`
   as the canonical reference; `PMID`/`DOI`/`PMCID` are convenience lookups.
 - Dates are `YYYY-MM-DD`; `limit` caps results per API.
