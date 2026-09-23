@@ -128,6 +128,32 @@ public abstract class CachingApiClient {
 
 	protected void rateLimit() {rateLimiter.consume();}
 
+	/**
+	 * Whether a response body is shorter than the length the server declared. A
+	 * truncation is invisible to a JSON parser (a prefix of a document can be valid
+	 * JSON), so it is checked before the body is parsed and cached — see issue-004.
+	 *
+	 * Returns false when no comparable length is available: no Content-Length (for
+	 * example a chunked response) or a body that was decoded, where the received
+	 * length legitimately differs from the encoded one.
+	 *
+	 * Public for testing.
+	 */
+	public static boolean isTruncated(String declaredLength, String contentEncoding, int actualLength) {
+		if (contentEncoding != null && !contentEncoding.trim().isEmpty()
+				&& !"identity".equalsIgnoreCase(contentEncoding.trim())) {
+			return false;
+		}
+		if (declaredLength == null || declaredLength.trim().isEmpty()) {
+			return false;
+		}
+		try {
+			return Long.parseLong(declaredLength.trim()) != actualLength;
+		} catch (NumberFormatException e) {
+			return false;
+		}
+	}
+
 	protected static String encode(String string) {
 		try {
 			return URLEncoder.encode(string,java.nio.charset.StandardCharsets.UTF_8.toString());
@@ -238,6 +264,16 @@ public abstract class CachingApiClient {
 				return Optional.empty();
 			}
 			BinaryData data = BinaryData.from(r.getEntityInputStream());
+			// byteArray is read directly rather than through an accessor: adding a
+			// method to BinaryData changes its computed serialVersionUID and would
+			// invalidate every persisted cache entry (see debt-007)
+			if (isTruncated(r.getHeaders().getFirst("Content-Length"), r.getHeaders().getFirst("Content-Encoding"), data.byteArray.length)) {
+				// deliberately not cached: a short read is a failed call, and caching
+				// it would turn a transient fault into a lasting wrong answer
+				logger.warn("Truncated API response from {}: read {} bytes, Content-Length {}",
+						wr.toString(), data.byteArray.length, r.getHeaders().getFirst("Content-Length"));
+				return Optional.empty();
+			}
 			X out = operation.apply(data.inputStream());
 			cache.put(key, data);
 			return Optional.of(out);

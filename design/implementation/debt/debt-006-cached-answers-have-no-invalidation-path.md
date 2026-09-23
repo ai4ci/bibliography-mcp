@@ -24,6 +24,13 @@ any other, so a wrong answer sticks until it expires:
 - cache hits are logged at DEBUG, so a "not found" gives no hint that it came
   from a cache rather than the API.
 
+Severity reduced by
+[issue-004](/design/implementation/issues/issue-004-truncated-responses-are-cached-as-empty.md):
+a body that fails validation is now rejected on read, the entry is dropped and the
+call is refetched, so caches holding unparseable content self-heal. What remains
+is the absence of an explicit bypass for answers that are *well formed but wrong*
+(an upstream mistake cached as truth), and the DEBUG-only cache-hit logging.
+
 This is a contributing factor to
 [issue-004](/design/implementation/issues/issue-004-truncated-responses-are-cached-as-empty.md)
 (a truncated body gets cached) — validation would stop the bad entry being

@@ -9,6 +9,7 @@ import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 
 import org.junit.Test;
 
+import uk.co.terminological.bibliography.CachingApiClient;
 import uk.co.terminological.bibliography.europepmc.EuropePMCListResult;
 import uk.co.terminological.bibliography.opencitations.OpenCitationsCitation;
 import uk.co.terminological.bibliography.pmcidconv.PMCIDResult;
@@ -41,17 +42,47 @@ public class TestApiDriftParsing {
 	}
 
 	@Test
-	public void aTruncatedSearchResponseIsIndistinguishableFromNoResults() throws Exception {
-		// reproduction for issue-004: a partial 2xx body (what a cut-short response
-		// leaves behind) parses cleanly and yields an empty item stream, so the
-		// client cannot tell "the record is not there" from "the response was broken"
-		// - and it caches the broken body, so the answer sticks.
+	public void aTruncatedSearchResponseIsRecognisedAsBroken() throws Exception {
+		// issue-004: a partial 2xx body parses cleanly and yields an empty item
+		// stream, so without an explicit shape check the client cannot tell "the
+		// record is not there" from "the response was broken".
 		EuropePMCListResult.Core truncated =
 				new EuropePMCListResult.Core(mapper.readTree("{\"version\":\"6.9\"}"));
 
 		assertEquals(0, truncated.getItems().count());
-		// a genuine empty result would carry hitCount (and a request block)
 		assertFalse(truncated.hitCount().isPresent());
+		// ...which is why the response is rejected rather than used and cached
+		assertFalse(truncated.isWellFormed());
+	}
+
+	@Test
+	public void aCompleteButEmptyResponseIsWellFormed() throws Exception {
+		// hitCount:0 with an (empty) result collection is a legitimate answer
+		EuropePMCListResult.Core empty = new EuropePMCListResult.Core(
+				mapper.readTree("{\"version\":\"6.9\",\"hitCount\":0,\"resultList\":{\"result\":[]}}"));
+
+		assertTrue(empty.isWellFormed());
+	}
+
+	@Test
+	public void aReferenceListResponseIsWellFormed() throws Exception {
+		EuropePMCListResult.Reference refs = new EuropePMCListResult.Reference(
+				mapper.readTree("{\"version\":\"6.9\",\"hitCount\":0,\"referenceList\":{\"reference\":[]}}"));
+
+		assertTrue(refs.isWellFormed());
+	}
+
+	@Test
+	public void aBodyShorterThanItsDeclaredLengthIsDetected() {
+		// truncation is invisible to the JSON parser, so the declared length is
+		// checked before the body is parsed and cached
+		assertTrue(CachingApiClient.isTruncated("100", null, 15));
+		assertFalse(CachingApiClient.isTruncated("15", null, 15));
+		assertFalse(CachingApiClient.isTruncated(null, null, 15));
+		assertFalse(CachingApiClient.isTruncated("not-a-number", null, 15));
+		// a decoded body legitimately differs in length from its encoded form
+		assertFalse(CachingApiClient.isTruncated("100", "gzip", 15));
+		assertTrue(CachingApiClient.isTruncated("100", "identity", 15));
 	}
 
 	@Test

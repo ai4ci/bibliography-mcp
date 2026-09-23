@@ -19,6 +19,7 @@ import org.isomorphism.util.TokenBuckets;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 
+import uk.co.terminological.bibliography.BibliographicApiException;
 import uk.co.terminological.bibliography.CachingApiClient;
 import uk.co.terminological.bibliography.client.CitedByMapper;
 import uk.co.terminological.bibliography.client.CitesMapper;
@@ -81,6 +82,19 @@ public class EuropePMCClient extends CachingApiClient implements Searcher,Record
 	
 	// ####### API methods ####### //
 	
+	/**
+	 * Refuse a response that cannot be a complete Europe PMC list. Throwing here
+	 * means CachingApiClient treats the call as failed: it is not cached and the
+	 * next call retries, instead of a truncated body becoming a lasting "not found"
+	 * (issue-004).
+	 */
+	private static <X> X complete(X parsed) {
+		if (parsed instanceof EuropePMCListResult && !((EuropePMCListResult<?>) parsed).isWellFormed()) {
+			throw new BibliographicApiException("incomplete Europe PMC response: no hitCount or result collection");
+		}
+		return parsed;
+	}
+
 	public Optional<EuropePMCCoreResult> getById(String id, IdType type) {
 		EuropePMCListResult<EuropePMCCoreResult> tmp;
 		if( type.equals(IdType.DOI)) {
@@ -128,7 +142,7 @@ public class EuropePMCClient extends CachingApiClient implements Searcher,Record
 			return client.buildCall(baseUrl+"searchPost", EuropePMCListResult.Lite.class)
 					.withParams(searchParams)
 					.withOperation(is -> 
-						new EuropePMCListResult.Lite(client.objectMapper.readTree(is))
+						complete(new EuropePMCListResult.Lite(client.objectMapper.readTree(is)))
 					).post().map(o -> (EuropePMCListResult<EuropePMCLiteResult>) o);
 					
 		}
@@ -139,7 +153,7 @@ public class EuropePMCClient extends CachingApiClient implements Searcher,Record
 			//return client.buildCall(baseUrl+"searchPOST", EuropePMCListResult.Core.class)
 					.withParams(searchParams)
 					.withOperation(is -> 
-						new EuropePMCListResult.Core(client.objectMapper.readTree(is))
+						complete(new EuropePMCListResult.Core(client.objectMapper.readTree(is)))
 			//		).post();
 					).get().map(o -> (EuropePMCListResult<EuropePMCCoreResult>) o);
 		}
@@ -207,7 +221,7 @@ public class EuropePMCClient extends CachingApiClient implements Searcher,Record
 		return this.buildCall(baseUrl+source+"/"+id+"/citations", EuropePMCListResult.Citation.class)
 				.withParams(defaultApiParams())
 				.withOperation(is -> 
-					new EuropePMCListResult.Citation(objectMapper.readTree(is))
+					complete(new EuropePMCListResult.Citation(objectMapper.readTree(is)))
 				).get().get();
 	}
 	
@@ -223,7 +237,7 @@ public class EuropePMCClient extends CachingApiClient implements Searcher,Record
 		return this.buildCall(baseUrl+source+"/"+id+"/references", EuropePMCListResult.Reference.class)
 				.withParams(defaultApiParams())
 				.withOperation(is -> 
-					new EuropePMCListResult.Reference(objectMapper.readTree(is))
+					complete(new EuropePMCListResult.Reference(objectMapper.readTree(is)))
 				).get().get();
 	}
 	

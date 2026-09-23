@@ -57,7 +57,9 @@ design/implementation/debt/debt-005-fetch-is-incomplete-by-id-type.md	47	IMPACTS
 design/implementation/debt/debt-005-fetch-is-incomplete-by-id-type.md	49	IMPACTS	src/main/java/uk/co/terminological/bibliography/mcp/BiblioFacade.java	NA
 design/implementation/debt/debt-005-fetch-is-incomplete-by-id-type.md	48	IMPACTS	src/main/java/uk/co/terminological/bibliography/unpaywall/UnpaywallClient.java	NA
 design/implementation/debt/debt-006-cached-answers-are-never-invalidated.md	46	IMPACTS	src/main/java/uk/co/terminological/bibliography/CachingApiClient.java	NA
-design/implementation/debt/debt-006-cached-answers-have-no-invalidation-path.md	38	IMPACTS	src/main/java/uk/co/terminological/bibliography/CachingApiClient.java	NA
+design/implementation/debt/debt-006-cached-answers-have-no-invalidation-path.md	45	IMPACTS	src/main/java/uk/co/terminological/bibliography/CachingApiClient.java	NA
+design/implementation/debt/debt-007-cache-stores-break-on-cached-class-changes.md	43	IMPACTS	src/main/java/uk/co/terminological/bibliography/BinaryData.java	NA
+design/implementation/debt/debt-007-cache-stores-break-on-cached-class-changes.md	42	IMPACTS	src/main/java/uk/co/terminological/bibliography/CachingApiClient.java	NA
 design/implementation/issues/issue-001-non-doi-citation-links-dropped.md	28	TESTED_BY	src/test/java/uk/co/terminological/pubmedclient/TestApiDriftParsing.java	NA
 design/implementation/issues/issue-002-third-party-api-endpoint-drift.md	31	TESTED_BY	src/test/java/uk/co/terminological/pubmedclient/TestApiDriftParsing.java	NA
 design/implementation/issues/issue-003-merged-record-resolution-is-non-deterministic.md	38	TESTED_BY	src/test/java/uk/co/terminological/pubmedclient/TestRecordMerge.java	NA
@@ -112,10 +114,10 @@ src/main/java/uk/co/terminological/bibliography/record/Provenance.java	15	IMPLEM
 src/main/java/uk/co/terminological/bibliography/record/PublicationTypes.java	22	IMPLEMENTS	design/features/feat-006-classify-records-by-type-with-provenance.md	NA
 src/main/java/uk/co/terminological/bibliography/record/Record.java	16	IMPLEMENTS	design/features/feat-006-classify-records-by-type-with-provenance.md	NA
 src/main/java/uk/co/terminological/bibliography/unpaywall/UnpaywallResult.java	20	IMPLEMENTS	design/features/feat-007-predictable-record-merging.md	NA
-src/test/java/uk/co/terminological/pubmedclient/TestApiDriftParsing.java	17	TESTS	design/implementation/issues/issue-001-non-doi-citation-links-dropped.md	NA
-src/test/java/uk/co/terminological/pubmedclient/TestApiDriftParsing.java	18	TESTS	design/implementation/issues/issue-002-third-party-api-endpoint-drift.md	NA
-src/test/java/uk/co/terminological/pubmedclient/TestApiDriftParsing.java	19	TESTS	design/implementation/issues/issue-004-truncated-responses-are-cached-as-empty.md	NA
-src/test/java/uk/co/terminological/pubmedclient/TestApiDriftParsing.java	16	TESTS	design/test-scripts/test-002-api-behaviour-tests.md	NA
+src/test/java/uk/co/terminological/pubmedclient/TestApiDriftParsing.java	18	TESTS	design/implementation/issues/issue-001-non-doi-citation-links-dropped.md	NA
+src/test/java/uk/co/terminological/pubmedclient/TestApiDriftParsing.java	19	TESTS	design/implementation/issues/issue-002-third-party-api-endpoint-drift.md	NA
+src/test/java/uk/co/terminological/pubmedclient/TestApiDriftParsing.java	20	TESTS	design/implementation/issues/issue-004-truncated-responses-are-cached-as-empty.md	NA
+src/test/java/uk/co/terminological/pubmedclient/TestApiDriftParsing.java	17	TESTS	design/test-scripts/test-002-api-behaviour-tests.md	NA
 src/test/java/uk/co/terminological/pubmedclient/TestCombinedApi.java	18	TESTS	design/test-scripts/test-002-api-behaviour-tests.md	NA
 src/test/java/uk/co/terminological/pubmedclient/TestRecordMerge.java	27	TESTS	design/implementation/issues/issue-003-merged-record-resolution-is-non-deterministic.md	NA
 src/test/java/uk/co/terminological/pubmedclient/TestRecordMerge.java	28	TESTS	design/test-scripts/test-002-api-behaviour-tests.md	NA

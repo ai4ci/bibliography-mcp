@@ -32,6 +32,26 @@ public class EuropePMCListResult<X extends ExtensibleJson> extends ExtensibleJso
 	
 	public Optional<Long> hitCount() {
 		return this.asLong("hitCount");}
+
+	/**
+	 * Whether this is a complete Europe PMC list response.
+	 *
+	 * A truncated body — for example just {"version":"6.9"}, which is what a
+	 * cut-short connection leaves behind — parses cleanly and yields an empty item
+	 * stream, so without this check the client cannot tell "nothing was found" from
+	 * "the response was broken", and the broken body then gets cached. A complete
+	 * response always carries hitCount and/or the collection it fills.
+	 *
+	 * See issue-004 (truncated responses are cached as empty) in the design records:
+	 * an IMPLEMENTS link is not valid from production code to an issue, so this is
+	 * a prose reference.
+	 */
+	public boolean isWellFormed() {
+		return hitCount().isPresent()
+				|| getRaw().has("resultList")
+				|| getRaw().has("referenceList")
+				|| getRaw().has("citationList");
+	}
 	
 	public Optional<Long> pageSize() {
 		return this.streamPath("request","pageSize").findFirst().map(jn -> jn.asLong());}

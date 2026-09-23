@@ -42,17 +42,17 @@
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/BinaryData.java": {
-    "modified": 1590593512,
+    "modified": 1790170286,
     "comments": [],
     "anchors": [],
     "count_lines": 60,
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/CachingApiClient.java": {
-    "modified": 1600695266,
+    "modified": 1790170286,
     "comments": [],
     "anchors": [],
-    "count_lines": 309,
+    "count_lines": 345,
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/CiteProcProvider.java": {
@@ -231,13 +231,13 @@
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/europepmc/EuropePMCClient.java": {
-    "modified": 1600699140,
+    "modified": 1790170209,
     "comments": [],
     "anchors": {
-      "####": 42,
+      "####": 43,
       "####.1": 82
     },
-    "count_lines": 329,
+    "count_lines": 343,
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/europepmc/EuropePMCCoreResult.java": {
@@ -248,10 +248,10 @@
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/europepmc/EuropePMCListResult.java": {
-    "modified": 1600698983,
+    "modified": 1790170397,
     "comments": [],
     "anchors": [],
-    "count_lines": 70,
+    "count_lines": 90,
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/europepmc/EuropePMCLiteResult.java": {
@@ -689,10 +689,10 @@
     "percent": 0
   },
   "src/test/java/uk/co/terminological/pubmedclient/TestApiDriftParsing.java": {
-    "modified": 1790169943,
+    "modified": 1790170176,
     "comments": [],
     "anchors": [],
-    "count_lines": 84,
+    "count_lines": 115,
     "percent": 0
   },
   "src/test/java/uk/co/terminological/pubmedclient/TestCombinedApi.java": {

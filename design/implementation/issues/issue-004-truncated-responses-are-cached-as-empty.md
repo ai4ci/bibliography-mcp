@@ -1,5 +1,5 @@
 ---
-status: open
+status: closed
 since-version: 0.1.0
 target-version: 0.3.0
 tags: data-integrity, cache, europepmc
@@ -64,6 +64,36 @@ be "fixed".
 `aTruncatedSearchResponseIsIndistinguishableFromNoResults` pins the current
 behaviour: a body of `{"version":"6.9"}` yields zero items and no `hitCount`, so
 the client has nothing to detect the breakage with.
+
+## Resolution
+
+Fixed with options A and B:
+
+- **A** — `EuropePMCListResult.isWellFormed()` (an Europe PMC list response must
+  carry `hitCount` or one of the result collections) and every Europe PMC parse
+  site now throws on a body that fails it, so `CachingApiClient` treats the call
+  as failed: the body is **not** cached and the next call retries.
+- **B** — `CachingApiClient.isTruncated(declaredLength, contentEncoding, actual)`
+  compares the bytes received with the `Content-Length` header (skipping the check
+  when the body was decoded) and refuses to parse or cache a short read.
+
+Verified against the real poisoned entry rather than a simulation:
+
+```
+Cache hit: {...query=DOI:10.1136/bmjqs-2018-008370...}
+Could not parse cached result: {...}          <- rejected by the shape check
+Calling url: .../search?query=DOI:...         <- entry dropped, refetched live
+= 1 record, and the good body is cached in its place
+```
+
+So existing poisoned caches **self-heal** on next use; clearing them is optional.
+The same truncated body was present in two independent cache directories
+(`/tmp/ehcache/test125` and `~/.cache/ehcache`), so this was recurring rather
+than a one-off.
+
+Tests: `aTruncatedSearchResponseIsRecognisedAsBroken`,
+`aCompleteButEmptyResponseIsWellFormed`, `aReferenceListResponseIsWellFormed`,
+`aBodyShorterThanItsDeclaredLengthIsDetected`.
 
 ## Fix options
 
