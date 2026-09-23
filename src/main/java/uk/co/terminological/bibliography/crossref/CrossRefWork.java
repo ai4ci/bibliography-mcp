@@ -19,12 +19,14 @@ import uk.co.terminological.bibliography.record.ImmutableCitationLink;
 import uk.co.terminological.bibliography.record.ImmutableCitationReference;
 import uk.co.terminological.bibliography.record.PrintReference;
 import uk.co.terminological.bibliography.record.RecordReference;
+import uk.co.terminological.bibliography.record.PlainText;
 import uk.co.terminological.bibliography.record.Provenance;
 import uk.co.terminological.bibliography.record.PublicationTypes;
 import uk.co.terminological.bibliography.record.RecordWithCitations;
 import uk.co.terminological.datatypes.StreamExceptions;
 
 // [IMPLEMENTS](/design/features/feat-006-classify-records-by-type-with-provenance.md)
+// [IMPLEMENTS](/design/features/feat-008-clean-up-collection-metadata.md)
 public class CrossRefWork extends ExtensibleJson implements PrintReference, RecordWithCitations {
 	public CrossRefWork(JsonNode node) {super(node);}
 	
@@ -35,7 +37,7 @@ public class CrossRefWork extends ExtensibleJson implements PrintReference, Reco
 	public Optional<String> getPublicationType() {return this.asString("type").map(t -> PublicationTypes.fromCrossRef(t).orElse(t));}
 	public Optional<String> getPublisher() {return this.asString("publisher");}
 	public Optional<Provenance> getProvenance() {return Optional.of(Provenance.of(Provenance.CROSSREF, this.asString("type").orElse(null)));}
-	public Optional<String> getTitle() {return this.streamPath("title").findFirst().map(n -> n.asString());}
+	public Optional<String> getTitle() {return this.streamPath("title").findFirst().map(n -> PlainText.of(n.asString()));}
 	public Optional<String> getFirstAuthorName() {
 		return this.getFirstAuthor().map(o -> o.getLastName());
 	}
@@ -84,7 +86,8 @@ public class CrossRefWork extends ExtensibleJson implements PrintReference, Reco
 	
 	public Optional<Long> getCitedByCount() {return this.asLong("is-referenced-by-count");}
 	public Optional<Long> getReferencesCount() {return this.asLong("references-count");}
-	public Optional<String> getAbstract() {return this.asString("abstract");}
+	// Crossref returns this as JATS XML, so it is reduced to text at the boundary
+	public Optional<String> getAbstract() {return this.asString("abstract").map(PlainText::of);}
 	
 	public Optional<URI> getTextMiningUri() {
 		// text-mining, similarity-checking or unspecified

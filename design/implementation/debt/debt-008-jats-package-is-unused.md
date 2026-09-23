@@ -1,0 +1,28 @@
+---
+status: open
+since-version: 0.1.0
+target-version: 0.4.0
+tags: dead-code, jats
+---
+<!-- @required: status one of open|closed -->
+<!-- @required: target-version specified -->
+<!-- @optional: since-version specified -->
+<!-- @optional: tags containing comma separated list of tags. -->
+
+## Debt desc
+
+The `uk.co.terminological.bibliography.jats` package (`JatsEntry`, `JatsAuthor`,
+`JatsReference`, `JatsCitedAuthor`) is imported by nothing outside itself, and the
+`src/test/resources/medrxivJats.xml` fixture is read by no test. The medRxiv client
+parses medRxiv's **HTML** (`span.nlm-given-names`) through fluentxml instead.
+
+Left in place deliberately (developer decision, 2026-09): it parses a whole JATS
+*document* into a `Record` via XPath, which is a different job from the markup that
+actually causes trouble here — JATS *fragments* inside JSON fields (Crossref
+abstracts), which `PlainText` reduces to text. If the bridge ever ingests
+bioRxiv/medRxiv JATS documents properly, this is the starting point; otherwise it
+should be deleted.
+
+## Impacts
+
+- [IMPACTS](/src/main/java/uk/co/terminological/bibliography/jats/JatsEntry.java)

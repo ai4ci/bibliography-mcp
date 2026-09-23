@@ -196,7 +196,10 @@ The user opens a collection and asks for the metadata to be tidied.
    both sides have a value, judge whether it is substance or precision — `2019`
    against `2019-01-01` is a judgement call, and the user may want to be asked.
    Markup is already stripped from the values the report offers, so you are
-   comparing content.
+   comparing content — and where the *Zotero* value holds markup (JATS pasted in by
+   a publisher-page import, say) the field carries `zoteroHasMarkup`: the values
+   agree, but the library still holds the mess, and the API value on offer is the
+   clean one to write back.
 3. `zotero_apply_updates` with the change set you decided on — only the named
    fields are written, and the previous values are reported back so the change is
    reviewable. Writes are off unless configured, and confined to one collection.

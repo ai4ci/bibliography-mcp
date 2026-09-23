@@ -171,6 +171,23 @@ public class TestMetadataComparison {
 	}
 
 	@Test
+	public void markupAlreadyInTheLibraryIsFlaggedRatherThanForgiven() throws Exception {
+		// both sides agree once markup is ignored, so without a flag the marked-up
+		// value would sit in the library looking like an agreement
+		var report = MetadataComparison.compare(mapper,
+				item("{\"key\":\"K13\",\"itemType\":\"journalArticle\",\"title\":\"T\","
+						+ "\"abstractNote\":\"<jats:p>We studied things.</jats:p>\"}"),
+				List.of(record("crossref", "T", null, null, "We studied things.", null)));
+
+		var abstractField = report.get("fields").get("abstractNote");
+		assertEquals("agree", abstractField.get("class").asText());
+		assertTrue(abstractField.get("zoteroHasMarkup").asBoolean());
+		assertEquals(1, report.get("fieldsWithMarkup").asInt());
+		// and the clean value is on offer to replace it with
+		assertEquals("We studied things.", abstractField.get("apis").get("crossref").asText());
+	}
+
+	@Test
 	public void creatorsAreComparedBySurnameAndCountOnly() throws Exception {
 		var report = MetadataComparison.compare(mapper,
 				item("{\"key\":\"K6\",\"itemType\":\"journalArticle\",\"title\":\"T\","

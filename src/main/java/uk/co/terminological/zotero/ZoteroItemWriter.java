@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import uk.co.terminological.bibliography.record.Author;
+import uk.co.terminological.bibliography.record.PlainText;
 import uk.co.terminological.bibliography.record.PublicationTypes;
 import uk.co.terminological.bibliography.record.Record;
 
@@ -38,13 +39,14 @@ public class ZoteroItemWriter {
 
 		ObjectNode item = MAPPER.createObjectNode();
 		item.put("itemType", PublicationTypes.toZotero(record.getPublicationType().orElse(null)));
-		item.put("title", title);
-		record.getAbstract().ifPresent(v -> item.put("abstractNote", v));
+		// defensive: never write markup into a library, whatever produced the record
+		item.put("title", PlainText.of(title));
+		record.getAbstract().map(PlainText::of).ifPresent(v -> item.put("abstractNote", v));
 		record.getDate().ifPresent(v -> item.put("date", v.toString()));
-		record.getPublisher().ifPresent(v -> item.put("publisher", v));
+		record.getPublisher().map(PlainText::of).ifPresent(v -> item.put("publisher", v));
 		// the container has a different field name per type, and omitting it entirely
 		// (as this did at first) creates items that have no journal at all
-		record.getContainerTitle().ifPresent(v -> item.put(containerField(item.get("itemType").asText()), v));
+		record.getContainerTitle().map(PlainText::of).ifPresent(v -> item.put(containerField(item.get("itemType").asText()), v));
 		record.getIdentifier(uk.co.terminological.bibliography.record.IdType.DOI).ifPresent(v -> item.put("DOI", v));
 		record.getIdentifier(uk.co.terminological.bibliography.record.IdType.ISBN).ifPresent(v -> item.put("ISBN", v));
 		// no landing-page field exists in the model; a PDF location is the honest

@@ -657,7 +657,7 @@ public class McpTools {
 
 		out.add(new Tool(
 			"zotero_cleanup_report",
-			"Compare every item in a Zotero collection against what the bibliographic APIs say, field by field. Reports agreements, gaps the APIs can fill, conflicts where both sides have a value, and items it could not check at all. It never picks a winner: the agent decides what to change, in conversation with the user, and then calls zotero_apply_updates. Read-only.",
+			"Compare every item in a Zotero collection against what the bibliographic APIs say, field by field. Reports agreements, gaps the APIs can fill, conflicts where both sides have a value, and items it could not check at all. A field whose Zotero value already holds markup is flagged with zoteroHasMarkup, with the cleaned value offered, so a marked-up abstract can be replaced rather than left looking like an agreement. It never picks a winner: the agent decides what to change, in conversation with the user, and then calls zotero_apply_updates. Read-only.",
 			schema(m, "{\"type\":\"object\",\"properties\":{\"collection\":{\"type\":\"string\",\"description\":\"collection key from zotero_collections\"},"
 					+ "\"limit\":{\"type\":\"integer\",\"description\":\"most items to compare (default 25)\"}},\"required\":[\"collection\"]}"),
 			args -> {

@@ -27,6 +27,7 @@ tags: zotero, enrichment, metadata
 
 [TESTED_BY](/src/test/java/uk/co/terminological/zotero/TestMetadataComparison.java)
 [TESTED_BY](/src/test/java/uk/co/terminological/zotero/TestZoteroItemWriter.java)
+[TESTED_BY](/src/test/java/uk/co/terminological/bibliography/record/TestPlainText.java)
 
 ### 2) Clean-up against a real collection (report, then write)
 

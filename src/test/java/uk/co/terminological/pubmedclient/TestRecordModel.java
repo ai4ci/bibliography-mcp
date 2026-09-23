@@ -55,6 +55,19 @@ public class TestRecordModel {
 	}
 
 	@Test
+	public void crossrefAbstractAndTitleComeBackAsPlainText() throws Exception {
+		// Crossref returns the abstract as JATS XML: markup is not content, and it
+		// must not reach a Zotero item or a report as markup either
+		CrossRefWork work = new CrossRefWork(mapper.readTree(
+				"{\"DOI\":\"10.1/x\",\"type\":\"journal-article\","
+						+ "\"title\":[\"Health &amp; social care: a <i>review</i>\"],"
+						+ "\"abstract\":\"<jats:title>ABSTRACT</jats:title><jats:p>We studied things &amp; found more.</jats:p>\"}"));
+
+		assertEquals("Health & social care: a review", work.getTitle().orElse(null));
+		assertEquals("We studied things & found more.", work.getAbstract().orElse(null));
+	}
+
+	@Test
 	public void crossrefBookChapterMapsToCslChapter() throws Exception {
 		CrossRefWork work = new CrossRefWork(mapper.readTree(
 				"{\"DOI\":\"10.1/y\",\"type\":\"book-chapter\",\"container-title\":[\"A Book\"]}"));

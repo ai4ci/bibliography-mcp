@@ -93,6 +93,17 @@ source that asserted it and cleaning markup out of the values it offers; an
 explicit update changed exactly the two fields named, reported what they had been
 before, and left the item's tags and title untouched.
 
+Markup is handled at the root rather than where it was noticed: `PlainText`
+reduces a fragment to text (tags stripped, a JATS heading dropped with its content,
+entities unescaped, whitespace collapsed) and is applied when a record is **mapped**
+(Crossref returns abstracts as JATS XML), again in the writer as a last gate, and in
+the comparison. Because cleaning both sides would make a marked-up abstract look
+like an agreement, the report **flags** a Zotero value that holds markup
+(`zoteroHasMarkup`) and offers the cleaned value, so markup already in the library
+is findable and fixable with the same two tools. Measured before the fix: 86 of
+2110 items held markup, 75 from the user's own imports and 11 from the bridge's
+first publish.
+
 Three defects the live run exposed, all fixed: CrossRef abstracts arrived as JATS
 XML (a markup-wrapped abstract read as a conflict with itself, and could have been
 written into `abstractNote` verbatim); the container was compared against a
@@ -108,6 +119,8 @@ using that name would have been refused; and Unpaywall reports every author as
 ## Implemented by
 
 - [IMPLEMENTED_BY](/src/main/java/uk/co/terminological/zotero/MetadataComparison.java)
+- [IMPLEMENTED_BY](/src/main/java/uk/co/terminological/bibliography/record/PlainText.java)
+- [IMPLEMENTED_BY](/src/main/java/uk/co/terminological/bibliography/crossref/CrossRefWork.java)
 - [IMPLEMENTED_BY](/src/main/java/uk/co/terminological/zotero/ZoteroClient.java)
 - [IMPLEMENTED_BY](/src/main/java/uk/co/terminological/zotero/ZoteroItemWriter.java)
 - [IMPLEMENTED_BY](/src/main/java/uk/co/terminological/bibliography/mcp/McpTools.java)

@@ -178,6 +178,18 @@ public class TestZoteroItemWriter {
 	}
 
 	@Test
+	public void markupIsCleanedBeforeItReachesTheLibrary() throws Exception {
+		// a record may carry markup whatever produced it; the writer is the last gate
+		Record r = record("article-journal", IdType.DOI, "10.1/x", null,
+				"<jats:p>An abstract with <i>emphasis</i></jats:p>", "A <i>marked</i> up title", List.of(), null);
+
+		var item = ZoteroItemWriter.toItem(r, "K", List.of());
+
+		assertEquals("A marked up title", item.get("title").asText());
+		assertEquals("An abstract with emphasis", item.get("abstractNote").asText());
+	}
+
+	@Test
 	public void anItemWithNoTitleIsRefused() {
 		Record noTitle = record("report", null, null, null, null, null, List.of(), null);
 		try {

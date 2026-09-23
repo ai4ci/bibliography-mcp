@@ -628,7 +628,40 @@ curated (Zotero) records excluded from merging altogether.
 
 ---
 
-## 6. (template for further ideas)
+## 6. Are preprints covered by Europe PMC? — `proposed`, effort S
+
+### Context
+
+The project has a medRxiv client that parses medRxiv's HTML, and Europe PMC indexes
+preprints too (results carry `source: PPR`). If Europe PMC covered them completely,
+the medRxiv client would be redundant.
+
+### Evidence (sampled 2026-09)
+
+| preprint | found in Europe PMC? |
+|---|---|
+| medRxiv `10.1101/2021.02.09.21250937` | yes (`PPR285723`) |
+| medRxiv `10.1101/2024.01.15.24301296` | no |
+| bioRxiv `10.1101/2020.01.09.20017596` | no |
+
+Coverage is partial, and a bare DOI query finds a preprint when Europe PMC has it —
+no source filter needed.
+
+### What to decide
+
+Whether to keep the medRxiv client for the coverage it adds, or drop it and accept
+Europe PMC's coverage (and its lag). That needs a proper sample rather than three
+DOIs, and interacts with the JATS question in
+[debt-008](/design/implementation/debt/debt-008-jats-package-is-unused.md): a direct
+medRxiv/bioRxiv route is also the only one that yields the preprint's JATS.
+
+### Linked artefacts
+
+Nothing yet — a question to answer before it becomes work.
+
+---
+
+## 7. (template for further ideas)
 
 Copy this shape for each new idea so the document stays comparable.
 

@@ -40,6 +40,9 @@ reuses the batched, version-preconditioned write from plan-004.
       version, apply, and report per item what changed with the previous values.
 - [x] `zotero_publish` gains `includeHeld` (default false) so the agent can choose
       the duplicate route for a conflict it cannot resolve.
+- [x] `PlainText`: markup reduced to text at the record mapping (Crossref), in the
+      writer as a last gate, and in the comparison; the report flags markup already in
+      the library rather than forgiving it.
 - [x] Design links, `test-004`, `feat-008` status, README and skill tool lists. Also
       fixed the writer, which omitted the container entirely — items published by the
       bridge had no journal at all.

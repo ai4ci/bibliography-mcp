@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import uk.co.terminological.bibliography.record.Author;
 import uk.co.terminological.bibliography.record.IdType;
+import uk.co.terminological.bibliography.record.PlainText;
 import uk.co.terminological.bibliography.record.Provenance;
 import uk.co.terminological.bibliography.record.Record;
 
@@ -25,6 +26,11 @@ import uk.co.terminological.bibliography.record.Record;
  * these are judgement calls for the agent, in conversation with the user. A rule
  * hidden in here would make the same decision silently and wrongly some of the
  * time; a report makes it visible every time.
+ *
+ * Markup in a value is reported rather than hidden: a field whose Zotero value
+ * carries JATS or HTML is flagged, because cleaning both sides for the comparison
+ * would otherwise make a marked-up abstract look like an agreement and leave the
+ * mess in the library.
  *
  * [IMPLEMENTS](/design/features/feat-008-clean-up-collection-metadata.md)
  */
@@ -66,6 +72,7 @@ public class MetadataComparison {
 		ObjectNode out = mapper.createObjectNode();
 		ObjectNode fields = out.putObject("fields");
 		Map<String, String> classes = new LinkedHashMap<>();
+		int markup = 0;
 
 		for (Field field : Field.values()) {
 			// a container has no single Zotero field name, so the report names the one
@@ -83,6 +90,12 @@ public class MetadataComparison {
 				apiValues.forEach(apis::put);
 			}
 			entry.put("class", classification);
+			if (PlainText.hasMarkup(zoteroValue)) {
+				// the two values agree once markup is ignored, but the library still
+				// holds the markup: say so, or it stays there for good
+				entry.put("zoteroHasMarkup", true);
+				markup++;
+			}
 			classes.put(field.reportName, classification);
 		}
 
@@ -90,6 +103,7 @@ public class MetadataComparison {
 		if (creators != null) classes.put("creators", creators);
 
 		// the summary is derived from the fields, so it cannot drift from them
+		if (markup > 0) out.put("fieldsWithMarkup", markup);
 		out.put("classification", classes.containsValue(CONFLICT) ? CONFLICTS
 				: classes.containsValue(FILLABLE) ? GAPS
 				: ALL_AGREE);
@@ -100,10 +114,10 @@ public class MetadataComparison {
 		if (zoteroValue == null && apiValues.isEmpty()) return null;
 		if (zoteroValue == null) return FILLABLE;
 		if (apiValues.isEmpty()) return ZOTERO_ONLY;
-		String normalised = ZoteroMatching.text(cleanText(zoteroValue));
+		String normalised = ZoteroMatching.text(PlainText.of(zoteroValue));
 		boolean allAgree = apiValues.values()
 				.stream()
-				.map(value -> ZoteroMatching.text(cleanText(value)))
+				.map(value -> ZoteroMatching.text(PlainText.of(value)))
 				.allMatch(normalised::equals);
 		return allAgree ? AGREE : CONFLICT;
 	}
@@ -121,31 +135,12 @@ public class MetadataComparison {
 			"publicationTitle", "bookTitle", "proceedingsTitle", "encyclopediaTitle",
 			"dictionaryTitle", "websiteTitle", "blogTitle" };
 
-	/**
-	 * Markup and entity escapes are not content. CrossRef in particular returns
-	 * abstracts as JATS XML, which would otherwise read as a disagreement with a
-	 * perfectly good Zotero abstract — and, worse, could be written into it verbatim.
-	 * Cleaning is applied to both sides for comparison, and the cleaned value is what
-	 * the report hands to the agent.
-	 */
-	static String cleanText(String raw) {
-		if (raw == null) return null;
-		// a JATS heading is a label, not abstract prose: dropping it (and its content)
-		// stops "ABSTRACT" appearing as a difference in every CrossRef abstract
-		String out = raw.replaceAll("(?is)<jats:title>.*?</jats:title>", " ");
-		out = out.replaceAll("<[^>]+>", " ");
-		out = out.replace("&amp;", "&").replace("&lt;", "<").replace("&gt;", ">")
-				.replace("&quot;", "\"").replace("&apos;", "'").replace("&#39;", "'");
-		out = out.replaceAll("\\s+", " ").trim();
-		return out.isEmpty() ? null : out;
-	}
-
 	private static String valueOf(JsonNode data, String fieldName, boolean clean) {
 		JsonNode node = data.get(fieldName);
 		if (node == null || node.isNull()) return null;
 		String value = node.asText();
 		if (value == null || value.trim().isEmpty()) return null;
-		return clean ? cleanText(value) : value.trim();
+		return clean ? PlainText.of(value) : value.trim();
 	}
 
 	private static Map<String, String> apiValues(List<? extends Record> apiRecords, Field field) {
@@ -154,7 +149,7 @@ public class MetadataComparison {
 			Optional<String> value = read(record, field);
 			// attributed by source, and cleaned: the agent needs to know who said what,
 			// and to be able to copy the value straight into an update
-			value.map(MetadataComparison::cleanText).ifPresent(v -> out.putIfAbsent(sourceOf(record), v));
+			value.map(PlainText::of).ifPresent(v -> out.putIfAbsent(sourceOf(record), v));
 		}
 		return out;
 	}
