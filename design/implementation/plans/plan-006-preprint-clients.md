@@ -53,6 +53,11 @@ attempted (arXiv references).
       `DOI` branch at all, so a preprint's references were reported as absent even
       though its API held them (`PPR`). Also fixed the citation index counter, which
       was never incremented in any of those loops.
+- [x] Reference parsing: all 28 references of a real medRxiv article are now
+      identifiable by title or DOI, where 14 were before and titles were absent
+      because the parser compared a string attribute by identity. A reference is named
+      by `article-title`, `collab` (reports and web pages) or `source`; PMIDs travel as
+      other identifiers; an unusable year yields no date rather than throwing.
 - [ ] Docs: README supported-APIs list, skill (preprint searching), SCOPE,
       `feat-009` status, roadmap idea 6 (which asked whether the medRxiv client is
       still needed — the answer is that it is, for coverage and for the published

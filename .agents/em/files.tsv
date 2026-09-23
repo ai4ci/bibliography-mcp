@@ -18,7 +18,7 @@ design/features/feat-005-zotero-curated-repository-bridge.md	1790173868	final	0.
 design/features/feat-006-classify-records-by-type-with-provenance.md	1790168418	final	0.2.0	model, provenance, zotero, accepted
 design/features/feat-007-predictable-record-merging.md	1790168418	final	0.2.0	model, merge, accepted
 design/features/feat-008-clean-up-collection-metadata.md	1790176785	final	0.3.0	zotero, enrichment, metadata
-design/features/feat-009-preprint-clients.md	1790180178	draft	0.4.0	arxiv, medrxiv, preprints, proposed
+design/features/feat-009-preprint-clients.md	1790180594	draft	0.4.0	arxiv, medrxiv, preprints, proposed
 design/implementation/debt/debt-001-session-persistence-uses-java-serialization.md	1790159628	open	0.3.0	persistence, serialization
 design/implementation/debt/debt-002-opencitations-queries-dois-only.md	1790159628	open	0.2.0	opencitations, id-types
 design/implementation/debt/debt-003-analysis-recomputes-topic-model-per-call.md	1790159628	open	0.3.0	analysis, performance
@@ -38,14 +38,14 @@ design/implementation/plans/plan-002-record-type-publisher-provenance.md	1790168
 design/implementation/plans/plan-003-record-merge-policy.md	1790168418	final	0.2.0	model, merge
 design/implementation/plans/plan-004-zotero-bridge.md	1790172910	final	0.2.0	zotero, mcp, repository
 design/implementation/plans/plan-005-metadata-cleanup.md	1790176785	final	0.3.0	zotero, enrichment, metadata
-design/implementation/plans/plan-006-preprint-clients.md	1790180178	draft	0.4.0	arxiv, medrxiv, preprints
+design/implementation/plans/plan-006-preprint-clients.md	1790180594	draft	0.4.0	arxiv, medrxiv, preprints
 design/prototypes/prototype-001-opencitations-meta-pids.md	1790159877	draft	0.2.0	opencitations, id-mapping, prototype
 design/roadmap.md	1790178044	draft	0.1.0	roadmap, mcp, opencitations, bibliographic-apis
 design/test-scripts/test-001-mcp-protocol-smoke-test.md	1790159864	final	0.1.0	mcp, smoke-test
 design/test-scripts/test-002-api-behaviour-tests.md	1790168418	final	0.1.0	api-client, citations, analysis, parsing
 design/test-scripts/test-003-zotero-bridge-tests.md	1790171442	final	0.2.0	zotero, mcp, integration
 design/test-scripts/test-004-metadata-cleanup-tests.md	1790176785	final	0.3.0	zotero, enrichment, metadata
-design/test-scripts/test-005-preprint-tests.md	1790180178	final	0.4.0	medrxiv, preprint, jats
+design/test-scripts/test-005-preprint-tests.md	1790180594	final	0.4.0	medrxiv, preprint, jats
 docs/references/arXiv API User's Manual.md	1790178617	NA	NA	NA
 pom.xml	1790091122	NA	NA	NA
 scripts/mcp-smoke-test.sh	1790159692	NA	NA	NA
@@ -92,7 +92,7 @@ src/main/java/uk/co/terminological/bibliography/europepmc/EuropePMCReference.jav
 src/main/java/uk/co/terminological/bibliography/jats/JatsAuthor.java	1630502889	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/jats/JatsCitedAuthor.java	1630503747	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/jats/JatsEntry.java	1790178735	NA	NA	NA
-src/main/java/uk/co/terminological/bibliography/jats/JatsReference.java	1630505794	NA	NA	NA
+src/main/java/uk/co/terminological/bibliography/jats/JatsReference.java	1790180526	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/mcp/Analysis.java	1790159689	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/mcp/BiblioFacade.java	1790179529	NA	NA	NA
 src/main/java/uk/co/terminological/bibliography/mcp/McpServer.java	1790170854	NA	NA	NA
@@ -159,6 +159,7 @@ src/main/resources/schema/pubmed_190101.dtd	1590593512	NA	NA	NA
 src/test/debug.jpage	1600157958	NA	NA	NA
 src/test/java/uk/co/terminological/bibliography/mcp/TestCitationDedupe.java	1790179529	NA	NA	NA
 src/test/java/uk/co/terminological/bibliography/record/TestPlainText.java	1790176785	NA	NA	NA
+src/test/java/uk/co/terminological/jats/TestJatsReferences.java	1790180487	NA	NA	NA
 src/test/java/uk/co/terminological/medrxiv/TestMedrxivRecords.java	1790178690	NA	NA	NA
 src/test/java/uk/co/terminological/pubmedclient/TestApiDriftParsing.java	1790170176	NA	NA	NA
 src/test/java/uk/co/terminological/pubmedclient/TestCombinedApi.java	1790159836	NA	NA	NA

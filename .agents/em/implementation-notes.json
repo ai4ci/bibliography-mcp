@@ -322,10 +322,10 @@
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/jats/JatsReference.java": {
-    "modified": 1630505794,
+    "modified": 1790180526,
     "comments": [],
     "anchors": [],
-    "count_lines": 103,
+    "count_lines": 143,
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/mcp/Analysis.java": {
@@ -795,6 +795,13 @@
     "comments": [],
     "anchors": [],
     "count_lines": 61,
+    "percent": 0
+  },
+  "src/test/java/uk/co/terminological/jats/TestJatsReferences.java": {
+    "modified": 1790180487,
+    "comments": [],
+    "anchors": [],
+    "count_lines": 118,
     "percent": 0
   },
   "src/test/java/uk/co/terminological/medrxiv/TestMedrxivRecords.java": {

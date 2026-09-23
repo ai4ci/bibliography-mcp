@@ -27,7 +27,23 @@ tags: medrxiv, preprint, jats
 
 [TESTED_BY](/src/test/java/uk/co/terminological/medrxiv/TestMedrxivRecords.java)
 
-### 2) Citations from two sources are one citation (offline)
+### 2) The reference-list parser (offline)
+
+ 1. Setup: a JATS article with four references covering what a real medRxiv article
+    contains — a normal journal reference with a DOI and a PMID, a report with no
+    `article-title` whose name is in `collab`, a web page with no year, and a
+    reference whose year is not a number.
+ 2. Execution: parse the article, take its references, and read each one.
+ 3. Expectation: the journal reference gives its DOI, title, journal, authors and
+    date, with the PMID as another identifier; the report is named by its `collab`
+    text; the web page is named even with no source; a non-numeric year gives no date
+    **rather than throwing**; and a reference with neither title nor identifier is
+    still returned as an incomplete reference rather than dropped.
+ 4. Cleanup: none — offline.
+
+[TESTED_BY](/src/test/java/uk/co/terminological/jats/TestJatsReferences.java)
+
+### 3) Citations from two sources are one citation (offline)
 
  1. Setup: stub citation links sharing a source.
  2. Execution: dedupe.
@@ -39,7 +55,7 @@ tags: medrxiv, preprint, jats
 
 [TESTED_BY](/src/test/java/uk/co/terminological/bibliography/mcp/TestCitationDedupe.java)
 
-### 3) Live, read-only
+### 4) Live, read-only
 
  1. Setup: a medRxiv DOI (`10.1101/2021.02.09.21250937`) and the MCP server.
  2. Execution: `cites` and `cited_by` with that DOI.

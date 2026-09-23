@@ -2,6 +2,7 @@ package uk.co.terminological.bibliography.jats;
 
 import java.net.URI;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -9,7 +10,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import uk.co.terminological.bibliography.record.Author;
+import uk.co.terminological.bibliography.record.Builder;
 import uk.co.terminological.bibliography.record.IdType;
+import uk.co.terminological.bibliography.record.ImmutableRecordReference;
 import uk.co.terminological.bibliography.record.Raw;
 import uk.co.terminological.bibliography.record.Record;
 import uk.co.terminological.bibliography.record.RecordReference;
@@ -42,7 +45,12 @@ public class JatsReference implements RecordReference, Record, Raw<XmlElement> {
 
 	@Override
 	public List<? extends RecordReference> getOtherIdentifiers() {
-		return Collections.emptyList();
+		List<ImmutableRecordReference> out = new ArrayList<>();
+		childWithAttribute("pub-id", "pub-id-type", "pmid")
+				.ifPresent(id -> out.add(Builder.recordReference(IdType.PMID, id)));
+		childWithAttribute("pub-id", "pub-id-type", "pmcid")
+				.ifPresent(id -> out.add(Builder.recordReference(IdType.PMCID, id)));
+		return out;
 	}
 
 	@Override
@@ -63,20 +71,34 @@ public class JatsReference implements RecordReference, Record, Raw<XmlElement> {
 		return Optional.empty();
 	}
 
+	/**
+	 * A reference is named by its article title, or — for the grey literature, reports
+	 * and web pages — by the collaborative name the publisher puts in `collab`, or
+	 * failing that by the source it appeared in.
+	 *
+	 * This used to be gated on `publication-type == "journal"`: a string identity
+	 * comparison, which is false for text that is not the interned literal, so in
+	 * practice **no** reference had a title.
+	 */
+	/** the text of the first child element with this name, if there is one */
+	private Optional<String> firstChildText(String name) {
+		return raw.childElements(name).findFirst().flatMap(el -> el.getTextContent());
+	}
+
+	/** the text of the first child element carrying a particular attribute value */
+	private Optional<String> childWithAttribute(String element, String attribute, String value) {
+		return raw.childElements(element)
+				.stream()
+				.filter(el -> el.getAttributeValue(attribute).map(value::equals).orElse(false))
+				.findFirst()
+				.flatMap(el -> el.getTextContent());
+	}
+
 	@Override
 	public Optional<String> getTitle() {
-		if (raw.getAttributeValue("publication-type").map(s -> s == "journal").orElse(Boolean.FALSE)) { 
-			return raw
-				.childElements("article-title")
-				.findFirst().flatMap(el -> el.getTextContent())
-				.or(() ->
-					raw
-					.childElements("source")
-					.findFirst().flatMap(el -> el.getTextContent())
-				);
-		} else {
-			return Optional.empty();
-		}
+		return firstChildText("article-title")
+				.or(() -> firstChildText("collab"))
+				.or(() -> firstChildText("source"));
 	}
 
 	@Override
@@ -86,12 +108,30 @@ public class JatsReference implements RecordReference, Record, Raw<XmlElement> {
 		.findFirst().flatMap(el -> el.getTextContent());
 	}
 
+	/**
+	 * A year may be absent, or not a number at all ("in press", "2020-2021"). This
+	 * project returns Optionals rather than throwing, so an unusable year is simply
+	 * no date.
+	 */
 	@Override
 	public Optional<LocalDate> getDate() {
-		Optional<Integer> year = raw.childElements("year").findFirst().flatMap(el2 -> el2.getTextContent()).map(Integer::parseInt);
-		Optional<Integer> month = raw.childElements("month").findFirst().flatMap(el2 -> el2.getTextContent()).map(Integer::parseInt);
-		Optional<Integer> day = raw.childElements("day").findFirst().flatMap(el2 -> el2.getTextContent()).map(Integer::parseInt);
-		return year.map(y -> LocalDate.of(y, month.orElse(1), day.orElse(1)));
+		Optional<Integer> year = number(firstChildText("year"));
+		if (!year.isPresent()) return Optional.empty();
+		return Optional.of(LocalDate.of(
+				year.get(),
+				number(firstChildText("month")).orElse(1),
+				number(firstChildText("day")).orElse(1)));
+	}
+
+	private static Optional<Integer> number(Optional<String> text) {
+		return text.map(String::trim)
+				.flatMap(value -> {
+					try {
+						return value.isEmpty() ? Optional.empty() : Optional.of(Integer.parseInt(value));
+					} catch (NumberFormatException e) {
+						return Optional.empty();
+					}
+				});
 	}
 
 	@Override

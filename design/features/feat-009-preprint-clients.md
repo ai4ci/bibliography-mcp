@@ -83,16 +83,29 @@ clients fill is *metadata* (and, for medRxiv, the published-version link).
 - Merge priority puts the preprint servers below the indexed services, as requested:
   a PMC record of the same work wins, and a preprint supplies only what the indexed
   services lack.
-- Two pre-existing defects were turned up by the tests and fixed:
-  `ImmutableCitationLink` accepted a citation index and dropped it, and
-  `JatsEntry.getTitle()` matched `article-title` outside the front matter, so a JATS
-  article's own title was lost whenever its reference list had titles too.
+- The reference parser now resolves the reference list properly. Measured on a real
+  medRxiv article (28 references): **all 28 are identifiable** by title or DOI,
+  where before 14 were, and titles were effectively absent — the parser gated the
+  title on `publication-type == "journal"`, a **string identity comparison**, so it
+  matched nothing. A reference's name is now its `article-title`, or the `collab`
+  element the publisher uses for reports and web pages ("Investigation of novel
+  SARS-CoV-2 variant", "Prime Minister announces Tier 4"), or the source it appeared
+  in; elsewhere PMIDs travel as other identifiers, and a non-numeric year ("in press")
+  yields no date instead of throwing.
 
-Still to do: the arXiv client (option A's other half), the medRxiv date-window
-Searcher, the preprint-to-published mapping, and Zotero's `repository`/`archiveID`
-mapping for preprints. Some JATS references resolve only partially (no DOI and no
-title) because `JatsReference` reads only part of a `citation` element — worth
-extending to `source`, `year`, `volume` and `fpage`.
+Four pre-existing defects were turned up along the way, all fixed:
+`ImmutableCitationLink` accepted a citation index and dropped it; `JatsEntry.getTitle()`
+matched `article-title` outside the front matter, so a JATS article's own title was
+lost whenever its reference list had titles too; `JatsReference.getTitle()` compared
+strings by identity, so no reference had a title; and `JatsReference.getDate()` threw
+on a year that was not a number.
+
+Still to do: the arXiv client (parked — a different shape of source), the medRxiv
+date-window Searcher, the preprint-to-published mapping, and Zotero's
+`repository`/`archiveID` mapping for preprints. A separate gap that is **not** the
+JATS: some citation links from CrossRef's reference entries and OpenCitations still
+carry neither an identifier nor a title (33 of 80 links in the recorded run), so they
+cannot be deduplicated precisely or shown usefully.
 
 ## Open question: is the PMC-first priority right for preprints?
 
