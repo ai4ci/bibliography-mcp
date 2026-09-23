@@ -21,8 +21,9 @@ nothing and the merged record is quietly thinner than it should be:
 | Unpaywall | 1 | **0** | DOI-keyed API by design (`/v2/{doi}`) |
 
 (An earlier version of this record claimed Europe PMC missed DOIs. That was
-wrong — it was measuring a stale cache entry, see
-[debt-006](/design/implementation/debt/debt-006-cached-answers-are-never-invalidated.md).)
+wrong: it was measuring a cached **truncated response body**, not a code gap — see
+[issue-004](/design/implementation/issues/issue-004-truncated-responses-are-cached-as-empty.md).
+Europe PMC handles DOI, PMID and PMCID correctly.)
 
 Consequence: an agent that only has a PMID gets Europe PMC's record but not
 CrossRef's publisher/type or Unpaywall's open-access location, and nothing in the
