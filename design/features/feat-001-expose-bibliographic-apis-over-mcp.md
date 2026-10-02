@@ -24,6 +24,7 @@ Tools: `search`, `fetch`, `cites`, `cited_by`, `map_ids`,
 - [HAS_INTERFACE](/design/external-interfaces/interface-002-configuration-and-secrets.md)
 - [HAS_TEST](/design/test-scripts/test-001-mcp-protocol-smoke-test.md)
 - [HAS_TEST](/design/test-scripts/test-002-api-behaviour-tests.md)
+- [HAS_PLAN](/design/implementation/plans/plan-007-api-test-coverage.md)
 
 ## Implemented by
 

@@ -21,6 +21,7 @@ tags: api-client, citations, analysis, parsing
  4. Cleanup: process exits; cache persists for cheaper reruns.
 
 [TESTED_BY](/src/test/java/uk/co/terminological/pubmedclient/TestCombinedApi.java)
+[TESTED_BY](/scripts/run-live-tests.sh)
 <!-- @optional: Paths to the test implementation -->
 
 Notes: this is a `main()`-method harness, not a JUnit test — it hits live APIs
