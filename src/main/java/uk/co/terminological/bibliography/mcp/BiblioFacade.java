@@ -68,7 +68,7 @@ public class BiblioFacade
 		out.put("citedBy", List.of("opencitations", "entrez", "europepmc"));
 		out.put("fetch", List.of("crossref", "entrez", "europepmc", "unpaywall", "medrxiv"));
 		// the preprint-to-published-article mapping
-		out.put("idMap", List.of("pmcid", "medrxiv"));
+		out.put("idMap", List.of("pmcid"));
 		return out;
 	}
 
@@ -352,9 +352,6 @@ public class BiblioFacade
 					.mappings(ids);
 			} else if (idMapApi.equals("pmcid")) {
 				tmp = this.api.getPmcIdConv()
-					.mappings(ids);
-			} else if (idMapApi.equals("medrxiv")) {
-				tmp = this.api.getMedrxiv()
 					.mappings(ids);
 			}
 			log.info(

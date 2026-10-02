@@ -28,7 +28,7 @@ design — and it contradicts one of the assumptions in the request.
 |---|---|---|
 | **Searcher** | date-window listing `/details/{server}/{from}/{to}[/{cursor}]` (authoritative, paginated by cursor, 30–100 per page). Keyword search exists only as **HTML scraping** (`MedrxivSearch`, already written) — prefer Europe PMC, which indexes preprints as `source: PPR` | proper keyword search: `search_query` with field prefixes (`ti`, `au`, `abs`, `co`, `jr`, `cat`, `rn`, `all`), `AND`/`OR`/`ANDNOT`, quoted phrases, and a `submittedDate:[…TO…]` filter that matches our `from`/`to`; `sortBy`/`sortOrder` |
 | **RecordFetcher** | by DOI: `/details/{server}/{doi}` → title, authors, corresponding author + institution, version, type, license, category, funder, abstract, `jatsxml` URL, `published` | by `id_list` (comma-separated, versions via `vN`); also `search_query`+`id_list` together as a filter |
-| **preprint → published mapping** | explicit: `/pubs/{server}/{doi}` → `preprint_doi`, `published_doi`, `published_journal`, both dates | `arxiv:doi` and `arxiv:journal_ref` on the entry — present only if the author supplied them, so weaker |
+| **preprint → published mapping** | **not served**: `/pubs/{server}/{doi}` exists but only knows `10.1101/` works — for `10.64898/` DOIs it answers empty, which reads as "unpublished" and is wrong for newly registered works, so `MedrxivClient` deliberately does **not** implement `IdMapper` | `arxiv:doi` and `arxiv:journal_ref` on the entry — present only if the author supplied them, so weaker |
 | **references (CitesMapper)** | **only from the JATS full text**: the `jatsxml` URL returns the article XML and it carries the reference list (sample: 28 `<ref>` in one `<ref-list>`). No API for it | **not available at all** — the API returns metadata only, and scraping PDFs/HTML is out of scope under arXiv's terms |
 | **cited-by** | none | none |
 | **citations, either direction** | Europe PMC has them for indexed preprints (sample `PPR285723`: **31 references, 10 citations**), and OpenCitations once published | same |
@@ -48,8 +48,7 @@ clients fill is *metadata* (and, for medRxiv, the published-version link).
   with the other APIs. `arxiv:doi`/`arxiv:journal_ref` become other identifiers and
   a published-version mapping where present.
 - **`MedrxivClient implements Searcher, RecordFetcher`** for real: the date-window
-  listing (cursor-paged) as the search, `/details` for fetch, `/pubs` as the
-  preprint→published mapping. The existing HTML-scraping classes are left alone:
+  listing (cursor-paged) as the search and `/details` for fetch. The existing HTML-scraping classes are left alone:
   they work, but the API is authoritative and Europe PMC is the better keyword route.
 - **`IdType.ARXIV`** — arXiv ids are the canonical handle for a preprint and DOIs
   (10.48550/arXiv.*) are optional; adding an enum constant is safe for serialised
@@ -107,10 +106,14 @@ on a year that was not a number.
   window holding 1498 preprints. With no dates the last 30 days are used, and when a
   window holds more than the page budget the log says how much was scanned ("300 of
   1498 records"), so a partial answer cannot look like an empty one.
-- **The published version** is read from `/pubs` and exposed as an **id mapping**, so
-  `map_ids` answers "was this preprint published?" with the journal DOI. A session
-  holding both will therefore treat them as one work: right for a citation graph, and a
-  deliberate choice recorded here rather than a side effect.
+- **The published version is deliberately not mapped.** `/pubs` was once exposed as
+  an **id mapping** so `map_ids` could answer "was this preprint published?", but
+  `/pubs` only knows `10.1101/` works: a published `10.64898/` preprint returns an
+  empty mapping, and an empty mapping in that interface reads exactly like
+  "unpublished" — a confidently wrong answer the interface cannot qualify, because
+  "outside my coverage" is not expressible. The `IdMapper` implementation was
+  therefore removed: a session holds the preprint and the journal article as two
+  works, and the agent can fetch both and judge.
 - Zotero's preprint item type holds its container in **`repository`** rather than
   `publicationTitle`, so the writer now maps it there and the clean-up report looks
   there — without it a published preprint had no repository and its container was

@@ -20,8 +20,9 @@ tags: medrxiv, preprint, jats
     no publisher and no PDF (the full text is XML); markup is cleaned out of title and
     abstract; authors split on the server's `"Surname, Initials;"` convention with an
     institutional author kept whole; the `published` DOI is *not* an identifier,
-    because the published article is a different work; only `10.1101/` DOIs are worth
-    a request; each JATS reference becomes a citation from the preprint, with its
+    because the published article is a different work; `10.1101/` and `10.64898/`
+    DOIs are both worth a request — prefix semantics, so the bare prefix `10.1101`
+    is not; each JATS reference becomes a citation from the preprint, with its
     position, and a reference without a DOI is still a (incomplete) citation.
  4. Cleanup: none — offline.
 
@@ -55,15 +56,15 @@ tags: medrxiv, preprint, jats
 
 [TESTED_BY](/src/test/java/uk/co/terminological/bibliography/mcp/TestCitationDedupe.java)
 
-### 4) Searching a window, and the published version (offline)
+### 4) Searching a window (offline)
 
- 1. Setup: a `/pubs` response that maps a preprint to a journal article, one that maps
-    nothing, and a preprint record.
- 2. Execution: read the mapping; match a term against the record.
- 3. Expectation: the mapping gives preprint DOI to published DOI, and an unpublished
-    preprint gives no mapping; a term matches when **every word** appears in the title
-    or abstract (a phrase-as-substring filter made a two-word query return nothing in a
-    window holding 1498 preprints), and an empty term matches everything.
+ 1. Setup: a preprint record.
+ 2. Execution: match a term against the record.
+ 3. Expectation: a term matches when **every word** appears in the title or abstract
+    (a phrase-as-substring filter made a two-word query return nothing in a window
+    holding 1498 preprints), and an empty term matches everything. There is no
+    published-version mapping to test: `/pubs` is prefix-blind and the `IdMapper`
+    was removed rather than answer "unpublished" wrongly (see feat-009).
  4. Cleanup: none — offline.
 
 [TESTED_BY](/src/test/java/uk/co/terminological/bibliography/medrxiv/TestMedrxivRecords.java)

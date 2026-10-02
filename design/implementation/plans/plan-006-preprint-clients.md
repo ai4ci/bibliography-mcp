@@ -71,6 +71,12 @@ attempted (arXiv references).
       `feat-009` status, roadmap idea 6 (which asked whether the medRxiv client is
       still needed — the answer is that it is, for coverage and for the published
       mapping).
+- [x] **Reversal after sign-off**: the `/pubs` preprint→published id mapping has been
+      removed and `MedrxivClient` no longer implements `IdMapper`. medRxiv widened its
+      DOI prefix to `10.64898/` after this plan shipped, and `/pubs` only knows
+      `10.1101/` works — for the new prefix it answers empty, which the id-mapping
+      interface cannot distinguish from "not published". An interface that cannot say
+      "outside my coverage" must not answer at all (see feat-009).
 
 ## Tests
 

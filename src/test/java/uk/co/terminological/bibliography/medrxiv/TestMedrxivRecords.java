@@ -83,27 +83,12 @@ public class TestMedrxivRecords {
 	public void onlyPreprintDoisAreWorthARequest() {
 		assertTrue(MedrxivClient.isPreprintDoi("10.1101/2021.01.01.12345678"));
 		assertTrue(MedrxivClient.isPreprintDoi(" 10.1101/x "));
+		// medRxiv widened its prefix; the gate is prefix semantics, not equality (a
+		// List.contains regression made every real DOI fail this check once)
+		assertTrue(MedrxivClient.isPreprintDoi("10.64898/2025.12.12.25342129"));
+		assertFalse(MedrxivClient.isPreprintDoi("10.1101"));
 		assertFalse(MedrxivClient.isPreprintDoi("10.1136/bmj.n579"));
 		assertFalse(MedrxivClient.isPreprintDoi(null));
-	}
-
-	@Test
-	public void thePublishedVersionMappingIsReadFromThePubsEndpoint() throws Exception {
-		var mapping = MedrxivClient.mappingFromPubs(
-				mapper.readTree("{\"collection\":[{\"preprint_doi\":\"10.1101/2021.01.01.12345678\","
-						+ "\"published_doi\":\"10.1136/bmj.n579\",\"published_journal\":\"BMJ\"}]}"),
-				"10.1101/2021.01.01.12345678").orElseThrow();
-
-		assertEquals("10.1101/2021.01.01.12345678", mapping.getSource().getIdentifier().orElse(null));
-		assertEquals("10.1136/bmj.n579", mapping.getTarget().getIdentifier().orElse(null));
-	}
-
-	@Test
-	public void anUnpublishedPreprintHasNoMapping() throws Exception {
-		assertTrue(MedrxivClient.mappingFromPubs(
-				mapper.readTree("{\"collection\":[]}"), "10.1101/x").isEmpty());
-		assertTrue(MedrxivClient.mappingFromPubs(
-				mapper.readTree("{\"collection\":[{\"preprint_doi\":\"10.1101/x\"}]}"), "10.1101/x").isEmpty());
 	}
 
 	@Test
