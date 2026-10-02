@@ -1,5 +1,5 @@
 ---
-status: draft
+status: final
 target-version: 0.4.0
 tags: testing, api-clients, fixtures
 ---
@@ -104,10 +104,29 @@ Two properties, tested separately:
       never runs them: the default build is already fully offline (133/133 green) and
       tagging `@Test`-less classes would be a no-op. They are a phase-6 declutter
       matter, not a retier one.
-- [ ] Phase 6: declutter — migrate surviving legacy tests out of
-      `uk.co.terminological.pubmedclient` into per-API packages; tombstone dead
-      harnesses; record each keep/move/delete decision here.
-- [ ] Phase 7: verify — `mvn -o test` green offline; live script green.
+- [x] Phase 6: declutter — `uk.co.terminological.pubmedclient` is gone. Decisions:
+      * **moved to `uk.co.terminological.legacy` for manual review** (all assert-less
+        `main()` probes, none run by the build): `TestCombinedApi`,
+        `TestConverterApiClient` (names a class no longer in main), `TestCrossRefClient`,
+        `TestEndToEnd`, `TestGoogleScholarClient` (scraper parked; client still wired
+        into `BibliographicApis`), `TestMedrxivParsing` (targets `MedrxivSearch`,
+        which no live client uses), `TestOpenCitations`, `TestPdfUtil`,
+        `TestPubMedRestClient`.
+      * **re-homed, still build tests**: `TestRecordModel`/`TestRecordMerge` ->
+        `bibliography.record`; `TestApiDriftParsing` -> `bibliography` (it pins
+        CachingApiClient + multi-API drift).
+- [x] Phase 7: verify — `mvn -o clean test` 133/133 offline; live script 8/8 green.
+      Two build fixes were needed to make "live tier under Maven" real rather than
+      vacuously green:
+      * surefire's `<excludedGroups>` literal was invisible to `-D` override, so
+        `run-live-tests.sh` ran *zero* tests; the pom now drives it from
+        `${test.excludedGroups}` and the script clears it.
+      * root cause of the Maven-only Entrez failure found: fluentxml ships a partial
+        2006-era Saxon-PE that declares the `TransformerFactory` service, and the JDK
+        only ever instantiates the *first* provider — `Saxon-HE:10.9` is now declared
+        *before* fluentxml so the full jar shadows the stale one (classpath and shade
+        are first-wins; **do not reorder the pom dependencies**). This also removes a
+        latent landmine from the shaded runtime jar, not just the test JVM.
 
 ## Tests
 
@@ -119,7 +138,7 @@ in `TestPaperFixtures` javadoc.
 - [x] `mvn -o test` green with no network access (offline Tier 1) — 133/133 green
       after phase 4; no test in the default build touches the network (all live
       `@Test`s carry `@Category(LiveTest)`).
-- [ ] `./scripts/run-live-tests.sh` green against live APIs.
+- [x] `./scripts/run-live-tests.sh` green against live APIs — 8/8 (2026-10-02).
 - [x] `Rscript …/design-check.R -d .` no new defects.
 
 ## Open questions

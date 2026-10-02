@@ -1,4 +1,4 @@
-package uk.co.terminological.pubmedclient;
+package uk.co.terminological.legacy;
 
 import java.util.Arrays;
 

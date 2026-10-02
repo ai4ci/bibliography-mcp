@@ -7,9 +7,9 @@
 set -e
 cd "$(dirname "$0")/.."
 
-# Clear the pom's excludedGroups and select only the live tier; anything the caller
-# passes (e.g. -Dtest=TestCrossRefClientEndToEnd) narrows the run further.
+# Clear the pom's excluded-groups property and select only the live tier; anything
+# the caller passes (e.g. -Dtest=TestCrossRefClientEndToEnd) narrows the run further.
 exec mvn -o test \
-  -DexcludedGroups= \
+  -Dtest.excludedGroups= \
   -Dgroups=uk.co.terminological.bibliography.LiveTest \
   "$@"

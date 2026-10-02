@@ -21,9 +21,23 @@
 		<maven.compiler.source>11</maven.compiler.source>
 		<maven.compiler.target>11</maven.compiler.target>
 		<jackson.version.core>2.9.7</jackson.version.core>
+		<!-- default offline tier: exclude the live category. scripts/run-live-tests.sh
+		     overrides this to empty to run only the live tier. -->
+		<test.excludedGroups>uk.co.terminological.bibliography.LiveTest</test.excludedGroups>
 	</properties>
 
 	<dependencies>
+		<!-- fluentxml bundles a service-declaring but partial Saxon-PE (2006 era) whose
+		     TransformerFactoryImpl can never instantiate (it wants
+		     net.sf.saxon.functions.Extensions, gone from HE since 9.x), and the JDK
+		     only ever tries the *first* service provider. Declaring a full Saxon
+		     BEFORE fluentxml shadows the stale classes and wins the service lookup —
+		     on the surefire classpath and in the shaded jar alike; do not reorder. -->
+		<dependency>
+			<groupId>net.sf.saxon</groupId>
+			<artifactId>Saxon-HE</artifactId>
+			<version>10.9</version>
+		</dependency>
 		<dependency>
 			<groupId>io.github.terminological</groupId>
 			<artifactId>fluentxml</artifactId>
@@ -174,7 +188,10 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>3.2.5</version>
 				<configuration>
-					<excludedGroups>uk.co.terminological.bibliography.LiveTest</excludedGroups>
+					<!-- default build = offline tier only; scripts/run-live-tests.sh clears
+					     this via -Dtest.excludedGroups= (an explicit literal here could
+					     not be overridden from the command line) -->
+					<excludedGroups>${test.excludedGroups}</excludedGroups>
 				</configuration>
 			</plugin>
 

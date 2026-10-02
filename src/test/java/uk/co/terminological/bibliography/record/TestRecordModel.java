@@ -1,4 +1,4 @@
-package uk.co.terminological.pubmedclient;
+package uk.co.terminological.bibliography.record;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
