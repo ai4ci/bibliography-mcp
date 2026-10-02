@@ -17,6 +17,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.isomorphism.util.TokenBuckets;
@@ -211,7 +212,7 @@ public class EntrezClient extends CachingApiClient
 					var resp = Xml.fromStream(is);
 					return new EntrezSearch(resp.content());
 				})
-				.post();
+				.post(MediaType.APPLICATION_FORM_URLENCODED_TYPE);
 
 		}
 
@@ -317,7 +318,7 @@ public class EntrezClient extends CachingApiClient
 			var is = this.buildCall(EFETCH, InputStream.class)
 				.withParams(fetchParams)
 				.withOperation(is2 -> is2)
-				.post();
+				.post(MediaType.APPLICATION_FORM_URLENCODED_TYPE);
 			if (!is.isPresent()) {
 				logger.warn(
 					"Could not fetch content from entrez. Returning items from cache"
@@ -363,7 +364,7 @@ public class EntrezClient extends CachingApiClient
 				var xml = Xml.fromStream(is);
 				return new EntrezEntries(xml.content());
 			})
-			.post();
+			.post(MediaType.APPLICATION_FORM_URLENCODED_TYPE);
 	}
 
 	public Optional<EntrezEntry> getPMEntryByPMId(String pmid) { // throws BibliographicApiException {
@@ -453,7 +454,7 @@ public class EntrezClient extends CachingApiClient
 		return this.buildCall(EFETCH, InputStream.class)
 			.withParams(params)
 			.withOperation(is -> is)
-			.post();
+			.post(MediaType.APPLICATION_FORM_URLENCODED_TYPE);
 	}
 
 	/**
@@ -583,7 +584,7 @@ public class EntrezClient extends CachingApiClient
 					var resp = Xml.fromStream(is);
 					return new EntrezLinks(resp.content());
 				})
-				.post();
+				.post(MediaType.APPLICATION_FORM_URLENCODED_TYPE);
 		}
 
 		@Override

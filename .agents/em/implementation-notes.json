@@ -31,6 +31,13 @@
     "count_lines": 33,
     "percent": 0
   },
+  "scripts/run-live-tests.sh": {
+    "modified": 1790933596,
+    "comments": [],
+    "anchors": [],
+    "count_lines": 15,
+    "percent": 0
+  },
   "skills/using-bibliographic-apis/references/mcp-call-sequences.md": {
     "modified": 1790174428,
     "comments": [],
@@ -74,10 +81,10 @@
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/CachingApiClient.java": {
-    "modified": 1790178938,
+    "modified": 1790784379,
     "comments": [],
     "anchors": [],
-    "count_lines": 358,
+    "count_lines": 505,
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/CiteProcProvider.java": {
@@ -186,10 +193,10 @@
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/entrez/EntrezClient.java": {
-    "modified": 1783588766,
+    "modified": 1790784845,
     "comments": [],
     "anchors": [],
-    "count_lines": 855,
+    "count_lines": 856,
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/entrez/EntrezEntries.java": {
@@ -256,13 +263,13 @@
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/europepmc/EuropePMCClient.java": {
-    "modified": 1790180071,
+    "modified": 1790786191,
     "comments": [],
     "anchors": {
-      "####": 45,
+      "####": 49,
       "####.1": 82
     },
-    "count_lines": 404,
+    "count_lines": 590,
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/europepmc/EuropePMCCoreResult.java": {
@@ -273,10 +280,10 @@
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/europepmc/EuropePMCListResult.java": {
-    "modified": 1790170397,
+    "modified": 1790786191,
     "comments": [],
     "anchors": [],
-    "count_lines": 90,
+    "count_lines": 123,
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/europepmc/EuropePMCLiteResult.java": {
@@ -336,10 +343,10 @@
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/mcp/BiblioFacade.java": {
-    "modified": 1790181335,
+    "modified": 1790936402,
     "comments": [],
     "anchors": [],
-    "count_lines": 469,
+    "count_lines": 466,
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/mcp/McpServer.java": {
@@ -371,10 +378,10 @@
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/medrxiv/MedrxivClient.java": {
-    "modified": 1790181715,
+    "modified": 1790935222,
     "comments": [],
     "anchors": [],
-    "count_lines": 326,
+    "count_lines": 364,
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/medrxiv/MedrxivRecord.java": {
@@ -644,10 +651,10 @@
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/unpaywall/UnpaywallAuthor.java": {
-    "modified": 1590593512,
+    "modified": 1790799424,
     "comments": [],
     "anchors": [],
-    "count_lines": 27,
+    "count_lines": 68,
     "percent": 0
   },
   "src/main/java/uk/co/terminological/bibliography/unpaywall/UnpaywallClient.java": {
@@ -783,6 +790,48 @@
     "count_lines": 1,
     "percent": 0
   },
+  "src/test/java/uk/co/terminological/bibliography/crossref/TestCrossRefClientEndToEnd.java": {
+    "modified": 1790788790,
+    "comments": [],
+    "anchors": [],
+    "count_lines": 90,
+    "percent": 0
+  },
+  "src/test/java/uk/co/terminological/bibliography/entrez/TestEntrezClientEndToEnd.java": {
+    "modified": 1790787970,
+    "comments": [],
+    "anchors": [],
+    "count_lines": 101,
+    "percent": 0
+  },
+  "src/test/java/uk/co/terminological/bibliography/entrez/TestEntrezParsing.java": {
+    "modified": 1790787795,
+    "comments": [],
+    "anchors": [],
+    "count_lines": 65,
+    "percent": 0
+  },
+  "src/test/java/uk/co/terminological/bibliography/europepmc/TestEuropePMCClientEndToEnd.java": {
+    "modified": 1790788522,
+    "comments": [],
+    "anchors": [],
+    "count_lines": 101,
+    "percent": 0
+  },
+  "src/test/java/uk/co/terminological/bibliography/FixtureRecorder.java": {
+    "modified": 1790936402,
+    "comments": [],
+    "anchors": [],
+    "count_lines": 144,
+    "percent": 0
+  },
+  "src/test/java/uk/co/terminological/bibliography/LiveTest.java": {
+    "modified": 1790933549,
+    "comments": [],
+    "anchors": [],
+    "count_lines": 12,
+    "percent": 0
+  },
   "src/test/java/uk/co/terminological/bibliography/mcp/TestCitationDedupe.java": {
     "modified": 1790179529,
     "comments": [],
@@ -790,11 +839,18 @@
     "count_lines": 99,
     "percent": 0
   },
-  "src/test/java/uk/co/terminological/bibliography/medrxiv/TestMedrxivRecords.java": {
-    "modified": 1790181715,
+  "src/test/java/uk/co/terminological/bibliography/medrxiv/TestMedrxivClientEndToEnd.java": {
+    "modified": 1790788808,
     "comments": [],
     "anchors": [],
-    "count_lines": 188,
+    "count_lines": 87,
+    "percent": 0
+  },
+  "src/test/java/uk/co/terminological/bibliography/medrxiv/TestMedrxivRecords.java": {
+    "modified": 1790936429,
+    "comments": [],
+    "anchors": [],
+    "count_lines": 173,
     "percent": 0
   },
   "src/test/java/uk/co/terminological/bibliography/record/TestPlainText.java": {
@@ -802,6 +858,20 @@
     "comments": [],
     "anchors": [],
     "count_lines": 61,
+    "percent": 0
+  },
+  "src/test/java/uk/co/terminological/bibliography/TestPaperFixtures.java": {
+    "modified": 1790788782,
+    "comments": [],
+    "anchors": [],
+    "count_lines": 83,
+    "percent": 0
+  },
+  "src/test/java/uk/co/terminological/bibliography/unpaywall/TestUnpaywallClientEndToEnd.java": {
+    "modified": 1790799290,
+    "comments": [],
+    "anchors": [],
+    "count_lines": 117,
     "percent": 0
   },
   "src/test/java/uk/co/terminological/citations/TestCitationLinkParsing.java": {
@@ -833,10 +903,10 @@
     "percent": 0
   },
   "src/test/java/uk/co/terminological/pubmedclient/TestCombinedApi.java": {
-    "modified": 1790159836,
+    "modified": 1790786553,
     "comments": [],
     "anchors": [],
-    "count_lines": 71,
+    "count_lines": 95,
     "percent": 0
   },
   "src/test/java/uk/co/terminological/pubmedclient/TestConverterApiClient.java": {
@@ -970,6 +1040,146 @@
     "comments": [],
     "anchors": [],
     "count_lines": 291,
+    "percent": 0
+  },
+  "src/test/resources/fixtures/crossref/work-cited.json": {
+    "modified": 1790933788,
+    "comments": [],
+    "anchors": [],
+    "count_lines": 1,
+    "percent": 0
+  },
+  "src/test/resources/fixtures/crossref/work-preprint.json": {
+    "modified": 1790933788,
+    "comments": [],
+    "anchors": [],
+    "count_lines": 1,
+    "percent": 0
+  },
+  "src/test/resources/fixtures/crossref/work-published.json": {
+    "modified": 1790933788,
+    "comments": [],
+    "anchors": [],
+    "count_lines": 1,
+    "percent": 0
+  },
+  "src/test/resources/fixtures/europepmc/citations-ppr.json": {
+    "modified": 1790933789,
+    "comments": [],
+    "anchors": [],
+    "count_lines": 1,
+    "percent": 0
+  },
+  "src/test/resources/fixtures/europepmc/references-pmc.json": {
+    "modified": 1790933789,
+    "comments": [],
+    "anchors": [],
+    "count_lines": 1,
+    "percent": 0
+  },
+  "src/test/resources/fixtures/europepmc/references-ppr.json": {
+    "modified": 1790933789,
+    "comments": [],
+    "anchors": [],
+    "count_lines": 1,
+    "percent": 0
+  },
+  "src/test/resources/fixtures/europepmc/search-med.json": {
+    "modified": 1790933788,
+    "comments": [],
+    "anchors": [],
+    "count_lines": 1,
+    "percent": 0
+  },
+  "src/test/resources/fixtures/europepmc/search-ppr.json": {
+    "modified": 1790933789,
+    "comments": [],
+    "anchors": [],
+    "count_lines": 1,
+    "percent": 0
+  },
+  "src/test/resources/fixtures/medrxiv/details-newprefix.json": {
+    "modified": 1790933800,
+    "comments": [],
+    "anchors": [],
+    "count_lines": 4,
+    "percent": 0
+  },
+  "src/test/resources/fixtures/medrxiv/details-oldprefix.json": {
+    "modified": 1790933801,
+    "comments": [],
+    "anchors": [],
+    "count_lines": 4,
+    "percent": 0
+  },
+  "src/test/resources/fixtures/medrxiv/pubs-newprefix.json": {
+    "modified": 1790933801,
+    "comments": [],
+    "anchors": [],
+    "count_lines": 4,
+    "percent": 0
+  },
+  "src/test/resources/fixtures/medrxiv/pubs-oldprefix.json": {
+    "modified": 1790933801,
+    "comments": [],
+    "anchors": [],
+    "count_lines": 4,
+    "percent": 0
+  },
+  "src/test/resources/fixtures/medrxiv/window.json": {
+    "modified": 1790933801,
+    "comments": [],
+    "anchors": [],
+    "count_lines": 4,
+    "percent": 0
+  },
+  "src/test/resources/fixtures/opencitations/citations-published.json": {
+    "modified": 1790933797,
+    "comments": [],
+    "anchors": [],
+    "count_lines": 6869,
+    "percent": 0
+  },
+  "src/test/resources/fixtures/opencitations/references-cited.json": {
+    "modified": 1790933797,
+    "comments": [],
+    "anchors": [],
+    "count_lines": 146,
+    "percent": 0
+  },
+  "src/test/resources/fixtures/pmcid/doi.json": {
+    "modified": 1790933797,
+    "comments": [],
+    "anchors": [],
+    "count_lines": 1,
+    "percent": 0
+  },
+  "src/test/resources/fixtures/pmcid/miss.json": {
+    "modified": 1790933797,
+    "comments": [],
+    "anchors": [],
+    "count_lines": 1,
+    "percent": 0
+  },
+  "src/test/resources/fixtures/pmcid/pmid.json": {
+    "modified": 1790933797,
+    "comments": [],
+    "anchors": [],
+    "count_lines": 1,
+    "percent": 0
+  },
+  "src/test/resources/fixtures/unpaywall/oa-published.json": {
+    "modified": 1790933789,
+    "comments": [],
+    "anchors": [],
+    "count_lines": 1,
+    "percent": 0
+  },
+  "src/test/resources/fixtures/unpaywall/preprint.json": {
+    "modified": 1790933790,
+    "comments": [],
+    "anchors": [],
+    "count_lines": 1,
     "percent": 0
   },
   "src/test/resources/medrxivApiResponse.json": {

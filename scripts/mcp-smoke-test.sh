@@ -4,7 +4,7 @@
 # against the shaded jar and asserts valid JSON-RPC responses.
 # Usage: scripts/mcp-smoke-test.sh [path-to-jar] [secrets-path]
 set -e
-JAR=${1:-target/bibliographic-api-client-master-SNAPSHOT.jar}
+JAR=${1:-$(ls target/bibliographic-api-client-*.jar 2>/dev/null | head -1)}
 SECRETS=${2:-$HOME/.private/apis/secrets.prop}
 JAR=$(realpath "$JAR")
 cd "$(dirname "$0")/.."

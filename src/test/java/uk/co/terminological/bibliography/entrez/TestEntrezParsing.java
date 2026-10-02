@@ -1,4 +1,4 @@
-package uk.co.terminological.pubmedclient;
+package uk.co.terminological.bibliography.entrez;
 
 import java.io.IOException;
 import java.io.InputStream;

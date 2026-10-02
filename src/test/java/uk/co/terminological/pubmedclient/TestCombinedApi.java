@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 
 import uk.co.terminological.bibliography.mcp.Analysis;
 import uk.co.terminological.bibliography.mcp.BiblioFacade;
-import uk.co.terminological.bibliography.mcp.Session;
 import uk.co.terminological.bibliography.record.Builder;
 import uk.co.terminological.bibliography.record.CitationLink;
 import uk.co.terminological.bibliography.record.IdType;
@@ -17,8 +16,8 @@ import uk.co.terminological.bibliography.record.IdType;
 public class TestCombinedApi {
 	// [TESTS](/design/test-scripts/test-002-api-behaviour-tests.md)
 
-	public static void main(String[] args) throws IOException,
-			ClassNotFoundException {
+	public static void main(String[] args)
+			throws IOException, ClassNotFoundException {
 
 		BasicConfigurator.configure();
 		org.apache.log4j.Logger.getRootLogger()
@@ -28,34 +27,59 @@ public class TestCombinedApi {
 		log.debug("Debugging");
 
 		var api = new BiblioFacade(
-			Paths.get(System.getProperty("user.home") + "/.private/apis/secrets.prop"),
-			Paths.get("/tmp/ehcache/test125")
+				Paths.get(
+					System.getProperty("user.home") + "/.private/apis/secrets.prop"
+				), Paths.get("/tmp/ehcache/test125")
 		);
 		// api.disableCache();
 
 		api.withSearchLimit(10);
-		Session session = api.getSession();
+		var session = api.getSession();
 		session.collectSearch("covid 19 database");
-		session.getRecords().forEach((k, r) -> System.out.println(k + " " + r.getTitle()
-			.orElse("")));
+		session.getRecords()
+			.forEach(
+				(k, r) -> System.out.println(
+					k + " " + r.getTitle()
+						.orElse("")
+				)
+			);
 
-		session.fetchRecords(java.util.Set.of(Builder.recordReference(IdType.PMID, "30636200")));
-		session.getFacade().citesReferences(java.util.Set.of(Builder.recordReference(IdType.PMID, "30636200")))
+		session
+			.fetchRecords(
+				java.util.Set.of(
+					Builder
+						.recordReference(IdType.DOI, "10.64898/2025.12.12.25342129")
+				)
+			);
+		session.getFacade()
+			.citesReferences(
+				java.util.Set.of(
+					Builder
+						.recordReference(IdType.DOI, "10.64898/2025.12.12.25342129")
+				)
+			)
 			.forEach(CitationLink::print);
 
 		System.out.println("REPOSITORY");
-		session.addSingle(IdType.DOI, "10.1136/bmjqs-2018-008370");
+		session.addSingle(IdType.DOI, "10.64898/2025.12.12.25342129");
 		session.expandUpCitationGraph(1000);
 		session.expandDownCitationGraph(60);
 		session.fetchMissingRecords();
 
 		System.out.println("RECORDS");
-		session.getRecords().forEach((k, r) -> System.out.println(k + " " + r.getTitle()
-			.orElse("")));
+		session.getRecords()
+			.forEach(
+				(k, r) -> System.out.println(
+					k + " " + r.getTitle()
+						.orElse("")
+				)
+			);
 
 		System.out.println("CITATIONS");
 		session.uuidCitations()
-			.forEach(t -> System.out.println(t.getFirst() + " -> " + t.getSecond()));
+			.forEach(
+				t -> System.out.println(t.getFirst() + " -> " + t.getSecond())
+			);
 
 		System.out.println("PAGERANK");
 		System.out.println(Analysis.pageRank(session));
