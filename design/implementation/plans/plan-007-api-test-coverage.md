@@ -85,13 +85,25 @@ Two properties, tested separately:
       `references-pmc.json` and `references-cited.json`; Entrez POST-form fixtures
       (esearch/efetch-by-id/elink) are deferred to phase 4 with the tests that
       consume them (`efetch.xml` already exists at the resources root).
-- [ ] Phase 4: Tier-1 asserted tests per API against the matrix, in per-API
-      packages (`...bibliography.<api>.Test<Api>Extraction`); convert the three
-      assertion-free parsing harnesses into asserted tests.
-- [ ] Phase 5: retier — `@Category(LiveTest)` on the five `*ClientEndToEnd`,
-      `TestEndToEnd`, `TestPubMedRestClient`, `TestConverterApiClient`,
-      `TestOpenCitations`, `TestGoogleScholarClient`; default `mvn -o test`
-      becomes fully offline.
+- [x] Phase 4: Tier-1 asserted tests per API against the matrix, in per-API
+      packages (`...bibliography.<api>.Test<Api>Extraction`) — CrossRef, EuropePMC,
+      Unpaywall, OpenCitations, PMCID and Entrez are green in the default build;
+      Entrez POST-form fixtures (esearch/efetch/elink) are now captured (over GET —
+      eutils answers identically and Tier-1 parsing only sees the response bytes) and
+      consumed by `TestEntrezExtraction`. The three assertion-free `main()` harnesses
+      (Entrez/Unpaywall/Json) are converted: their legacy fixtures' values are now
+      asserted as pins inside the relevant `Test<Api>Extraction`, and the harnesses
+      deleted. `TestJsonParsing` (a CrossRef *search-list* fixture) became
+      `TestCrossRefExtraction.aSearchResponseListParsesIntoWorkRecords`, the only
+      coverage of the CrossRef list parse seam.
+- [x] Phase 5: retier — the five `*ClientEndToEnd` classes carry
+      `@Category(LiveTest)` and are excluded from `mvn -o test` by surefire. The
+      remaining named classes (`TestEndToEnd`, `TestPubMedRestClient`,
+      `TestConverterApiClient`, `TestOpenCitations`, `TestGoogleScholarClient`,
+      `TestCombinedApi`) contain only `main()` and no `@Test` methods, so surefire
+      never runs them: the default build is already fully offline (133/133 green) and
+      tagging `@Test`-less classes would be a no-op. They are a phase-6 declutter
+      matter, not a retier one.
 - [ ] Phase 6: declutter — migrate surviving legacy tests out of
       `uk.co.terminological.pubmedclient` into per-API packages; tombstone dead
       harnesses; record each keep/move/delete decision here.
@@ -104,9 +116,11 @@ in `TestPaperFixtures` javadoc.
 
 ## Verification
 
-- [ ] `mvn -o test` green with no network access (offline Tier 1).
+- [x] `mvn -o test` green with no network access (offline Tier 1) — 133/133 green
+      after phase 4; no test in the default build touches the network (all live
+      `@Test`s carry `@Category(LiveTest)`).
 - [ ] `./scripts/run-live-tests.sh` green against live APIs.
-- [ ] `Rscript …/design-check.R -d .` no new defects.
+- [x] `Rscript …/design-check.R -d .` no new defects.
 
 ## Open questions
 
@@ -115,3 +129,30 @@ in `TestPaperFixtures` javadoc.
 - Phase 6 package migration: do it, or leave `pubmedclient` alone for now?
 - Entrez `elink` fixtures for `cites`/`citedBy` are version-sensitive; if they
   churn, Tier-1 may assert them loosely (counts and id shapes, not exact sets).
+  **Resolved (phase 4):** `pubmed_pubmed_refs` answers with plain PMIDs (not PMC ids)
+  and the exact set drifts with the live citation graph, so `TestEntrezExtraction`
+  asserts the *shape* — every row starts from the canonical PMID and points at a
+  numeric PubMed id — not a fixed set.
+
+## Findings (recorded by the phase-4 extraction tests, each pinned to its source)
+
+- Title orthography is per-source and now deliberately pinned, not normalised in the
+  parse layer: EuropePMC and Entrez append a trailing `.` to article titles; CrossRef
+  keeps a Unicode en dash in the date range (`2006–2022`) where EuropePMC/Unpaywall-
+  preprint/openRxiv use an ASCII hyphen; CrossRef title-cases container titles where
+  EuropePMC sentence-cases them. Case/dash/punctuation folding is a merge-layer
+  concern, not an extraction one.
+- `CrossRefWork.getOtherIdentifiers()` is hardcoded empty, so CrossRef's own
+  `identifier[]`/`alternative-id` arrays (PMID etc.) never surface — pinned as a known
+  model limitation rather than fixed.
+- Publication types are normalised into the CSL vocabulary (`journal-article` ->
+  `article-journal`); preprint `posted-content` passes through unchanged.
+- Unpaywall `z_authors` have null `given`/`family` for this corpus; the raw
+  `raw_author_name` split is what surfaces a name (pinned).
+- OpenCitations resolves incoming citations to the **version of record** DOI
+  (`10.1136/bmj.n579`) even though the recorded handle still carries the preprint's
+  `omid:`; a citing work with no DOI surfaces its `omid`/`openalex` handle as an
+  `UNK` identifier rather than being dropped.
+- Entrez `getDate()` reads `PubMedPubDate[@PubStatus='pubmed']` (MEDLINE index date,
+  27th) not the journal `PubDate` (26th) that Unpaywall/EuropePMC report.
+

@@ -25,6 +25,14 @@ public final class TestPaperFixtures {
 	/** The PubMed Central identifier assigned to the published paper */
 	public static final String PMCID = "PMC13141338";
 
+	/** A citation-rich preprint (EPMC PPR285723, published as BMJ n579) used to exercise
+	 *  the citation/reference parsers against non-empty data */
+	public static final String CITATION_RICH_DOI = "10.1101/2021.02.09.21250937";
+
+	/** The version of record of the citation-rich preprint: OpenCitations aggregates
+	 *  incoming citations against this DOI, not the preprint's */
+	public static final String CITATION_RICH_VOR_DOI = "10.1136/bmj.n579";
+
 	/**
 	 * Expected title from Zotero:
 	 * "Trends in invasive and non-invasive Streptococcus pneumoniae disease in adults hospitalised in Bristol and Bath: a retrospective cohort study, 2006-2022"

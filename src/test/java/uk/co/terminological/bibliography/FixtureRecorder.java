@@ -23,8 +23,10 @@ import java.util.Properties;
  *   java src/test/java/uk/co/terminological/bibliography/FixtureRecorder.java
  *
  * Git history is the fixture changelog; re-run to refresh the corpus when an API
- * changes. Only GET endpoints are captured here - Entrez (POST form) fixtures are
- * deferred to the phase that writes the Entrez extraction tests.
+ * changes. An optional third argument filters capture to fixture names starting with
+ * that prefix, e.g. {@code ... src/test/resources/fixtures entrez/}. Entrez endpoints
+ * are captured over GET: the client POSTs the same parameters as a form, but eutils
+ * answers identically and Tier-1 parsing only ever sees the response bytes.
  */
 public class FixtureRecorder {
 
@@ -42,11 +44,14 @@ public class FixtureRecorder {
 
 	static int captured = 0;
 	static int failed = 0;
+	static String FILTER = null;
 
 	public static void main(String[] args) throws Exception {
 		Path secretsFile = Paths.get(args.length > 0 ? args[0]
 				: System.getProperty("user.home") + "/.private/apis/secrets.prop");
 		Path outDir = Paths.get(args.length > 1 ? args[1] : "src/test/resources/fixtures");
+		String only = args.length > 2 ? args[2] : null;
+		FILTER = only;
 
 		Properties secrets = new Properties();
 		try (InputStream is = Files.newInputStream(secretsFile)) { secrets.load(is); }
@@ -100,6 +105,19 @@ public class FixtureRecorder {
 		rec(http, outDir, "medrxiv/details-oldprefix.json", BID + "details/medrxiv/" + CITED_DOI);
 		rec(http, outDir, "medrxiv/window.json", BID + "details/medrxiv/2021-02-09/2021-02-09/0");
 
+		// Entrez (eutils): esearch by DOI, efetch the canonical record, elink references.
+		// Same db/term/id/linkname parameters the client builds for the corpus.
+		String EUTILS = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/";
+		String auth = "&tool=" + enc(tool) + "&email=" + enc(email)
+				+ "&api_key=" + enc(secrets.getProperty("pubmed-apikey", ""));
+		rec(http, outDir, "entrez/esearch-doi.xml",
+				EUTILS + "esearch.fcgi?db=pubmed&retmode=xml&term=" + enc("\"" + PUB_DOI + "\"[DOI]") + auth);
+		rec(http, outDir, "entrez/efetch-pmid.xml",
+				EUTILS + "efetch.fcgi?db=pubmed&retmode=xml&rettype=abstract&id=" + PMID + auth);
+		rec(http, outDir, "entrez/elink-refs.xml",
+				EUTILS + "elink.fcgi?dbfrom=pubmed&db=pubmed&retmode=xml"
+						+ "&linkname=pubmed_pubmed_refs&id=" + PMID + auth);
+
 		System.out.println("Captured " + captured + " fixtures (" + failed + " failed) into " + outDir.toAbsolutePath());
 		if (failed > 0) System.exit(1);
 	}
@@ -111,6 +129,7 @@ public class FixtureRecorder {
 
 	/** GET url, write raw bytes to outDir/name on 2xx; count success/failure */
 	static void rec(HttpClient http, Path outDir, String name, String url) {
+		if (FILTER != null && !name.startsWith(FILTER)) return;
 		try {
 			HttpRequest req = HttpRequest.newBuilder(URI.create(url))
 					.header("User-Agent", UA)
