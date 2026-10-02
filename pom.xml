@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>io.github.terminological</groupId>
 		<artifactId>m2repo</artifactId>
-		<version>0.0.5-SNAPSHOT</version>
+		<version>0.0.6</version>
 	</parent>
 	
 	<version>0.0.6-SNAPSHOT</version>
@@ -27,12 +27,14 @@
 	</properties>
 
 	<dependencies>
-		<!-- fluentxml bundles a service-declaring but partial Saxon-PE (2006 era) whose
-		     TransformerFactoryImpl can never instantiate (it wants
-		     net.sf.saxon.functions.Extensions, gone from HE since 9.x), and the JDK
-		     only ever tries the *first* service provider. Declaring a full Saxon
-		     BEFORE fluentxml shadows the stale classes and wins the service lookup —
-		     on the surefire classpath and in the shaded jar alike; do not reorder. -->
+		<!-- fluentxml (even the 2.0.0 release) bundles a service-declaring but partial
+		     Saxon whose TransformerFactoryImpl can never instantiate — 1.1-SNAPSHOT
+		     wanted net.sf.saxon.functions.Extensions (gone from HE since 9.x); 2.0.0
+		     shades a modern Saxon but omits its org.xmlresolver catalog loader — and
+		     the JDK only ever tries the *first* service provider. Declaring a full
+		     Saxon BEFORE fluentxml shadows the partial classes and wins the service
+		     lookup — on the surefire classpath and in the shaded jar alike; do not
+		     reorder. -->
 		<dependency>
 			<groupId>net.sf.saxon</groupId>
 			<artifactId>Saxon-HE</artifactId>
@@ -41,7 +43,7 @@
 		<dependency>
 			<groupId>io.github.terminological</groupId>
 			<artifactId>fluentxml</artifactId>
-			<version>1.1-SNAPSHOT</version>
+			<version>2.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-lang</groupId>
