@@ -27,23 +27,10 @@
 	</properties>
 
 	<dependencies>
-		<!-- fluentxml (even the 2.0.0 release) bundles a service-declaring but partial
-		     Saxon whose TransformerFactoryImpl can never instantiate — 1.1-SNAPSHOT
-		     wanted net.sf.saxon.functions.Extensions (gone from HE since 9.x); 2.0.0
-		     shades a modern Saxon but omits its org.xmlresolver catalog loader — and
-		     the JDK only ever tries the *first* service provider. Declaring a full
-		     Saxon BEFORE fluentxml shadows the partial classes and wins the service
-		     lookup — on the surefire classpath and in the shaded jar alike; do not
-		     reorder. -->
-		<dependency>
-			<groupId>net.sf.saxon</groupId>
-			<artifactId>Saxon-HE</artifactId>
-			<version>10.9</version>
-		</dependency>
 		<dependency>
 			<groupId>io.github.terminological</groupId>
 			<artifactId>fluentxml</artifactId>
-			<version>2.0.0</version>
+			<version>2.1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-lang</groupId>
