@@ -1,0 +1,64 @@
+{
+  "mcpServers": {
+    "eclipse-ide": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "http://localhost:8124/mcp/eclipse-ide",
+        "--allow-http",
+        "--header",
+        "Authorization: Bearer 6fb5ba3f-d199-41f4-9871-91393ac89575"
+      ],
+      "directTools": true
+    },
+    "eclipse-coder": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "http://localhost:8124/mcp/eclipse-coder",
+        "--allow-http",
+        "--header",
+        "Authorization: Bearer 6fb5ba3f-d199-41f4-9871-91393ac89575"
+      ],
+      "directTools": true
+    },
+    "eclipse-context": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "http://localhost:8124/mcp/eclipse-context",
+        "--allow-http",
+        "--header",
+        "Authorization: Bearer 6fb5ba3f-d199-41f4-9871-91393ac89575"
+      ],
+      "directTools": true
+    },
+    "eclipse-runner": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "http://localhost:8124/mcp/eclipse-runner",
+        "--allow-http",
+        "--header",
+        "Authorization: Bearer 6fb5ba3f-d199-41f4-9871-91393ac89575"
+      ],
+      "directTools": true
+    },
+    "eclipse-git": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "http://localhost:8124/mcp/eclipse-git",
+        "--allow-http",
+        "--header",
+        "Authorization: Bearer 6fb5ba3f-d199-41f4-9871-91393ac89575"
+      ],
+      "directTools": true
+    }
+  }
+}
