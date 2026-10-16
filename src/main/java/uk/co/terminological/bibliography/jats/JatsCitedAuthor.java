@@ -11,23 +11,22 @@ import uk.co.terminological.fluentxml.XmlException;
 public class JatsCitedAuthor implements Author, Raw<XmlElement> {
 
 	private XmlElement raw;
-	public JatsCitedAuthor(XmlElement raw) {this.raw = raw;}
-	
-	@Override
-	public XmlElement getRaw() {
-		return raw;
+	public JatsCitedAuthor(XmlElement raw) {
+		this.raw = raw;
 	}
 
 	@Override
-	public Optional<String> getORCID() {
-		return Optional.empty();
-	}
+	public XmlElement getRaw() { return raw; }
+
+	@Override
+	public Optional<String> getORCID() { return Optional.empty(); }
 
 	@Override
 	public Optional<String> getFirstName() {
 		try {
 			return raw.doXpath("given-names")
-					.get(XmlElement.class).flatMap(o -> o.getTextContent());
+				.get(XmlElement.class)
+				.flatMap(o -> o.getTextContent());
 		} catch (XmlException e) {
 			return Optional.empty();
 		}
@@ -36,7 +35,10 @@ public class JatsCitedAuthor implements Author, Raw<XmlElement> {
 	@Override
 	public String getLastName() {
 		try {
-			return raw.doXpath("surname").get(XmlElement.class).flatMap(o -> o.getTextContent()).orElse("Unknown");
+			return raw.doXpath("surname")
+				.get(XmlElement.class)
+				.flatMap(o -> o.getTextContent())
+				.orElse("Unknown");
 		} catch (XmlException e) {
 			return "Unknown";
 		}
@@ -48,8 +50,6 @@ public class JatsCitedAuthor implements Author, Raw<XmlElement> {
 	}
 
 	@Override
-	public Stream<String> getAffiliations() {
-		return Stream.empty();
-	}
+	public Stream<String> getAffiliations() { return Stream.empty(); }
 
 }

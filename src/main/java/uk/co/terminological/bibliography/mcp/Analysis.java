@@ -12,33 +12,36 @@ import org.jgrapht.graph.SimpleDirectedGraph;
 
 import uk.co.terminological.bibliography.record.IdType;
 import uk.co.terminological.bibliography.record.MergedRecord;
-import uk.co.terminological.datatypes.Tuple;
 import uk.co.terminological.nlptools.Corpus;
 import uk.co.terminological.nlptools.Filter;
 import uk.co.terminological.nlptools.TopicModelBuilder;
 import uk.co.terminological.nlptools.TopicModelResult;
 
 /**
- * Analysis over a Session: page rank over the uuid citation graph, and topic
- * modelling over the session records using nlp-tools. (Salvaged from the
- * rjavaapi CitationAnalyser and TopicModelAnalyser, minus the R interface.)
+ * Analysis over a Session: page rank over the uuid citation graph, and topic modelling over the session records using
+ * nlp-tools. (Salvaged from the rjavaapi CitationAnalyser and TopicModelAnalyser, minus the R interface.)
  */
 // [IMPLEMENTS](/design/features/feat-003-analyse-citation-graphs-and-topics.md)
+
 public class Analysis {
 
 	/**
 	 * Page rank over the citation graph, keyed by record uuid.
 	 */
 	public static Map<UUID, Double> pageRank(Session session) {
-		var citations = new SimpleDirectedGraph<UUID, DefaultEdge>(DefaultEdge.class);
-		session.uuidCitations().forEach(t -> {
-			citations.addVertex(t.getFirst());
-			if (!t.getFirst().equals(t.getSecond())) {
-				citations.addVertex(t.getSecond());
-				citations.addEdge(t.getFirst(), t.getSecond());
-			}
-		});
-		PageRank<UUID, DefaultEdge> pr = new PageRank<>(citations);
+		var citations = new SimpleDirectedGraph<UUID, DefaultEdge>(
+				DefaultEdge.class
+		);
+		session.uuidCitations()
+			.forEach(t -> {
+				citations.addVertex(t.getFirst());
+				if (!t.getFirst()
+					.equals(t.getSecond())) {
+					citations.addVertex(t.getSecond());
+					citations.addEdge(t.getFirst(), t.getSecond());
+				}
+			});
+		var pr = new PageRank<>(citations);
 		return pr.getScores();
 	}
 
@@ -51,24 +54,30 @@ public class Analysis {
 			.stream()
 			.map(e -> {
 				Map<String, Object> row = new LinkedHashMap<>();
-				row.put("uuid", e.getKey()
-					.toString());
+				row.put(
+					"uuid",
+					e.getKey()
+						.toString()
+				);
 				row.put("pageRank", e.getValue());
-				row.put("title", records.getOpt(e.getKey())
-					.flatMap(MergedRecord::getTitle)
-					.orElse(null));
+				row.put(
+					"title",
+					records.getOpt(e.getKey())
+						.flatMap(MergedRecord::getTitle)
+						.orElse(null)
+				);
 				return row;
 			})
 			.collect(Collectors.toList());
 	}
 
 	/**
-	 * Topic model over the session records (title + abstract), returning rows
-	 * of {topic, uuid, score} for each document-topic weight.
+	 * Topic model over the session records (title + abstract), returning rows of {topic, uuid, score} for each
+	 * document-topic weight.
 	 */
 	public static List<Map<String, Object>> topicModel(
-			Session session, List<String> stopwords,
-			int topics, double alpha, double beta
+			Session session, List<String> stopwords, int topics, double alpha,
+			double beta
 	) {
 		// ponytail: rebuilds corpus and model on every call; LDA is slow on
 		// large sessions — cache TopicModelResult in the session if that matters
@@ -104,16 +113,17 @@ public class Analysis {
 		return result.getTopicsForDocuments()
 			.flatMap(
 				t -> t.streamDocuments()
-					.map(
-						wd -> {
-							Map<String, Object> row = new LinkedHashMap<>();
-							row.put("topic", t.getTopicId());
-							row.put("uuid", wd.getTarget()
-								.getIdentifier());
-							row.put("score", wd.getWeight());
-							return row;
-						}
-					)
+					.map(wd -> {
+						Map<String, Object> row = new LinkedHashMap<>();
+						row.put("topic", t.getTopicId());
+						row.put(
+							"uuid",
+							wd.getTarget()
+								.getIdentifier()
+						);
+						row.put("score", wd.getWeight());
+						return row;
+					})
 			)
 			.collect(Collectors.toList());
 	}

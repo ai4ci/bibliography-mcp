@@ -14,14 +14,14 @@ import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.slf4j.LoggerFactory;
 
-import uk.co.terminological.bibliography.BibliographicApiException;
-import uk.co.terminological.bibliography.crossref.CrossRefClient;
-import uk.co.terminological.bibliography.crossref.CrossRefSingleResult;
-import uk.co.terminological.bibliography.crossref.CrossRefWork;
-import uk.co.terminological.bibliography.entrez.EntrezClient;
-import uk.co.terminological.bibliography.pmcidconv.PMCIDClient;
+import uk.co.terminological.bibliography.api.BibliographicApiException;
+import uk.co.terminological.bibliography.api.crossref.CrossRefClient;
+import uk.co.terminological.bibliography.api.crossref.CrossRefSingleResult;
+import uk.co.terminological.bibliography.api.crossref.CrossRefWork;
+import uk.co.terminological.bibliography.api.entrez.EntrezClient;
+import uk.co.terminological.bibliography.api.pmcidconv.PMCIDClient;
+import uk.co.terminological.bibliography.api.unpaywall.UnpaywallClient;
 import uk.co.terminological.bibliography.record.IdType;
-import uk.co.terminological.bibliography.unpaywall.UnpaywallClient;
 
 public class TestEndToEnd {
 
@@ -61,14 +61,15 @@ public class TestEndToEnd {
 		);
 		var mapper = PMCIDClient
 			.create(appId, developerEmail, ehcache.resolve("idconv"));
-		var xref = CrossRefClient
-			.create(developerEmail, ehcache.resolve("xref"));
+		var xref = CrossRefClient.create(developerEmail, ehcache.resolve("xref"));
 		var unpaywall = UnpaywallClient
 			.create(developerEmail, ehcache.resolve("unpaywall"));
 
-		var result = pubmed.buildSearchQuery("machine learning")
+		var result = pubmed.buildQuery()
+			.searchTerm("machine learning")
 			.limit(0, 50)
-			.betweenDates(LocalDate.of(2016, 01, 1), LocalDate.of(2017, 01, 1))
+			.since(LocalDate.of(2016, 01, 1))
+			.until(LocalDate.of(2017, 01, 1))
 			.execute()
 			.get();
 
@@ -110,9 +111,11 @@ public class TestEndToEnd {
 			);
 
 		Stream<CrossRefWork> work = dois2.stream()
-			.flatMap(doi -> xref.getByDoi(doi)
-				.map(o -> Stream.of(o))
-				.orElse(Stream.empty()))
+			.flatMap(
+				doi -> xref.getByDoi(doi)
+					.map(Stream::of)
+					.orElse(Stream.empty())
+			)
 			.map(CrossRefSingleResult::getWork);
 		work.forEach(w -> System.out.println(w.getTitle()));
 		// https://academic.oup.com/bioinformatics/article-pdf/33/6/863/25147932/btw768.pdf

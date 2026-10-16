@@ -3,6 +3,9 @@ package uk.co.terminological.bibliography.record;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import org.immutables.value.Value;
+
+@Value.Immutable
 public interface Author {
 
 	Optional<String> getORCID();
@@ -10,13 +13,14 @@ public interface Author {
 	String getLastName();
 	Optional<String> getInitials();
 	Stream<String> getAffiliations();
-	
-	
-	public default String getLabel() {
-		return (getLastName()+", "+getInitials().orElse("Unknown").substring(0, 1)).toLowerCase();
+
+	default String getLabel() {
+		return (this.getLastName() + ", " + this.getInitials()
+			.orElse("Unknown")
+			.substring(0, 1)).toLowerCase();
 	}
-	
-	public static String print(Author a) {
+
+	static String print(Author a) {
 		return a.getLabel();
 	}
 }

@@ -1,3 +1,8 @@
-# .agentreadwrite — $HOME/... directories bound read-write into the sandbox, one per line
+# .sandbox/readwrite — $HOME directories bound read-write, one per line.
 
+# Maven's local repository, and the settings.xml inside it. Without this the
+# build cannot resolve its parent POM and `mvn` fails before compiling.
+$HOME/.m2
+
+# Disk cache for bibliographic API responses (CachingApiClient).
 $HOME/.cache/ehcache

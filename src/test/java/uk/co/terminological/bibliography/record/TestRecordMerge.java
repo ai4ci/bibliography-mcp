@@ -11,17 +11,9 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import uk.co.terminological.bibliography.record.Author;
-import uk.co.terminological.bibliography.record.IdType;
-import uk.co.terminological.bibliography.record.MergedRecord;
-import uk.co.terminological.bibliography.record.Provenance;
-import uk.co.terminological.bibliography.record.Record;
-import uk.co.terminological.bibliography.record.RecordReference;
-
 /**
- * feat-007: when several discovery APIs describe the same work the merged
- * record must be robust and, above all, predictable — the same inputs always
- * give the same answer, whatever order the APIs answered in. Curated records
+ * feat-007: when several discovery APIs describe the same work the merged record must be robust and, above all,
+ * predictable — the same inputs always give the same answer, whatever order the APIs answered in. Curated records
  * (Zotero) are authoritative and are never overridden by API values.
  *
  * [TESTS](/design/implementation/issues/issue-003-merged-record-resolution-is-non-deterministic.md)
@@ -35,11 +27,23 @@ public class TestRecordMerge {
 
 	@Test
 	public void resolutionIsIndependentOfInsertionOrder() {
-		Record crossref = record("crossref", "journal-article", "Title from CrossRef", "Abstract from CrossRef");
-		Record europepmc = record("europepmc", "Journal Article", "Title from EuropePMC", "Abstract from EuropePMC");
+		var crossref = record(
+			"crossref",
+			"journal-article",
+			"Title from CrossRef",
+			"Abstract from CrossRef"
+		);
+		var europepmc = record(
+			"europepmc",
+			"Journal Article",
+			"Title from EuropePMC",
+			"Abstract from EuropePMC"
+		);
 
-		MergedRecord ab = MergedRecord.from(crossref).merge(europepmc);
-		MergedRecord ba = MergedRecord.from(europepmc).merge(crossref);
+		var ab = MergedRecord.from(crossref)
+			.merge(europepmc);
+		var ba = MergedRecord.from(europepmc)
+			.merge(crossref);
 
 		assertEquals(ab.getTitle(), ba.getTitle());
 		assertEquals(ab.getAbstract(), ba.getAbstract());
@@ -50,35 +54,88 @@ public class TestRecordMerge {
 
 	@Test
 	public void perFieldPriorityPicksTheRightSourceForEachField() {
-		Record crossref = record("crossref", "journal-article", "Title from CrossRef", "Abstract from CrossRef");
-		Record europepmc = record("europepmc", "Journal Article", "Title from EuropePMC", "Abstract from EuropePMC");
+		var crossref = record(
+			"crossref",
+			"journal-article",
+			"Title from CrossRef",
+			"Abstract from CrossRef"
+		);
+		var europepmc = record(
+			"europepmc",
+			"Journal Article",
+			"Title from EuropePMC",
+			"Abstract from EuropePMC"
+		);
 
-		MergedRecord merged = MergedRecord.from(crossref).merge(europepmc);
+		var merged = MergedRecord.from(crossref)
+			.merge(europepmc);
 
 		// title/date prefer CrossRef; abstracts prefer Europe PMC
-		assertEquals("Title from CrossRef", merged.getTitle().orElse(null));
-		assertEquals("Abstract from EuropePMC", merged.getAbstract().orElse(null));
+		assertEquals(
+			"Title from CrossRef",
+			merged.getTitle()
+				.orElse(null)
+		);
+		assertEquals(
+			"Abstract from EuropePMC",
+			merged.getAbstract()
+				.orElse(null)
+		);
 	}
 
 	@Test
 	public void lowerPrioritySourceStillFillsAGap() {
-		Record crossref = recordWithout("crossref", "journal-article", null, "Abstract from CrossRef");
-		Record europepmc = record("europepmc", "Journal Article", "Title from EuropePMC", "Abstract from EuropePMC");
+		var crossref = recordWithout(
+			"crossref",
+			"journal-article",
+			null,
+			"Abstract from CrossRef"
+		);
+		var europepmc = record(
+			"europepmc",
+			"Journal Article",
+			"Title from EuropePMC",
+			"Abstract from EuropePMC"
+		);
 
-		MergedRecord merged = MergedRecord.from(crossref).merge(europepmc);
+		var merged = MergedRecord.from(crossref)
+			.merge(europepmc);
 
 		// non-empty beats priority, otherwise the value would be lost
-		assertEquals("Title from EuropePMC", merged.getTitle().orElse(null));
+		assertEquals(
+			"Title from EuropePMC",
+			merged.getTitle()
+				.orElse(null)
+		);
 	}
 
 	@Test
 	public void resultDoesNotDependOnWhichRecordWasFirst() {
-		Record a = record("entrez", "Journal Article", "Same title", "Entrez abstract");
-		Record b = record("unpaywall", "Journal Article", "Same title", "Unpaywall abstract");
-		Record c = record("crossref", "journal-article", "Same title", "CrossRef abstract");
+		var a = record(
+			"entrez",
+			"Journal Article",
+			"Same title",
+			"Entrez abstract"
+		);
+		var b = record(
+			"unpaywall",
+			"Journal Article",
+			"Same title",
+			"Unpaywall abstract"
+		);
+		var c = record(
+			"crossref",
+			"journal-article",
+			"Same title",
+			"CrossRef abstract"
+		);
 
-		MergedRecord one = MergedRecord.from(a).merge(b).merge(c);
-		MergedRecord two = MergedRecord.from(c).merge(a).merge(b);
+		var one = MergedRecord.from(a)
+			.merge(b)
+			.merge(c);
+		var two = MergedRecord.from(c)
+			.merge(a)
+			.merge(b);
 
 		assertEquals(one.getAbstract(), two.getAbstract());
 		assertEquals(one.getPublisher(), two.getPublisher());
@@ -88,32 +145,67 @@ public class TestRecordMerge {
 
 	@Test
 	public void mergedAuthorsAreDeduplicated() {
-		Record a = recordWithAuthors("crossref", "journal-article", List.of(author("Smith"), author("Jones")));
-		Record b = recordWithAuthors("europepmc", "Journal Article", List.of(author("Smith"), author("Brown")));
+		var a = recordWithAuthors(
+			"crossref",
+			"journal-article",
+			List.of(author("Smith"), author("Jones"))
+		);
+		var b = recordWithAuthors(
+			"europepmc",
+			"Journal Article",
+			List.of(author("Smith"), author("Brown"))
+		);
 
-		MergedRecord merged = MergedRecord.from(a).merge(b);
+		var merged = MergedRecord.from(a)
+			.merge(b);
 
-		List<String> names = merged.getAuthors().stream().map(Author::getLastName).toList();
+		var names = merged.getAuthors()
+			.stream()
+			.map(Author::getLastName)
+			.toList();
 		assertEquals(List.of("Smith", "Jones", "Brown"), names);
 	}
 
 	@Test
 	public void authorsWithTheSameOrcidAreDeduplicatedDespiteNameDifferences() {
-		Record a = recordWithAuthors("crossref", "journal-article", List.of(authorWithOrcid("Smith", "0000-0002-5504-7768")));
-		Record b = recordWithAuthors("europepmc", "Journal Article", List.of(authorWithOrcid("Smith, R", "0000-0002-5504-7768")));
+		var a = recordWithAuthors(
+			"crossref",
+			"journal-article",
+			List.of(authorWithOrcid("Smith", "0000-0002-5504-7768"))
+		);
+		var b = recordWithAuthors(
+			"europepmc",
+			"Journal Article",
+			List.of(authorWithOrcid("Smith, R", "0000-0002-5504-7768"))
+		);
 
-		assertEquals(1, MergedRecord.from(a).merge(b).getAuthors().size());
+		assertEquals(
+			1,
+			MergedRecord.from(a)
+				.merge(b)
+				.getAuthors()
+				.size()
+		);
 	}
 
 	@Test
 	public void identifiersAndLicencesAreUnions() {
-		Record a = record("crossref", "journal-article", "T", "A");
-		Record b = record("europepmc", "Journal Article", "T", "A");
+		var a = record("crossref", "journal-article", "T", "A");
+		var b = record("europepmc", "Journal Article", "T", "A");
 
-		MergedRecord merged = MergedRecord.from(a).merge(b);
+		var merged = MergedRecord.from(a)
+			.merge(b);
 
-		assertTrue(merged.getIdentifiers().stream().anyMatch(i -> i.getIdentifierType() == IdType.DOI));
-		assertEquals(2, merged.getProvenances().size());
+		assertTrue(
+			merged.getIdentifiers()
+				.stream()
+				.anyMatch(i -> i.getIdentifierType() == IdType.DOI)
+		);
+		assertEquals(
+			2,
+			merged.getProvenances()
+				.size()
+		);
 	}
 
 	@Test
@@ -121,63 +213,136 @@ public class TestRecordMerge {
 		// BiblioFacade.fetch merges per-API results into one record, so a
 		// MergedRecord gets merged into another MergedRecord. Flattening it at
 		// that point silently discards every contribution but the first.
-		MergedRecord twoApis = MergedRecord.from(record("crossref", "journal-article", "T", "Crossref abstract"))
-				.merge(record("europepmc", "Journal Article", "T", "EuropePMC abstract"));
-		MergedRecord third = MergedRecord.from(record("unpaywall", "journal-article", "T", "Unpaywall abstract"));
+		var twoApis = MergedRecord
+			.from(record("crossref", "journal-article", "T", "Crossref abstract"))
+			.merge(
+				record("europepmc", "Journal Article", "T", "EuropePMC abstract")
+			);
+		var third = MergedRecord.from(
+			record("unpaywall", "journal-article", "T", "Unpaywall abstract")
+		);
 
-		MergedRecord merged = third.merge(twoApis);
+		var merged = third.merge(twoApis);
 
-		assertEquals(3, merged.getProvenances().size());
+		assertEquals(
+			3,
+			merged.getProvenances()
+				.size()
+		);
 		// and the discarded contributions must still influence resolution
-		assertEquals("EuropePMC abstract", merged.getAbstract().orElse(null));
+		assertEquals(
+			"EuropePMC abstract",
+			merged.getAbstract()
+				.orElse(null)
+		);
 	}
 
 	@Test
 	public void pdfLocationPrefersUnpaywallOverCrossRef() {
 		// the policy cannot rank a source that reports no provenance, which is why
 		// UnpaywallResult and EntrezEntry now carry one
-		Stub crossref = (Stub) record("crossref", "journal-article", "T", "A");
-		Stub unpaywall = ((Stub) record("unpaywall", "journal-article", "T", "A")).withPdf("https://example.org/oa.pdf");
+		var crossref = (Stub) record("crossref", "journal-article", "T", "A");
+		var unpaywall = ((Stub) record("unpaywall", "journal-article", "T", "A"))
+			.withPdf("https://example.org/oa.pdf");
 		crossref.withPdf("https://example.org/paywalled.pdf");
 
-		MergedRecord merged = MergedRecord.from(crossref).merge(unpaywall);
+		var merged = MergedRecord.from(crossref)
+			.merge(unpaywall);
 
-		assertEquals("https://example.org/oa.pdf", merged.getPdfUri().map(URI::toString).orElse(null));
+		assertEquals(
+			"https://example.org/oa.pdf",
+			merged.getPdfUri()
+				.map(URI::toString)
+				.orElse(null)
+		);
 	}
 
 	@Test
 	public void aPostedContentRecordIsOwnedByItsPreprintServer() {
 		// the server is the source of record for its own preprint and it updates
 		// first, so it wins even though the indexed services usually outrank it
-		Record preprint = record("medrxiv", "posted-content", "Title from medRxiv", "Abstract from medRxiv");
-		Record indexed = record("europepmc", "posted-content", "Title from Europe PMC", "Abstract from Europe PMC");
+		var preprint = record(
+			"medrxiv",
+			"posted-content",
+			"Title from medRxiv",
+			"Abstract from medRxiv"
+		);
+		var indexed = record(
+			"europepmc",
+			"posted-content",
+			"Title from Europe PMC",
+			"Abstract from Europe PMC"
+		);
 
-		MergedRecord merged = MergedRecord.from(preprint).merge(indexed);
+		var merged = MergedRecord.from(preprint)
+			.merge(indexed);
 
-		assertEquals("Title from medRxiv", merged.getTitle().orElse(null));
-		assertEquals("Abstract from medRxiv", merged.getAbstract().orElse(null));
+		assertEquals(
+			"Title from medRxiv",
+			merged.getTitle()
+				.orElse(null)
+		);
+		assertEquals(
+			"Abstract from medRxiv",
+			merged.getAbstract()
+				.orElse(null)
+		);
 	}
 
 	@Test
 	public void anIndexedServiceStillOutranksAPreprintServerForAPublishedWork() {
 		// the preprint servers are only promoted for their own kind of record
-		Record serverRecord = record("medrxiv", "journal-article", "Title from the server", "Abstract from the server");
-		Record indexed = record("europepmc", "Journal Article", "Title from Europe PMC", "Abstract from Europe PMC");
+		var serverRecord = record(
+			"medrxiv",
+			"journal-article",
+			"Title from the server",
+			"Abstract from the server"
+		);
+		var indexed = record(
+			"europepmc",
+			"Journal Article",
+			"Title from Europe PMC",
+			"Abstract from Europe PMC"
+		);
 
-		MergedRecord merged = MergedRecord.from(serverRecord).merge(indexed);
+		var merged = MergedRecord.from(serverRecord)
+			.merge(indexed);
 
-		assertEquals("Title from Europe PMC", merged.getTitle().orElse(null));
-		assertEquals("Abstract from Europe PMC", merged.getAbstract().orElse(null));
+		assertEquals(
+			"Title from Europe PMC",
+			merged.getTitle()
+				.orElse(null)
+		);
+		assertEquals(
+			"Abstract from Europe PMC",
+			merged.getAbstract()
+				.orElse(null)
+		);
 	}
 
 	@Test
 	public void aPreprintStillSuppliesWhatTheIndexedServicesLack() {
-		Record preprint = record("medrxiv", "posted-content", "Title from medRxiv", "Abstract from medRxiv");
-		Record indexed = recordWithout("europepmc", "Journal Article", "Title from Europe PMC", null);
+		var preprint = record(
+			"medrxiv",
+			"posted-content",
+			"Title from medRxiv",
+			"Abstract from medRxiv"
+		);
+		var indexed = recordWithout(
+			"europepmc",
+			"Journal Article",
+			"Title from Europe PMC",
+			null
+		);
 
-		MergedRecord merged = MergedRecord.from(preprint).merge(indexed);
+		var merged = MergedRecord.from(preprint)
+			.merge(indexed);
 
-		assertEquals("Abstract from medRxiv", merged.getAbstract().orElse(null));
+		assertEquals(
+			"Abstract from medRxiv",
+			merged.getAbstract()
+				.orElse(null)
+		);
 	}
 
 	// ---- curated records are authoritative and kept distinct ----
@@ -187,78 +352,145 @@ public class TestRecordMerge {
 		// A zotero item may be scraped from a publisher page and broken, or hand
 		// repaired; we cannot tell which, so it is ranked by the same per-field
 		// policy as every other source rather than winning unconditionally.
-		Record api = record("crossref", "journal-article", "Title from CrossRef", "Abstract from CrossRef");
-		Record zotero = curated("Zotero title", null);
+		var api = record(
+			"crossref",
+			"journal-article",
+			"Title from CrossRef",
+			"Abstract from CrossRef"
+		);
+		var zotero = curated("Zotero title", null);
 
-		MergedRecord merged = MergedRecord.from(api).merge(zotero);
+		var merged = MergedRecord.from(api)
+			.merge(zotero);
 
-		assertEquals("Title from CrossRef", merged.getTitle().orElse(null));
+		assertEquals(
+			"Title from CrossRef",
+			merged.getTitle()
+				.orElse(null)
+		);
 	}
 
 	@Test
 	public void aZoteroOnlyValueIsStillUsed() {
 		// ...but nothing is thrown away: where the APIs have no value, zotero's stands
-		Record api = record("crossref", "journal-article", "Title from CrossRef", null);
-		Record zotero = curated("Zotero title", "Zotero abstract");
+		var api = record(
+			"crossref",
+			"journal-article",
+			"Title from CrossRef",
+			null
+		);
+		var zotero = curated("Zotero title", "Zotero abstract");
 
-		MergedRecord merged = MergedRecord.from(api).merge(zotero);
+		var merged = MergedRecord.from(api)
+			.merge(zotero);
 
-		assertEquals("Zotero abstract", merged.getAbstract().orElse(null));
+		assertEquals(
+			"Zotero abstract",
+			merged.getAbstract()
+				.orElse(null)
+		);
 	}
 
 	@Test
 	public void curatedGapsAreFilledFromApis() {
-		Record api = record("crossref", "journal-article", "Title from CrossRef", "Abstract from CrossRef");
-		Record zotero = curated(null, null); // zotero has no abstract of its own
+		var api = record(
+			"crossref",
+			"journal-article",
+			"Title from CrossRef",
+			"Abstract from CrossRef"
+		);
+		var zotero = curated(null, null); // zotero has no abstract of its own
 
-		MergedRecord merged = MergedRecord.from(api).merge(zotero);
+		var merged = MergedRecord.from(api)
+			.merge(zotero);
 
-		assertEquals("Abstract from CrossRef", merged.getAbstract().orElse(null));
+		assertEquals(
+			"Abstract from CrossRef",
+			merged.getAbstract()
+				.orElse(null)
+		);
 	}
 
 	@Test
 	public void curatedRecordsAreIdentifiableInTheProvenance() {
-		Record api = record("crossref", "journal-article", "T", "A");
-		Record curated = curated("Curated title", null);
+		var api = record("crossref", "journal-article", "T", "A");
+		var curated = curated("Curated title", null);
 
-		MergedRecord merged = MergedRecord.from(api).merge(curated);
+		var merged = MergedRecord.from(api)
+			.merge(curated);
 
-		assertTrue(merged.getProvenances().stream().anyMatch(Provenance::isCurated));
-		assertTrue(merged.getProvenances().stream().anyMatch(p -> !p.isCurated()));
+		assertTrue(
+			merged.getProvenances()
+				.stream()
+				.anyMatch(Provenance::isCurated)
+		);
+		assertTrue(
+			merged.getProvenances()
+				.stream()
+				.anyMatch(p -> !p.isCurated())
+		);
 	}
 
 	// ---- stand-ins ----
 
-	static Record record(String source, String nativeType, String title, String abstractText) {
-		return new Stub(source, nativeType, title, abstractText, List.of(), false, "Some Journal", DOI);
+	static Record record(
+			String source, String nativeType, String title, String abstractText
+	) {
+		return new Stub(
+				source, nativeType, title, abstractText, List.of(), false,
+				"Some Journal", DOI
+		);
 	}
 
-	static Record recordWithout(String source, String nativeType, String title, String abstractText) {
-		return new Stub(source, nativeType, title, abstractText, List.of(), false, null, DOI);
+	static Record recordWithout(
+			String source, String nativeType, String title, String abstractText
+	) {
+		return new Stub(
+				source, nativeType, title, abstractText, List.of(), false, null, DOI
+		);
 	}
 
-	static Record recordWithAuthors(String source, String nativeType, List<Author> authors) {
+	static Record recordWithAuthors(
+			String source, String nativeType, List<Author> authors
+	) {
 		return new Stub(source, nativeType, "T", "A", authors, false, null, DOI);
 	}
 
 	static Record curated(String title, String abstractText) {
-		return new Stub("zotero", "journalArticle", title, abstractText, List.of(), true, null, DOI);
+		return new Stub(
+				"zotero", "journalArticle", title, abstractText, List.of(), true,
+				null, DOI
+		);
 	}
 
-	static Author author(String lastName) { return new StubAuthor(lastName, null); }
+	static Author author(String lastName) {
+		return new StubAuthor(lastName, null);
+	}
 
-	static Author authorWithOrcid(String lastName, String orcid) { return new StubAuthor(lastName, orcid); }
+	static Author authorWithOrcid(String lastName, String orcid) {
+		return new StubAuthor(lastName, orcid);
+	}
 
 	static class StubAuthor implements Author {
 		private final String lastName;
 		private final String orcid;
 
-		StubAuthor(String lastName, String orcid) { this.lastName = lastName; this.orcid = orcid; }
+		StubAuthor(String lastName, String orcid) {
+			this.lastName = lastName;
+			this.orcid = orcid;
+		}
 
-		public Optional<String> getORCID() { return Optional.ofNullable(orcid); }
+		@Override
+		public Optional<String> getORCID() {
+			return Optional.ofNullable(this.orcid);
+		}
+		@Override
 		public Optional<String> getFirstName() { return Optional.of("Robert"); }
-		public String getLastName() { return lastName; }
+		@Override
+		public String getLastName() { return this.lastName; }
+		@Override
 		public Optional<String> getInitials() { return Optional.of("R"); }
+		@Override
 		public Stream<String> getAffiliations() { return Stream.empty(); }
 	}
 
@@ -272,9 +504,12 @@ public class TestRecordMerge {
 		private final String id;
 		private String pdf;
 
-		Stub(String source, String nativeType, String title, String abstractText,
-				List<Author> authors, boolean curated, String journal, String id) {
-			this.provenance = curated ? Provenance.curated(source) : Provenance.of(source, nativeType);
+		Stub(
+				String source, String nativeType, String title, String abstractText,
+				List<Author> authors, boolean curated, String journal, String id
+		) {
+			this.provenance = curated ? Provenance.curated(source)
+				: Provenance.of(source, nativeType);
 			this.publicationType = nativeType;
 			this.title = title;
 			this.abstractText = abstractText;
@@ -283,18 +518,46 @@ public class TestRecordMerge {
 			this.id = id;
 		}
 
-		public Optional<String> getIdentifier() { return Optional.of(id); }
+		@Override
+		public Optional<String> getIdentifier() { return Optional.of(this.id); }
+		@Override
 		public IdType getIdentifierType() { return IdType.DOI; }
-		public List<? extends RecordReference> getOtherIdentifiers() { return List.of(); }
-		public List<? extends Author> getAuthors() { return authors; }
+		@Override
+		public List<RecordReference> getOtherIdentifiers() { return List.of(); }
+		@Override
+		public List<Author> getAuthors() { return this.authors; }
+		@Override
 		public Stream<String> getLicenses() { return Stream.of("licence-a"); }
-		public Optional<String> getAbstract() { return Optional.ofNullable(abstractText); }
-		public Optional<String> getTitle() { return Optional.ofNullable(title); }
-		public Optional<String> getJournal() { return Optional.ofNullable(journal); }
-		public Optional<LocalDate> getDate() { return Optional.of(LocalDate.of(2019, 1, 12)); }
-		public Optional<URI> getPdfUri() { return pdf == null ? Optional.empty() : Optional.of(URI.create(pdf)); }
-		public Optional<Provenance> getProvenance() { return Optional.of(provenance); }
-		public Optional<String> getPublicationType() { return Optional.ofNullable(publicationType); }
-		Stub withPdf(String url) { this.pdf = url; return this; }
+		@Override
+		public Optional<String> getAbstract() {
+			return Optional.ofNullable(this.abstractText);
+		}
+		@Override
+		public Optional<String> getTitle() {
+			return Optional.ofNullable(this.title);
+		}
+		@Override
+		public Optional<String> getJournal() {
+			return Optional.ofNullable(this.journal);
+		}
+		@Override
+		public Optional<LocalDate> getDate() {
+			return Optional.of(LocalDate.of(2019, 1, 12));
+		}
+		@Override
+		public Optional<URI> getPdfUri() {
+			return this.pdf == null ? Optional.empty()
+				: Optional.of(URI.create(this.pdf));
+		}
+		@Override
+		public Provenance getProvenance() { return this.provenance; }
+		@Override
+		public Optional<String> getPublicationType() {
+			return Optional.ofNullable(this.publicationType);
+		}
+		Stub withPdf(String url) {
+			this.pdf = url;
+			return this;
+		}
 	}
 }

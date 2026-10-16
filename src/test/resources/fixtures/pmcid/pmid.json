@@ -1,1 +1,21 @@
-{"status":"ok","response-date":"2026-10-02 05:36:37","request":{"warnings":[],"format":"json","idtype":"pmid","ids":["41888721"],"email":"rob@terminological.co.uk","tool":"test","echo":"tool=test&email=rob%40terminological.co.uk&format=json&ids=41888721&idtype=pmid","versions":"no","showaiid":"no"},"records":[{"doi":"10.1186/s12879-026-13122-y","pmcid":"PMC13141338","pmid":41888721,"requested-id":"41888721"}]}
+{
+  "status" : "ok",
+  "response-date" : "2026-10-15 09:39:28",
+  "request" : {
+    "warnings" : [ ],
+    "format" : "json",
+    "idtype" : "pmid",
+    "ids" : [ "41888721" ],
+    "email" : "rob@terminological.co.uk",
+    "tool" : "test",
+    "echo" : "tool=test&email=rob%40terminological.co.uk&format=json&ids=41888721&idtype=pmid",
+    "versions" : "no",
+    "showaiid" : "no"
+  },
+  "records" : [ {
+    "doi" : "10.1186/s12879-026-13122-y",
+    "pmcid" : "PMC13141338",
+    "pmid" : 41888721,
+    "requested-id" : "41888721"
+  } ]
+}

@@ -1,1 +1,217 @@
-{"best_oa_location":{"endpoint_id":null,"evidence":"deprecated","host_type":"repository","is_best":true,"license":"cc-by","oa_date":"2025-12-15","pmh_id":null,"repository_institution":null,"updated":"deprecated","url":"https://www.medrxiv.org/content/medrxiv/early/2025/12/15/2025.12.12.25342129.full.pdf","url_for_landing_page":"https://doi.org/10.64898/2025.12.12.25342129","url_for_pdf":"https://www.medrxiv.org/content/medrxiv/early/2025/12/15/2025.12.12.25342129.full.pdf","version":"acceptedVersion"},"data_standard":2,"doi":"10.64898/2025.12.12.25342129","doi_url":"https://doi.org/10.64898/2025.12.12.25342129","first_oa_location":{"endpoint_id":null,"evidence":"deprecated","host_type":"repository","is_best":true,"license":"cc-by","oa_date":"2025-12-15","pmh_id":null,"repository_institution":null,"updated":"deprecated","url":"https://www.medrxiv.org/content/medrxiv/early/2025/12/15/2025.12.12.25342129.full.pdf","url_for_landing_page":"https://doi.org/10.64898/2025.12.12.25342129","url_for_pdf":"https://www.medrxiv.org/content/medrxiv/early/2025/12/15/2025.12.12.25342129.full.pdf","version":"acceptedVersion"},"genre":"posted-content","has_repository_copy":true,"is_oa":true,"is_paratext":false,"journal_is_in_doaj":false,"journal_is_oa":false,"journal_issn_l":null,"journal_issns":null,"journal_name":"medRxiv","oa_locations":[{"endpoint_id":null,"evidence":"deprecated","host_type":"repository","is_best":true,"license":"cc-by","oa_date":"2025-12-15","pmh_id":null,"repository_institution":null,"updated":"deprecated","url":"https://www.medrxiv.org/content/medrxiv/early/2025/12/15/2025.12.12.25342129.full.pdf","url_for_landing_page":"https://doi.org/10.64898/2025.12.12.25342129","url_for_pdf":"https://www.medrxiv.org/content/medrxiv/early/2025/12/15/2025.12.12.25342129.full.pdf","version":"acceptedVersion"},{"endpoint_id":"3302dd407c5f4832117","evidence":"deprecated","host_type":"repository","is_best":false,"license":null,"oa_date":"2025-12-15","pmh_id":"oai:openaccess.sgul.ac.uk:118684","repository_institution":"St George's, University of London","updated":"deprecated","url":"https://openaccess.sgul.ac.uk/id/eprint/118684/2/s12879-026-13122-y.pdf","url_for_landing_page":"https://doi.org/10.1186/s12879-026-13122-y","url_for_pdf":"https://openaccess.sgul.ac.uk/id/eprint/118684/2/s12879-026-13122-y.pdf","version":"submittedVersion"},{"endpoint_id":"8e556f4518885d9a235","evidence":"deprecated","host_type":"repository","is_best":false,"license":"cc-by-sa","oa_date":"2025-12-15","pmh_id":"oai:doaj.org/article:b73338aac9884af2bc2be97c7305c80d","repository_institution":null,"updated":"deprecated","url":"https://doaj.org/article/b73338aac9884af2bc2be97c7305c80d","url_for_landing_page":"https://doaj.org/article/b73338aac9884af2bc2be97c7305c80d","url_for_pdf":null,"version":"submittedVersion"},{"endpoint_id":"ac9de7698155b820de7","evidence":"deprecated","host_type":"repository","is_best":false,"license":"cc-by","oa_date":"2025-12-15","pmh_id":"oai:pubmedcentral.nih.gov:13141338","repository_institution":"National Institutes of Health","updated":"deprecated","url":"https://pubmed.ncbi.nlm.nih.gov/41888721/","url_for_landing_page":"https://pubmed.ncbi.nlm.nih.gov/41888721/","url_for_pdf":null,"version":"submittedVersion"},{"endpoint_id":null,"evidence":"deprecated","host_type":"repository","is_best":false,"license":"cc-by","oa_date":"2025-12-15","pmh_id":null,"repository_institution":"Figshare (United Kingdom)","updated":"deprecated","url":"https://doi.org/10.6084/m9.figshare.c.8458139","url_for_landing_page":"https://doi.org/10.6084/m9.figshare.c.8458139","url_for_pdf":null,"version":null},{"endpoint_id":null,"evidence":"deprecated","host_type":"repository","is_best":false,"license":"cc-by","oa_date":"2025-12-15","pmh_id":null,"repository_institution":"Figshare (United Kingdom)","updated":"deprecated","url":"https://doi.org/10.6084/m9.figshare.c.8458139.v1","url_for_landing_page":"https://doi.org/10.6084/m9.figshare.c.8458139.v1","url_for_pdf":null,"version":null}],"oa_locations_embargoed":[],"oa_status":"green","published_date":"2025-12-15","publisher":"openRxiv","title":"Trends in invasive and non-invasive Streptococcus pneumoniae disease in adults hospitalised in Bristol and Bath: a retrospective cohort study, 2006-2022","updated":"2026-09-11T13:22:54Z","year":2025,"z_authors":[{"author_position":"first","is_corresponding":true,"raw_affiliation_strings":["Engineering Mathematics, University of Bristol, Bristol, UK;","Engineering Mathematics, University of Bristol, Bristol, UK"],"raw_author_name":"Robert Challen"},{"author_position":"middle","is_corresponding":false,"raw_affiliation_strings":["Bristol Vaccine Centre, Schools of Cellular and Molecular Medicine and of Population Health Sciences, University of Bristol, Bristol, UK;","Bristol Vaccine Centre, Schools of Cellular and Molecular Medicine and of Population Health Sciences, University of Bristol, Bristol, UK"],"raw_author_name":"Catherine Hyams"},{"author_position":"middle","is_corresponding":false,"raw_affiliation_strings":["Department of Microbiology, Bristol Royal Infirmary, Upper Maudlin Street, Bristol, UK;","Department of Microbiology, Bristol Royal Infirmary, Upper Maudlin Street, Bristol, UK"],"raw_author_name":"David Hettle"},{"author_position":"middle","is_corresponding":false,"raw_affiliation_strings":["Immunisation Department, UK Health Security Agency (UKHSA), London, UK;","Immunisation Department, UK Health Security Agency (UKHSA), London, UK"],"raw_author_name":"Zahin Amin-Chowdhury"},{"author_position":"middle","is_corresponding":false,"raw_affiliation_strings":["Academic Respiratory Unit, Learning and Research Building, Southmead Hospital, Bristol, UK;","Academic Respiratory Unit, Learning and Research Building, Southmead Hospital, Bristol, UK"],"raw_author_name":"Charli Grimes"},{"author_position":"middle","is_corresponding":false,"raw_affiliation_strings":["Academic Respiratory Unit, Learning and Research Building, Southmead Hospital, Bristol, UK;","Academic Respiratory Unit, Learning and Research Building, Southmead Hospital, Bristol, UK"],"raw_author_name":"Gabriella Ruffino"},{"author_position":"middle","is_corresponding":false,"raw_affiliation_strings":["Academic Respiratory Unit, Learning and Research Building, Southmead Hospital, Bristol, UK;","Academic Respiratory Unit, Learning and Research Building, Southmead Hospital, Bristol, UK"],"raw_author_name":"Rauri Conway"},{"author_position":"middle","is_corresponding":false,"raw_affiliation_strings":["Bristol Vaccine Centre, Schools of Cellular and Molecular Medicine and of Population Health Sciences, University of Bristol, Bristol, UK;","Bristol Vaccine Centre, Schools of Cellular and Molecular Medicine and of Population Health Sciences, University of Bristol, Bristol, UK"],"raw_author_name":"Robyn Heath"},{"author_position":"middle","is_corresponding":false,"raw_affiliation_strings":["Department of Microbiology, Bristol Royal Infirmary, Upper Maudlin Street, Bristol, UK;","Department of Microbiology, Bristol Royal Infirmary, Upper Maudlin Street, Bristol, UK"],"raw_author_name":"Paul North"},{"author_position":"middle","is_corresponding":false,"raw_affiliation_strings":["Department of Respiratory Medicine, The Royal United Hospital, Bath, UK"],"raw_author_name":"Adam Malin"},{"author_position":"middle","is_corresponding":false,"raw_affiliation_strings":["Academic Respiratory Unit, Learning and Research Building, Southmead Hospital, Bristol, UK;","Academic Respiratory Unit, Learning and Research Building, Southmead Hospital, Bristol, UK"],"raw_author_name":"Nick A Maskell"},{"author_position":"middle","is_corresponding":false,"raw_affiliation_strings":["Department of Microbiology, Bristol Royal Infirmary, Upper Maudlin Street, Bristol, UK;","Department of Microbiology, Bristol Royal Infirmary, Upper Maudlin Street, Bristol, UK"],"raw_author_name":"Philip Williams"},{"author_position":"middle","is_corresponding":false,"raw_affiliation_strings":["Department of Microbiology, Bristol Royal Infirmary, Upper Maudlin Street, Bristol, UK;","Department of Microbiology, Bristol Royal Infirmary, Upper Maudlin Street, Bristol, UK"],"raw_author_name":"O. Martin Williams"},{"author_position":"middle","is_corresponding":false,"raw_affiliation_strings":["Immunisation Department, UK Health Security Agency (UKHSA), London, UK;","Immunisation Department, UK Health Security Agency (UKHSA), London, UK"],"raw_author_name":"Shamez N Ladhani"},{"author_position":"middle","is_corresponding":false,"raw_affiliation_strings":["Engineering Mathematics, University of Bristol, Bristol, UK;","Engineering Mathematics, University of Bristol, Bristol, UK"],"raw_author_name":"Leon Danon"},{"author_position":"last","is_corresponding":false,"raw_affiliation_strings":["Bristol Vaccine Centre, Schools of Cellular and Molecular Medicine and of Population Health Sciences, University of Bristol, Bristol, UK;","Bristol Vaccine Centre, Schools of Cellular and Molecular Medicine and of Population Health Sciences, University of Bristol, Bristol, UK"],"raw_author_name":"Adam Finn"}]}
+{
+  "best_oa_location" : {
+    "endpoint_id" : null,
+    "evidence" : "deprecated",
+    "host_type" : "repository",
+    "is_best" : true,
+    "license" : "cc-by",
+    "oa_date" : "2025-12-15",
+    "pmh_id" : null,
+    "repository_institution" : null,
+    "updated" : "deprecated",
+    "url" : "https://www.medrxiv.org/content/medrxiv/early/2025/12/15/2025.12.12.25342129.full.pdf",
+    "url_for_landing_page" : "https://doi.org/10.64898/2025.12.12.25342129",
+    "url_for_pdf" : "https://www.medrxiv.org/content/medrxiv/early/2025/12/15/2025.12.12.25342129.full.pdf",
+    "version" : "acceptedVersion"
+  },
+  "data_standard" : 2,
+  "doi" : "10.64898/2025.12.12.25342129",
+  "doi_url" : "https://doi.org/10.64898/2025.12.12.25342129",
+  "first_oa_location" : {
+    "endpoint_id" : null,
+    "evidence" : "deprecated",
+    "host_type" : "repository",
+    "is_best" : true,
+    "license" : "cc-by",
+    "oa_date" : "2025-12-15",
+    "pmh_id" : null,
+    "repository_institution" : null,
+    "updated" : "deprecated",
+    "url" : "https://www.medrxiv.org/content/medrxiv/early/2025/12/15/2025.12.12.25342129.full.pdf",
+    "url_for_landing_page" : "https://doi.org/10.64898/2025.12.12.25342129",
+    "url_for_pdf" : "https://www.medrxiv.org/content/medrxiv/early/2025/12/15/2025.12.12.25342129.full.pdf",
+    "version" : "acceptedVersion"
+  },
+  "genre" : "posted-content",
+  "has_repository_copy" : true,
+  "is_oa" : true,
+  "is_paratext" : false,
+  "journal_is_in_doaj" : false,
+  "journal_is_oa" : false,
+  "journal_issn_l" : null,
+  "journal_issns" : null,
+  "journal_name" : "medRxiv",
+  "oa_locations" : [ {
+    "endpoint_id" : null,
+    "evidence" : "deprecated",
+    "host_type" : "repository",
+    "is_best" : true,
+    "license" : "cc-by",
+    "oa_date" : "2025-12-15",
+    "pmh_id" : null,
+    "repository_institution" : null,
+    "updated" : "deprecated",
+    "url" : "https://www.medrxiv.org/content/medrxiv/early/2025/12/15/2025.12.12.25342129.full.pdf",
+    "url_for_landing_page" : "https://doi.org/10.64898/2025.12.12.25342129",
+    "url_for_pdf" : "https://www.medrxiv.org/content/medrxiv/early/2025/12/15/2025.12.12.25342129.full.pdf",
+    "version" : "acceptedVersion"
+  }, {
+    "endpoint_id" : "3302dd407c5f4832117",
+    "evidence" : "deprecated",
+    "host_type" : "repository",
+    "is_best" : false,
+    "license" : null,
+    "oa_date" : "2025-12-15",
+    "pmh_id" : "oai:openaccess.sgul.ac.uk:118684",
+    "repository_institution" : "St George's, University of London",
+    "updated" : "deprecated",
+    "url" : "https://openaccess.sgul.ac.uk/id/eprint/118684/2/s12879-026-13122-y.pdf",
+    "url_for_landing_page" : "https://doi.org/10.1186/s12879-026-13122-y",
+    "url_for_pdf" : "https://openaccess.sgul.ac.uk/id/eprint/118684/2/s12879-026-13122-y.pdf",
+    "version" : "submittedVersion"
+  }, {
+    "endpoint_id" : "8e556f4518885d9a235",
+    "evidence" : "deprecated",
+    "host_type" : "repository",
+    "is_best" : false,
+    "license" : "cc-by-sa",
+    "oa_date" : "2025-12-15",
+    "pmh_id" : "oai:doaj.org/article:b73338aac9884af2bc2be97c7305c80d",
+    "repository_institution" : null,
+    "updated" : "deprecated",
+    "url" : "https://doaj.org/article/b73338aac9884af2bc2be97c7305c80d",
+    "url_for_landing_page" : "https://doaj.org/article/b73338aac9884af2bc2be97c7305c80d",
+    "url_for_pdf" : null,
+    "version" : "submittedVersion"
+  }, {
+    "endpoint_id" : "ac9de7698155b820de7",
+    "evidence" : "deprecated",
+    "host_type" : "repository",
+    "is_best" : false,
+    "license" : "cc-by",
+    "oa_date" : "2025-12-15",
+    "pmh_id" : "oai:pubmedcentral.nih.gov:13141338",
+    "repository_institution" : "National Institutes of Health",
+    "updated" : "deprecated",
+    "url" : "https://pubmed.ncbi.nlm.nih.gov/41888721/",
+    "url_for_landing_page" : "https://pubmed.ncbi.nlm.nih.gov/41888721/",
+    "url_for_pdf" : null,
+    "version" : "submittedVersion"
+  }, {
+    "endpoint_id" : null,
+    "evidence" : "deprecated",
+    "host_type" : "repository",
+    "is_best" : false,
+    "license" : "cc-by",
+    "oa_date" : "2025-12-15",
+    "pmh_id" : null,
+    "repository_institution" : "Figshare (United Kingdom)",
+    "updated" : "deprecated",
+    "url" : "https://doi.org/10.6084/m9.figshare.c.8458139",
+    "url_for_landing_page" : "https://doi.org/10.6084/m9.figshare.c.8458139",
+    "url_for_pdf" : null,
+    "version" : null
+  }, {
+    "endpoint_id" : null,
+    "evidence" : "deprecated",
+    "host_type" : "repository",
+    "is_best" : false,
+    "license" : "cc-by",
+    "oa_date" : "2025-12-15",
+    "pmh_id" : null,
+    "repository_institution" : "Figshare (United Kingdom)",
+    "updated" : "deprecated",
+    "url" : "https://doi.org/10.6084/m9.figshare.c.8458139.v1",
+    "url_for_landing_page" : "https://doi.org/10.6084/m9.figshare.c.8458139.v1",
+    "url_for_pdf" : null,
+    "version" : null
+  } ],
+  "oa_locations_embargoed" : [ ],
+  "oa_status" : "green",
+  "published_date" : "2025-12-15",
+  "publisher" : "openRxiv",
+  "title" : "Trends in invasive and non-invasive Streptococcus pneumoniae disease in adults hospitalised in Bristol and Bath: a retrospective cohort study, 2006-2022",
+  "updated" : "2026-09-11T13:22:54Z",
+  "year" : 2025,
+  "z_authors" : [ {
+    "author_position" : "first",
+    "is_corresponding" : true,
+    "raw_affiliation_strings" : [ "Engineering Mathematics, University of Bristol, Bristol, UK;", "Engineering Mathematics, University of Bristol, Bristol, UK" ],
+    "raw_author_name" : "Robert Challen"
+  }, {
+    "author_position" : "middle",
+    "is_corresponding" : false,
+    "raw_affiliation_strings" : [ "Bristol Vaccine Centre, Schools of Cellular and Molecular Medicine and of Population Health Sciences, University of Bristol, Bristol, UK;", "Bristol Vaccine Centre, Schools of Cellular and Molecular Medicine and of Population Health Sciences, University of Bristol, Bristol, UK" ],
+    "raw_author_name" : "Catherine Hyams"
+  }, {
+    "author_position" : "middle",
+    "is_corresponding" : false,
+    "raw_affiliation_strings" : [ "Department of Microbiology, Bristol Royal Infirmary, Upper Maudlin Street, Bristol, UK;", "Department of Microbiology, Bristol Royal Infirmary, Upper Maudlin Street, Bristol, UK" ],
+    "raw_author_name" : "David Hettle"
+  }, {
+    "author_position" : "middle",
+    "is_corresponding" : false,
+    "raw_affiliation_strings" : [ "Immunisation Department, UK Health Security Agency (UKHSA), London, UK;", "Immunisation Department, UK Health Security Agency (UKHSA), London, UK" ],
+    "raw_author_name" : "Zahin Amin-Chowdhury"
+  }, {
+    "author_position" : "middle",
+    "is_corresponding" : false,
+    "raw_affiliation_strings" : [ "Academic Respiratory Unit, Learning and Research Building, Southmead Hospital, Bristol, UK;", "Academic Respiratory Unit, Learning and Research Building, Southmead Hospital, Bristol, UK" ],
+    "raw_author_name" : "Charli Grimes"
+  }, {
+    "author_position" : "middle",
+    "is_corresponding" : false,
+    "raw_affiliation_strings" : [ "Academic Respiratory Unit, Learning and Research Building, Southmead Hospital, Bristol, UK;", "Academic Respiratory Unit, Learning and Research Building, Southmead Hospital, Bristol, UK" ],
+    "raw_author_name" : "Gabriella Ruffino"
+  }, {
+    "author_position" : "middle",
+    "is_corresponding" : false,
+    "raw_affiliation_strings" : [ "Academic Respiratory Unit, Learning and Research Building, Southmead Hospital, Bristol, UK;", "Academic Respiratory Unit, Learning and Research Building, Southmead Hospital, Bristol, UK" ],
+    "raw_author_name" : "Rauri Conway"
+  }, {
+    "author_position" : "middle",
+    "is_corresponding" : false,
+    "raw_affiliation_strings" : [ "Bristol Vaccine Centre, Schools of Cellular and Molecular Medicine and of Population Health Sciences, University of Bristol, Bristol, UK;", "Bristol Vaccine Centre, Schools of Cellular and Molecular Medicine and of Population Health Sciences, University of Bristol, Bristol, UK" ],
+    "raw_author_name" : "Robyn Heath"
+  }, {
+    "author_position" : "middle",
+    "is_corresponding" : false,
+    "raw_affiliation_strings" : [ "Department of Microbiology, Bristol Royal Infirmary, Upper Maudlin Street, Bristol, UK;", "Department of Microbiology, Bristol Royal Infirmary, Upper Maudlin Street, Bristol, UK" ],
+    "raw_author_name" : "Paul North"
+  }, {
+    "author_position" : "middle",
+    "is_corresponding" : false,
+    "raw_affiliation_strings" : [ "Department of Respiratory Medicine, The Royal United Hospital, Bath, UK" ],
+    "raw_author_name" : "Adam Malin"
+  }, {
+    "author_position" : "middle",
+    "is_corresponding" : false,
+    "raw_affiliation_strings" : [ "Academic Respiratory Unit, Learning and Research Building, Southmead Hospital, Bristol, UK;", "Academic Respiratory Unit, Learning and Research Building, Southmead Hospital, Bristol, UK" ],
+    "raw_author_name" : "Nick A Maskell"
+  }, {
+    "author_position" : "middle",
+    "is_corresponding" : false,
+    "raw_affiliation_strings" : [ "Department of Microbiology, Bristol Royal Infirmary, Upper Maudlin Street, Bristol, UK;", "Department of Microbiology, Bristol Royal Infirmary, Upper Maudlin Street, Bristol, UK" ],
+    "raw_author_name" : "Philip Williams"
+  }, {
+    "author_position" : "middle",
+    "is_corresponding" : false,
+    "raw_affiliation_strings" : [ "Department of Microbiology, Bristol Royal Infirmary, Upper Maudlin Street, Bristol, UK;", "Department of Microbiology, Bristol Royal Infirmary, Upper Maudlin Street, Bristol, UK" ],
+    "raw_author_name" : "O. Martin Williams"
+  }, {
+    "author_position" : "middle",
+    "is_corresponding" : false,
+    "raw_affiliation_strings" : [ "Immunisation Department, UK Health Security Agency (UKHSA), London, UK;", "Immunisation Department, UK Health Security Agency (UKHSA), London, UK" ],
+    "raw_author_name" : "Shamez N Ladhani"
+  }, {
+    "author_position" : "middle",
+    "is_corresponding" : false,
+    "raw_affiliation_strings" : [ "Engineering Mathematics, University of Bristol, Bristol, UK;", "Engineering Mathematics, University of Bristol, Bristol, UK" ],
+    "raw_author_name" : "Leon Danon"
+  }, {
+    "author_position" : "last",
+    "is_corresponding" : false,
+    "raw_affiliation_strings" : [ "Bristol Vaccine Centre, Schools of Cellular and Molecular Medicine and of Population Health Sciences, University of Bristol, Bristol, UK;", "Bristol Vaccine Centre, Schools of Cellular and Molecular Medicine and of Population Health Sciences, University of Bristol, Bristol, UK" ],
+    "raw_author_name" : "Adam Finn"
+  } ]
+}

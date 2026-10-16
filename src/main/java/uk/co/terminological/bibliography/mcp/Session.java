@@ -23,6 +23,7 @@ import org.jgrapht.graph.SimpleDirectedGraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import uk.co.terminological.bibliography.client.Query;
 import uk.co.terminological.bibliography.record.Builder;
 import uk.co.terminological.bibliography.record.CitationLink;
 import uk.co.terminological.bibliography.record.IdType;
@@ -36,11 +37,9 @@ import uk.co.terminological.datatypes.FluentSet;
 import uk.co.terminological.datatypes.Tuple;
 
 /**
- * Stateful repository over the bibliographic clients: normalises DOIs, manages
- * a cross map of ids of different types, merges and deduplicates records,
- * caches a citation graph. (Salvaged from the rjavaapi Repository, minus the R
- * interface.) Long-lived; held in memory for the lifetime of an MCP server
- * session, persisted via save/load.
+ * Stateful repository over the bibliographic clients: normalises DOIs, manages a cross map of ids of different types,
+ * merges and deduplicates records, caches a citation graph. (Salvaged from the rjavaapi Repository, minus the R
+ * interface.) Long-lived; held in memory for the lifetime of an MCP server session, persisted via save/load.
  */
 // [IMPLEMENTS](/design/features/feat-002-explore-citation-networks-in-a-session.md)
 public class Session implements Serializable {
@@ -212,29 +211,30 @@ public class Session implements Serializable {
 
 	// Orchestration
 
-	public Session collectSearch(String search) {
+	public Session collectSearch(Query search) {
 		Collection<? extends Record> hits = this.facade.search(search);
 		hits.forEach(this::add);
 		hits.stream()
 			.filter(RecordWithCitations.class::isInstance)
 			.map(h -> (RecordWithCitations) h)
-			.flatMap(RecordWithCitations::getCitations)
+			.flatMap(
+				c -> c.getCitations()
+					.stream()
+			)
 			.forEach(this::add);
 		return this;
 	}
 
-	public Session collectSearchByApi(HashMap<String, String> searchByApi) {
-		Collection<? extends Record> hits = this.facade.multiSearch(
-				searchByApi,
-				this.facade.from,
-				this.facade.to,
-				this.facade.limit
-		);
+	public Session collectSearchByApi(HashMap<String, Query> searchByApi) {
+		Collection<? extends Record> hits = this.facade.multiSearch(searchByApi);
 		hits.forEach(this::add);
 		hits.stream()
 			.filter(RecordWithCitations.class::isInstance)
 			.map(h -> (RecordWithCitations) h)
-			.flatMap(RecordWithCitations::getCitations)
+			.flatMap(
+				c -> c.getCitations()
+					.stream()
+			)
 			.forEach(this::add);
 		return this;
 	}

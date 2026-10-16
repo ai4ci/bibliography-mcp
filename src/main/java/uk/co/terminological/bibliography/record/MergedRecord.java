@@ -26,13 +26,13 @@ public class MergedRecord implements RecordWithCitations, Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	List<ImmutableRecord> records = new ArrayList<>();
+	List<ImmutableRecordWithCitations> records = new ArrayList<>();
 
 	private final MergePolicy policy = MergePolicy.standard();
 
 	public static MergedRecord from(Record r) {
 		if (r instanceof MergedRecord) return (MergedRecord) r;
-		MergedRecord out = new MergedRecord();
+		var out = new MergedRecord();
 		return out.merge(r);
 	}
 
@@ -44,26 +44,30 @@ public class MergedRecord implements RecordWithCitations, Serializable {
 			((MergedRecord) r).records.forEach(this::merge);
 			return this;
 		}
-		ImmutableRecord candidate = Builder.record(r);
+		var candidate = Builder.recordWithCitations(r);
 		// an exact re-contribution (same source, identifier and content) adds
 		// nothing but memory, so repeated fetches do not inflate the merge
-		if (records.stream().noneMatch(existing -> sameContribution(existing, candidate))) {
-			records.add(candidate);
+		if (this.records.stream()
+			.noneMatch(existing -> sameContribution(existing, candidate))) {
+			this.records.add(candidate);
 		}
 		return this;
 	}
 
 	private static boolean sameContribution(Record a, Record b) {
-		return contributionKey(a).equals(contributionKey(b))
-				&& a.getIdentifier().equals(b.getIdentifier())
-				&& a.getTitle().equals(b.getTitle())
-				&& a.getAbstract().equals(b.getAbstract());
+		return contributionKey(a).equals(contributionKey(b)) && a.getIdentifier()
+			.equals(b.getIdentifier())
+				&& a.getTitle()
+					.equals(b.getTitle())
+				&& a.getAbstract()
+					.equals(b.getAbstract());
 	}
 
 	/** two records without provenance are not the same source just because both are unnamed */
 	private static String contributionKey(Record r) {
-		String source = MergePolicy.sourceOf(r);
-		return source.isEmpty() ? r.getClass().getName() : source;
+		var source = MergePolicy.sourceOf(r);
+		return source.isEmpty() ? r.getClass()
+			.getName() : source;
 	}
 
 	// ---- resolution ----------------------------------------------------------
@@ -71,229 +75,311 @@ public class MergedRecord implements RecordWithCitations, Serializable {
 	/**
 	 * Pick a single value for a field by the documented per-field priority.
 	 *
-	 * Every source is ranked the same way, including a Zotero item: a zotero
-	 * record may be scraped from a publisher page and broken, or hand repaired,
-	 * and nothing in the data reliably distinguishes the two. Where sources
-	 * disagree the loser is not discarded — provenance and the contributing
-	 * records are both retained so the disagreement can be reported (and, for
-	 * write-back, refused rather than overwritten).
+	 * Every source is ranked the same way, including a Zotero item: a zotero record may be scraped from a publisher page
+	 * and broken, or hand repaired, and nothing in the data reliably distinguishes the two. Where sources disagree the
+	 * loser is not discarded — provenance and the contributing records are both retained so the disagreement can be
+	 * reported (and, for write-back, refused rather than overwritten).
 	 *
-	 * Ties are broken by the value itself, so the outcome is reproducible rather
-	 * than merely stable under insertion order.
+	 * Ties are broken by the value itself, so the outcome is reproducible rather than merely stable under insertion order.
 	 */
-	private <T> Optional<T> resolve(String field, Function<Record, Optional<T>> getter) {
-		return records.stream()
-				.map(record -> getter.apply(record)
-						.filter(value -> value != null)
-						.map(value -> Map.entry(policy.rank(field, record), value)))
-				.filter(Optional::isPresent)
-				.map(Optional::get)
-				.min(Comparator.<Map.Entry<Integer, T>, Integer>comparing(Map.Entry::getKey)
-						.thenComparing(entry -> String.valueOf(entry.getValue())))
-				.map(Map.Entry::getValue);
+	private <T> Optional<T> resolve(
+			String field, Function<Record, Optional<T>> getter
+	) {
+		return this.records.stream()
+			.map(
+				record -> getter.apply(record)
+					.filter(value -> value != null)
+					.map(value -> Map.entry(this.policy.rank(field, record), value))
+			)
+			.filter(Optional::isPresent)
+			.map(Optional::get)
+			.min(
+				Comparator.<Map.Entry<Integer, T>, Integer>comparing(
+					Map.Entry::getKey
+				)
+					.thenComparing(entry -> String.valueOf(entry.getValue()))
+			)
+			.map(Map.Entry::getValue);
 	}
 
 	/** contributing records in priority order, for the list-valued fields */
-	private List<Record> byPriority(String field) {
-		return records.stream()
-				.sorted(Comparator.comparingInt((Record r) -> policy.rank(field, r))
-						.thenComparing(MergePolicy::sourceOf)
-						.thenComparing(r -> r.getIdentifier().orElse(""))
-						.thenComparing(r -> r.getTitle().orElse("")))
-				.collect(Collectors.toList());
+	private List<RecordWithCitations> byPriority(String field) {
+		return this.records.stream()
+			.sorted(
+				Comparator.comparingInt((Record r) -> this.policy.rank(field, r))
+					.thenComparing(MergePolicy::sourceOf)
+					.thenComparing(
+						r -> r.getIdentifier()
+							.orElse("")
+					)
+					.thenComparing(
+						r -> r.getTitle()
+							.orElse("")
+					)
+			)
+			.collect(Collectors.toList());
 	}
 
 	// ---- scalar fields -------------------------------------------------------
 
 	@Override
 	public Optional<String> getAbstract() {
-		return resolve(MergePolicy.ABSTRACT, Record::getAbstract);
+		return this.resolve(MergePolicy.ABSTRACT, Record::getAbstract);
 	}
 
 	@Override
 	public Optional<String> getTitle() {
-		return resolve(MergePolicy.TITLE, Record::getTitle);
+		return this.resolve(MergePolicy.TITLE, Record::getTitle);
 	}
 
 	@Override
 	public Optional<String> getJournal() {
-		return resolve(MergePolicy.CONTAINER, Record::getJournal);
+		return this.resolve(MergePolicy.CONTAINER, Record::getJournal);
 	}
 
 	@Override
 	public Optional<LocalDate> getDate() {
-		return resolve(MergePolicy.DATE, Record::getDate);
+		return this.resolve(MergePolicy.DATE, Record::getDate);
 	}
 
 	@Override
 	public Optional<URI> getPdfUri() {
-		return resolve(MergePolicy.PDF, Record::getPdfUri);
+		return this.resolve(MergePolicy.PDF, Record::getPdfUri);
 	}
 
 	@Override
 	public Optional<String> getPublicationType() {
-		return resolve(MergePolicy.PUBLICATION_TYPE, Record::getPublicationType);
+		return this
+			.resolve(MergePolicy.PUBLICATION_TYPE, Record::getPublicationType);
 	}
 
 	@Override
 	public Optional<String> getPublisher() {
-		return resolve(MergePolicy.PUBLISHER, Record::getPublisher);
+		return this.resolve(MergePolicy.PUBLISHER, Record::getPublisher);
 	}
 
 	// ---- identity ------------------------------------------------------------
 
 	@Override
 	public Set<ImmutableRecordReference> getIdentifiers() {
-		return records.stream()
-				.flatMap(r -> r.getIdentifiers().stream())
-				.sorted(identifierOrder())
-				.collect(Collectors.toCollection(LinkedHashSet::new));
+		return this.records.stream()
+			.flatMap(
+				r -> r.getIdentifiers()
+					.stream()
+			)
+			.sorted(identifierOrder())
+			.collect(Collectors.toCollection(LinkedHashSet::new));
 	}
 
-	private static Comparator<ImmutableRecordReference> identifierOrder() {
-		return Comparator
-				.comparing((ImmutableRecordReference i) -> i.getIdentifierType().name())
-				.thenComparing(i -> i.getIdentifier().orElse(""));
+	private static Comparator<RecordReference> identifierOrder() {
+		return Comparator.comparing(
+			(RecordReference i) -> i.getIdentifierType()
+				.name()
+		)
+			.thenComparing(
+				i -> i.getIdentifier()
+					.orElse("")
+			);
 	}
 
 	@Override
 	public Optional<String> getIdentifier(IdType type) {
-		return getIdentifiers().stream()
-				.filter(i -> i.getIdentifierType().equals(type))
-				.flatMap(i -> i.getIdentifier().stream())
-				.findFirst();
+		return this.getIdentifiers()
+			.stream()
+			.filter(
+				i -> i.getIdentifierType()
+					.equals(type)
+			)
+			.flatMap(
+				i -> i.getIdentifier()
+					.stream()
+			)
+			.findFirst();
 	}
 
 	@Override
 	public Optional<String> getIdentifier() {
-		return getIdentifier(IdType.DOI)
-				.or(() -> getIdentifier(IdType.PMID))
-				.or(() -> getIdentifier(IdType.PMCID).map(s -> s.replaceAll("^PMC", "")))
-				.or(() -> getIdentifier(IdType.ISBN))
-				// deterministic rather than whichever a hash happened to yield first
-				.or(() -> getIdentifiers().stream().flatMap(i -> i.getIdentifier().stream()).findFirst());
+		return this.getIdentifier(IdType.DOI)
+			.or(() -> this.getIdentifier(IdType.PMID))
+			.or(
+				() -> this.getIdentifier(IdType.PMCID)
+					.map(s -> s.replaceAll("^PMC", ""))
+			)
+			.or(() -> this.getIdentifier(IdType.ISBN))
+			// deterministic rather than whichever a hash happened to yield first
+			.or(
+				() -> this.getIdentifiers()
+					.stream()
+					.flatMap(
+						i -> i.getIdentifier()
+							.stream()
+					)
+					.findFirst()
+			);
 	}
 
 	@Override
 	public IdType getIdentifierType() {
-		if (getIdentifier(IdType.DOI).isPresent()) return IdType.DOI;
-		if (getIdentifier(IdType.PMID).isPresent()) return IdType.PMID;
-		if (getIdentifier(IdType.PMCID).isPresent()) return IdType.PMCID;
-		if (getIdentifier(IdType.ISBN).isPresent()) return IdType.ISBN;
+		if (this.getIdentifier(IdType.DOI)
+			.isPresent()) return IdType.DOI;
+		if (this.getIdentifier(IdType.PMID)
+			.isPresent()) return IdType.PMID;
+		if (this.getIdentifier(IdType.PMCID)
+			.isPresent()) return IdType.PMCID;
+		if (this.getIdentifier(IdType.ISBN)
+			.isPresent()) return IdType.ISBN;
 		return IdType.UNK;
 	}
 
 	@Override
 	public List<RecordReference> getOtherIdentifiers() {
-		return records.stream()
-				.flatMap(r -> r.getOtherIdentifiers().stream())
-				.sorted(identifierOrder())
-				.distinct()
-				.collect(Collectors.toList());
+		return this.records.stream()
+			.flatMap(
+				r -> r.getOtherIdentifiers()
+					.stream()
+			)
+			.sorted(identifierOrder())
+			.distinct()
+			.collect(Collectors.toList());
 	}
 
 	// ---- list-valued fields --------------------------------------------------
 
 	@Override
-	public List<? extends Author> getAuthors() {
+	public List<Author> getAuthors() {
 		Set<String> seen = new LinkedHashSet<>();
 		List<Author> out = new ArrayList<>();
-		for (Record record : byPriority(MergePolicy.AUTHORS)) {
+		for (Record record : this.byPriority(MergePolicy.AUTHORS)) {
 			for (Author author : record.getAuthors()) {
-				if (author == null) continue;
-				if (seen.add(authorKey(author))) out.add(author);
+				if (author == null) { continue; }
+				if (seen.add(authorKey(author))) { out.add(author); }
 			}
 		}
 		return out;
 	}
 
 	/**
-	 * ORCID when the source provides one, otherwise a normalised name. Name-only
-	 * identity is best effort: the same person spelled differently in two
-	 * vocabularies is not detectable without ORCID.
+	 * ORCID when the source provides one, otherwise a normalised name. Name-only identity is best effort: the same person
+	 * spelled differently in two vocabularies is not detectable without ORCID.
 	 */
 	private static String authorKey(Author author) {
 		return author.getORCID()
-				.map(orcid -> "orcid:" + orcid.trim().toLowerCase(Locale.ROOT))
-				.orElseGet(() -> "name:" + (author.getLastName() + "|"
-						+ author.getInitials().orElse("") + "|"
-						+ author.getFirstName().orElse("")).trim().toLowerCase(Locale.ROOT));
+			.map(
+				orcid -> "orcid:" + orcid.trim()
+					.toLowerCase(Locale.ROOT)
+			)
+			.orElseGet(
+				() -> "name:" + (author.getLastName() + "|" + author.getInitials()
+					.orElse("") + "|"
+						+ author.getFirstName()
+							.orElse(""))
+					.trim()
+					.toLowerCase(Locale.ROOT)
+			);
 	}
 
 	@Override
 	public Stream<String> getLicenses() {
 		Set<String> distinct = new LinkedHashSet<>();
-		for (Record record : byPriority(MergePolicy.LICENCES)) {
-			record.getLicenses().forEach(distinct::add);
+		for (Record record : this.byPriority(MergePolicy.LICENCES)) {
+			record.getLicenses()
+				.forEach(distinct::add);
 		}
 		return distinct.stream();
 	}
 
 	@Override
-	public Stream<? extends CitationLink> getCitations() {
-		return byPriority(MergePolicy.CITATIONS).stream()
-				.filter(RecordWithCitations.class::isInstance)
-				.map(RecordWithCitations.class::cast)
-				.flatMap(RecordWithCitations::getCitations);
+	public List<CitationLink> getCitations() {
+		return this.byPriority(MergePolicy.CITATIONS)
+			.stream()
+			.flatMap(
+				c -> c.getCitations()
+					.stream()
+			)
+			.collect(Collectors.toList());
+
 	}
 
 	// ---- provenance ----------------------------------------------------------
 
 	@Override
-	public Optional<Provenance> getProvenance() {
-		return getProvenances().stream().findFirst();
-	}
+	public Provenance getProvenance() { return Provenance.curated("merged"); }
 
 	/**
-	 * Every contributing source, de-duplicated by source and ordered by source
-	 * name, so provenance survives merging deterministically.
+	 * Every contributing source, de-duplicated by source and ordered by source name, so provenance survives merging
+	 * deterministically.
 	 */
 	public List<Provenance> getProvenances() {
-		return records.stream()
-				.flatMap(r -> r.getProvenance().stream())
-				.sorted(Comparator.comparing(Provenance::getSource))
-				.collect(Collectors.toMap(Provenance::getSource, p -> p, (a, b) -> a, LinkedHashMap::new))
-				.values()
-				.stream()
-				.collect(Collectors.toList());
+		return this.records.stream()
+			.map(ImmutableRecordWithCitations::getProvenance)
+			.sorted(Comparator.comparing(Provenance::getSource))
+			.collect(
+				Collectors.toMap(
+					Provenance::getSource,
+					p -> p,
+					(a, b) -> a,
+					LinkedHashMap::new
+				)
+			)
+			.values()
+			.stream()
+			.collect(Collectors.toList());
 	}
 
 	// ---- counts --------------------------------------------------------------
 
 	@Override
 	public Optional<Long> getCitedByCount() {
-		return this.records.stream().flatMap(r -> r.getCitedByCount().stream()).max(Long::compare);
+		return this.records.stream()
+			.filter(RecordWithCitations.class::isInstance)
+			.map(RecordWithCitations.class::cast)
+			.flatMap(
+				r -> r.getCitedByCount()
+					.stream()
+			)
+			.max(Long::compare);
 	}
 
 	@Override
 	public Optional<Long> getReferencesCount() {
-		return this.records.stream().flatMap(r -> r.getReferencesCount().stream()).max(Long::compare);
+		return this.records.stream()
+			.filter(RecordWithCitations.class::isInstance)
+			.map(RecordWithCitations.class::cast)
+			.flatMap(
+				r -> r.getReferencesCount()
+					.stream()
+			)
+			.max(Long::compare);
 	}
 
-	public static Collector<Record,List<Record>,Optional<MergedRecord>> collector() {
-		return new Collector<Record,List<Record>, Optional<MergedRecord>>() {
+	public static Collector<Record, List<Record>, Optional<MergedRecord>> collector() {
+		return new Collector<>() {
 			@Override
 			public Set<Characteristics> characteristics() {
 				// safe to be unordered: resolution does not depend on insertion order
-				return Set.of(Characteristics.UNORDERED,Characteristics.CONCURRENT);
+				return Set
+					.of(Characteristics.UNORDERED, Characteristics.CONCURRENT);
 			}
 			@Override
 			public Supplier<List<Record>> supplier() {
-				return () -> new ArrayList<Record>();
+				return ArrayList::new;
 			}
 			@Override
 			public BiConsumer<List<Record>, Record> accumulator() {
-				return (l,r) -> l.add(r);
+				return List::add;
 			}
 			@Override
 			public BinaryOperator<List<Record>> combiner() {
-				return (l1,l2) -> {l1.addAll(l2); return l1;};
+				return (l1, l2) -> {
+					l1.addAll(l2);
+					return l1;
+				};
 			}
 			@Override
 			public Function<List<Record>, Optional<MergedRecord>> finisher() {
 				return l -> {
 					if (l.isEmpty()) return Optional.empty();
-					MergedRecord out = new MergedRecord();
+					var out = new MergedRecord();
 					l.forEach(out::merge);
 					return Optional.of(out);
 				};

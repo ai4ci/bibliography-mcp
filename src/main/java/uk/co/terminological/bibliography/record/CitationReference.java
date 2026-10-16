@@ -2,20 +2,27 @@ package uk.co.terminological.bibliography.record;
 
 import java.util.Optional;
 
+import org.immutables.value.Value;
+
+@Value.Immutable
 public interface CitationReference {
 
 	Optional<RecordReference> getIdentifier();
 	Optional<String> getTitle();
 	Optional<PrintReference> getBibliographicId();
-	
-	public default boolean isComplete() {
-		return getIdentifier().isPresent() && getIdentifier().get().isComplete();
+
+	default boolean isComplete() {
+		return this.getIdentifier()
+			.isPresent()
+				&& this.getIdentifier()
+					.get()
+					.isComplete();
 	}
-	
-	public static CitationReference create(
-			final RecordReference identifier,
-			final String title,
-			final PrintReference bibliographicInfo) {
+
+	static CitationReference create(
+			final RecordReference identifier, final String title,
+			final PrintReference bibliographicInfo
+	) {
 		return new CitationReference() {
 
 			@Override
@@ -32,15 +39,17 @@ public interface CitationReference {
 			public Optional<PrintReference> getBibliographicId() {
 				return Optional.ofNullable(bibliographicInfo);
 			}
-			
+
 		};
 	}
-	
-	public static String print(CitationReference cr) {
-		return
-			cr.getTitle().orElse("No title")+" "+
-			cr.getIdentifier().map(RecordReference::print).orElse("No identifier");
-		
+
+	static String print(CitationReference cr) {
+		return cr.getTitle()
+			.orElse("No title") + " "
+				+ cr.getIdentifier()
+					.map(RecordReference::print)
+					.orElse("No identifier");
+
 	}
-	
+
 }

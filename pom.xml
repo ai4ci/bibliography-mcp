@@ -21,6 +21,7 @@
 		<maven.compiler.source>11</maven.compiler.source>
 		<maven.compiler.target>11</maven.compiler.target>
 		<jackson.version.core>2.9.7</jackson.version.core>
+		<immutables.version>2.12.3</immutables.version>
 		<!-- default offline tier: exclude the live category. scripts/run-live-tests.sh
 		     overrides this to empty to run only the live tier. -->
 		<test.excludedGroups>uk.co.terminological.bibliography.LiveTest</test.excludedGroups>
@@ -123,6 +124,12 @@
 			<artifactId>jgrapht-core</artifactId>
 			<version>1.4.0</version>
 		</dependency>
+		<dependency>
+		    <groupId>org.immutables</groupId>
+		    <artifactId>value-annotations</artifactId>
+		    <version>${immutables.version}</version>
+		    <scope>provided</scope> <!-- compile only -->
+		</dependency>
 	</dependencies>
 
 	
@@ -161,11 +168,19 @@
 		<plugins>
 			<!-- Managed in parent POM -->
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.8.0</version>
+				<version>3.14.0</version>
 				<configuration>
 					<source>${maven.compiler.source}</source>
 					<target>${maven.compiler.target}</target>
+					<annotationProcessorPaths>
+			          <path>
+			            <groupId>org.immutables</groupId>
+			            <artifactId>value</artifactId> <!-- contains the annotation processor -->
+			            <version>${immutables.version}</version>
+			          </path>
+			        </annotationProcessorPaths>
 				</configuration>
 			</plugin>
 

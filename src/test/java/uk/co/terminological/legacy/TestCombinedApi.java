@@ -7,6 +7,7 @@ import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.slf4j.LoggerFactory;
 
+import uk.co.terminological.bibliography.client.ImmutableQuery;
 import uk.co.terminological.bibliography.mcp.Analysis;
 import uk.co.terminological.bibliography.mcp.BiblioFacade;
 import uk.co.terminological.bibliography.record.Builder;
@@ -35,7 +36,11 @@ public class TestCombinedApi {
 
 		api.withSearchLimit(10);
 		var session = api.getSession();
-		session.collectSearch("covid 19 database");
+		session.collectSearch(
+			ImmutableQuery.builder()
+				.allFields("covid 19 database")
+				.build()
+		);
 		session.getRecords()
 			.forEach(
 				(k, r) -> System.out.println(

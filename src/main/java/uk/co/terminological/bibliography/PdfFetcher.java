@@ -34,69 +34,84 @@ import pl.edu.icm.cermine.bibref.model.BibEntryType;
 public class PdfFetcher extends CachingApiClient {
 
 	static Logger logger = LoggerFactory.getLogger(PdfFetcher.class);
-	
+
 	static PdfFetcher instance = null;
-	
+
 	int maxRedirects = 10;
 	Path cache = null;
-	
+
 	private PdfFetcher(Optional<Path> cachePath) {
-		super(cachePath, TokenBuckets.builder().withInitialTokens(10).withCapacity(10).withFixedIntervalRefillStrategy(10, 1, TimeUnit.SECONDS).build());
+		super(
+				cachePath, TokenBuckets.builder()
+					.withInitialTokens(10)
+					.withCapacity(10)
+					.withFixedIntervalRefillStrategy(10, 1, TimeUnit.SECONDS)
+					.build()
+		);
 		ClientConfig config = new DefaultClientConfig();
-	    config.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
-	    client = Client.create(config);
-	    client.setFollowRedirects(true);
-	    client.setConnectTimeout(1000);
-	    client.setReadTimeout(4000);
-	    client.addFilter(new ClientFilter() { 
-            @Override 
-            public ClientResponse handle(ClientRequest request) 
-                            throws ClientHandlerException { 
-                    request.getHeaders().add( 
-                                    HttpHeaders.USER_AGENT, 
-                                    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.119 Safari/537.36");
-                    request.getHeaders().add(
-                    				HttpHeaders.ACCEPT,
-                    				"application/pdf");
-                    return getNext().handle(request); 
-            } 
-	    });
-	    client.addFilter(new ClientFilter() {
-	    	@Override
-	        public ClientResponse handle(ClientRequest cr) throws ClientHandlerException {
-	            ClientHandler ch = getNext();
-	            int i=maxRedirects;
-	            while (i-->0) {
-		            ClientResponse resp = ch.handle(cr);
-		            if (resp.getClientResponseStatus().getFamily() != Response.Status.Family.REDIRECTION) {
-		                return resp;
-		            } else {
-		                // try location
-		                String redirectTarget = resp.getHeaders().getFirst("Location");
-		                logger.debug("redirecting to :"+redirectTarget);
-		                cr.setURI(UriBuilder.fromUri(redirectTarget).build());
-		                resp = ch.handle(cr);
-		            }
-	            }
-	            throw new ClientHandlerException("Too many redirects");
-	        }
-	    });
+		config.getProperties()
+			.put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
+		client = Client.create(config);
+		client.setFollowRedirects(true);
+		client.setConnectTimeout(1000);
+		client.setReadTimeout(4000);
+		client.addFilter(new ClientFilter() {
+			@Override
+			public ClientResponse handle(ClientRequest request)
+					throws ClientHandlerException {
+				request.getHeaders()
+					.add(
+						HttpHeaders.USER_AGENT,
+						"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.119 Safari/537.36"
+					);
+				request.getHeaders()
+					.add(HttpHeaders.ACCEPT, "application/pdf");
+				return getNext().handle(request);
+			}
+		});
+		client.addFilter(new ClientFilter() {
+			@Override
+			public ClientResponse handle(ClientRequest cr)
+					throws ClientHandlerException {
+				ClientHandler ch = getNext();
+				int i = maxRedirects;
+				while (i-- > 0) {
+					ClientResponse resp = ch.handle(cr);
+					if (resp.getClientResponseStatus()
+						.getFamily() != Response.Status.Family.REDIRECTION) {
+						return resp;
+					} else {
+						// try location
+						String redirectTarget = resp.getHeaders()
+							.getFirst("Location");
+						logger.debug("redirecting to :" + redirectTarget);
+						cr.setURI(
+							UriBuilder.fromUri(redirectTarget)
+								.build()
+						);
+						resp = ch.handle(cr);
+					}
+				}
+				throw new ClientHandlerException("Too many redirects");
+			}
+		});
 	}
-	
+
 	public static PdfFetcher create() {
 		return new PdfFetcher(Optional.empty());
 	}
-	
+
 	public static PdfFetcher create(Path cachePath) {
-		if (instance == null) instance = new PdfFetcher(Optional.ofNullable(cachePath));
+		if (instance == null)
+			instance = new PdfFetcher(Optional.ofNullable(cachePath));
 		return instance;
 	}
-	
+
 	public PdfFetcher maxRedirects(int redirects) {
 		this.maxRedirects = redirects;
 		return this;
 	}
-	
+
 	public Optional<InputStream> getPdfFromUrl(String url) {
 		return this.buildCall(url, InputStream.class)
 			.cacheForever()
@@ -108,29 +123,35 @@ public class PdfFetcher extends CachingApiClient {
 	protected MultivaluedMap<String, String> defaultApiParams() {
 		return new MultivaluedMapImpl();
 	}
-	
+
 	public List<String> extractArticleRefs(String doi, InputStream is) {
-		String key = "cermine_refs_"+doi;
-		Optional<ArrayList<String>> references = this.cachedObject(key, false, k -> {
-			ContentExtractor extractor = new ContentExtractor();
-			extractor.setPDF(is);
-			List<BibEntry> refs = extractor.getReferences();
-			logger.info("Found {} references for {}", refs.size(), key);
-			ArrayList<String> out = new ArrayList<>();
-			refs.stream().filter(ref -> Arrays.asList(
-						BibEntryType.ARTICLE,
-						BibEntryType.INPROCEEDINGS,
-						BibEntryType.PROCEEDINGS
-					).contains(ref.getType()))
+		String key = "cermine_refs_" + doi;
+		Optional<ArrayList<String>> references = this
+			.cachedObject(key, false, k -> {
+				ContentExtractor extractor = new ContentExtractor();
+				extractor.setPDF(is);
+				List<BibEntry> refs = extractor.getReferences();
+				logger.info("Found {} references for {}", refs.size(), key);
+				ArrayList<String> out = new ArrayList<>();
+				refs.stream()
+					.filter(
+						ref -> Arrays
+							.asList(
+								BibEntryType.ARTICLE,
+								BibEntryType.INPROCEEDINGS,
+								BibEntryType.PROCEEDINGS
+							)
+							.contains(ref.getType())
+					)
 					.map(bib -> bib.getText())
 					.forEach(s -> out.add(s));
-			return out;
-		});
+				return out;
+			});
 		return references.orElse(new ArrayList<>());
-		//TODO: get mapped metadata 
+		// TODO: get mapped metadata
 	}
-	
-	//TODO: Stream<Citation> getCitations(Record sourceWithDoi) {
-	//USing BibEntryFieldType / BibEntry
-	
+
+	// TODO: Stream<Citation> getCitations(Record sourceWithDoi) {
+	// USing BibEntryFieldType / BibEntry
+
 }

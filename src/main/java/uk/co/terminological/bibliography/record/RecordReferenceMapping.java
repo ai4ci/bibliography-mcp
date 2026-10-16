@@ -1,12 +1,18 @@
 package uk.co.terminological.bibliography.record;
 
+import org.immutables.value.Value;
+
+@Value.Immutable
 public interface RecordReferenceMapping {
 
 	RecordReference getSource();
 	RecordReference getTarget();
 
-	public default boolean isComplete() {
-		return getSource().isComplete() && getTarget().isComplete();
+	default boolean isComplete() {
+		return this.getSource()
+			.isComplete()
+				&& this.getTarget()
+					.isComplete();
 	}
 
 }

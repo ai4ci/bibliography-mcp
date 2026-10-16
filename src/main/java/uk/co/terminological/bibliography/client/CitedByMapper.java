@@ -7,12 +7,15 @@ import uk.co.terminological.bibliography.record.CitationLink;
 import uk.co.terminological.bibliography.record.RecordReference;
 
 public interface CitedByMapper {
-	
-	public Collection<? extends CitationLink> referencesCiting(Collection<? extends RecordReference> ref); 
-	
-	
-	default Collection<? extends CitationLink> referencesCiting(RecordReference ref) {
+
+	public Collection<? extends CitationLink> referencesCiting(
+			Collection<? extends RecordReference> ref
+	);
+
+	default Collection<? extends CitationLink> referencesCiting(
+			RecordReference ref
+	) {
 		return referencesCiting(Collections.singleton(ref));
 	};
-	
+
 }

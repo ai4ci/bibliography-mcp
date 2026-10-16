@@ -1,15 +1,12 @@
 package uk.co.terminological.bibliography.mcp;
 
 import java.io.IOException;
-import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -20,13 +17,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.undercouch.citeproc.CSL;
-import uk.co.terminological.bibliography.BibliographicApis;
+import uk.co.terminological.bibliography.api.BibliographicApis;
+import uk.co.terminological.bibliography.api.crossref.CrossRefWork;
 import uk.co.terminological.bibliography.client.CitedByMapper;
 import uk.co.terminological.bibliography.client.CitesMapper;
 import uk.co.terminological.bibliography.client.IdMapper;
+import uk.co.terminological.bibliography.client.Query;
 import uk.co.terminological.bibliography.client.RecordFetcher;
+import uk.co.terminological.bibliography.client.SearchBuilder;
 import uk.co.terminological.bibliography.client.Searcher;
-import uk.co.terminological.bibliography.crossref.CrossRefWork;
 import uk.co.terminological.bibliography.record.CitationLink;
 import uk.co.terminological.bibliography.record.CitationReference;
 import uk.co.terminological.bibliography.record.ImmutableRecordReference;
@@ -36,27 +35,31 @@ import uk.co.terminological.bibliography.record.RecordReference;
 import uk.co.terminological.bibliography.record.RecordReferenceMapping;
 
 /**
- * Plain-Java facade over the bibliographic clients: routes search / citation /
- * fetch / id-mapping queries across the configured APIs and merges results.
- * (Salvaged from the rjavaapi ApiClient, minus the R interface.)
+ * Plain-Java facade over the bibliographic clients: routes search / citation / fetch / id-mapping queries across the
+ * configured APIs and merges results. (Salvaged from the rjavaapi ApiClient, minus the R interface.)
  */
 // [IMPLEMENTS](/design/features/feat-001-expose-bibliographic-apis-over-mcp.md)
 // [IMPLEMENTS](/design/external-interfaces/interface-002-configuration-and-secrets.md)
+
 public class BiblioFacade
 		implements Searcher, CitedByMapper, CitesMapper, RecordFetcher, IdMapper {
 
 	static Logger log = LoggerFactory.getLogger(BiblioFacade.class);
 
 	BibliographicApis api;
+
 	String citationStyle = null;
+
 	List<String> searchApis = new ArrayList<>(defaultApis().get("search"));
+
 	List<String> citesApis = new ArrayList<>(defaultApis().get("cites"));
+
 	List<String> citedByApis = new ArrayList<>(defaultApis().get("citedBy"));
+
 	List<String> fetchApis = new ArrayList<>(defaultApis().get("fetch"));
+
 	List<String> idMapApis = new ArrayList<>(defaultApis().get("idMap"));
 
-	Optional<LocalDate> from = Optional.empty();
-	Optional<LocalDate> to = Optional.empty();
 	Optional<Integer> limit = Optional.of(50);
 
 	public static Map<String, List<String>> defaultApis() {
@@ -64,9 +67,15 @@ public class BiblioFacade
 		out.put("search", List.of("crossref", "entrez", "europepmc", "medrxiv"));
 		// medRxiv joins the citation sources as the only route to a preprint's own
 		// reference list, and ignores anything that is not a 10.1101 DOI
-		out.put("cites", List.of("crossref", "entrez", "europepmc", "opencitations", "medrxiv"));
+		out.put(
+			"cites",
+			List.of("crossref", "entrez", "europepmc", "opencitations", "medrxiv")
+		);
 		out.put("citedBy", List.of("opencitations", "entrez", "europepmc"));
-		out.put("fetch", List.of("crossref", "entrez", "europepmc", "unpaywall", "medrxiv"));
+		out.put(
+			"fetch",
+			List.of("crossref", "entrez", "europepmc", "unpaywall", "medrxiv")
+		);
 		// the preprint-to-published-article mapping
 		out.put("idMap", List.of("pmcid"));
 		return out;
@@ -76,75 +85,18 @@ public class BiblioFacade
 		this.api = BibliographicApis.create(configFile);
 	}
 
-	public BiblioFacade(java.nio.file.Path configFile, java.nio.file.Path cacheDir) throws IOException {
+	public BiblioFacade(
+			java.nio.file.Path configFile, java.nio.file.Path cacheDir
+	) throws IOException {
 		this.api = BibliographicApis.create(configFile, cacheDir);
 	}
 
-	public void enableCache() { this.api.enableCache(); }
-
-	public void disableCache() { this.api.disableCache(); }
-
-	@Override
-	public Collection<Record> search(
-			String search, Optional<LocalDate> from, Optional<LocalDate> to,
-			Optional<Integer> limit
-	) {
-		Map<String, String> multiSearch = new HashMap<>();
-		for (String api : this.searchApis) {
-			multiSearch.put(api, search);
-		}
-		return this.multiSearch(multiSearch, from, to, limit);
+	public void enableCache() {
+		this.api.enableCache();
 	}
 
-	// the no-argument variants fall back to the configured dates/limit, matching the
-	// behaviour of the R-era client these were salvaged from
-	@Override
-	public Collection<? extends Record> search(String search) {
-		return this.search(search, this.from, this.to, this.limit);
-	}
-
-	@Override
-	public Collection<? extends Record> search(String search, Integer limit) {
-		return this.search(search, this.from, this.to, Optional.of(limit));
-	}
-
-	@Override
-	public Collection<? extends Record> search(String search, LocalDate from, LocalDate to) {
-		return this.search(search, Optional.of(from), Optional.of(to), this.limit);
-	}
-
-	public Collection<Record> multiSearch(
-			Map<String, String> searchByApi, Optional<LocalDate> from,
-			Optional<LocalDate> to, Optional<Integer> limit
-	) {
-		Collection<Record> out = new ArrayList<>();
-		searchByApi.forEach((searchApi, search) -> {
-			Collection<? extends Record> tmp = Collections.emptyList();
-			if (searchApi.equals("crossref")) {
-				tmp = this.api.getCrossref()
-					.search(search, from, to, limit);
-			} else if (searchApi.equals("entrez")) {
-				tmp = this.api.getEntrez()
-					.search(search, from, to, limit);
-			} else if (searchApi.equals("europepmc")) {
-				tmp = this.api.getEuropePMC()
-					.search(search, from, to, limit);
-			} else if (searchApi.equals("medrxiv")) {
-				// its API lists a date window rather than searching: without dates this
-				// is the last month
-				tmp = this.api.getMedrxiv()
-					.search(search, from, to, limit);
-			}
-			log.info(
-				"Search found {} hits in {} for '{}'",
-				tmp.size(),
-				searchApi,
-				search
-			);
-			out.addAll(tmp);
-		});
-
-		return out;
+	public void disableCache() {
+		this.api.disableCache();
 	}
 
 	@Override
@@ -157,29 +109,32 @@ public class BiblioFacade
 	}
 
 	/**
-	 * One citation reported by two APIs is one citation. Without this the counts an
-	 * agent sees are inflated by however many sources happen to cover the same
-	 * reference list — which is now the normal case for a preprint, whose references
-	 * come from both Europe PMC and its own JATS.
+	 * One citation reported by two APIs is one citation. Without this the counts an agent sees are inflated by however many
+	 * sources happen to cover the same reference list — which is now the normal case for a preprint, whose references come
+	 * from both Europe PMC and its own JATS.
 	 *
-	 * An endpoint is identified by its identifier, falling back to its title. When
-	 * neither is available the link is **kept as it stands** rather than collapsed:
-	 * a shared "unknown" key would quietly merge every unidentified reference into
+	 * An endpoint is identified by its identifier, falling back to its title. When neither is available the link is **kept
+	 * as it stands** rather than collapsed: a shared "unknown" key would quietly merge every unidentified reference into
 	 * one, which is worse than a duplicate.
 	 */
-	static Collection<CitationLink> dedupeCitations(Collection<? extends CitationLink> links) {
+
+	static Collection<CitationLink> dedupeCitations(
+			Collection<? extends CitationLink> links
+	) {
 		List<CitationLink> out = new ArrayList<>();
 		Map<String, CitationLink> byPair = new LinkedHashMap<>();
 		for (CitationLink link : links) {
-			String key = pairKey(link);
-			if (key == null) {
-				out.add(link);
-				continue;
-			}
+			var key = pairKey(link);
+			if (key == null) { out.add(link); continue; }
 			// keep the richest version of the pair: two APIs may describe the same
 			// citation and one of them may have no title or no target identifier,
 			// and taking whichever came first would throw the better one away
-			byPair.merge(key, link, (first, second) -> richness(second) > richness(first) ? second : first);
+			byPair.merge(
+				key,
+				link,
+				(first, second) -> richness(second) > richness(first) ? second
+					: first
+			);
 		}
 		out.addAll(byPair.values());
 		return out;
@@ -187,17 +142,22 @@ public class BiblioFacade
 
 	/** how much a link tells us, for choosing between two descriptions of one citation */
 	private static int richness(CitationLink link) {
-		int score = 0;
-		if (identifiable(link.getTarget()).isPresent()) score += 2;
-		if (link.getTarget().getTitle().isPresent()) score += 1;
-		if (link.getSource().getTitle().isPresent()) score += 1;
-		if (link.getIndex().isPresent()) score += 1;
+		var score = 0;
+		if (identifiable(link.getTarget()).isPresent()) { score += 2; }
+		if (link.getTarget()
+			.getTitle()
+			.isPresent()) { score += 1; }
+		if (link.getSource()
+			.getTitle()
+			.isPresent()) { score += 1; }
+		if (link.getIndex()
+			.isPresent()) { score += 1; }
 		return score;
 	}
 
 	private static String pairKey(CitationLink link) {
-		Optional<String> source = identifiable(link.getSource());
-		Optional<String> target = identifiable(link.getTarget());
+		var source = identifiable(link.getSource());
+		var target = identifiable(link.getTarget());
 		if (!source.isPresent() || !target.isPresent()) return null;
 		return source.get() + "->" + target.get();
 	}
@@ -205,14 +165,14 @@ public class BiblioFacade
 	/** an endpoint by identifier, or by title when it has no identifier */
 	private static Optional<String> identifiable(CitationReference reference) {
 		return reference.getIdentifier()
-				.flatMap(RecordReference::getIdentifier)
-				.map(Optional::of)
-				.orElseGet(reference::getTitle);
+			.flatMap(RecordReference::getIdentifier)
+			.map(Optional::of)
+			.orElseGet(reference::getTitle);
 	}
 
-
 	private void citesApiLoop(
-			Collection<? extends RecordReference> refs, Collection<CitationLink> out
+			Collection<? extends RecordReference> refs,
+			Collection<CitationLink> out
 	) {
 		this.citesApis.forEach(citesApi -> {
 			Collection<? extends CitationLink> tmp = Collections.emptyList();
@@ -311,31 +271,42 @@ public class BiblioFacade
 	}
 
 	/**
-	 * The per-API records, unmerged, keyed by source name. The merged view is what
-	 * most callers want, but it keeps only the winning value and one provenance, so a
-	 * caller that needs to attribute each value to the API that asserted it (the
+	 * The per-API records, unmerged, keyed by source name. The merged view is what most callers want, but it keeps only the
+	 * winning value and one provenance, so a caller that needs to attribute each value to the API that asserted it (the
 	 * metadata clean-up report, for instance) needs the contributions separately.
 	 */
-	public Map<String, List<Record>> fetchBySource(Collection<? extends RecordReference> ids) {
+
+	public Map<String, List<Record>> fetchBySource(
+			Collection<? extends RecordReference> ids
+	) {
 		Map<String, List<Record>> out = new LinkedHashMap<>();
 		this.fetchApis.forEach(fetchApi -> {
 			Map<ImmutableRecordReference, ? extends Record> fetched;
 			if (fetchApi.equals("crossref")) {
-				fetched = this.api.getCrossref().fetch(ids);
+				fetched = this.api.getCrossref()
+					.fetch(ids);
 			} else if (fetchApi.equals("entrez")) {
-				fetched = this.api.getEntrez().fetch(ids);
+				fetched = this.api.getEntrez()
+					.fetch(ids);
 			} else if (fetchApi.equals("europepmc")) {
-				fetched = this.api.getEuropePMC().fetch(ids);
+				fetched = this.api.getEuropePMC()
+					.fetch(ids);
 			} else if (fetchApi.equals("unpaywall")) {
-				fetched = this.api.getUnpaywall().fetch(ids);
+				fetched = this.api.getUnpaywall()
+					.fetch(ids);
 			} else {
 				fetched = new HashMap<>();
 			}
 			List<Record> records = new ArrayList<>();
-			fetched.values().forEach(records::add);
-			if (!records.isEmpty()) out.put(fetchApi, records);
+			fetched.values()
+				.forEach(records::add);
+			if (!records.isEmpty()) { out.put(fetchApi, records); }
 		});
-		log.info("Unmerged fetch returned {} sources for {} ids", out.size(), ids.size());
+		log.info(
+			"Unmerged fetch returned {} sources for {} ids",
+			out.size(),
+			ids.size()
+		);
 		return out;
 	}
 
@@ -377,9 +348,11 @@ public class BiblioFacade
 			log.debug("Found {} references for {}", refs.size(), pdfUrl);
 
 			Set<CrossRefWork> works = refs.stream()
-				.flatMap(ref -> this.api.getCrossref()
-					.findWorkByCitationString(ref)
-					.stream())
+				.flatMap(
+					ref -> this.api.getCrossref()
+						.findWorkByCitationString(ref)
+						.stream()
+				)
 				.collect(Collectors.toSet());
 
 			ois.get()
@@ -396,18 +369,6 @@ public class BiblioFacade
 
 	public BiblioFacade withCitationStyle(String styleName) {
 		this.citationStyle = styleName;
-		return this;
-	}
-
-	public BiblioFacade withSearchDates(String from, String to) {
-		try {
-			this.from = Optional.ofNullable(from)
-				.map(LocalDate::parse);
-			this.to = Optional.ofNullable(to)
-				.map(LocalDate::parse);
-		} catch (DateTimeParseException e) {
-			log.error("Unparseable date string in one of: {} or {}", from, to);
-		}
 		return this;
 	}
 
@@ -460,6 +421,97 @@ public class BiblioFacade
 		var out = (Session) s.readObject();
 		in.close();
 		out.setFacade(this);
+		return out;
+	}
+
+	@Override
+	public GenericSearchBuilder buildQuery() {
+		return new GenericSearchBuilder(this);
+	}
+
+	public static class GenericSearchBuilder
+			implements SearchBuilder<List<Record>> {
+
+		private BiblioFacade biblioFacade;
+		Query qry;
+
+		public GenericSearchBuilder(BiblioFacade biblioFacade) {
+			this.biblioFacade = biblioFacade;
+		}
+
+		@Override
+		public GenericSearchBuilder withQuery(Query qry) {
+
+			return this;
+		}
+
+		@Override
+		public Optional<List<Record>> execute() {
+
+			Map<String, Query> multiSearch = new HashMap<>();
+			for (String api : this.biblioFacade.searchApis) {
+				multiSearch.put(api, this.qry);
+			}
+			List<Record> out = new ArrayList<>();
+			this.biblioFacade.searchApis.forEach(api -> {
+				Collection<? extends Record> tmp = Collections.emptyList();
+				if (api.equals("crossref")) {
+					tmp = this.biblioFacade.api.getCrossref()
+						.search(this.qry);
+				} else if (api.equals("entrez")) {
+					tmp = this.biblioFacade.api.getEntrez()
+						.search(this.qry);
+				} else if (api.equals("europepmc")) {
+					tmp = this.biblioFacade.api.getEuropePMC()
+						.search(this.qry);
+				} else if (api.equals("medrxiv")) {
+					tmp = this.biblioFacade.api.getMedrxiv()
+						.search(this.qry);
+				}
+				log.info("Search found {} hits in {}", tmp.size(), api);
+				out.addAll(tmp);
+			});
+
+			return Optional.of(out);
+		}
+
+	}
+
+	@Override
+	public Collection<Record> search(Query qry) {
+		Map<String, Query> multiSearch = new HashMap<>();
+		for (String api : this.searchApis) {
+			multiSearch.put(api, qry);
+		}
+		return this.multiSearch(multiSearch);
+	}
+
+	public Collection<Record> multiSearch(Map<String, Query> searchByApi) {
+		Collection<Record> out = new ArrayList<>();
+		searchByApi.forEach((searchApi, search) -> {
+			Collection<? extends Record> tmp = Collections.emptyList();
+			if (searchApi.equals("crossref")) {
+				tmp = this.api.getCrossref()
+					.search(search);
+			} else if (searchApi.equals("entrez")) {
+				tmp = this.api.getEntrez()
+					.search(search);
+			} else if (searchApi.equals("europepmc")) {
+				tmp = this.api.getEuropePMC()
+					.search(search);
+			} else if (searchApi.equals("medrxiv")) {
+				tmp = this.api.getMedrxiv()
+					.search(search);
+			}
+			log.info(
+				"Search found {} hits in {} for '{}'",
+				tmp.size(),
+				searchApi,
+				search
+			);
+			out.addAll(tmp);
+		});
+
 		return out;
 	}
 

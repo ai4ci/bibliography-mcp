@@ -1,1 +1,258 @@
-{"status":"ok","message-type":"work","message-version":"1.0.0","message":{"institution":[{"name":"medRxiv"}],"indexed":{"date-parts":[[2026,9,29]],"date-time":"2026-09-29T12:30:11Z","timestamp":1790685011640,"version":"4.1.0"},"posted":{"date-parts":[[2021,2,19]]},"group-title":"Infectious Diseases (except HIV\/AIDS)","reference-count":31,"publisher":"openRxiv","content-domain":{"domain":[],"crossmark-restriction":false},"short-container-title":[],"accepted":{"date-parts":[[2021,3,5]]},"abstract":"<jats:title>Abstract<\/jats:title>\n                <jats:sec>\n                  <jats:title>Objectives<\/jats:title>\n                  <jats:p>To establish whether there is any change in mortality associated with infection of a new variant of SARS-CoV-2, designated a Variant of Concern in December 2020 (VOC-202012\/1) compared to that associated with infection with circulating SARS-CoV-2 variants.<\/jats:p>\n                <\/jats:sec>\n                <jats:sec>\n                  <jats:title>Design<\/jats:title>\n                  <jats:p>Matched cohort study. Cases are matched by age, gender, ethnicity, index of multiple deprivation, lower tier local authority region, and sample date of positive specimen, and differing only by detectability of the spike protein gene using the TaqPath assay - a proxy measure of VOC-202012\/1 infection.<\/jats:p>\n                <\/jats:sec>\n                <jats:sec>\n                  <jats:title>Setting<\/jats:title>\n                  <jats:p>United Kingdom, community - based (Pillar 2) COVID-19 testing centres using the TaqPath assay.<\/jats:p>\n                <\/jats:sec>\n                <jats:sec>\n                  <jats:title>Participants<\/jats:title>\n                  <jats:p>54,906 pairs of participants testing positive for SARS-CoV-2 in Pillar 2 between 1st October 2020 and 29th January 2021, followed up until the 12th February 2021.<\/jats:p>\n                <\/jats:sec>\n                <jats:sec>\n                  <jats:title>Main outcome measures<\/jats:title>\n                  <jats:p>Death within 28 days of first positive SARS-CoV-2 test.<\/jats:p>\n                <\/jats:sec>\n                <jats:sec>\n                  <jats:title>Results<\/jats:title>\n                  <jats:p>There is a high probability that the risk of mortality is increased by infection with VOC-202012\/01 (p &lt;0.001). The mortality hazard ratio associated with infection with VOC-202012\/1 compared to infection with previously circulating variants is 1.64 (95% CI 1.32 - 2.04) in patients who have tested positive for COVID-19 in the community. In this comparatively low risk group, this represents an increase from 2.5 to 4.1 deaths per 1000 detected cases.<\/jats:p>\n                <\/jats:sec>\n                <jats:sec>\n                  <jats:title>Conclusions<\/jats:title>\n                  <jats:p>If this finding is generalisable to other populations, VOC-202012\/1 infections have the potential to cause substantial additional mortality compared to previously circulating variants. Healthcare capacity planning, national and international control policies are all impacted by this finding, with increased mortality lending weight to the argument that further coordinated and stringent measures are justified to reduce deaths from SARS-CoV-2.<\/jats:p>\n                <\/jats:sec>","DOI":"10.1101\/2021.02.09.21250937","type":"posted-content","created":{"date-parts":[[2021,2,19]],"date-time":"2021-02-19T12:40:42Z","timestamp":1613738442000},"source":"Crossref","is-referenced-by-count":31,"title":["Increased hazard of mortality in cases compatible with SARS-CoV-2 variant of concern 202012\/1 - a matched cohort study"],"prefix":"10.64898","author":[{"ORCID":"https:\/\/orcid.org\/0000-0002-5504-7768","authenticated-orcid":false,"given":"Robert","family":"Challen","sequence":"first","affiliation":[],"role":[{"vocabulary":"crossref","role":"author"}]},{"ORCID":"https:\/\/orcid.org\/0000-0002-5984-4932","authenticated-orcid":false,"given":"Ellen","family":"Brooks-Pollock","sequence":"additional","affiliation":[],"role":[{"vocabulary":"crossref","role":"author"}]},{"ORCID":"https:\/\/orcid.org\/0000-0002-9697-0962","authenticated-orcid":false,"given":"Jonathan M","family":"Read","sequence":"additional","affiliation":[],"role":[{"vocabulary":"crossref","role":"author"}]},{"ORCID":"https:\/\/orcid.org\/0000-0001-9788-4858","authenticated-orcid":false,"given":"Louise","family":"Dyson","sequence":"additional","affiliation":[],"role":[{"vocabulary":"crossref","role":"author"}]},{"ORCID":"https:\/\/orcid.org\/0000-0002-6294-7051","authenticated-orcid":false,"given":"Krasimira","family":"Tsaneva-Atanasova","sequence":"additional","affiliation":[],"role":[{"vocabulary":"crossref","role":"author"}]},{"ORCID":"https:\/\/orcid.org\/0000-0002-7076-1871","authenticated-orcid":false,"given":"Leon","family":"Danon","sequence":"additional","affiliation":[],"role":[{"vocabulary":"crossref","role":"author"}]}],"member":"54368","reference":[{"key":"2021030801201385000_2021.02.09.21250937v3.1","doi-asserted-by":"publisher","DOI":"10.1136\/bmj.m4857"},{"key":"2021030801201385000_2021.02.09.21250937v3.2","unstructured":"Investigation of novel SARS-CoV-2 variant: Variant of Concern 202012\/01 \u2013 Technical 1 briefing 4."},{"key":"2021030801201385000_2021.02.09.21250937v3.3","unstructured":"Prime Minister announces Tier 4: \u2018Stay At Home\u2019 Alert Level in response to new COVID variant. GOV.UK. https:\/\/www.gov.uk\/government\/news\/prime-minister-announces-tier-4-stay-at-home-alert-level-in-response-to-new-covid-variant (accessed 30 Jan 2021)."},{"key":"2021030801201385000_2021.02.09.21250937v3.4","unstructured":"Risk related to the spread of new SARS-CoV-2 variants of concern in the EU\/EEA \u2013 first update. Eur. Cent. Dis. Prev. Control. 2021.https:\/\/www.ecdc.europa.eu\/en\/publications-data\/covid-19-risk-assessment-spread-new-variants-concern-eueea-first-update (accessed 30 Jan 2021)."},{"key":"2021030801201385000_2021.02.09.21250937v3.5","unstructured":"CDC. US COVID-19 Cases Caused by Variants. Cent. Dis. Control Prev. 2020.https:\/\/www.cdc.gov\/coronavirus\/2019-ncov\/transmission\/variant-cases.html (accessed 30 Jan 2021)."},{"key":"2021030801201385000_2021.02.09.21250937v3.6","unstructured":"The Helix COVID-19 Surveillance Dashboard. Helix. https:\/\/www.helix.com\/pages\/helix-covid-19-surveillance-dashboard (accessed 14 Feb 2021)."},{"key":"2021030801201385000_2021.02.09.21250937v3.7","unstructured":"Investigation of novel SARS-CoV-2 variant: Variant of Concern 202012\/01 - Technical briefing 1. https:\/\/assets.publishing.service.gov.uk\/government\/uploads\/system\/uploads\/attachment_data\/file\/947048\/Technical_Briefing_VOC_SH_NJL2_SH2.pdf (accessed 19 Jan 2021)."},{"key":"2021030801201385000_2021.02.09.21250937v3.8","unstructured":"Investigation of novel SARS-CoV-2 variant: Variant of Concern 202012\/01 - Technical briefing 2. https:\/\/assets.publishing.service.gov.uk\/government\/uploads\/system\/uploads\/attachment_data\/file\/949639\/Technical_Briefing_VOC202012-2_Briefing_2_FINAL.pdf (accessed 19 Jan 2021)."},{"key":"2021030801201385000_2021.02.09.21250937v3.9","unstructured":"Investigation of novel SARS-CoV-2 variant: Variant of Concern 202012\/01 - Technical briefing 3."},{"key":"2021030801201385000_2021.02.09.21250937v3.10","unstructured":"Rambaut A. Preliminary genomic characterisation of an emergent SARS-CoV-2 lineage in the UK defined by a novel set of spike mutations - SARS-CoV-2 coronavirus \/ nCoV-2019 Genomic Epidemiology. Virological: 2020. https:\/\/virological.org\/t\/preliminary-genomic-characterisation-of-an-emergent-sars-cov-2-lineage-in-the-uk-defined-by-a-novel-set-of-spike-mutations\/563 (accessed 30 Jan 2021)."},{"key":"2021030801201385000_2021.02.09.21250937v3.11","doi-asserted-by":"publisher","DOI":"10.1016\/j.cell.2020.08.012"},{"key":"2021030801201385000_2021.02.09.21250937v3.12","doi-asserted-by":"publisher","DOI":"10.1101\/2020.12.24.20248822"},{"key":"2021030801201385000_2021.02.09.21250937v3.13","doi-asserted-by":"publisher","DOI":"10.1126\/science.abf2946"},{"key":"2021030801201385000_2021.02.09.21250937v3.14","doi-asserted-by":"publisher","DOI":"10.1101\/2021.01.11.21249461"},{"key":"2021030801201385000_2021.02.09.21250937v3.15","unstructured":"PHE reporting of COVID-19 deaths: technical summary \u2013 12 August 2020. 2020;:15."},{"key":"2021030801201385000_2021.02.09.21250937v3.16","doi-asserted-by":"publisher","DOI":"10.1101\/2020.09.15.20194209"},{"key":"2021030801201385000_2021.02.09.21250937v3.17","unstructured":"Cox DR , Oakes D. Analysis of survival data. CRC press 1984."},{"key":"2021030801201385000_2021.02.09.21250937v3.18","unstructured":"R Core Team. R: A Language and Environment for Statistical Computing. Vienna, Austria: : R Foundation for Statistical Computing 2017."},{"key":"2021030801201385000_2021.02.09.21250937v3.19","unstructured":"Therneau TM . A package for survival analysis in r. 2020. https:\/\/CRAN.R-project.org\/package=survival"},{"key":"2021030801201385000_2021.02.09.21250937v3.20","doi-asserted-by":"crossref","unstructured":"Terry M. Therneau , Patricia M. Grambsch . Modeling survival data: Extending the Cox model. New York: : Springer 2000.","DOI":"10.1007\/978-1-4757-3294-8"},{"key":"2021030801201385000_2021.02.09.21250937v3.21","doi-asserted-by":"publisher","DOI":"10.1038\/s41586-020-2521-4"},{"key":"2021030801201385000_2021.02.09.21250937v3.22","unstructured":"Steel K , Davies B. Coronavirus (COVID-19) Infection Survey: characteristics of people testing positive for COVID-19 in England, 27 January 2021. Office of National Statistics https:\/\/www.ons.gov.uk\/peoplepopulationandcommunity\/healthandsocialcare\/conditionsanddiseases\/articles\/coronaviruscovid19infectionsinthecommunityinengland\/characteristicsofpeopletestingpositiveforcovid19inengland27january2021"},{"key":"2021030801201385000_2021.02.09.21250937v3.23","unstructured":"Horby P. NERVTAG note on B.1.1.7 severity. NERVTAG https:\/\/assets.publishing.service.gov.uk\/government\/uploads\/system\/uploads\/attachment_data\/file\/955239\/NERVTAG_paper_on_variant_of_concernVOCB.1.1.7.pdf (accessed 31 Jan 2021)."},{"key":"2021030801201385000_2021.02.09.21250937v3.24","doi-asserted-by":"publisher","DOI":"10.1136\/bmj.n230"},{"key":"2021030801201385000_2021.02.09.21250937v3.25","doi-asserted-by":"publisher","DOI":"10.1016\/j.bbmt.2015.12.005"},{"key":"2021030801201385000_2021.02.09.21250937v3.26","unstructured":"NERVTAG: Update note on B.1.1.7 severity, 11 February 2021. GOV.UK. https:\/\/www.gov.uk\/government\/publications\/nervtag-update-note-on-b117-severity-11-february-2021 (accessed 14 Feb 2021)."},{"key":"2021030801201385000_2021.02.09.21250937v3.27","doi-asserted-by":"publisher","DOI":"10.1101\/2020.12.30.20249034"},{"key":"2021030801201385000_2021.02.09.21250937v3.28","doi-asserted-by":"publisher","DOI":"10.1136\/bmj.n158"},{"key":"2021030801201385000_2021.02.09.21250937v3.29","doi-asserted-by":"publisher","DOI":"10.1101\/2021.01.18.427166"},{"key":"2021030801201385000_2021.02.09.21250937v3.30","doi-asserted-by":"publisher","DOI":"10.1101\/2020.11.18.388140"},{"key":"2021030801201385000_2021.02.09.21250937v3.31","doi-asserted-by":"publisher","DOI":"10.1371\/journal.pone.0241027"}],"container-title":[],"original-title":[],"link":[{"URL":"https:\/\/syndication.highwire.org\/content\/doi\/10.1101\/2021.02.09.21250937","content-type":"unspecified","content-version":"vor","intended-application":"similarity-checking"}],"deposited":{"date-parts":[[2026,1,15]],"date-time":"2026-01-15T14:06:18Z","timestamp":1768485978000},"score":1,"resource":{"primary":{"URL":"http:\/\/medrxiv.org\/lookup\/doi\/10.1101\/2021.02.09.21250937"}},"subtitle":[],"short-title":[],"issued":{"date-parts":[[2021,2,19]]},"references-count":31,"URL":"https:\/\/doi.org\/10.1101\/2021.02.09.21250937","relation":{"is-preprint-of":[{"id-type":"doi","id":"10.1136\/bmj.n579","asserted-by":"subject"}]},"subject":[],"published":{"date-parts":[[2021,2,19]]},"subtype":"preprint"}}
+{
+  "status" : "ok",
+  "message-type" : "work",
+  "message-version" : "1.0.0",
+  "message" : {
+    "institution" : [ {
+      "name" : "medRxiv"
+    } ],
+    "indexed" : {
+      "date-parts" : [ [ 2026, 9, 29 ] ],
+      "date-time" : "2026-09-29T12:30:11Z",
+      "timestamp" : 1790685011640,
+      "version" : "4.1.0"
+    },
+    "posted" : {
+      "date-parts" : [ [ 2021, 2, 19 ] ]
+    },
+    "group-title" : "Infectious Diseases (except HIV/AIDS)",
+    "reference-count" : 31,
+    "publisher" : "openRxiv",
+    "content-domain" : {
+      "domain" : [ ],
+      "crossmark-restriction" : false
+    },
+    "short-container-title" : [ ],
+    "accepted" : {
+      "date-parts" : [ [ 2021, 3, 5 ] ]
+    },
+    "abstract" : "<jats:title>Abstract</jats:title>\n                <jats:sec>\n                  <jats:title>Objectives</jats:title>\n                  <jats:p>To establish whether there is any change in mortality associated with infection of a new variant of SARS-CoV-2, designated a Variant of Concern in December 2020 (VOC-202012/1) compared to that associated with infection with circulating SARS-CoV-2 variants.</jats:p>\n                </jats:sec>\n                <jats:sec>\n                  <jats:title>Design</jats:title>\n                  <jats:p>Matched cohort study. Cases are matched by age, gender, ethnicity, index of multiple deprivation, lower tier local authority region, and sample date of positive specimen, and differing only by detectability of the spike protein gene using the TaqPath assay - a proxy measure of VOC-202012/1 infection.</jats:p>\n                </jats:sec>\n                <jats:sec>\n                  <jats:title>Setting</jats:title>\n                  <jats:p>United Kingdom, community - based (Pillar 2) COVID-19 testing centres using the TaqPath assay.</jats:p>\n                </jats:sec>\n                <jats:sec>\n                  <jats:title>Participants</jats:title>\n                  <jats:p>54,906 pairs of participants testing positive for SARS-CoV-2 in Pillar 2 between 1st October 2020 and 29th January 2021, followed up until the 12th February 2021.</jats:p>\n                </jats:sec>\n                <jats:sec>\n                  <jats:title>Main outcome measures</jats:title>\n                  <jats:p>Death within 28 days of first positive SARS-CoV-2 test.</jats:p>\n                </jats:sec>\n                <jats:sec>\n                  <jats:title>Results</jats:title>\n                  <jats:p>There is a high probability that the risk of mortality is increased by infection with VOC-202012/01 (p &lt;0.001). The mortality hazard ratio associated with infection with VOC-202012/1 compared to infection with previously circulating variants is 1.64 (95% CI 1.32 - 2.04) in patients who have tested positive for COVID-19 in the community. In this comparatively low risk group, this represents an increase from 2.5 to 4.1 deaths per 1000 detected cases.</jats:p>\n                </jats:sec>\n                <jats:sec>\n                  <jats:title>Conclusions</jats:title>\n                  <jats:p>If this finding is generalisable to other populations, VOC-202012/1 infections have the potential to cause substantial additional mortality compared to previously circulating variants. Healthcare capacity planning, national and international control policies are all impacted by this finding, with increased mortality lending weight to the argument that further coordinated and stringent measures are justified to reduce deaths from SARS-CoV-2.</jats:p>\n                </jats:sec>",
+    "DOI" : "10.1101/2021.02.09.21250937",
+    "type" : "posted-content",
+    "created" : {
+      "date-parts" : [ [ 2021, 2, 19 ] ],
+      "date-time" : "2021-02-19T12:40:42Z",
+      "timestamp" : 1613738442000
+    },
+    "source" : "Crossref",
+    "is-referenced-by-count" : 31,
+    "title" : [ "Increased hazard of mortality in cases compatible with SARS-CoV-2 variant of concern 202012/1 - a matched cohort study" ],
+    "prefix" : "10.64898",
+    "author" : [ {
+      "ORCID" : "https://orcid.org/0000-0002-5504-7768",
+      "authenticated-orcid" : false,
+      "given" : "Robert",
+      "family" : "Challen",
+      "sequence" : "first",
+      "affiliation" : [ ],
+      "role" : [ {
+        "vocabulary" : "crossref",
+        "role" : "author"
+      } ]
+    }, {
+      "ORCID" : "https://orcid.org/0000-0002-5984-4932",
+      "authenticated-orcid" : false,
+      "given" : "Ellen",
+      "family" : "Brooks-Pollock",
+      "sequence" : "additional",
+      "affiliation" : [ ],
+      "role" : [ {
+        "vocabulary" : "crossref",
+        "role" : "author"
+      } ]
+    }, {
+      "ORCID" : "https://orcid.org/0000-0002-9697-0962",
+      "authenticated-orcid" : false,
+      "given" : "Jonathan M",
+      "family" : "Read",
+      "sequence" : "additional",
+      "affiliation" : [ ],
+      "role" : [ {
+        "vocabulary" : "crossref",
+        "role" : "author"
+      } ]
+    }, {
+      "ORCID" : "https://orcid.org/0000-0001-9788-4858",
+      "authenticated-orcid" : false,
+      "given" : "Louise",
+      "family" : "Dyson",
+      "sequence" : "additional",
+      "affiliation" : [ ],
+      "role" : [ {
+        "vocabulary" : "crossref",
+        "role" : "author"
+      } ]
+    }, {
+      "ORCID" : "https://orcid.org/0000-0002-6294-7051",
+      "authenticated-orcid" : false,
+      "given" : "Krasimira",
+      "family" : "Tsaneva-Atanasova",
+      "sequence" : "additional",
+      "affiliation" : [ ],
+      "role" : [ {
+        "vocabulary" : "crossref",
+        "role" : "author"
+      } ]
+    }, {
+      "ORCID" : "https://orcid.org/0000-0002-7076-1871",
+      "authenticated-orcid" : false,
+      "given" : "Leon",
+      "family" : "Danon",
+      "sequence" : "additional",
+      "affiliation" : [ ],
+      "role" : [ {
+        "vocabulary" : "crossref",
+        "role" : "author"
+      } ]
+    } ],
+    "member" : "54368",
+    "reference" : [ {
+      "key" : "2021030801201385000_2021.02.09.21250937v3.1",
+      "doi-asserted-by" : "publisher",
+      "DOI" : "10.1136/bmj.m4857"
+    }, {
+      "key" : "2021030801201385000_2021.02.09.21250937v3.2",
+      "unstructured" : "Investigation of novel SARS-CoV-2 variant: Variant of Concern 202012/01 – Technical 1 briefing 4."
+    }, {
+      "key" : "2021030801201385000_2021.02.09.21250937v3.3",
+      "unstructured" : "Prime Minister announces Tier 4: ‘Stay At Home’ Alert Level in response to new COVID variant. GOV.UK. https://www.gov.uk/government/news/prime-minister-announces-tier-4-stay-at-home-alert-level-in-response-to-new-covid-variant (accessed 30 Jan 2021)."
+    }, {
+      "key" : "2021030801201385000_2021.02.09.21250937v3.4",
+      "unstructured" : "Risk related to the spread of new SARS-CoV-2 variants of concern in the EU/EEA – first update. Eur. Cent. Dis. Prev. Control. 2021.https://www.ecdc.europa.eu/en/publications-data/covid-19-risk-assessment-spread-new-variants-concern-eueea-first-update (accessed 30 Jan 2021)."
+    }, {
+      "key" : "2021030801201385000_2021.02.09.21250937v3.5",
+      "unstructured" : "CDC. US COVID-19 Cases Caused by Variants. Cent. Dis. Control Prev. 2020.https://www.cdc.gov/coronavirus/2019-ncov/transmission/variant-cases.html (accessed 30 Jan 2021)."
+    }, {
+      "key" : "2021030801201385000_2021.02.09.21250937v3.6",
+      "unstructured" : "The Helix COVID-19 Surveillance Dashboard. Helix. https://www.helix.com/pages/helix-covid-19-surveillance-dashboard (accessed 14 Feb 2021)."
+    }, {
+      "key" : "2021030801201385000_2021.02.09.21250937v3.7",
+      "unstructured" : "Investigation of novel SARS-CoV-2 variant: Variant of Concern 202012/01 - Technical briefing 1. https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/947048/Technical_Briefing_VOC_SH_NJL2_SH2.pdf (accessed 19 Jan 2021)."
+    }, {
+      "key" : "2021030801201385000_2021.02.09.21250937v3.8",
+      "unstructured" : "Investigation of novel SARS-CoV-2 variant: Variant of Concern 202012/01 - Technical briefing 2. https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/949639/Technical_Briefing_VOC202012-2_Briefing_2_FINAL.pdf (accessed 19 Jan 2021)."
+    }, {
+      "key" : "2021030801201385000_2021.02.09.21250937v3.9",
+      "unstructured" : "Investigation of novel SARS-CoV-2 variant: Variant of Concern 202012/01 - Technical briefing 3."
+    }, {
+      "key" : "2021030801201385000_2021.02.09.21250937v3.10",
+      "unstructured" : "Rambaut A. Preliminary genomic characterisation of an emergent SARS-CoV-2 lineage in the UK defined by a novel set of spike mutations - SARS-CoV-2 coronavirus / nCoV-2019 Genomic Epidemiology. Virological: 2020. https://virological.org/t/preliminary-genomic-characterisation-of-an-emergent-sars-cov-2-lineage-in-the-uk-defined-by-a-novel-set-of-spike-mutations/563 (accessed 30 Jan 2021)."
+    }, {
+      "key" : "2021030801201385000_2021.02.09.21250937v3.11",
+      "doi-asserted-by" : "publisher",
+      "DOI" : "10.1016/j.cell.2020.08.012"
+    }, {
+      "key" : "2021030801201385000_2021.02.09.21250937v3.12",
+      "doi-asserted-by" : "publisher",
+      "DOI" : "10.1101/2020.12.24.20248822"
+    }, {
+      "key" : "2021030801201385000_2021.02.09.21250937v3.13",
+      "doi-asserted-by" : "publisher",
+      "DOI" : "10.1126/science.abf2946"
+    }, {
+      "key" : "2021030801201385000_2021.02.09.21250937v3.14",
+      "doi-asserted-by" : "publisher",
+      "DOI" : "10.1101/2021.01.11.21249461"
+    }, {
+      "key" : "2021030801201385000_2021.02.09.21250937v3.15",
+      "unstructured" : "PHE reporting of COVID-19 deaths: technical summary – 12 August 2020. 2020;:15."
+    }, {
+      "key" : "2021030801201385000_2021.02.09.21250937v3.16",
+      "doi-asserted-by" : "publisher",
+      "DOI" : "10.1101/2020.09.15.20194209"
+    }, {
+      "key" : "2021030801201385000_2021.02.09.21250937v3.17",
+      "unstructured" : "Cox DR , Oakes D. Analysis of survival data. CRC press 1984."
+    }, {
+      "key" : "2021030801201385000_2021.02.09.21250937v3.18",
+      "unstructured" : "R Core Team. R: A Language and Environment for Statistical Computing. Vienna, Austria: : R Foundation for Statistical Computing 2017."
+    }, {
+      "key" : "2021030801201385000_2021.02.09.21250937v3.19",
+      "unstructured" : "Therneau TM . A package for survival analysis in r. 2020. https://CRAN.R-project.org/package=survival"
+    }, {
+      "key" : "2021030801201385000_2021.02.09.21250937v3.20",
+      "doi-asserted-by" : "crossref",
+      "unstructured" : "Terry M. Therneau , Patricia M. Grambsch . Modeling survival data: Extending the Cox model. New York: : Springer 2000.",
+      "DOI" : "10.1007/978-1-4757-3294-8"
+    }, {
+      "key" : "2021030801201385000_2021.02.09.21250937v3.21",
+      "doi-asserted-by" : "publisher",
+      "DOI" : "10.1038/s41586-020-2521-4"
+    }, {
+      "key" : "2021030801201385000_2021.02.09.21250937v3.22",
+      "unstructured" : "Steel K , Davies B. Coronavirus (COVID-19) Infection Survey: characteristics of people testing positive for COVID-19 in England, 27 January 2021. Office of National Statistics https://www.ons.gov.uk/peoplepopulationandcommunity/healthandsocialcare/conditionsanddiseases/articles/coronaviruscovid19infectionsinthecommunityinengland/characteristicsofpeopletestingpositiveforcovid19inengland27january2021"
+    }, {
+      "key" : "2021030801201385000_2021.02.09.21250937v3.23",
+      "unstructured" : "Horby P. NERVTAG note on B.1.1.7 severity. NERVTAG https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/955239/NERVTAG_paper_on_variant_of_concernVOCB.1.1.7.pdf (accessed 31 Jan 2021)."
+    }, {
+      "key" : "2021030801201385000_2021.02.09.21250937v3.24",
+      "doi-asserted-by" : "publisher",
+      "DOI" : "10.1136/bmj.n230"
+    }, {
+      "key" : "2021030801201385000_2021.02.09.21250937v3.25",
+      "doi-asserted-by" : "publisher",
+      "DOI" : "10.1016/j.bbmt.2015.12.005"
+    }, {
+      "key" : "2021030801201385000_2021.02.09.21250937v3.26",
+      "unstructured" : "NERVTAG: Update note on B.1.1.7 severity, 11 February 2021. GOV.UK. https://www.gov.uk/government/publications/nervtag-update-note-on-b117-severity-11-february-2021 (accessed 14 Feb 2021)."
+    }, {
+      "key" : "2021030801201385000_2021.02.09.21250937v3.27",
+      "doi-asserted-by" : "publisher",
+      "DOI" : "10.1101/2020.12.30.20249034"
+    }, {
+      "key" : "2021030801201385000_2021.02.09.21250937v3.28",
+      "doi-asserted-by" : "publisher",
+      "DOI" : "10.1136/bmj.n158"
+    }, {
+      "key" : "2021030801201385000_2021.02.09.21250937v3.29",
+      "doi-asserted-by" : "publisher",
+      "DOI" : "10.1101/2021.01.18.427166"
+    }, {
+      "key" : "2021030801201385000_2021.02.09.21250937v3.30",
+      "doi-asserted-by" : "publisher",
+      "DOI" : "10.1101/2020.11.18.388140"
+    }, {
+      "key" : "2021030801201385000_2021.02.09.21250937v3.31",
+      "doi-asserted-by" : "publisher",
+      "DOI" : "10.1371/journal.pone.0241027"
+    } ],
+    "container-title" : [ ],
+    "original-title" : [ ],
+    "link" : [ {
+      "URL" : "https://syndication.highwire.org/content/doi/10.1101/2021.02.09.21250937",
+      "content-type" : "unspecified",
+      "content-version" : "vor",
+      "intended-application" : "similarity-checking"
+    } ],
+    "deposited" : {
+      "date-parts" : [ [ 2026, 1, 15 ] ],
+      "date-time" : "2026-01-15T14:06:18Z",
+      "timestamp" : 1768485978000
+    },
+    "score" : 1,
+    "resource" : {
+      "primary" : {
+        "URL" : "http://medrxiv.org/lookup/doi/10.1101/2021.02.09.21250937"
+      }
+    },
+    "subtitle" : [ ],
+    "short-title" : [ ],
+    "issued" : {
+      "date-parts" : [ [ 2021, 2, 19 ] ]
+    },
+    "references-count" : 31,
+    "URL" : "https://doi.org/10.1101/2021.02.09.21250937",
+    "relation" : {
+      "is-preprint-of" : [ {
+        "id-type" : "doi",
+        "id" : "10.1136/bmj.n579",
+        "asserted-by" : "subject"
+      } ]
+    },
+    "subject" : [ ],
+    "published" : {
+      "date-parts" : [ [ 2021, 2, 19 ] ]
+    },
+    "subtype" : "preprint"
+  }
+}

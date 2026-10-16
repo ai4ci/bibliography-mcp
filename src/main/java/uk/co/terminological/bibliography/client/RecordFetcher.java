@@ -16,18 +16,24 @@ import uk.co.terminological.bibliography.record.RecordReference;
 
 public interface RecordFetcher {
 
-	Map<ImmutableRecordReference, ? extends Record> fetch(Collection<? extends RecordReference> equivalentIds);
-	
+	Map<ImmutableRecordReference, ? extends Record> fetch(
+			Collection<? extends RecordReference> equivalentIds
+	);
+
 	default Optional<? extends Record> fetch(IdType type, String id) {
-		ImmutableRecordReference tmp = Builder.recordReference(type,id); 
-		return fetch(Collections.singleton(tmp)).values().stream().collect(MergedRecord.collector());
+		ImmutableRecordReference tmp = Builder.recordReference(type, id);
+		return fetch(Collections.singleton(tmp)).values()
+			.stream()
+			.collect(MergedRecord.collector());
 	};
-	
+
 	default Optional<? extends Record> fetch(Record rec) {
 		Set<RecordReference> tmp = new HashSet<>();
 		tmp.add(rec);
 		tmp.addAll(rec.getOtherIdentifiers());
-		return fetch(tmp).values().stream().collect(MergedRecord.collector());
+		return fetch(tmp).values()
+			.stream()
+			.collect(MergedRecord.collector());
 	};
-	
+
 }

@@ -32,6 +32,7 @@ import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.filter.LoggingFilter;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 
+import uk.co.terminological.bibliography.api.BibliographicApiException;
 import uk.co.terminological.datatypes.StreamExceptions;
 import uk.co.terminological.datatypes.StreamExceptions.FunctionWithException;
 
@@ -181,8 +182,18 @@ public abstract class CachingApiClient {
 		this.client.setReadTimeout(millis);
 	}
 
-	protected void rateLimit() {
-		this.rateLimiter.consume();
+	protected void rateLimit(int cost) {
+		this.rateLimiter.consume(cost);
+	}
+
+	/**
+	 * if the current capacity is less 10% of normal capacity we may change to a different api.
+	 * 
+	 * @return
+	 */
+	protected boolean throttle() {
+		return ((double) this.rateLimiter.getNumTokens())
+				/ this.rateLimiter.getCapacity() < 0.1D;
 	}
 
 	/**
@@ -302,23 +313,31 @@ public abstract class CachingApiClient {
 			return this;
 		}
 		public Optional<X> get() {
+			return this.get(1);
+		}
+		public Optional<X> get(int cost) {
 			return this.client.call(
 				this.url,
 				this.params,
 				this.temporary,
 				"GET",
 				this.operation,
-				null
+				null,
+				cost
 			);
 		}
 		public Optional<X> post(MediaType encoding) {
+			return this.post(encoding, 1);
+		}
+		public Optional<X> post(MediaType encoding, int cost) {
 			return this.client.call(
 				this.url,
 				this.params,
 				this.temporary,
 				"POST",
 				this.operation,
-				encoding
+				encoding,
+				cost
 			);
 		}
 		public CallBuilder<X, E> collapseLists(String string) {
@@ -338,7 +357,7 @@ public abstract class CachingApiClient {
 	private <X, E extends Exception> Optional<X> call(
 			String url, MultivaluedMap<String, String> params, boolean temporary,
 			String method, FunctionWithException<InputStream, X, E> operation,
-			MediaType encoding
+			MediaType encoding, int cost
 	) {
 		if (operation == null)
 			throw new NullPointerException("Operation must be defined");
@@ -364,7 +383,7 @@ public abstract class CachingApiClient {
 			}
 		}
 		// Not cached or operation did not succeed
-		this.rateLimit();
+		this.rateLimit(cost);
 		logger.trace("Retrieving from API: " + key);
 		var wr = this.client.resource(url);
 		try {

@@ -1,1 +1,93 @@
-{"version":"6.9","hitCount":10,"request":{"id":"PPR285723","source":"PPR","offSet":0,"pageSize":25},"citationList":{"citation":[{"source":"PPR","id":"PPR1253258","citationType":"preprint","title":"Infectious Disease Forecasting via Physics-Informed Machine Learning","authorString":"Hart J, Smith H, Rennert L, McMahan CS.","pubYear":2026,"citedByCount":0},{"source":"PPR","id":"PPR453305","citationType":"preprint","title":"The Role of Glycocalyx Steric Effects on Viral Endocytosis*","authorString":"Buckley J, Battaglia G.","pubYear":2022,"citedByCount":0},{"source":"PPR","id":"PPR450950","citationType":"preprint","title":"Cardiovascular Signatures of COVID-19 Predict Mortality and Identify Barrier Stabilizing Therapies","authorString":"Gustafson D, Ngai M, Wu R, Hou H, Schoffel A, Erice C, Mandla S, Billia F, Wilson MD, Radisic M, Fan E, Trahtemberg U, Baker A, McIntosh C, Fan CS, dos Santos CC, Kain KC, Hanneman K, Thavendiranathan P, Fish JE, Howe KL.","pubYear":2022,"citedByCount":0},{"source":"PPR","id":"PPR430582","citationType":"preprint","title":"Using patient biomarker time series to determine mortality risk in hospitalised COVID-19 patients: a comparative analysis across two New York hospitals","authorString":"Lambert B, Stopard IJ, Momeni-Boroujeni A, Mendoza R, Zuretti A.","pubYear":2021,"citedByCount":0},{"source":"PPR","id":"PPR425257","citationType":"preprint","title":"Anatomy of the first six months of COVID-19 Vaccination Campaign in Italy","authorString":"Gozzi N, Chinazzi M, Davis JT, Mu K, y Piontti AP, Ajelli M, Perra N, Vespignani A.","pubYear":2021,"citedByCount":0},{"source":"PPR","id":"PPR384588","citationType":"preprint","title":"SARS-CoV-2 alpha variant: is it really more deadly? A population level observational study","authorString":"Moore CM, Sergienko R, Arbel R.","pubYear":2021,"citedByCount":0},{"source":"PPR","id":"PPR355571","citationType":"preprint","title":"A runtime alterable epidemic model with genetic drift, waning immunity, and vaccinations","authorString":"Getz WM, Salter R, Vissat LL, Koopman JS, Simon CP.","pubYear":2021,"citedByCount":1},{"source":"PPR","id":"PPR296568","citationType":"preprint","title":"Bayesian inference across multiple models suggests a strong increase in lethality of COVID-19 in late 2020 in the UK","authorString":"Pietzonka P, Brorson E, Bankes W, Cates ME, Jack RL, Adhikari R.","pubYear":2021,"citedByCount":1},{"source":"PPR","id":"PPR290639","citationType":"preprint","title":"Sequence Analysis of 20,453 SARS-CoV-2 Genomes from the Houston Metropolitan Area Identifies the Emergence and Widespread Distribution of Multiple Isolates of All Major Variants of Concern","authorString":"Long SW, Olsen RJ, Christensen PA, Subedi S, Olson R, Davis JJ, Saavedra MO, Yerramilli P, Pruitt L, Reppond K, Shyer MN, Cambric J, Finkelstein IJ, Gollihar J, Musser JM.","pubYear":2021,"citedByCount":5},{"source":"PPR","id":"PPR288699","citationType":"preprint","title":"Increased transmission of SARS-CoV-2 lineage B.1.1.7 (VOC 2020212/01) is not accounted for by a replicative advantage in primary airway cells or antibody escape","authorString":"Brown JC, Goldhill DH, Zhou J, Peacock TP, Frise R, Goonawardane N, Baillon L, Kugathasan R, Pinto AL, McKay PF, Hassard J, Moshe M, Singanayagam A, Burgoyne T, the ATACCC Investigators, PHE Virology Consortium, Barclay WS.","pubYear":2021,"citedByCount":28}]}}
+{
+  "version" : "6.9",
+  "hitCount" : 10,
+  "request" : {
+    "id" : "PPR285723",
+    "source" : "PPR",
+    "offSet" : 0,
+    "pageSize" : 25
+  },
+  "citationList" : {
+    "citation" : [ {
+      "source" : "PPR",
+      "id" : "PPR1253258",
+      "citationType" : "preprint",
+      "title" : "Infectious Disease Forecasting via Physics-Informed Machine Learning",
+      "authorString" : "Hart J, Smith H, Rennert L, McMahan CS.",
+      "pubYear" : 2026,
+      "citedByCount" : 0
+    }, {
+      "source" : "PPR",
+      "id" : "PPR453305",
+      "citationType" : "preprint",
+      "title" : "The Role of Glycocalyx Steric Effects on Viral Endocytosis*",
+      "authorString" : "Buckley J, Battaglia G.",
+      "pubYear" : 2022,
+      "citedByCount" : 0
+    }, {
+      "source" : "PPR",
+      "id" : "PPR450950",
+      "citationType" : "preprint",
+      "title" : "Cardiovascular Signatures of COVID-19 Predict Mortality and Identify Barrier Stabilizing Therapies",
+      "authorString" : "Gustafson D, Ngai M, Wu R, Hou H, Schoffel A, Erice C, Mandla S, Billia F, Wilson MD, Radisic M, Fan E, Trahtemberg U, Baker A, McIntosh C, Fan CS, dos Santos CC, Kain KC, Hanneman K, Thavendiranathan P, Fish JE, Howe KL.",
+      "pubYear" : 2022,
+      "citedByCount" : 0
+    }, {
+      "source" : "PPR",
+      "id" : "PPR430582",
+      "citationType" : "preprint",
+      "title" : "Using patient biomarker time series to determine mortality risk in hospitalised COVID-19 patients: a comparative analysis across two New York hospitals",
+      "authorString" : "Lambert B, Stopard IJ, Momeni-Boroujeni A, Mendoza R, Zuretti A.",
+      "pubYear" : 2021,
+      "citedByCount" : 0
+    }, {
+      "source" : "PPR",
+      "id" : "PPR425257",
+      "citationType" : "preprint",
+      "title" : "Anatomy of the first six months of COVID-19 Vaccination Campaign in Italy",
+      "authorString" : "Gozzi N, Chinazzi M, Davis JT, Mu K, y Piontti AP, Ajelli M, Perra N, Vespignani A.",
+      "pubYear" : 2021,
+      "citedByCount" : 0
+    }, {
+      "source" : "PPR",
+      "id" : "PPR384588",
+      "citationType" : "preprint",
+      "title" : "SARS-CoV-2 alpha variant: is it really more deadly? A population level observational study",
+      "authorString" : "Moore CM, Sergienko R, Arbel R.",
+      "pubYear" : 2021,
+      "citedByCount" : 0
+    }, {
+      "source" : "PPR",
+      "id" : "PPR355571",
+      "citationType" : "preprint",
+      "title" : "A runtime alterable epidemic model with genetic drift, waning immunity, and vaccinations",
+      "authorString" : "Getz WM, Salter R, Vissat LL, Koopman JS, Simon CP.",
+      "pubYear" : 2021,
+      "citedByCount" : 1
+    }, {
+      "source" : "PPR",
+      "id" : "PPR296568",
+      "citationType" : "preprint",
+      "title" : "Bayesian inference across multiple models suggests a strong increase in lethality of COVID-19 in late 2020 in the UK",
+      "authorString" : "Pietzonka P, Brorson E, Bankes W, Cates ME, Jack RL, Adhikari R.",
+      "pubYear" : 2021,
+      "citedByCount" : 1
+    }, {
+      "source" : "PPR",
+      "id" : "PPR290639",
+      "citationType" : "preprint",
+      "title" : "Sequence Analysis of 20,453 SARS-CoV-2 Genomes from the Houston Metropolitan Area Identifies the Emergence and Widespread Distribution of Multiple Isolates of All Major Variants of Concern",
+      "authorString" : "Long SW, Olsen RJ, Christensen PA, Subedi S, Olson R, Davis JJ, Saavedra MO, Yerramilli P, Pruitt L, Reppond K, Shyer MN, Cambric J, Finkelstein IJ, Gollihar J, Musser JM.",
+      "pubYear" : 2021,
+      "citedByCount" : 5
+    }, {
+      "source" : "PPR",
+      "id" : "PPR288699",
+      "citationType" : "preprint",
+      "title" : "Increased transmission of SARS-CoV-2 lineage B.1.1.7 (VOC 2020212/01) is not accounted for by a replicative advantage in primary airway cells or antibody escape",
+      "authorString" : "Brown JC, Goldhill DH, Zhou J, Peacock TP, Frise R, Goonawardane N, Baillon L, Kugathasan R, Pinto AL, McKay PF, Hassard J, Moshe M, Singanayagam A, Burgoyne T, the ATACCC Investigators, PHE Virology Consortium, Barclay WS.",
+      "pubYear" : 2021,
+      "citedByCount" : 28
+    } ]
+  }
+}

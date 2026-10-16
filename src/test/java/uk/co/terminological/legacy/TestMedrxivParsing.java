@@ -2,7 +2,7 @@ package uk.co.terminological.legacy;
 
 import java.io.IOException;
 
-import uk.co.terminological.bibliography.medrxiv.MedrxivSearch;
+import uk.co.terminological.bibliography.api.medrxiv.MedrxivSearch;
 import uk.co.terminological.fluentxml.Xml;
 import uk.co.terminological.fluentxml.XmlException;
 
@@ -12,8 +12,7 @@ public class TestMedrxivParsing {
 		// TODO Auto-generated method stub
 
 		System.out.println("\n==SEARCH HTML=============================\n");
-		var is = ClassLoader
-			.getSystemResourceAsStream("medrxivSearch.html");
+		var is = ClassLoader.getSystemResourceAsStream("medrxivSearch.html");
 		var xml = Xml.fromHtmlStream(is);
 		var response = new MedrxivSearch(xml.content());
 		response.stream()

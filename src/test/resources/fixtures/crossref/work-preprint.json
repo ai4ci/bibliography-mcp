@@ -1,1 +1,360 @@
-{"status":"ok","message-type":"work","message-version":"1.0.0","message":{"institution":[{"name":"medRxiv"}],"indexed":{"date-parts":[[2025,12,17]],"date-time":"2025-12-17T19:00:19Z","timestamp":1765998019598,"version":"3.48.0"},"posted":{"date-parts":[[2025,12,15]]},"group-title":"Infectious Diseases (except HIV\/AIDS)","reference-count":30,"publisher":"openRxiv","license":[{"start":{"date-parts":[[2025,12,15]],"date-time":"2025-12-15T00:00:00Z","timestamp":1765756800000},"content-version":"vor","delay-in-days":0,"URL":"http:\/\/creativecommons.org\/licenses\/by\/4.0\/"}],"content-domain":{"domain":[],"crossmark-restriction":false},"short-container-title":[],"accepted":{"date-parts":[[2025,12,15]]},"abstract":"<jats:title>ABSTRACT<\/jats:title>\n                <jats:sec>\n                  <jats:title>Objectives<\/jats:title>\n                  <jats:p>Pneumococcal surveillance typically focuses on invasive disease (IPD), collecting limited clinical data. We used a longitudinal adult cohort of IPD and non-invasive pneumococcal disease (non-IPD) patients in three hospitals between 2006-22, to describe clinical disease, including site of infection, and serotype distribution.<\/jats:p>\n                <\/jats:sec>\n                <jats:sec>\n                  <jats:title>Methods<\/jats:title>\n                  <jats:p>The demographics of IPD and non-IPD were compared and survival analysis performed. Features of IPD in different sites were compared and serotype distributions analysed using bootstrap resampling.<\/jats:p>\n                <\/jats:sec>\n                <jats:sec>\n                  <jats:title>Results<\/jats:title>\n                  <jats:p>Out of a total 3719 cases, non-IPD was responsible for 54.7%. IPD had a higher case-fatality ratio than non-IPD (14.8% versus 11.7%; P=0.005). Among the 1686 IPD cases, 15.3% were outside the respiratory tract. Those with meningitis were younger (54.9y vs LRTI 66.8y; P&lt;0.001); and had high rates of ICU admission (63.4% vs LRTI 10.2%; P&lt;0.001). We found a similar serotype distribution across different infection sites<\/jats:p>\n                <\/jats:sec>\n                <jats:sec>\n                  <jats:title>Conclusions<\/jats:title>\n                  <jats:p>Non-IPD accounts for 54.7% (2033\/3719) of total diagnosed cases in adults hospitalised during the PCV era. IPD manifests outside of the respiratory tract in 15.3% (258\/1686). Higher valent PCVs will likely have a similar impact regardless of different clinical presentations.<\/jats:p>\n                <\/jats:sec>","DOI":"10.64898\/2025.12.12.25342129","type":"posted-content","created":{"date-parts":[[2025,12,16]],"date-time":"2025-12-16T00:50:12Z","timestamp":1765846212000},"source":"Crossref","is-referenced-by-count":0,"title":["Trends in invasive and non-invasive\n                  <i>Streptococcus pneumoniae<\/i>\n                  disease in adults hospitalised in Bristol and Bath: a retrospective cohort study, 2006-2022"],"prefix":"10.64898","author":[{"ORCID":"https:\/\/orcid.org\/0000-0002-5504-7768","authenticated-orcid":false,"given":"Robert","family":"Challen","sequence":"first","affiliation":[],"role":[{"role":"author","vocabulary":"crossref"}]},{"ORCID":"https:\/\/orcid.org\/0000-0003-3923-1773","authenticated-orcid":false,"given":"Catherine","family":"Hyams","sequence":"additional","affiliation":[],"role":[{"role":"author","vocabulary":"crossref"}]},{"ORCID":"https:\/\/orcid.org\/0000-0002-7606-986X","authenticated-orcid":false,"given":"David","family":"Hettle","sequence":"additional","affiliation":[],"role":[{"role":"author","vocabulary":"crossref"}]},{"given":"Zahin","family":"Amin-Chowdhury","sequence":"additional","affiliation":[],"role":[{"role":"author","vocabulary":"crossref"}]},{"given":"Charli","family":"Grimes","sequence":"additional","affiliation":[],"role":[{"role":"author","vocabulary":"crossref"}]},{"given":"Gabriella","family":"Ruffino","sequence":"additional","affiliation":[],"role":[{"role":"author","vocabulary":"crossref"}]},{"given":"Rauri","family":"Conway","sequence":"additional","affiliation":[],"role":[{"role":"author","vocabulary":"crossref"}]},{"given":"Robyn","family":"Heath","sequence":"additional","affiliation":[],"role":[{"role":"author","vocabulary":"crossref"}]},{"given":"Paul","family":"North","sequence":"additional","affiliation":[],"role":[{"role":"author","vocabulary":"crossref"}]},{"given":"Adam","family":"Malin","sequence":"additional","affiliation":[],"role":[{"role":"author","vocabulary":"crossref"}]},{"given":"Nick A","family":"Maskell","sequence":"additional","affiliation":[],"role":[{"role":"author","vocabulary":"crossref"}]},{"given":"Philip","family":"Williams","sequence":"additional","affiliation":[],"role":[{"role":"author","vocabulary":"crossref"}]},{"given":"O. Martin","family":"Williams","sequence":"additional","affiliation":[],"role":[{"role":"author","vocabulary":"crossref"}]},{"ORCID":"https:\/\/orcid.org\/0000-0002-0856-2476","authenticated-orcid":false,"given":"Shamez N","family":"Ladhani","sequence":"additional","affiliation":[],"role":[{"role":"author","vocabulary":"crossref"}]},{"ORCID":"https:\/\/orcid.org\/0000-0002-7076-1871","authenticated-orcid":false,"given":"Leon","family":"Danon","sequence":"additional","affiliation":[],"role":[{"role":"author","vocabulary":"crossref"}]},{"ORCID":"https:\/\/orcid.org\/0000-0003-1756-5668","authenticated-orcid":false,"given":"Adam","family":"Finn","sequence":"additional","affiliation":[],"role":[{"role":"author","vocabulary":"crossref"}]}],"member":"54368","reference":[{"key":"2025121710551090000_2025.12.12.25342129v1.1","doi-asserted-by":"publisher","DOI":"10.1016\/S1473-3099(18)30310-4"},{"key":"2025121710551090000_2025.12.12.25342129v1.2","doi-asserted-by":"publisher","DOI":"10.1038\/s41579-018-0001-8"},{"key":"2025121710551090000_2025.12.12.25342129v1.3","doi-asserted-by":"publisher","DOI":"10.3390\/geriatrics6010013"},{"key":"2025121710551090000_2025.12.12.25342129v1.4","unstructured":"Pneumococcal Disease: Guidance, Data and Analysis. gov.uk 2015."},{"key":"2025121710551090000_2025.12.12.25342129v1.5","doi-asserted-by":"publisher","DOI":"10.1016\/S1473-3099(18)30052-5"},{"key":"2025121710551090000_2025.12.12.25342129v1.6","doi-asserted-by":"publisher","DOI":"10.1016\/S1473-3099(11)70090-1"},{"key":"2025121710551090000_2025.12.12.25342129v1.7","doi-asserted-by":"publisher","DOI":"10.3201\/eid2801.210734"},{"key":"2025121710551090000_2025.12.12.25342129v1.8","doi-asserted-by":"publisher","DOI":"10.1086\/374624"},{"key":"2025121710551090000_2025.12.12.25342129v1.9","doi-asserted-by":"publisher","DOI":"10.3201\/eid2509.180747"},{"key":"2025121710551090000_2025.12.12.25342129v1.10","doi-asserted-by":"publisher","DOI":"10.1016\/j.lanepe.2023.100692"},{"key":"2025121710551090000_2025.12.12.25342129v1.11","doi-asserted-by":"publisher","DOI":"10.1093\/cid\/ciab477"},{"key":"2025121710551090000_2025.12.12.25342129v1.12","doi-asserted-by":"publisher","DOI":"10.1136\/thorax.58.5.377"},{"key":"2025121710551090000_2025.12.12.25342129v1.13","doi-asserted-by":"publisher","DOI":"10.1136\/thx.2009.121434"},{"key":"2025121710551090000_2025.12.12.25342129v1.14","doi-asserted-by":"publisher","DOI":"10.1214\/ss\/1009213286"},{"key":"2025121710551090000_2025.12.12.25342129v1.15","doi-asserted-by":"crossref","unstructured":"Fisher R. A. , Yates F. Statistical Methods, Experimental Design, and Scientific Inference: A Re-issue of Statistical Methods for Research Workers, The Design of Experiments, and Statistical Methods and Scientific Inference. 1st edition. Oxford England ; New York: Oxford University Press; 1990.","DOI":"10.1093\/oso\/9780198522294.003.0001"},{"key":"2025121710551090000_2025.12.12.25342129v1.16","unstructured":"Cox David Roxbee, Oakes David. Analysis of Survival Data. vol. 21. CRC press; 1984."},{"key":"2025121710551090000_2025.12.12.25342129v1.17","doi-asserted-by":"crossref","unstructured":"Loader Clive . Local Regression and Likelihood. New York: Springer-Verlag; 1999.","DOI":"10.1007\/b98858"},{"key":"2025121710551090000_2025.12.12.25342129v1.18","doi-asserted-by":"publisher","DOI":"10.1016\/j.lanepe.2022.100473"},{"key":"2025121710551090000_2025.12.12.25342129v1.19","doi-asserted-by":"publisher","DOI":"10.3201\/eid2910.230519"},{"key":"2025121710551090000_2025.12.12.25342129v1.20","unstructured":"Team R Core. R: A Language and Environment for Statistical Computing 2017."},{"key":"2025121710551090000_2025.12.12.25342129v1.21","doi-asserted-by":"publisher","DOI":"10.21105\/joss.04707"},{"key":"2025121710551090000_2025.12.12.25342129v1.22","doi-asserted-by":"publisher","DOI":"10.1016\/j.cmi.2019.04.032"},{"key":"2025121710551090000_2025.12.12.25342129v1.23","doi-asserted-by":"publisher","DOI":"10.1136\/bmjopen-2016-015080"},{"key":"2025121710551090000_2025.12.12.25342129v1.24","doi-asserted-by":"publisher","DOI":"10.1186\/s12879-015-0787-1"},{"key":"2025121710551090000_2025.12.12.25342129v1.25","doi-asserted-by":"publisher","DOI":"10.1016\/j.vaccine.2016.07.038"},{"key":"2025121710551090000_2025.12.12.25342129v1.26","doi-asserted-by":"publisher","DOI":"10.1016\/j.vaccine.2017.09.050"},{"key":"2025121710551090000_2025.12.12.25342129v1.27","doi-asserted-by":"publisher","DOI":"10.1086\/648593"},{"key":"2025121710551090000_2025.12.12.25342129v1.28","doi-asserted-by":"publisher","DOI":"10.1111\/j.1651-2227.2010.01914.x"},{"key":"2025121710551090000_2025.12.12.25342129v1.29","unstructured":"Pneumococcal: The Green Book, Chapter 25. UK Health Security Agency; 2013."},{"key":"2025121710551090000_2025.12.12.25342129v1.30","unstructured":"Lim Wei Shen , Lawrence Hannah . National Adult Community Acquired Pneumonia Audit 2018\/19. British Thoracic Society Reports 2019;10:13."}],"container-title":[],"original-title":[],"link":[{"URL":"https:\/\/syndication.highwire.org\/content\/doi\/10.64898\/2025.12.12.25342129","content-type":"unspecified","content-version":"vor","intended-application":"similarity-checking"}],"deposited":{"date-parts":[[2025,12,17]],"date-time":"2025-12-17T18:55:18Z","timestamp":1765997718000},"score":1,"resource":{"primary":{"URL":"http:\/\/medrxiv.org\/lookup\/doi\/10.64898\/2025.12.12.25342129"}},"subtitle":[],"short-title":[],"issued":{"date-parts":[[2025,12,15]]},"references-count":30,"URL":"https:\/\/doi.org\/10.64898\/2025.12.12.25342129","relation":{},"subject":[],"published":{"date-parts":[[2025,12,15]]},"subtype":"preprint"}}
+{
+  "status" : "ok",
+  "message-type" : "work",
+  "message-version" : "1.0.0",
+  "message" : {
+    "institution" : [ {
+      "name" : "medRxiv"
+    } ],
+    "indexed" : {
+      "date-parts" : [ [ 2025, 12, 17 ] ],
+      "date-time" : "2025-12-17T19:00:19Z",
+      "timestamp" : 1765998019598,
+      "version" : "3.48.0"
+    },
+    "posted" : {
+      "date-parts" : [ [ 2025, 12, 15 ] ]
+    },
+    "group-title" : "Infectious Diseases (except HIV/AIDS)",
+    "reference-count" : 30,
+    "publisher" : "openRxiv",
+    "license" : [ {
+      "start" : {
+        "date-parts" : [ [ 2025, 12, 15 ] ],
+        "date-time" : "2025-12-15T00:00:00Z",
+        "timestamp" : 1765756800000
+      },
+      "content-version" : "vor",
+      "delay-in-days" : 0,
+      "URL" : "http://creativecommons.org/licenses/by/4.0/"
+    } ],
+    "content-domain" : {
+      "domain" : [ ],
+      "crossmark-restriction" : false
+    },
+    "short-container-title" : [ ],
+    "accepted" : {
+      "date-parts" : [ [ 2025, 12, 15 ] ]
+    },
+    "abstract" : "<jats:title>ABSTRACT</jats:title>\n                <jats:sec>\n                  <jats:title>Objectives</jats:title>\n                  <jats:p>Pneumococcal surveillance typically focuses on invasive disease (IPD), collecting limited clinical data. We used a longitudinal adult cohort of IPD and non-invasive pneumococcal disease (non-IPD) patients in three hospitals between 2006-22, to describe clinical disease, including site of infection, and serotype distribution.</jats:p>\n                </jats:sec>\n                <jats:sec>\n                  <jats:title>Methods</jats:title>\n                  <jats:p>The demographics of IPD and non-IPD were compared and survival analysis performed. Features of IPD in different sites were compared and serotype distributions analysed using bootstrap resampling.</jats:p>\n                </jats:sec>\n                <jats:sec>\n                  <jats:title>Results</jats:title>\n                  <jats:p>Out of a total 3719 cases, non-IPD was responsible for 54.7%. IPD had a higher case-fatality ratio than non-IPD (14.8% versus 11.7%; P=0.005). Among the 1686 IPD cases, 15.3% were outside the respiratory tract. Those with meningitis were younger (54.9y vs LRTI 66.8y; P&lt;0.001); and had high rates of ICU admission (63.4% vs LRTI 10.2%; P&lt;0.001). We found a similar serotype distribution across different infection sites</jats:p>\n                </jats:sec>\n                <jats:sec>\n                  <jats:title>Conclusions</jats:title>\n                  <jats:p>Non-IPD accounts for 54.7% (2033/3719) of total diagnosed cases in adults hospitalised during the PCV era. IPD manifests outside of the respiratory tract in 15.3% (258/1686). Higher valent PCVs will likely have a similar impact regardless of different clinical presentations.</jats:p>\n                </jats:sec>",
+    "DOI" : "10.64898/2025.12.12.25342129",
+    "type" : "posted-content",
+    "created" : {
+      "date-parts" : [ [ 2025, 12, 16 ] ],
+      "date-time" : "2025-12-16T00:50:12Z",
+      "timestamp" : 1765846212000
+    },
+    "source" : "Crossref",
+    "is-referenced-by-count" : 0,
+    "title" : [ "Trends in invasive and non-invasive\n                  <i>Streptococcus pneumoniae</i>\n                  disease in adults hospitalised in Bristol and Bath: a retrospective cohort study, 2006-2022" ],
+    "prefix" : "10.64898",
+    "author" : [ {
+      "ORCID" : "https://orcid.org/0000-0002-5504-7768",
+      "authenticated-orcid" : false,
+      "given" : "Robert",
+      "family" : "Challen",
+      "sequence" : "first",
+      "affiliation" : [ ],
+      "role" : [ {
+        "role" : "author",
+        "vocabulary" : "crossref"
+      } ]
+    }, {
+      "ORCID" : "https://orcid.org/0000-0003-3923-1773",
+      "authenticated-orcid" : false,
+      "given" : "Catherine",
+      "family" : "Hyams",
+      "sequence" : "additional",
+      "affiliation" : [ ],
+      "role" : [ {
+        "role" : "author",
+        "vocabulary" : "crossref"
+      } ]
+    }, {
+      "ORCID" : "https://orcid.org/0000-0002-7606-986X",
+      "authenticated-orcid" : false,
+      "given" : "David",
+      "family" : "Hettle",
+      "sequence" : "additional",
+      "affiliation" : [ ],
+      "role" : [ {
+        "role" : "author",
+        "vocabulary" : "crossref"
+      } ]
+    }, {
+      "given" : "Zahin",
+      "family" : "Amin-Chowdhury",
+      "sequence" : "additional",
+      "affiliation" : [ ],
+      "role" : [ {
+        "role" : "author",
+        "vocabulary" : "crossref"
+      } ]
+    }, {
+      "given" : "Charli",
+      "family" : "Grimes",
+      "sequence" : "additional",
+      "affiliation" : [ ],
+      "role" : [ {
+        "role" : "author",
+        "vocabulary" : "crossref"
+      } ]
+    }, {
+      "given" : "Gabriella",
+      "family" : "Ruffino",
+      "sequence" : "additional",
+      "affiliation" : [ ],
+      "role" : [ {
+        "role" : "author",
+        "vocabulary" : "crossref"
+      } ]
+    }, {
+      "given" : "Rauri",
+      "family" : "Conway",
+      "sequence" : "additional",
+      "affiliation" : [ ],
+      "role" : [ {
+        "role" : "author",
+        "vocabulary" : "crossref"
+      } ]
+    }, {
+      "given" : "Robyn",
+      "family" : "Heath",
+      "sequence" : "additional",
+      "affiliation" : [ ],
+      "role" : [ {
+        "role" : "author",
+        "vocabulary" : "crossref"
+      } ]
+    }, {
+      "given" : "Paul",
+      "family" : "North",
+      "sequence" : "additional",
+      "affiliation" : [ ],
+      "role" : [ {
+        "role" : "author",
+        "vocabulary" : "crossref"
+      } ]
+    }, {
+      "given" : "Adam",
+      "family" : "Malin",
+      "sequence" : "additional",
+      "affiliation" : [ ],
+      "role" : [ {
+        "role" : "author",
+        "vocabulary" : "crossref"
+      } ]
+    }, {
+      "given" : "Nick A",
+      "family" : "Maskell",
+      "sequence" : "additional",
+      "affiliation" : [ ],
+      "role" : [ {
+        "role" : "author",
+        "vocabulary" : "crossref"
+      } ]
+    }, {
+      "given" : "Philip",
+      "family" : "Williams",
+      "sequence" : "additional",
+      "affiliation" : [ ],
+      "role" : [ {
+        "role" : "author",
+        "vocabulary" : "crossref"
+      } ]
+    }, {
+      "given" : "O. Martin",
+      "family" : "Williams",
+      "sequence" : "additional",
+      "affiliation" : [ ],
+      "role" : [ {
+        "role" : "author",
+        "vocabulary" : "crossref"
+      } ]
+    }, {
+      "ORCID" : "https://orcid.org/0000-0002-0856-2476",
+      "authenticated-orcid" : false,
+      "given" : "Shamez N",
+      "family" : "Ladhani",
+      "sequence" : "additional",
+      "affiliation" : [ ],
+      "role" : [ {
+        "role" : "author",
+        "vocabulary" : "crossref"
+      } ]
+    }, {
+      "ORCID" : "https://orcid.org/0000-0002-7076-1871",
+      "authenticated-orcid" : false,
+      "given" : "Leon",
+      "family" : "Danon",
+      "sequence" : "additional",
+      "affiliation" : [ ],
+      "role" : [ {
+        "role" : "author",
+        "vocabulary" : "crossref"
+      } ]
+    }, {
+      "ORCID" : "https://orcid.org/0000-0003-1756-5668",
+      "authenticated-orcid" : false,
+      "given" : "Adam",
+      "family" : "Finn",
+      "sequence" : "additional",
+      "affiliation" : [ ],
+      "role" : [ {
+        "role" : "author",
+        "vocabulary" : "crossref"
+      } ]
+    } ],
+    "member" : "54368",
+    "reference" : [ {
+      "key" : "2025121710551090000_2025.12.12.25342129v1.1",
+      "doi-asserted-by" : "publisher",
+      "DOI" : "10.1016/S1473-3099(18)30310-4"
+    }, {
+      "key" : "2025121710551090000_2025.12.12.25342129v1.2",
+      "doi-asserted-by" : "publisher",
+      "DOI" : "10.1038/s41579-018-0001-8"
+    }, {
+      "key" : "2025121710551090000_2025.12.12.25342129v1.3",
+      "doi-asserted-by" : "publisher",
+      "DOI" : "10.3390/geriatrics6010013"
+    }, {
+      "key" : "2025121710551090000_2025.12.12.25342129v1.4",
+      "unstructured" : "Pneumococcal Disease: Guidance, Data and Analysis. gov.uk 2015."
+    }, {
+      "key" : "2025121710551090000_2025.12.12.25342129v1.5",
+      "doi-asserted-by" : "publisher",
+      "DOI" : "10.1016/S1473-3099(18)30052-5"
+    }, {
+      "key" : "2025121710551090000_2025.12.12.25342129v1.6",
+      "doi-asserted-by" : "publisher",
+      "DOI" : "10.1016/S1473-3099(11)70090-1"
+    }, {
+      "key" : "2025121710551090000_2025.12.12.25342129v1.7",
+      "doi-asserted-by" : "publisher",
+      "DOI" : "10.3201/eid2801.210734"
+    }, {
+      "key" : "2025121710551090000_2025.12.12.25342129v1.8",
+      "doi-asserted-by" : "publisher",
+      "DOI" : "10.1086/374624"
+    }, {
+      "key" : "2025121710551090000_2025.12.12.25342129v1.9",
+      "doi-asserted-by" : "publisher",
+      "DOI" : "10.3201/eid2509.180747"
+    }, {
+      "key" : "2025121710551090000_2025.12.12.25342129v1.10",
+      "doi-asserted-by" : "publisher",
+      "DOI" : "10.1016/j.lanepe.2023.100692"
+    }, {
+      "key" : "2025121710551090000_2025.12.12.25342129v1.11",
+      "doi-asserted-by" : "publisher",
+      "DOI" : "10.1093/cid/ciab477"
+    }, {
+      "key" : "2025121710551090000_2025.12.12.25342129v1.12",
+      "doi-asserted-by" : "publisher",
+      "DOI" : "10.1136/thorax.58.5.377"
+    }, {
+      "key" : "2025121710551090000_2025.12.12.25342129v1.13",
+      "doi-asserted-by" : "publisher",
+      "DOI" : "10.1136/thx.2009.121434"
+    }, {
+      "key" : "2025121710551090000_2025.12.12.25342129v1.14",
+      "doi-asserted-by" : "publisher",
+      "DOI" : "10.1214/ss/1009213286"
+    }, {
+      "key" : "2025121710551090000_2025.12.12.25342129v1.15",
+      "doi-asserted-by" : "crossref",
+      "unstructured" : "Fisher R. A. , Yates F. Statistical Methods, Experimental Design, and Scientific Inference: A Re-issue of Statistical Methods for Research Workers, The Design of Experiments, and Statistical Methods and Scientific Inference. 1st edition. Oxford England ; New York: Oxford University Press; 1990.",
+      "DOI" : "10.1093/oso/9780198522294.003.0001"
+    }, {
+      "key" : "2025121710551090000_2025.12.12.25342129v1.16",
+      "unstructured" : "Cox David Roxbee, Oakes David. Analysis of Survival Data. vol. 21. CRC press; 1984."
+    }, {
+      "key" : "2025121710551090000_2025.12.12.25342129v1.17",
+      "doi-asserted-by" : "crossref",
+      "unstructured" : "Loader Clive . Local Regression and Likelihood. New York: Springer-Verlag; 1999.",
+      "DOI" : "10.1007/b98858"
+    }, {
+      "key" : "2025121710551090000_2025.12.12.25342129v1.18",
+      "doi-asserted-by" : "publisher",
+      "DOI" : "10.1016/j.lanepe.2022.100473"
+    }, {
+      "key" : "2025121710551090000_2025.12.12.25342129v1.19",
+      "doi-asserted-by" : "publisher",
+      "DOI" : "10.3201/eid2910.230519"
+    }, {
+      "key" : "2025121710551090000_2025.12.12.25342129v1.20",
+      "unstructured" : "Team R Core. R: A Language and Environment for Statistical Computing 2017."
+    }, {
+      "key" : "2025121710551090000_2025.12.12.25342129v1.21",
+      "doi-asserted-by" : "publisher",
+      "DOI" : "10.21105/joss.04707"
+    }, {
+      "key" : "2025121710551090000_2025.12.12.25342129v1.22",
+      "doi-asserted-by" : "publisher",
+      "DOI" : "10.1016/j.cmi.2019.04.032"
+    }, {
+      "key" : "2025121710551090000_2025.12.12.25342129v1.23",
+      "doi-asserted-by" : "publisher",
+      "DOI" : "10.1136/bmjopen-2016-015080"
+    }, {
+      "key" : "2025121710551090000_2025.12.12.25342129v1.24",
+      "doi-asserted-by" : "publisher",
+      "DOI" : "10.1186/s12879-015-0787-1"
+    }, {
+      "key" : "2025121710551090000_2025.12.12.25342129v1.25",
+      "doi-asserted-by" : "publisher",
+      "DOI" : "10.1016/j.vaccine.2016.07.038"
+    }, {
+      "key" : "2025121710551090000_2025.12.12.25342129v1.26",
+      "doi-asserted-by" : "publisher",
+      "DOI" : "10.1016/j.vaccine.2017.09.050"
+    }, {
+      "key" : "2025121710551090000_2025.12.12.25342129v1.27",
+      "doi-asserted-by" : "publisher",
+      "DOI" : "10.1086/648593"
+    }, {
+      "key" : "2025121710551090000_2025.12.12.25342129v1.28",
+      "doi-asserted-by" : "publisher",
+      "DOI" : "10.1111/j.1651-2227.2010.01914.x"
+    }, {
+      "key" : "2025121710551090000_2025.12.12.25342129v1.29",
+      "unstructured" : "Pneumococcal: The Green Book, Chapter 25. UK Health Security Agency; 2013."
+    }, {
+      "key" : "2025121710551090000_2025.12.12.25342129v1.30",
+      "unstructured" : "Lim Wei Shen , Lawrence Hannah . National Adult Community Acquired Pneumonia Audit 2018/19. British Thoracic Society Reports 2019;10:13."
+    } ],
+    "container-title" : [ ],
+    "original-title" : [ ],
+    "link" : [ {
+      "URL" : "https://syndication.highwire.org/content/doi/10.64898/2025.12.12.25342129",
+      "content-type" : "unspecified",
+      "content-version" : "vor",
+      "intended-application" : "similarity-checking"
+    } ],
+    "deposited" : {
+      "date-parts" : [ [ 2025, 12, 17 ] ],
+      "date-time" : "2025-12-17T18:55:18Z",
+      "timestamp" : 1765997718000
+    },
+    "score" : 1,
+    "resource" : {
+      "primary" : {
+        "URL" : "http://medrxiv.org/lookup/doi/10.64898/2025.12.12.25342129"
+      }
+    },
+    "subtitle" : [ ],
+    "short-title" : [ ],
+    "issued" : {
+      "date-parts" : [ [ 2025, 12, 15 ] ]
+    },
+    "references-count" : 30,
+    "URL" : "https://doi.org/10.64898/2025.12.12.25342129",
+    "relation" : { },
+    "subject" : [ ],
+    "published" : {
+      "date-parts" : [ [ 2025, 12, 15 ] ]
+    },
+    "subtype" : "preprint"
+  }
+}

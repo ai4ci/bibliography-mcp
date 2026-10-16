@@ -9,11 +9,11 @@ import org.apache.log4j.BasicConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.co.terminological.bibliography.BibliographicApiException;
-import uk.co.terminological.bibliography.entrez.EntrezClient;
-import uk.co.terminological.bibliography.entrez.EntrezClient.Command;
-import uk.co.terminological.bibliography.entrez.EntrezClient.Database;
-import uk.co.terminological.bibliography.entrez.EntrezEntry;
+import uk.co.terminological.bibliography.api.BibliographicApiException;
+import uk.co.terminological.bibliography.api.entrez.EntrezClient;
+import uk.co.terminological.bibliography.api.entrez.EntrezClient.Command;
+import uk.co.terminological.bibliography.api.entrez.EntrezClient.Database;
+import uk.co.terminological.bibliography.api.entrez.EntrezEntry;
 
 public class TestPubMedRestClient {
 
@@ -45,7 +45,8 @@ public class TestPubMedRestClient {
 			.create(pubmedApiToken, appId, developerEmail);
 		restClient.debugMode();
 
-		var result = restClient.buildSearchQuery("Doxapram")
+		var result = restClient.buildQuery()
+			.searchTerm("Doxapram")
 			.limit(0, 10)
 			.execute()
 			.get();
@@ -53,12 +54,11 @@ public class TestPubMedRestClient {
 		result.getIds()
 			.forEach(System.out::println);
 
-		var links = restClient
-			.buildLinksQueryForIdsAndDatabase(
-				result.getIds()
-					.collect(Collectors.toSet()),
-				Database.PUBMED
-			)
+		var links = restClient.buildLinksQueryForIdsAndDatabase(
+			result.getIds()
+				.collect(Collectors.toSet()),
+			Database.PUBMED
+		)
 			.command(Command.LLINKS)
 			.execute()
 			.get();
@@ -66,12 +66,11 @@ public class TestPubMedRestClient {
 		links.stream()
 			.forEach(System.out::println);
 
-		var links2 = restClient
-			.buildLinksQueryForIdsAndDatabase(
-				result.getIds()
-					.collect(Collectors.toSet()),
-				Database.PUBMED
-			)
+		var links2 = restClient.buildLinksQueryForIdsAndDatabase(
+			result.getIds()
+				.collect(Collectors.toSet()),
+			Database.PUBMED
+		)
 			.command(Command.NEIGHBOR_SCORE)
 			.execute()
 			.get();

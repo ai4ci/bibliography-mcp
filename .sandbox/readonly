@@ -1,15 +1,13 @@
-.github/
-.claude/
-opencode.json
-.gitignore
-package-lock.json
-poetry.lock
-Cargo.lock
-pnpm-lock.yaml
-yarn.lock
-mise.toml
+# .sandbox/readonly — paths kept read-only inside the sandbox, one per line.
+# The baseline (~/.config/scoder/sandbox/readonly) already covers .github/,
+# .claude/, .gitignore and the common lockfiles — do not repeat them here.
 
+# API keys the Java client loads at runtime (ZoteroConfig, CachingApiClient,
+# the MCP server, and scripts/mcp-smoke-test.sh all default to this path).
 $HOME/.private/apis/secrets.prop
+
+# Sibling source projects: the parent POM and two compile dependencies.
+# Each has a .project file, so Eclipse imports them as source projects.
 $HOME/Git/m2repo
 $HOME/Git/fluentxml
 $HOME/Git/exotic-datatypes
