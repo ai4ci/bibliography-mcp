@@ -68,6 +68,7 @@ public class TestRecordModel {
 			"journal-article",
 			work.getProvenance()
 				.getNativeType()
+				.orElse(null)
 		);
 	}
 
@@ -151,7 +152,7 @@ public class TestRecordModel {
 		assertTrue(
 			lite.getProvenance()
 				.getNativeType()
-				.get()
+				.orElse("")
 				.contains("journal article")
 		);
 	}
@@ -313,7 +314,11 @@ public class TestRecordModel {
 			this.idType = idType;
 			this.authors = authors;
 			this.publisher = publisher;
-			this.provenance = Provenance.of(source, nativeType);
+			// a record with nothing recorded about where it came from: an unnamed
+			// source, which MergedRecord keeps distinct from any other unnamed one
+			this.provenance = source == null ? Provenance.placeholder("")
+				: nativeType == null ? Provenance.placeholder(source)
+					: Provenance.of(source, nativeType);
 			this.type = "crossref".equals(source) && "journal-article".equals(
 				nativeType
 			) ? "article-journal"

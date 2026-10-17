@@ -29,12 +29,12 @@ public interface Record extends RecordReference {
 	 * unknown values survive; sources pass their own value through when no mapping exists. Defaults to empty so that the
 	 * existing implementations keep compiling.
 	 */
+	@Value.Default
 	default Optional<String> getPublicationType() { return Optional.empty(); }
 
 	/** The publisher or issuing body: a journal's publisher, a book's publisher, a report's institution. */
-	default Optional<String> getPublisher() {
-		return Optional.empty();
-	}
+	@Value.Default
+	default Optional<String> getPublisher() { return Optional.empty(); }
 
 	/** Where this record's claims came from. */
 	Provenance getProvenance();

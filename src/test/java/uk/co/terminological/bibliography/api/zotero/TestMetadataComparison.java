@@ -530,7 +530,8 @@ public class TestMetadataComparison {
 			public Optional<java.net.URI> getPdfUri() { return Optional.empty(); }
 			@Override
 			public Provenance getProvenance() {
-				return Provenance.of(source, null);
+				// the source is known, the kind of work it called this is not
+				return Provenance.placeholder(source);
 			}
 		};
 	}

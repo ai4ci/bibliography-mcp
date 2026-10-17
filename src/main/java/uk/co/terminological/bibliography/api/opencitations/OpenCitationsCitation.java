@@ -117,7 +117,8 @@ public class OpenCitationsCitation extends ExtensibleJson
 			.flatMap(OpenCitationsCitation::pidFromPids)
 			.map(pid -> Builder.recordReference(pid.type, pid.value))
 			.orElse(null);
-		return Builder.citationReference(identifier, null, null);
+		return Builder
+			.citationReference(identifier, Optional.empty(), Optional.empty());
 	}
 
 	@Override

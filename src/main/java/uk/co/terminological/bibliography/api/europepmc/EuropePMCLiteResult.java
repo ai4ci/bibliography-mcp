@@ -116,7 +116,9 @@ public class EuropePMCLiteResult extends ExtensibleJson
 	}
 
 	public Provenance getProvenance() {
-		return Provenance.placeholder(Provenance.EUROPEPMC);
+		return this.getNativePubTypes()
+			.map(t -> Provenance.of(Provenance.EUROPEPMC, t))
+			.orElseGet(() -> Provenance.placeholder(Provenance.EUROPEPMC));
 	}
 
 	public Optional<Long> getCitedByCount() {

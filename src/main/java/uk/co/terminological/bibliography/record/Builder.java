@@ -132,8 +132,8 @@ public class Builder {
 		if (record instanceof PrintReference) { print = (PrintReference) record; }
 		return citationReference(
 			record.asId(),
-			Optional.of(title),
-			Optional.of(print)
+			Optional.ofNullable(title),
+			Optional.ofNullable(print)
 		);
 	}
 
@@ -163,7 +163,7 @@ public class Builder {
 			Optional<PrintReference> bib
 	) {
 		return ImmutableCitationReference.builder()
-			.identifier(identifier)
+			.identifier(Optional.ofNullable(identifier))
 			.title(title)
 			.bibliographicId(bib)
 			.build();
