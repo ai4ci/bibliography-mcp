@@ -16,12 +16,29 @@ import uk.co.terminological.bibliography.CiteProcProvider;
 import uk.co.terminological.bibliography.CiteProcProvider.Format;
 
 /**
- * The
+ * What one source says about one work: an identity, plus the bibliographic claims made about it.
+ *
+ * A {@code Record} is a <strong>statement by a source</strong>, not a library entry and not the truth. Two sources
+ * describing the same work give two records that may disagree, and resolving that is {@link MergedRecord}'s job, not
+ * this interface's — which is why {@link #getProvenance()} is required rather than optional: a claim with no
+ * attribution cannot be weighed against a competing one.
+ *
+ * The scope is deliberately narrow. Notes, tags, collections, attachments beyond a single pdf link, and full text all
+ * belong to a repository rather than to a statement about a work, and stay outside the model; the Zotero bridge has
+ * its own surface for them. What is in scope is whatever is needed to identify a work, say what kind of thing it is,
+ * and carry the fields that kind actually has.
+ *
+ * The API classes implement this directly over their own payloads rather than copying into it, so a field this
+ * interface does not name is still reachable on the implementation.
  */
 // [IMPLEMENTS](/design/features/feat-006-classify-records-by-type-with-provenance.md)
 @Value.Immutable
 public interface Record extends RecordReference {
 
+	/**
+	 * Other identifiers this source gave for the same work. The main route by which records from different APIs are
+	 * recognised as describing one work, alongside {@link RecordReferenceMapping}.
+	 */
 	List<RecordReference> getOtherIdentifiers();
 
 	/**

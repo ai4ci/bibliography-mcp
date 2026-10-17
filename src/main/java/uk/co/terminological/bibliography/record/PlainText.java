@@ -4,7 +4,8 @@ package uk.co.terminological.bibliography.record;
  * Reduces inline markup in a metadata field to plain text.
  *
  * Crossref returns abstracts as JATS XML, connector imports carry publisher HTML, and entity escapes turn up anywhere.
- * None of that is content: an abstract is the sentence it says, and a title with `&amp;` in it says "&". Reducing
+ * None of that is content: an abstract is the sentence it says, and a title with {@code &amp;amp;} in it says
+ * {@code &amp;}. Reducing
  * markup to text is the same question wherever it is asked, so it is asked once — in the record mapping, so every
  * consumer benefits, rather than at each point of use.
  *
