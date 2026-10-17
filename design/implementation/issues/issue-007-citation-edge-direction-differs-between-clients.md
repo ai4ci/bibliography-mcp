@@ -1,5 +1,5 @@
 ---
-status: open
+status: closed
 since-version: 0.1.0
 target-version: 0.3.0
 tags: citations, graph, data-integrity, entrez, europepmc
@@ -53,6 +53,26 @@ The defect is invisible in single-source use and in the offline tests, because
 each client's own fixtures are self-consistent. It only shows up once a session
 mixes citation sources, which is the default (`BiblioFacade.defaultApis()`
 routes `cites` to five APIs and `citedBy` to three).
+
+## Resolution
+
+Fixed 2026-10-17 (developer). The convention is **source cites target**, now
+documented on `CitationLink`, and the two divergent clients were brought into
+line:
+
+- `EntrezLinks.getCitations(boolean invert)` — the two branches were swapped, so
+  `citesReferences` (`invert=false`) now yields `citationLink(from, to)` with the
+  queried work as the citing source, and `referencesCiting` (`invert=true`)
+  yields `citationLink(to, from)` with the citing work as the source.
+- `EuropePMCClient.referencesCiting` — now builds `citationLink(target, source)`
+  where the loop variable holding the citing article becomes the link source.
+  `citesReferences` was already correct and was left behaving the same way; both
+  methods were renamed internally so the roles read off the code.
+
+Still outstanding, and the reason this could drift again: **there is no test
+asserting edge direction for any client.** The extraction tests assert that
+links are produced, not which way they point, which is why the defect survived
+this long. A fixture-based direction test per citation client is worth adding.
 
 ## Suggested fix
 

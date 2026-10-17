@@ -438,50 +438,53 @@ public class EuropePMCClient extends CachingApiClient
 
 	@Override
 	public Collection<? extends CitationLink> citesReferences(
-			Collection<? extends RecordReference> ref
+			Collection<? extends RecordReference> sources
 	) {
+
+		// The source cites a target
+		// The relationship is source --> target
 
 		Set<CitationLink> out = new HashSet<>();
 
-		for (RecordReference r : ref) {
+		for (RecordReference source : sources) {
 
-			if (r.getIdentifierType()
+			if (source.getIdentifierType()
 				.equals(IdType.PMID)) {
 				var i = 0;
-				for (EuropePMCReference r2 : this
+				for (EuropePMCReference target : this
 					.references(
 						DataSources.MED,
-						r.getIdentifier()
+						source.getIdentifier()
 							.get()
 					)
 					.getItems()
 					.collect(Collectors.toList())) {
-					out.add(Builder.citationLink(r, r2, i));
+					out.add(Builder.citationLink(source, target, i));
 				}
 			}
 
-			if (r.getIdentifierType()
+			if (source.getIdentifierType()
 				.equals(IdType.DOI)) {
 				var i = 0;
-				for (EuropePMCReference r2 : this.referencesForDoi(
-					r.getIdentifier()
+				for (EuropePMCReference target : this.referencesForDoi(
+					source.getIdentifier()
 						.get()
 				)) {
-					out.add(Builder.citationLink(r, r2, i));
+					out.add(Builder.citationLink(source, target, i));
 				}
 			}
-			if (r.getIdentifierType()
+			if (source.getIdentifierType()
 				.equals(IdType.PMCID)) {
 				var i = 0;
-				for (EuropePMCReference r2 : this
+				for (EuropePMCReference target : this
 					.references(
 						DataSources.PMC,
-						r.getIdentifier()
+						source.getIdentifier()
 							.get()
 					)
 					.getItems()
 					.collect(Collectors.toList())) {
-					out.add(Builder.citationLink(r, r2, i));
+					out.add(Builder.citationLink(source, target, i));
 				}
 			}
 		}
@@ -492,50 +495,53 @@ public class EuropePMCClient extends CachingApiClient
 
 	@Override
 	public Collection<? extends CitationLink> referencesCiting(
-			Collection<? extends RecordReference> ref
+			Collection<? extends RecordReference> sources
 	) {
+
+		// The articles (target) that site this source
+		// The link should be target --> source
 
 		Set<CitationLink> out = new HashSet<>();
 
-		for (RecordReference r : ref) {
+		for (RecordReference source : sources) {
 
-			if (r.getIdentifierType()
+			if (source.getIdentifierType()
 				.equals(IdType.PMID)) {
 				var i = 0;
-				for (EuropePMCCitation r2 : this
+				for (EuropePMCCitation target : this
 					.citations(
 						DataSources.MED,
-						r.getIdentifier()
+						source.getIdentifier()
 							.get()
 					)
 					.getItems()
 					.collect(Collectors.toList())) {
-					out.add(Builder.citationLink(r, r2, i));
+					out.add(Builder.citationLink(target, source, i));
 				}
 			}
 
-			if (r.getIdentifierType()
+			if (source.getIdentifierType()
 				.equals(IdType.DOI)) {
 				var i = 0;
-				for (EuropePMCCitation r2 : this.citationsForDoi(
-					r.getIdentifier()
+				for (EuropePMCCitation target : this.citationsForDoi(
+					source.getIdentifier()
 						.get()
 				)) {
-					out.add(Builder.citationLink(r, r2, i));
+					out.add(Builder.citationLink(target, source, i));
 				}
 			}
-			if (r.getIdentifierType()
+			if (source.getIdentifierType()
 				.equals(IdType.PMCID)) {
 				var i = 0;
-				for (EuropePMCCitation r2 : this
+				for (EuropePMCCitation target : this
 					.citations(
 						DataSources.PMC,
-						r.getIdentifier()
+						source.getIdentifier()
 							.get()
 					)
 					.getItems()
 					.collect(Collectors.toList())) {
-					out.add(Builder.citationLink(r, r2, i));
+					out.add(Builder.citationLink(target, source, i));
 				}
 			}
 		}

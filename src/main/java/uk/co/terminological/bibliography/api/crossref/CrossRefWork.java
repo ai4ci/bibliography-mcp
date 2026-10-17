@@ -114,6 +114,7 @@ public class CrossRefWork extends ExtensibleJson
 		return this.streamPath(CrossRefContributor.class, "author")
 			.collect(Collectors.toList());
 	}
+
 	public Stream<CrossRefReference> getReferences() {
 		return this.streamPath(CrossRefReference.class, "reference");
 	}

@@ -124,9 +124,9 @@ public class EntrezLinks implements Raw<XmlElement> {
 				var lhs = Builder.recordReference(lookup.get(l.fromDb), l.fromId);
 
 				if (invert)
-					return Builder.citationLink(lhs, rhs, null);
-				else
 					return Builder.citationLink(rhs, lhs, null);
+				else
+					return Builder.citationLink(lhs, rhs, null);
 			});
 
 	}
