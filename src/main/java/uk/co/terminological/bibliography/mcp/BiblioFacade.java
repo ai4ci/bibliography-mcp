@@ -64,7 +64,7 @@ public class BiblioFacade
 
 	public static Map<String, List<String>> defaultApis() {
 		Map<String, List<String>> out = new LinkedHashMap<>();
-		out.put("search", List.of("crossref", "entrez", "europepmc", "medrxiv"));
+		out.put("search", List.of("crossref", "entrez", "europepmc"));
 		// medRxiv joins the citation sources as the only route to a preprint's own
 		// reference list, and ignores anything that is not a 10.1101 DOI
 		out.put(
