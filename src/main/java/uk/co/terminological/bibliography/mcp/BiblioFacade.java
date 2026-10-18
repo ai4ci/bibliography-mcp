@@ -464,9 +464,6 @@ public class BiblioFacade
 				} else if (api.equals("europepmc")) {
 					tmp = this.biblioFacade.api.getEuropePMC()
 						.search(this.qry);
-				} else if (api.equals("medrxiv")) {
-					tmp = this.biblioFacade.api.getMedrxiv()
-						.search(this.qry);
 				}
 				log.info("Search found {} hits in {}", tmp.size(), api);
 				out.addAll(tmp);
@@ -498,9 +495,6 @@ public class BiblioFacade
 					.search(search);
 			} else if (searchApi.equals("europepmc")) {
 				tmp = this.api.getEuropePMC()
-					.search(search);
-			} else if (searchApi.equals("medrxiv")) {
-				tmp = this.api.getMedrxiv()
 					.search(search);
 			}
 			log.info(

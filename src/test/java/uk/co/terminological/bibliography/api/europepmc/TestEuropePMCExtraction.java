@@ -113,6 +113,19 @@ public class TestEuropePMCExtraction {
 	}
 
 	@Test
+	public void coreResultsReportTheirJournalThroughTheRecordInterface() {
+		// getJournal() reads a top-level `journalTitle`, which only a *lite* response
+		// carries; a core response nests it under journalInfo.journal.title. search()
+		// returns core results, so every record it yields has no container title --
+		// which feeds merging, the Zotero cleanup report and any journal comparison
+		assertEquals(
+			"BMC infectious diseases",
+			med.getJournal()
+				.orElse(null)
+		);
+	}
+
+	@Test
 	public void coreResultsCarryTheMedlineAbbreviationFromJournalInfo() {
 		// no getter exists for it — the field is pinned through the raw node
 		String abbr = med.getRaw()

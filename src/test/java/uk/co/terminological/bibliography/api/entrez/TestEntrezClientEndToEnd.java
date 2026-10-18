@@ -144,4 +144,23 @@ public class TestEntrezClientEndToEnd {
 			);
 		}
 	}
+
+	/**
+	 * PMID 31285980 is an ahead-of-print article: ArticleDate 2015-03-23, journal issue June 2019, entered PubMed
+	 * 2019-07-10. PubMed's own pdat filter matches the 2015 date, so that is the one Record.getDate() has to report for a
+	 * date-windowed search to be self-consistent. Live rather than fixture-based because no recorded fixture carries an
+	 * ArticleDate.
+	 */
+	@Test
+	public void anAheadOfPrintRecordReportsItsElectronicPublicationDate() {
+		var entry = entrez.getPMEntryByPMId("31285980");
+		assertTrue("PMID 31285980 should be retrievable", entry.isPresent());
+
+		assertEquals(
+			java.time.LocalDate.of(2015, 3, 23),
+			entry.get()
+				.getDate()
+				.orElse(null)
+		);
+	}
 }

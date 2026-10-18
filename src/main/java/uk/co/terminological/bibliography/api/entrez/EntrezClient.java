@@ -223,10 +223,7 @@ public class EntrezClient extends CachingApiClient
 				.stream()
 				.map(ESearchFields.JOURNAL::searchTerm)
 				.forEach(this.terms::add);
-			qry.getAfter()
-				.ifPresent(this::since);
-			qry.getUntil()
-				.ifPresent(this::until);
+			this.between(qry.getAfter(), qry.getUntil());
 			qry.getLimit()
 				.ifPresent(l -> this.limit(0, l));
 			return this;
@@ -248,19 +245,22 @@ public class EntrezClient extends CachingApiClient
 			return this;
 		}
 
-		public ESearchQueryBuilder since(LocalDate start) {
-			this.searchParams.remove("mindate");
-			this.searchParams.remove("datetype");
-			this.searchParams.add("datetype", "edat");
-			this.searchParams.add("mindate", start.format(this.formatter));
-			return this;
-		}
-
-		public ESearchQueryBuilder until(LocalDate end) {
-			this.searchParams.remove("maxdate");
-			this.searchParams.remove("datetype");
-			this.searchParams.add("datetype", "edat");
-			this.searchParams.add("maxdate", end.format(this.formatter));
+		public ESearchQueryBuilder between(
+				Optional<LocalDate> from, Optional<LocalDate> to
+		) {
+			if (from.isPresent() || to.isPresent()) {
+				var fromStr = from.map(d -> d.format(this.formatter))
+					.orElse("1900-01-01");
+				var toStr = to.orElse(LocalDate.now())
+					.format(this.formatter);
+				this.searchParams.remove("mindate");
+				this.searchParams.remove("datetype");
+				this.searchParams.remove("maxdate");
+				this.searchParams.add("datetype", "pdat");
+				this.searchParams.add("mindate", fromStr);
+				this.searchParams.add("datetype", "pdat");
+				this.searchParams.add("maxdate", toStr);
+			}
 			return this;
 		}
 
@@ -270,14 +270,26 @@ public class EntrezClient extends CachingApiClient
 			return this;
 		}
 
+		/**
+		 * The eSearch {@code term} this builder would send, assembled exactly as {@link #execute()} assembles it.
+		 *
+		 * Exposed so the translation from a {@link Query} can be asserted without a network call: the native syntax is the part
+		 * most likely to be wrong, and it is otherwise only observable by making the request.
+		 */
+		public String term() {
+			return this.terms.stream()
+				.collect(Collectors.joining(" AND "));
+		}
+
+		/** The request parameters as they stand, for the same reason as {@link #term()}. Live, not a copy. */
+		public MultivaluedMap<String, String> params() {
+			return this.searchParams;
+		}
+
 		@Override
 		public Optional<EntrezSearch> execute() {
 			if (this.terms.isEmpty()) return Optional.empty();
-			this.searchParams.add(
-				"term",
-				this.terms.stream()
-					.collect(Collectors.joining(" AND "))
-			);
+			this.searchParams.add("term", this.term());
 
 			return this.client.buildCall(ESEARCH, EntrezSearch.class)
 				.withParams(this.searchParams)

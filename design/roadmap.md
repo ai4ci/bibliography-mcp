@@ -666,6 +666,31 @@ different jobs, and the coverage question is folded into
 [HAS_FEATURE](/design/features/feat-009-preprint-clients.md) rather than decided
 here.
 
+### Correction (2026-10-17): coverage is not partial
+
+The "coverage is partial" finding above came from three sampled DOIs and is
+wrong. Measured properly — Europe PMC `SRC:PPR` hit counts against each
+server's own count of distinct preprints — Europe PMC indexes **99-100%** of
+both servers, including the current year:
+
+| window | server | Europe PMC | server's new papers | coverage |
+|---|---|---:|---:|---|
+| 2024 H1 | medRxiv | 6,170 | 6,175 | 99.9% |
+| 2024 H1 | bioRxiv | 20,871 | 20,875 | 100.0% |
+| 2026 H1 | medRxiv | 7,983 | 8,067 | 99.0% |
+| 2026 H1 | bioRxiv | 26,555 | 26,549 | 100.0% |
+
+The earlier sample was misleading because a bare DOI lookup can miss a record
+the index does hold.
+
+This matters now rather than academically: bioRxiv has put its HTML search
+behind a Cloudflare challenge, so the scraped `MedrxivClient.search` cannot work
+at all — see
+[issue-015](/design/implementation/issues/issue-015-preprint-html-search-is-blocked-by-cloudflare.md).
+Europe PMC is the replacement for preprint *search*. The conclusion above stands
+unchanged for everything else: the servers' own JSON API remains the only source
+of their native metadata, the JATS full text and the published-version mapping.
+
 ---
 
 ## 7. (template for further ideas)

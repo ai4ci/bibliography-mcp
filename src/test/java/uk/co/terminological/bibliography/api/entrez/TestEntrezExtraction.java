@@ -16,11 +16,6 @@ import java.util.stream.Collectors;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import uk.co.terminological.bibliography.api.entrez.EntrezEntries;
-import uk.co.terminological.bibliography.api.entrez.EntrezEntry;
-import uk.co.terminological.bibliography.api.entrez.EntrezLink;
-import uk.co.terminological.bibliography.api.entrez.EntrezLinks;
-import uk.co.terminological.bibliography.api.entrez.EntrezSearch;
 import uk.co.terminological.fluentxml.Xml;
 
 /**
@@ -111,11 +106,8 @@ public class TestEntrezExtraction {
 			canonical.getIssue()
 				.orElse("<none>")
 		);
-		// getDate() reads PubMedPubDate[@PubStatus='pubmed'] — the date MEDLINE
-		// indexed the citation (27th) — not the journal PubDate (26th) that
-		// Unpaywall and EuropePMC report; each source is pinned to itself
 		assertEquals(
-			LocalDate.of(2026, 3, 27),
+			LocalDate.of(2026, 3, 26),
 			canonical.getDate()
 				.orElseThrow()
 		);
@@ -124,6 +116,27 @@ public class TestEntrezExtraction {
 			canonical.getAbstract()
 				.orElse("<none>")
 				.length() > 200
+		);
+	}
+
+	@Test
+	public void theRecordDateIsWhenTheWorkWasPublished() {
+		// Still failing, and narrowed. getDate() now prefers Article/ArticleDate,
+		// which is the electronic publication date and the one PubMed's own pdat
+		// filter matches. This record has no ArticleDate, so it falls back to
+		// PubMedPubDate[@PubStatus='pubmed'] -- when the record entered PubMed --
+		// and reports 2026-03-27 where the issue date is 2026-03-26.
+		//
+		// The remaining gap is the middle fallback: Article/Journal/JournalIssue/
+		// PubDate, deliberately not implemented because it carries partial
+		// precision (a bare year, "2019 Jun", or a MedlineDate like
+		// "2019 Jun-Jul") that Optional<LocalDate> cannot represent. See
+		// issue-014: the fix needs a decision about partial dates, not just a
+		// parser.
+		assertEquals(
+			LocalDate.of(2026, 3, 26),
+			canonical.getDate()
+				.orElse(null)
 		);
 	}
 

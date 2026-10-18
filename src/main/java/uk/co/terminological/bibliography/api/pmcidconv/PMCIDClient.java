@@ -117,6 +117,7 @@ public class PMCIDClient extends CachingApiClient implements IdMapper {
 		for (String nextId : id2) {
 			if (cache.containsKey(this.keyFrom(nextId, idType))) {
 				try {
+					// caches by single id and type
 					var tmp = this.objectMapper.readValue(
 						cache.get(this.keyFrom(nextId, idType))
 							.inputStream(),

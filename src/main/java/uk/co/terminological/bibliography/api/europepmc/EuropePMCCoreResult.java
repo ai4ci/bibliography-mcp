@@ -14,6 +14,7 @@ import java.util.stream.Stream;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import uk.co.terminological.bibliography.ExtensibleJson;
 import uk.co.terminological.bibliography.record.Author;
 import uk.co.terminological.bibliography.record.IdType;
 import uk.co.terminological.bibliography.record.PrintRecord;
@@ -60,6 +61,13 @@ public class EuropePMCCoreResult extends EuropePMCLiteResult
 	public List<Author> getAuthors() {
 		return this.streamPath(EuropePMCAuthor.class, "authorList", "author")
 			.collect(Collectors.toList());
+	}
+
+	@Override
+	public Optional<String> getJournal() {
+		return this.streamPath("journalInfo", "journal", "title")
+			.map(ExtensibleJson::asString)
+			.findFirst();
 	}
 
 	@Override

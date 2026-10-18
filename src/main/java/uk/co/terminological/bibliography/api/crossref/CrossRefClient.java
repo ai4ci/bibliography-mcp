@@ -265,12 +265,16 @@ public class CrossRefClient extends CachingApiClient
 		}
 
 		public QueryBuilder since(LocalDate date) {
+			// Deliberately not from published date as not well supported
+			// in crossref records
 			this.params
 				.add("filter", "from-created-date:" + date.format(this.formatter));// date.format(format);//format.format(date));
 			return this;
 		}
 
 		public QueryBuilder until(LocalDate date) {
+			// Deliberately not from published date as not well supported
+			// in crossref records
 			this.params
 				.add("filter", "until-created-date:" + date.format(this.formatter));
 			return this;
@@ -338,6 +342,22 @@ public class CrossRefClient extends CachingApiClient
 			return this;
 		}
 
+		/**
+		 * The request parameters this builder would send.
+		 *
+		 * Exposed so the translation from a {@link Query} can be asserted without a network call: CrossRef carries the whole
+		 * query in its parameters (repeated {@code filter} and {@code query.*} entries) rather than in one query string, and
+		 * which filter name is used is exactly the thing worth asserting. Live, not a copy.
+		 */
+		public MultivaluedMap<String, String> params() {
+			return this.params;
+		}
+
+		/** The endpoint this builder would call. */
+		public String url() {
+			return this.url;
+		}
+
 		@Override
 		public Optional<CrossRefListResult> execute() {
 			return this.client.buildCall(this.url, CrossRefListResult.class)
@@ -358,6 +378,8 @@ public class CrossRefClient extends CachingApiClient
 
 		@Override
 		public SearchBuilder<CrossRefListResult> withQuery(Query qry) {
+			qry.getNativeQuery()
+				.ifPresent(this::withSearchTerm);
 			qry.getLimit()
 				.ifPresent(this::limit);
 			qry.getAllFields()
@@ -374,7 +396,7 @@ public class CrossRefClient extends CachingApiClient
 				.ifPresent(this::since);
 			qry.getUntil()
 				.ifPresent(this::until);
-			return null;
+			return this;
 		}
 	}
 
@@ -395,7 +417,7 @@ public class CrossRefClient extends CachingApiClient
 	// https://api.crossref.org/swagger-docs
 	public enum Field {
 		TITLE, CONTAINER_TITLE, AUTHOR, EDITOR, CHAIR, TRANSLATOR, CONTRIBUTOR,
-		BIBLIOGRAPHIC, AFFIILIATION
+		BIBLIOGRAPHIC, AFFILIATION
 	}
 
 	public enum Sort {

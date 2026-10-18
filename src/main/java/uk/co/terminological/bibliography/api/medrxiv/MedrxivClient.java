@@ -3,8 +3,6 @@ package uk.co.terminological.bibliography.api.medrxiv;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.nio.file.Path;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -14,7 +12,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.core.MultivaluedMap;
@@ -25,16 +22,11 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.jersey.api.uri.UriComponent;
-import com.sun.jersey.api.uri.UriComponent.Type;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 
 import uk.co.terminological.bibliography.CachingApiClient;
 import uk.co.terminological.bibliography.client.CitesMapper;
-import uk.co.terminological.bibliography.client.Query;
 import uk.co.terminological.bibliography.client.RecordFetcher;
-import uk.co.terminological.bibliography.client.SearchBuilder;
-import uk.co.terminological.bibliography.client.Searcher;
 import uk.co.terminological.bibliography.jats.JatsEntry;
 import uk.co.terminological.bibliography.record.Builder;
 import uk.co.terminological.bibliography.record.CitationLink;
@@ -62,7 +54,7 @@ import uk.co.terminological.fluentxml.Xml;
  * [IMPLEMENTS](/design/features/feat-009-preprint-clients.md)
  */
 public class MedrxivClient extends CachingApiClient
-		implements Searcher, RecordFetcher, CitesMapper {
+		implements RecordFetcher, CitesMapper {
 
 	static Logger log = LoggerFactory.getLogger(MedrxivClient.class);
 
@@ -272,239 +264,174 @@ public class MedrxivClient extends CachingApiClient
 
 	/** used when a caller gives no window: preprints matter most when they are new */
 
-	@Override
-	public SearchQueryBuilder buildQuery() {
-		return new SearchQueryBuilder(this);
-	}
-
-	public static class SearchQueryBuilder
-			implements SearchBuilder<MedrxivSearch> {
-
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-		List<String> terms = new ArrayList<>();
-		int authors = 0;
-
-		MedrxivClient client;
-
-		public SearchQueryBuilder(MedrxivClient medrxivClient) {
-			this.client = medrxivClient;
-			this.field("format-result", "standard");
-			this.field("jcode", "medrxiv||biorxiv");
-			this.field("sort", "relevance-rank");
-		}
-
-		public SearchQueryBuilder author(String author) {
-			this.field("author" + (this.authors + 1), author);
-			this.authors += 1;
-			return this;
-		}
-
-		private SearchQueryBuilder field(String field, String value) {
-			this.terms.add(field + ":" + this.asValue(value));
-			return this;
-		}
-
-		private Consumer<String> addField(String field) {
-			return s -> this.field(field, s);
-		}
-
-		private String asValue(String value) {
-			return value.replaceAll("\\s+", "+");
-		}
-
-		public SearchQueryBuilder abstractTitle(String term) {
-			this.field("abstract_title", term);
-			this.field("abstract_title_flags", "match-all");
-			return this;
-		}
-
-		public SearchQueryBuilder fullText(String term) {
-			this.field("text_abstract_title", term);
-			this.field("text_abstract_title_flags", "match-all");
-			return this;
-		}
-
-		public SearchQueryBuilder limit(Optional<Integer> l) {
-			l.map(i -> i.toString())
-				.ifPresent(this.addField("numresults"));
-			return this;
-		}
-
-		public SearchQueryBuilder since(Optional<LocalDate> l) {
-			l.map(i -> i.format(this.formatter))
-				.ifPresent(this.addField("limit_from"));
-			return this;
-		}
-
-		public SearchQueryBuilder until(Optional<LocalDate> l) {
-			l.map(i -> i.format(this.formatter))
-				.ifPresent(this.addField("limit_to"));
-			return this;
-		}
-
-		@Override
-		public SearchQueryBuilder withQuery(Query qry) {
-
-			qry.getNativeQuery()
-				.ifPresent(this.terms::add);
-			qry.getAllFields()
-				.stream()
-				.map(this::asValue)
-				.forEach(this.terms::add);
-			qry.getTitleAbstract()
-				.ifPresent(this::abstractTitle);
-			qry.getAllFields()
-				.ifPresent(this::fullText);
-			qry.getFullText()
-				.forEach(this::fullText);
-
-			this.limit(qry.getLimit());
-			this.since(qry.getAfter());
-			this.until(qry.getUntil());
-
-			qry.getAuthors()
-				.stream()
-				.map(this::author);
-			return this;
-		}
-
-		@Override
-		public Optional<MedrxivSearch> execute() {
-			if (this.terms.size() == 0) return Optional.empty();
-			var qry = this.terms.stream()
-				.collect(Collectors.joining(" "));
-
-			var url = SEARCH + UriComponent.encode(qry, Type.PATH);
-
-			return this.client.buildCall(url, MedrxivSearch.class)
-				.withOperation(is -> {
-					var resp = Xml.fromStream(is);
-					return new MedrxivSearch(resp.content());
-				})
-				.get();
-		}
-
-	}
-
-	protected enum SearchFields {
-		AUTHOR(
-				"author"
-		), TITLE_ABSTRACT(
-				"abstract_title"
-		), TEXT(
-				"text_abstract_title"
-		), ALL(
-				null
-		);
-
-		private String marker;
-		SearchFields(String m) {
-			this.marker = m;
-		}
-		public String searchTerm(String value) {
-			if (this.marker == null) return value;
-			return this.marker + ":" + value;
-		}
-	}
-
-	// TODO: This was generated and has skipped the concept of a search query builder
-	// I think this
-
-	// Need to scrape HMTL. Medrxiv or biorxiv can search both.
-	// https://www.biorxiv.org/search/
-
-	// medrxiv search strings:
-	// long%2Bcovid author1:challen author2:danon jcode:medrxiv limit_from:2026-07-10 numresults:10 sort:relevance-rank
-	// format_result:standard
-	// long%2Bcovid author1:challen author2:danon abstract_title:abstract+or+title+text abstract_title_flags:match-all
-	// text_abstract_title:full+text text_abstract_title_flags:match-all jcode:medrxiv limit_from:2026-07-10
-	// limit_to:2027-02-16 numresults:10 sort:relevance-rank format_result:standard
-	// p53 author1:challen jcode:medrxiv||biorxiv numresults:10 sort:relevance-rank format_result:standard
-
-	/**
-	 * The dates are the API's natural axis: `api.biorxiv.org` lists what was posted in a window, cursor-paged, and has no
-	 * keyword search at all. A term is therefore applied to what comes back rather than sent to the server, which is worth
-	 * knowing when results look narrower than expected — Europe PMC indexes preprints *and* searches words.
-	 */
-	@Override
-	public Collection<Record> search(Query qry) {
-		var tmp = this.buildQuery()
-			.withQuery(qry);
-		return tmp.execute()
-			.stream()
-			.flatMap(MedrxivSearch::stream)
-			.collect(Collectors.toList());
-	}
-
-//	private List<Record> window(
-//			String server, LocalDate from, LocalDate to, String term, int wanted
-//	) {
-//		List<Record> out = new ArrayList<>();
-//		var cursor = 0;
-//		var windowTotal = Integer.MAX_VALUE;
-//		for (var page = 0; page < MAX_PAGES && out.size() < wanted; page++) {
-//			var response = this.windowJson(server, from, to, cursor);
-//			if (!response.isPresent()) { break; }
-//			var collection = response.get()
-//				.path("collection");
-//			if (!collection.isArray() || collection.size() == 0) { break; }
-//			for (JsonNode version : collection) {
-//				var record = new MedrxivRecord(version, server);
-//				if (matches(record, term)) { out.add(record); }
-//			}
-//			cursor += collection.size();
-//			windowTotal = response.get()
-//				.path("messages")
-//				.path(0)
-//				.path("total")
-//				.asInt(cursor);
-//		}
-//		if (cursor < windowTotal) {
-//			// a month can hold thousands of preprints and the API pages thirty at a
-//			// time, so a search of a busy window is partial by construction: say so
-//			log.info(
-//				"medRxiv {}: scanned {} of {} records in the window; narrow the dates for fuller coverage",
-//				server,
-//				cursor,
-//				windowTotal
-//			);
-//		}
-//		return out.size() > wanted ? out.subList(0, wanted) : out;
+//	@Override
+//	public SearchQueryBuilder buildQuery() {
+//		return new SearchQueryBuilder(this);
 //	}
 //
-//	private Optional<JsonNode> windowJson(
-//			String server, LocalDate from, LocalDate to, int cursor
-//	) {
-//		return this
-//			.buildCall(
-//				API + "/details/" + server + "/" + from + "/" + to + "/" + cursor,
-//				JsonNode.class
-//			)
-//			.withParams(this.defaultApiParams())
-//			.withOperation(is -> this.mapper.readTree(is))
-//			.get();
+//	public static class SearchQueryBuilder
+//			implements SearchBuilder<MedrxivSearch> {
+//
+//		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+//		List<String> terms = new ArrayList<>();
+//		int authors = 0;
+//
+//		MedrxivClient client;
+//
+//		public SearchQueryBuilder(MedrxivClient medrxivClient) {
+//			this.client = medrxivClient;
+//			this.field("format-result", "standard");
+//			this.field("jcode", "medrxiv||biorxiv");
+//			this.field("sort", "relevance-rank");
+//		}
+//
+//		public SearchQueryBuilder author(String author) {
+//			this.field("author" + (this.authors + 1), author);
+//			this.authors += 1;
+//			return this;
+//		}
+//
+//		private SearchQueryBuilder field(String field, String value) {
+//			this.terms.add(field + ":" + this.asValue(value));
+//			return this;
+//		}
+//
+//		private Consumer<String> addField(String field) {
+//			return s -> this.field(field, s);
+//		}
+//
+//		private String asValue(String value) {
+//			return value.replaceAll("\\s+", "+");
+//		}
+//
+//		public SearchQueryBuilder abstractTitle(String term) {
+//			this.field("abstract_title", term);
+//			this.field("abstract_title_flags", "match-all");
+//			return this;
+//		}
+//
+//		public SearchQueryBuilder fullText(String term) {
+//			this.field("text_abstract_title", term);
+//			this.field("text_abstract_title_flags", "match-all");
+//			return this;
+//		}
+//
+//		public SearchQueryBuilder limit(Optional<Integer> l) {
+//			l.map(i -> i.toString())
+//				.ifPresent(this.addField("numresults"));
+//			return this;
+//		}
+//
+//		public SearchQueryBuilder since(Optional<LocalDate> l) {
+//			l.map(i -> i.format(this.formatter))
+//				.ifPresent(this.addField("limit_from"));
+//			return this;
+//		}
+//
+//		public SearchQueryBuilder until(Optional<LocalDate> l) {
+//			l.map(i -> i.format(this.formatter))
+//				.ifPresent(this.addField("limit_to"));
+//			return this;
+//		}
+//
+//		@Override
+//		public SearchQueryBuilder withQuery(Query qry) {
+//
+//			qry.getNativeQuery()
+//				.ifPresent(this.terms::add);
+//			qry.getTitleAbstract()
+//				.ifPresent(this::abstractTitle);
+//			qry.getAllFields()
+//				.ifPresent(this::fullText);
+//			qry.getFullText()
+//				.forEach(this::fullText);
+//
+//			this.limit(qry.getLimit());
+//			this.since(qry.getAfter());
+//			this.until(qry.getUntil());
+//
+//			qry.getAuthors()
+//				.forEach(this::author);
+//			return this;
+//		}
+//
+//		/**
+//		 * The search expression this builder would put in the request path, assembled exactly as {@link #execute()} assembles
+//		 * it (before URL encoding).
+//		 *
+//		 * Exposed so the translation from a {@link Query} can be asserted without a network call. It matters more here than
+//		 * elsewhere because this is not a documented API but the preprint servers' HTML search interface, where a malformed
+//		 * expression returns a plausible-looking page rather than an error.
+//		 */
+//		public String query() {
+//			return this.terms.stream()
+//				.collect(Collectors.joining(" "));
+//		}
+//
+//		@Override
+//		public Optional<MedrxivSearch> execute() {
+//			if (this.terms.size() == 0) return Optional.empty();
+//			var qry = this.query();
+//
+//			var url = SEARCH + UriComponent.encode(qry, Type.PATH);
+//
+//			return this.client.buildCall(url, MedrxivSearch.class)
+//				.withOperation(is -> {
+//					var resp = Xml.fromStream(is);
+//					return new MedrxivSearch(resp.content());
+//				})
+//				.get();
+//		}
+//
 //	}
+//
+//	protected enum SearchFields {
+//		AUTHOR(
+//				"author"
+//		), TITLE_ABSTRACT(
+//				"abstract_title"
+//		), TEXT(
+//				"text_abstract_title"
+//		), ALL(
+//				null
+//		);
+//
+//		private String marker;
+//		SearchFields(String m) {
+//			this.marker = m;
+//		}
+//		public String searchTerm(String value) {
+//			if (this.marker == null) return value;
+//			return this.marker + ":" + value;
+//		}
+//	}
+//
+//	// Need to scrape HMTL. Medrxiv or biorxiv can search both.
+//	// https://www.biorxiv.org/search/
+// // HOWEVER this can't be done automatically as the cloudflare captcha is triggered
+// // A solution using zenapi was tried but that also did not work. 	
+//
+//	// medrxiv search strings:
+//	// long%2Bcovid author1:challen author2:danon jcode:medrxiv limit_from:2026-07-10 numresults:10 sort:relevance-rank
+//	// format_result:standard
+//	// long%2Bcovid author1:challen author2:danon abstract_title:abstract+or+title+text abstract_title_flags:match-all
+//	// text_abstract_title:full+text text_abstract_title_flags:match-all jcode:medrxiv limit_from:2026-07-10
+//	// limit_to:2027-02-16 numresults:10 sort:relevance-rank format_result:standard
+//	// p53 author1:challen jcode:medrxiv||biorxiv numresults:10 sort:relevance-rank format_result:standard
 //
 //	/**
-//	 * Whether a record matches the term. Every word must appear somewhere in the title or the abstract: a whole phrase as
-//	 * one substring almost never matches, which made a two-word query return nothing at all in a window holding 1498
-//	 * preprints.
+//	 * The dates are the API's natural axis: `api.biorxiv.org` lists what was posted in a window, cursor-paged, and has no
+//	 * keyword search at all. A term is therefore applied to what comes back rather than sent to the server, which is worth
+//	 * knowing when results look narrower than expected — Europe PMC indexes preprints *and* searches words.
 //	 */
-//	static boolean matches(MedrxivRecord record, String term) {
-//		if (term == null || term.trim()
-//			.isEmpty()) return true;
-//		var haystack = (record.getTitle()
-//			.orElse("") + " "
-//				+ record.getAbstract()
-//					.orElse(""))
-//			.toLowerCase(java.util.Locale.ROOT);
-//		for (String word : term.trim()
-//			.toLowerCase(java.util.Locale.ROOT)
-//			.split("\\s+")) {
-//			if (word.length() < 2) { continue; }
-//			if (!haystack.contains(word)) return false;
-//		}
-//		return true;
+//	@Override
+//	public Collection<Record> search(Query qry) {
+//		var tmp = this.buildQuery()
+//			.withQuery(qry);
+//		return tmp.execute()
+//			.stream()
+//			.flatMap(MedrxivSearch::stream)
+//			.collect(Collectors.toList());
 //	}
 
 }

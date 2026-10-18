@@ -128,9 +128,19 @@ public class EntrezEntry implements PrintRecord, Raw<XmlElement> {
 	@Override
 	public Optional<LocalDate> getDate() {
 		try {
-			Optional<XmlElement> date = this.raw
-				.doXpath(".//PubMedPubDate[@PubStatus='pubmed']")
+			Optional<XmlElement> date = this.raw.doXpath(".//Article/ArticleDate")
 				.get(XmlElement.class);
+//			if (date.isEmpty()) {
+//				date = this.raw.doXpath(".//Article/Journal/JournalIssue/PubDate")
+//					.get(XmlElement.class);
+//			}
+//			`PubDate` needs care: it is not always a full date. It can be a year alone, a
+//			year plus a month name (`2019 Jun`), or a `MedlineDate` string such as
+//			`2019 Jun-Jul`
+			if (date.isEmpty()) {
+				date = this.raw.doXpath(".//PubMedPubDate[@PubStatus='pubmed']")
+					.get(XmlElement.class);
+			}
 			return date.flatMap(el -> {
 				Optional<Integer> year = el.childElements("Year")
 					.findFirst()

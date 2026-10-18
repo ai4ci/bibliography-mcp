@@ -7,6 +7,7 @@ import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -68,8 +69,12 @@ public class TestEndToEnd {
 		var result = pubmed.buildQuery()
 			.searchTerm("machine learning")
 			.limit(0, 50)
-			.since(LocalDate.of(2016, 01, 1))
-			.until(LocalDate.of(2017, 01, 1))
+			// since()/until() were replaced by between(): eSearch ignores a date range
+			// unless both ends are supplied, so the one-sided builders were a trap
+			.between(
+				Optional.of(LocalDate.of(2016, 01, 1)),
+				Optional.of(LocalDate.of(2017, 01, 1))
+			)
 			.execute()
 			.get();
 

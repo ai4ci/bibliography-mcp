@@ -131,7 +131,8 @@ public class EuropePMCClient extends CachingApiClient
 
 	protected enum SearchFields {
 		JOURNAL(
-				null//has to be exact match on journal title if specified in the search string
+				null// This is deliberately set to a full text search field as otherwise
+		// EPM needs an exact match on the journal short title
 		), AUTHOR(
 				"AUTH"
 		), TITLE_ABSTRACT(
@@ -210,13 +211,25 @@ public class EuropePMCClient extends CachingApiClient
 			return this;
 		}
 
+		/**
+		 * The {@code query} this builder would send, assembled exactly as {@link #execute()} assembles it.
+		 *
+		 * Exposed so the translation from a {@link Query} can be asserted without a network call: the native syntax is the part
+		 * most likely to be wrong, and it is otherwise only observable by making the request.
+		 */
+		public String query() {
+			return this.terms.stream()
+				.collect(Collectors.joining(" AND "));
+		}
+
+		/** The request parameters as they stand, for the same reason as {@link #query()}. Live, not a copy. */
+		public MultivaluedMap<String, String> params() {
+			return this.searchParams;
+		}
+
 		public Optional<EuropePMCListResult<EuropePMCLiteResult>> executeLite() {
 			if (this.terms.size() == 0) return Optional.empty();
-			this.searchParams.add(
-				"query",
-				this.terms.stream()
-					.collect(Collectors.joining(" AND "))
-			);
+			this.searchParams.add("query", this.query());
 			this.searchParams.add("resultType", "lite");
 			return this.client
 				.buildCall(baseUrl + "searchPost", EuropePMCListResult.Lite.class)
@@ -236,11 +249,7 @@ public class EuropePMCClient extends CachingApiClient
 		@Override
 		public Optional<EuropePMCListResult<EuropePMCCoreResult>> execute() {
 			if (this.terms.size() == 0) return Optional.empty();
-			this.searchParams.add(
-				"query",
-				this.terms.stream()
-					.collect(Collectors.joining(" AND "))
-			);
+			this.searchParams.add("query", this.query());
 			this.searchParams.add("resultType", "core");
 			return this.client
 				.buildCall(baseUrl + "search", EuropePMCListResult.Core.class)
@@ -261,17 +270,20 @@ public class EuropePMCClient extends CachingApiClient
 		public QueryBuilder between(
 				Optional<LocalDate> from, Optional<LocalDate> to
 		) {
-			var fromStr = from.map(d -> d.format(this.formatter))
-				.orElse("1900-01-01");
-			var toStr = to.orElse(LocalDate.now())
-				.format(this.formatter);
-			this.terms.add("FIRST_PDATE:[" + fromStr + " TO " + toStr + "])");
+			if (from.isPresent() || to.isPresent()) {
+				var fromStr = from.map(d -> d.format(this.formatter))
+					.orElse("1900-01-01");
+				var toStr = to.orElse(LocalDate.now())
+					.format(this.formatter);
+				this.terms.add("(FIRST_PDATE:[" + fromStr + " TO " + toStr + "])");
+			}
 			return this;
 		}
 
 		public QueryBuilder limit(Optional<Integer> records) {
 			records.ifPresent(
-				r -> this.searchParams.putSingle("pageSize", r.toString())
+				r -> this.searchParams
+					.putSingle("pageSize", Integer.toString(r > 1000 ? 1000 : r))
 			);
 			return this;
 		}
