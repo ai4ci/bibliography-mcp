@@ -24,11 +24,12 @@ import uk.co.terminological.bibliography.client.IdMapper;
 import uk.co.terminological.bibliography.client.Query;
 import uk.co.terminological.bibliography.client.RecordFetcher;
 import uk.co.terminological.bibliography.client.SearchBuilder;
+import uk.co.terminological.bibliography.record.ImmutableRecordReference;
+import uk.co.terminological.bibliography.record.UnionFind;
 import uk.co.terminological.bibliography.client.Searcher;
 import uk.co.terminological.bibliography.mcp.Session;
 import uk.co.terminological.bibliography.record.CitationLink;
 import uk.co.terminological.bibliography.record.CitationReference;
-import uk.co.terminological.bibliography.record.ImmutableRecordReference;
 import uk.co.terminological.bibliography.record.MergedRecord;
 import uk.co.terminological.bibliography.record.Record;
 import uk.co.terminological.bibliography.record.RecordReference;
@@ -443,66 +444,188 @@ public class BiblioFacade
 
 		@Override
 		public Optional<List<Record>> execute() {
-
-			Map<String, Query> multiSearch = new HashMap<>();
-			for (String api : this.biblioFacade.searchApis) {
-				multiSearch.put(api, this.qry);
-			}
-			List<Record> out = new ArrayList<>();
-			this.biblioFacade.searchApis.forEach(api -> {
-				Collection<? extends Record> tmp = Collections.emptyList();
-				if (api.equals("crossref")) {
-					tmp = this.biblioFacade.api.getCrossref()
-						.search(this.qry);
-				} else if (api.equals("entrez")) {
-					tmp = this.biblioFacade.api.getEntrez()
-						.search(this.qry);
-				} else if (api.equals("europepmc")) {
-					tmp = this.biblioFacade.api.getEuropePMC()
-						.search(this.qry);
-				}
-				log.info("Search found {} hits in {}", tmp.size(), api);
-				out.addAll(tmp);
-			});
-
-			return Optional.of(out);
+			// delegate to the facade's search(), which now does dedup + RRF
+			return Optional.of(new ArrayList<>(this.biblioFacade.search(this.qry)));
 		}
 
 	}
 
+	/**
+	 * A raw search hit tagged with the API that returned it and its 1-indexed
+	 * position in that API's result list. Used after dedup to compute RRF scores.
+	 */
+	/** Visible for testing. */
+	static class ScoredHit {
+		final Record record;
+		final String api;
+		final int rank; // 1-indexed position in the api's result list
+
+		ScoredHit(Record record, String api, int rank) {
+			this.record = record;
+			this.api = api;
+			this.rank = rank;
+		}
+	}
+
+	/**
+	 * Collect and deduplicate raw hits from each configured search API, then
+	 * rank by reciprocal rank fusion (RRF).
+	 * 
+	 * @see #dedupedSearch(List)
+	 */
 	@Override
 	public Collection<Record> search(Query qry) {
-		Map<String, Query> multiSearch = new HashMap<>();
+		List<ScoredHit> scoredHits = new ArrayList<>();
 		for (String api : this.searchApis) {
-			multiSearch.put(api, qry);
-		}
-		return this.multiSearch(multiSearch);
-	}
-
-	public Collection<Record> multiSearch(Map<String, Query> searchByApi) {
-		Collection<Record> out = new ArrayList<>();
-		searchByApi.forEach((searchApi, search) -> {
-			Collection<? extends Record> tmp = Collections.emptyList();
-			if (searchApi.equals("crossref")) {
-				tmp = this.api.getCrossref()
-					.search(search);
-			} else if (searchApi.equals("entrez")) {
-				tmp = this.api.getEntrez()
-					.search(search);
-			} else if (searchApi.equals("europepmc")) {
-				tmp = this.api.getEuropePMC()
-					.search(search);
+			Collection<? extends Record> raw = dispatchSearch(api, qry);
+			List<? extends Record> results = raw instanceof List
+				? (List<? extends Record>) raw
+				: new ArrayList<>(raw);
+			for (int i = 0; i < results.size(); i++) {
+				scoredHits.add(new ScoredHit(results.get(i), api, i + 1));
 			}
 			log.info(
 				"Search found {} hits in {} for '{}'",
-				tmp.size(),
-				searchApi,
-				search
+				results.size(),
+				api,
+				qry
 			);
-			out.addAll(tmp);
-		});
+		}
+		return dedupedSearch(scoredHits);
+	}
 
+	/**
+	 * Search each API with its own query, deduplicate and rank by RRF.
+	 * Each entry in {@code searchByApi} uses that API's individual query.
+	 */
+	public Collection<Record> multiSearch(Map<String, Query> searchByApi) {
+		List<ScoredHit> scoredHits = new ArrayList<>();
+		searchByApi.forEach((api, qry) -> {
+			Collection<? extends Record> raw = dispatchSearch(api, qry);
+			List<? extends Record> results = raw instanceof List
+				? (List<? extends Record>) raw
+				: new ArrayList<>(raw);
+			for (int i = 0; i < results.size(); i++) {
+				scoredHits.add(new ScoredHit(results.get(i), api, i + 1));
+			}
+			log.info(
+				"Search found {} hits in {} for '{}'",
+				results.size(),
+				api,
+				qry
+			);
+		});
+		return dedupedSearch(scoredHits);
+	}
+
+	/**
+	 * Deduplicate a list of scored hits (Phase 2–5) and return merged records
+	 * sorted by RRF score descending.
+	 * <p>
+	 * Phase 2: collect every identifier (DOI, PMID, PMCID) from all results.
+	 * Phase 3: run through IdMapper to find cross-scheme equivalences.
+	 * Phase 4: group by equivalence and merge via {@link MergedRecord}.
+	 * Phase 5: compute RRF score per group and sort descending.
+	 */
+	private Collection<Record> dedupedSearch(List<ScoredHit> scoredHits) {
+		if (scoredHits.isEmpty()) return List.of();
+
+		// Phase 2 — collect all identifiers
+		Set<ImmutableRecordReference> allIds = new HashSet<>();
+		for (ScoredHit sh : scoredHits) {
+			Record r = sh.record;
+			r.getIdentifier()
+				.ifPresent(id -> allIds.add(refOf(r)));
+			for (RecordReference other : r.getOtherIdentifiers()) {
+				other.getIdentifier()
+					.ifPresent(id -> allIds.add(otherOf(other)));
+			}
+		}
+
+		// Phase 3 — map identifiers across schemes
+		Set<RecordReferenceMapping> mappings = mappings(allIds);
+		UnionFind<ImmutableRecordReference> uf = new UnionFind<>();
+		for (ImmutableRecordReference id : allIds)
+			uf.add(id);
+		for (RecordReferenceMapping m : mappings) {
+			if (!m.isComplete()) continue;
+			uf.union(refOf(m.getSource()), refOf(m.getTarget()));
+		}
+
+		// Phase 4 — group by equivalence root
+		Map<ImmutableRecordReference, MergedRecord> merged = new LinkedHashMap<>();
+		Map<ImmutableRecordReference, List<ScoredHit>> hitsByRoot = new LinkedHashMap<>();
+
+		for (ScoredHit sh : scoredHits) {
+			ImmutableRecordReference root = rootRef(sh.record, uf);
+			if (root == null) continue;
+			merged.merge(root, MergedRecord.from(sh.record), MergedRecord::merge);
+			hitsByRoot.computeIfAbsent(root, k -> new ArrayList<>())
+				.add(sh);
+		}
+
+		// Phase 5 — rank by RRF and sort
+		int k = 5;
+		List<Map.Entry<ImmutableRecordReference, MergedRecord>> sorted = new ArrayList<>(
+			merged.entrySet()
+		);
+		sorted.sort((a, b) -> Double.compare(rrfScore(hitsByRoot.get(b.getKey()), k),
+			rrfScore(hitsByRoot.get(a.getKey()), k)));
+
+		List<Record> out = new ArrayList<>(sorted.size());
+		for (var entry : sorted)
+			out.add(entry.getValue());
 		return out;
+	}
+
+	/** Visible for testing. */
+	static double rrfScore(List<ScoredHit> hits, int k) {
+		return hits.stream()
+			.mapToDouble(sh -> 1.0 / (k + sh.rank))
+			.sum();
+	}
+
+	/** Convenience: build an ImmutableRecordReference from a record's own identifier. */
+	private static ImmutableRecordReference refOf(RecordReference ref) {
+		return ImmutableRecordReference.builder()
+			.identifierType(ref.getIdentifierType())
+			.identifier(ref.getIdentifier()
+				.orElse(null))
+			.build();
+	}
+
+	/** Convenience: build an ImmutableRecordReference from another reference. */
+	private static ImmutableRecordReference otherOf(RecordReference ref) {
+		return ImmutableRecordReference.builder()
+			.identifierType(ref.getIdentifierType())
+			.identifier(ref.getIdentifier()
+				.orElse(null))
+			.build();
+	}
+
+	/**
+	 * Find the equivalence-class root for a record, or build one from its own
+	 * identifier if it has no mapping yet.
+	 */
+	private static ImmutableRecordReference rootRef(Record r, UnionFind<ImmutableRecordReference> uf) {
+		return r.getIdentifier()
+			.map(id -> refOf(r))
+			.flatMap(uf::find)
+			.orElse(null);
+	}
+
+	/**
+	 * Route a search to the right API client by name.
+	 */
+	private Collection<? extends Record> dispatchSearch(String api, Query qry) {
+		if (api.equals("crossref")) return this.api.getCrossref()
+			.search(qry);
+		if (api.equals("entrez")) return this.api.getEntrez()
+			.search(qry);
+		if (api.equals("europepmc")) return this.api.getEuropePMC()
+			.search(qry);
+		log.warn("No search available for API: {}", api);
+		return List.of();
 	}
 
 }
