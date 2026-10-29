@@ -7,9 +7,9 @@ import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.slf4j.LoggerFactory;
 
+import uk.co.terminological.bibliography.api.BiblioFacade;
 import uk.co.terminological.bibliography.client.ImmutableQuery;
 import uk.co.terminological.bibliography.mcp.Analysis;
-import uk.co.terminological.bibliography.mcp.BiblioFacade;
 import uk.co.terminological.bibliography.record.Builder;
 import uk.co.terminological.bibliography.record.CitationLink;
 import uk.co.terminological.bibliography.record.IdType;

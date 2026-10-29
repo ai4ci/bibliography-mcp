@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import uk.co.terminological.bibliography.api.BiblioFacade;
 import uk.co.terminological.bibliography.api.crossref.CrossRefWork;
 import uk.co.terminological.bibliography.api.zotero.MetadataComparison;
 import uk.co.terminological.bibliography.api.zotero.ZoteroClient;
@@ -54,6 +55,8 @@ public class McpTools {
 
 	@Deprecated
 	static Logger log = LoggerFactory.getLogger(McpTools.class);
+	@Deprecated
+	static String citationStyle = null;
 
 	/** Server state shared by all tool handlers; session is swappable via load. */
 	@Deprecated
@@ -163,6 +166,11 @@ public class McpTools {
 		return Optional.of(out);
 	}
 
+	@Deprecated
+	public static void withCitationStyle(String styleName) {
+		citationStyle = styleName;
+	}
+
 	private static Set<ImmutableRecordReference> ids(ObjectNode args) {
 		Set<ImmutableRecordReference> out = new HashSet<>();
 		var arr = args.get("ids");
@@ -239,8 +247,8 @@ public class McpTools {
 			.ifPresent(t -> pn.put("nativeType", t));
 		if (p.isCurated()) { pn.put("curated", true); }
 
-		if (f != null && f.citationStyle != null) {
-			r.render(f.citationStyle)
+		if (f != null && citationStyle != null) {
+			r.render(citationStyle)
 				.ifPresent(v -> n.put("citation", v));
 		}
 		return n;

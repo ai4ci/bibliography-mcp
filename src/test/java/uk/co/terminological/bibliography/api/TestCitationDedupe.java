@@ -1,4 +1,4 @@
-package uk.co.terminological.bibliography.mcp;
+package uk.co.terminological.bibliography.api;
 
 import static org.junit.Assert.assertEquals;
 
@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import org.junit.Test;
 
+import uk.co.terminological.bibliography.api.BiblioFacade;
 import uk.co.terminological.bibliography.record.Builder;
 import uk.co.terminological.bibliography.record.CitationLink;
 import uk.co.terminological.bibliography.record.IdType;

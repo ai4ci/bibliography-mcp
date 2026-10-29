@@ -23,6 +23,7 @@ import org.jgrapht.graph.SimpleDirectedGraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import uk.co.terminological.bibliography.api.BiblioFacade;
 import uk.co.terminological.bibliography.client.Query;
 import uk.co.terminological.bibliography.record.Builder;
 import uk.co.terminological.bibliography.record.CitationLink;
@@ -61,7 +62,7 @@ public class Session implements Serializable {
 		this.facade = facade;
 	}
 
-	void setFacade(BiblioFacade facade) { this.facade = facade; }
+	public void setFacade(BiblioFacade facade) { this.facade = facade; }
 
 	public void addAll(Collection<? extends Record> records) {
 		records.forEach(this::add);

@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 
+import uk.co.terminological.bibliography.api.BiblioFacade;
 import uk.co.terminological.bibliography.api.zotero.ZoteroClient;
 import uk.co.terminological.bibliography.api.zotero.ZoteroConfig;
 

@@ -1,4 +1,4 @@
-package uk.co.terminological.bibliography.mcp;
+package uk.co.terminological.bibliography.api;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.undercouch.citeproc.CSL;
-import uk.co.terminological.bibliography.api.BibliographicApis;
 import uk.co.terminological.bibliography.api.crossref.CrossRefWork;
 import uk.co.terminological.bibliography.client.CitedByMapper;
 import uk.co.terminological.bibliography.client.CitesMapper;
@@ -26,6 +25,7 @@ import uk.co.terminological.bibliography.client.Query;
 import uk.co.terminological.bibliography.client.RecordFetcher;
 import uk.co.terminological.bibliography.client.SearchBuilder;
 import uk.co.terminological.bibliography.client.Searcher;
+import uk.co.terminological.bibliography.mcp.Session;
 import uk.co.terminological.bibliography.record.CitationLink;
 import uk.co.terminological.bibliography.record.CitationReference;
 import uk.co.terminological.bibliography.record.ImmutableRecordReference;
@@ -44,11 +44,12 @@ import uk.co.terminological.bibliography.record.RecordReferenceMapping;
 public class BiblioFacade
 		implements Searcher, CitedByMapper, CitesMapper, RecordFetcher, IdMapper {
 
+	// TODO: implement CachingApiClient and sllow setup to create persistent id mapping
+	// inbuilt resolvers to map between different id schemes to persistent internal id
+
 	static Logger log = LoggerFactory.getLogger(BiblioFacade.class);
 
 	BibliographicApis api;
-
-	String citationStyle = null;
 
 	List<String> searchApis = new ArrayList<>(defaultApis().get("search"));
 
@@ -366,11 +367,6 @@ public class BiblioFacade
 	}
 
 	// Fluent configuration
-
-	public BiblioFacade withCitationStyle(String styleName) {
-		this.citationStyle = styleName;
-		return this;
-	}
 
 	public BiblioFacade withSearchLimit(int limit) {
 		this.limit = Optional.of(limit);

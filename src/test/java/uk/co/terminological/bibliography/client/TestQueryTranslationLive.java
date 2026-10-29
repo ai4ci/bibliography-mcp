@@ -399,7 +399,7 @@ public class TestQueryTranslationLive {
 			throws Exception {
 		// BiblioFacade.multiSearch has no per-API error handling, so one client
 		// failing takes the whole search with it rather than degrading
-		var facade = new uk.co.terminological.bibliography.mcp.BiblioFacade(
+		var facade = new uk.co.terminological.bibliography.api.BiblioFacade(
 				Paths.get(
 					System.getProperty("user.home") + "/.private/apis/secrets.prop"
 				), Paths.get("/tmp/ehcache/query-translation-live")
