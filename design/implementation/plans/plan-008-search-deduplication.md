@@ -1,6 +1,6 @@
 ---
 title: Search deduplication
-status: draft
+status: final
 targetVersion: 0.1.0
 tags:
 - search
@@ -374,7 +374,7 @@ happened). Not a strict equality test (API results change over time).
 - [ ] MCP smoke test: `search` returns fewer records when more APIs are enabled
 - [ ] `collect_search` still populates session correctly
 
-## Status: implemented, and now actually asserted — 0.0.11
+## Status: implemented, and now actually asserted — 0.1.0
 
 The code this plan describes was already in `BiblioFacade` — `ScoredHit`,
 `dedupedSearch`, `UnionFind`, `dispatchSearch`, `rrfScore`, all as written here,

@@ -4,7 +4,7 @@ id: issue-022-shaded-jar-cannot-render-citations.md
 title: Shaded jar cannot render citations
 status: closed
 sinceVersion: 0.0.6
-targetVersion: 0.0.11
+targetVersion: 0.1.0
 tags:
 - bug
 - packaging
@@ -97,7 +97,7 @@ listing styles, since that is the assertion that would have caught this.
 
 ## Closed
 
-Fixed in 0.0.11 by option 1: **the build no longer shades**. `maven-shade-plugin`
+Fixed in 0.1.0 by option 1: **the build no longer shades**. `maven-shade-plugin`
 is replaced by `maven-dependency-plugin` copying the runtime dependencies to
 `target/lib/`, and `maven-jar-plugin` writing a manifest that names them —
 `Main-Class` plus a `Class-Path` of `lib/*`. `java -jar target/<jar>` works as

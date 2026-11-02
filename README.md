@@ -47,7 +47,7 @@ the EHCache directory:
     "bibliographic-api-client": {
       "command": "java",
       "args": [
-        "-jar", "/path/to/target/bibliographic-api-client-0.0.11-SNAPSHOT.jar",
+        "-jar", "/path/to/target/bibliographic-api-client-0.1.0-SNAPSHOT.jar",
         "/path/to/.private/apis/secrets.prop",
         "/tmp/ehcache/biblio"
       ]

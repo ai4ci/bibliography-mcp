@@ -1,7 +1,7 @@
 ---
 title: OpenAlex client
 status: final
-targetVersion: unassigned
+targetVersion: 0.1.0
 tags:
 - openalex
 - citations
@@ -122,7 +122,7 @@ changes silently (issue-002).
   CrossRef and Europe PMC ones on DOI in the plan-008 dedupe without a mapping round
   trip, which was the thing to verify rather than assume.
 - **Does OpenAlex belong in `searchApis`?** It was left out of this plan and **put
-  in afterwards, in 0.0.11, behind a credit gate** (see "Search, reconsidered"
+  in afterwards, in 0.1.0, behind a credit gate** (see "Search, reconsidered"
   below). The reasoning here — 10 credits a call against ~1,000 searches a day, when
   three free search sources exist — turned out to argue for a reserve rather than
   for exclusion.
@@ -139,11 +139,12 @@ tests, 0 failures. Live tier: 13 tests in `TestOpenAlexClientEndToEnd`, 0 failur
 
 Things this round did **not** do, in the order they are worth taking:
 
-1. **`pom.xml` is at `0.0.10-SNAPSHOT` — a patch bump, and the milestone question is
-   still open.** feat-011 is written against `0.1.0`, whose theme ("MCP server
-   usable") is not reached while issue-017 is open. Deciding whether this work ships
-   as 0.0.10 or folds into 0.1.0 belongs to the developer (ADR-0001: the version
-   carries the milestone).
+1. ~~**The milestone question.**~~ *Settled — see "Search, reconsidered" above.*
+   It read: feat-011 is written against `0.1.0`, whose theme ("MCP server usable")
+   is not reached while issue-017 is open, so whether this work ships as 0.0.10 or
+   folds into 0.1.0 belongs to the developer (ADR-0001: the version carries the
+   milestone). It folded in: issue-017 is closed, and this client ships as part of
+   **0.1.0**.
 2. **`interface-002` now documents `openalex-apikey` and `openalex-daily-credits`,
    but only `openalex-apikey` is read.** Nothing enforces a daily credit ceiling;
    `creditsRemaining()` is exposed and the crawl engine (plan-011) is where it should
@@ -161,7 +162,7 @@ Things this round did **not** do, in the order they are worth taking:
    sources this project already queries directly), so leaving them in `FALLBACK`
    behind CrossRef/EuropePMC/Entrez is probably right, but it was not measured.
 
-## Search, reconsidered — 0.0.11
+## Search, reconsidered — 0.1.0
 
 The decision not to register OpenAlex as a search provider was reversed, with a
 gate rather than without one. The arithmetic that argued against it is the same:
@@ -199,10 +200,11 @@ OpenAlex offers that this client does not do: a cached PDF is 10 credits and
 capped at 100 a day, while `best_oa_location.pdf_url` points at the publisher's
 own copy, which `PdfFetcher` takes for nothing.
 
-Follow-ups 2 and 3 below are closed by this. Follow-up 1 is settled too: the
-OpenAlex client shipped as 0.0.10 and this gate as 0.0.11.
+Follow-ups 2 and 3 below are closed by this. Follow-up 1 is settled too: neither
+0.0.10 nor 0.0.11 was ever released, so the client and this gate ship together as
+**0.1.0**, the milestone they were always aimed at.
 
-### A default page size, after the search registration — 0.0.11
+### A default page size, after the search registration — 0.1.0
 
 `SearchQueryBuilder` asked for `MAX_PAGE` (200) whenever a query carried no
 limit. That was harmless while OpenAlex was not a search provider and wrong as

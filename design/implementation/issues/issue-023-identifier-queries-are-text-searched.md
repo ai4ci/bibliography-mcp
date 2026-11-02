@@ -4,7 +4,7 @@ id: issue-023-identifier-queries-are-text-searched.md
 title: Identifier queries are text searched
 status: closed
 sinceVersion: 0.0.6
-targetVersion: 0.0.11
+targetVersion: 0.1.0
 tags:
 - bug
 - search

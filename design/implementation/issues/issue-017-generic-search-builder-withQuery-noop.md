@@ -2,7 +2,7 @@
 title: Generic search builder withquery noop
 status: closed
 sinceVersion: 0.0.6
-targetVersion: 0.0.11
+targetVersion: 0.1.0
 tags:
 - bug
 - search
@@ -44,7 +44,7 @@ public GenericSearchBuilder withQuery(Query qry) {
 
 ## Closed
 
-Fixed in 0.0.11 with exactly the one-line change above: `this.qry = qry`.
+Fixed in 0.1.0 with exactly the one-line change above: `this.qry = qry`.
 
 Pinned by `TestGenericSearchBuilder.withQueryKeepsTheQueryItWasGiven`, written
 and proven to fail first. The test reads the builder's field rather than calling

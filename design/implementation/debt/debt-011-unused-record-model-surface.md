@@ -53,7 +53,7 @@ Decide each independently rather than sweeping them together:
   `openalex:` handles, or remove it. `MID`: remove unless a source is known.
 
 
-## Partly overtaken — 0.0.10
+## Partly overtaken — 0.1.0
 
 `IdType.OPENALEX` is now constructed: `OpenAlexClient.workReference` builds
 references with it and `OpenAlexRecord` reports it among a work's identifiers, so

@@ -53,7 +53,7 @@ not a new abstraction.
 
 | SPI | OpenAlex | measured |
 |---|---|---|
-| `Searcher` | `GET /works?filter=title_and_abstract.search:…` | 10 credits/call — registered in 0.0.11 behind a credit reserve, see [plan-013](/design/implementation/plans/plan-013-openalex-client.md) |
+| `Searcher` | `GET /works?filter=title_and_abstract.search:…` | 10 credits/call — registered in 0.1.0 behind a credit reserve, see [plan-013](/design/implementation/plans/plan-013-openalex-client.md) |
 | `RecordFetcher` | `GET /works/doi:…`, `/works/W…` | **free**, batchable via `filter=doi:A\|B` at 1 credit for up to `per_page` records |
 | `CitesMapper` (down) | `referenced_works` inside the record | **free** |
 | `CitedByMapper` (up) | `GET /works?filter=cites:W…` | 1 credit/call |

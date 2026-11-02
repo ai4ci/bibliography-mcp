@@ -4,7 +4,7 @@ id: issue-020-search-tool-offers-an-api-it-cannot-dispatch.md
 title: Search tool offers an api it cannot dispatch
 status: closed
 sinceVersion: 0.0.6
-targetVersion: 0.0.11
+targetVersion: 0.1.0
 tags:
 - bug
 - mcp
@@ -49,7 +49,7 @@ stop the two drifting again; `TestMcpToolSurface` is where it belongs.
 
 ## Closed
 
-Fixed in 0.0.11, and by removing the second list rather than by removing one
+Fixed in 0.1.0, and by removing the second list rather than by removing one
 entry from it. `BiblioFacade.searchableApis()` is now the only statement of what
 can be searched: `defaultApis().get("search")` returns it, and the tool's schema
 builds its `apis` enum from it, so the enum cannot name an API the dispatcher

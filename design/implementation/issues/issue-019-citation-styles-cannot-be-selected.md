@@ -2,7 +2,7 @@
 title: Citation styles are listed but cannot be selected
 status: closed
 sinceVersion: 0.0.6
-targetVersion: 0.0.11
+targetVersion: 0.1.0
 tags:
 - bug
 - mcp
@@ -52,7 +52,7 @@ territory, and a working tool beats waiting for it.
 
 ## Closed
 
-Fixed in 0.0.11 as option B. A `citation_style` tool takes a style name,
+Fixed in 0.1.0 as option B. A `citation_style` tool takes a style name,
 validates it against `getSupportedCitationStyles()` — the same list
 `citation_styles` advertises — and sets it for the server; every record returned
 afterwards carries a `citation` field. Passing no style switches rendering off

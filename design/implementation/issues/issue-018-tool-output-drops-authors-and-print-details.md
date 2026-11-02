@@ -2,7 +2,7 @@
 title: Tool output drops authors and print details
 status: closed
 sinceVersion: 0.0.6
-targetVersion: 0.0.11
+targetVersion: 0.1.0
 tags:
 - bug
 - mcp
@@ -67,7 +67,7 @@ shape to extend.
 
 ## Closed
 
-Fixed in 0.0.11. `recordJson` now emits:
+Fixed in 0.1.0. `recordJson` now emits:
 
 - `authors`, as an array of `{lastName, firstName?, initials?, ORCID?}`. A surname
   is the only part every source supplies, so the rest appear only when the source
