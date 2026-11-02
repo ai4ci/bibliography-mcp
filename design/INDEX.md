@@ -38,13 +38,14 @@ fails the build instead of quietly lying.
 | --- | --- | --- | --- |
 | [Unpaywall preprint doi not resolved](implementation/issues/issue-016-unpaywall-preprint-doi-not-resolved.md) | Unpaywall preprint doi not resolved | open | 0.1.0 |
 | [Generic search builder withquery noop](implementation/issues/issue-017-generic-search-builder-withQuery-noop.md) | Generic search builder withquery noop | open | 0.1.0 |
+| [Tool output drops authors and print details](implementation/issues/issue-018-tool-output-drops-authors-and-print-details.md) | Tool output drops authors and print details | open | 0.1.0 |
+| [Citation styles are listed but cannot be selected](implementation/issues/issue-019-citation-styles-cannot-be-selected.md) | Citation styles are listed but cannot be selected | open | 0.1.0 |
 | [Non doi citation links dropped](implementation/issues/issue-001-non-doi-citation-links-dropped.md) | Non doi citation links dropped | open | 0.2.0 |
 | [Third party api endpoint drift](implementation/issues/issue-002-third-party-api-endpoint-drift.md) | Third party api endpoint drift | open | 0.2.0 |
 | [Crossref query translation is broken](implementation/issues/issue-008-crossref-query-translation-is-broken.md) | Crossref query translation is broken | open | 0.3.0 |
 | [One failing api empties a multi api search](implementation/issues/issue-013-one-failing-api-empties-a-multi-api-search.md) | One failing api empties a multi api search | open | 0.3.0 |
 | [Entrez record dates are not publication dates](implementation/issues/issue-014-entrez-record-dates-are-not-publication-dates.md) | Entrez record dates are not publication dates | open | 0.3.0 |
 | [Preprint html search is blocked by cloudflare](implementation/issues/issue-015-preprint-html-search-is-blocked-by-cloudflare.md) | Preprint html search is blocked by cloudflare | open | 0.3.0 |
-| [End to end bug report from a live MCP session](implementation/issues/e2e-testing-issues.md) | End to end bug report from a live MCP session | open | unassigned |
 <!-- loom view: work_in_progress end -->
 
 ## Open debt
@@ -58,7 +59,6 @@ fails the build instead of quietly lying.
 | [Analysis recomputes topic model per call](implementation/debt/debt-003-analysis-recomputes-topic-model-per-call.md) | Analysis recomputes topic model per call | 0.3.0 |
 | [Fetch is incomplete by id type](implementation/debt/debt-005-fetch-is-incomplete-by-id-type.md) | Fetch is incomplete by id type | 0.3.0 |
 | [Cached answers are never invalidated](implementation/debt/debt-006-cached-answers-are-never-invalidated.md) | Cached answers are never invalidated | 0.3.0 |
-| debt:debt-006-cached-answers-have-no-invalidation-path.md | Cached answers have no invalidation path | 0.3.0 |
 | [Cache stores break on cached class changes](implementation/debt/debt-007-cache-stores-break-on-cached-class-changes.md) | Cache stores break on cached class changes | 0.3.0 |
 | [Javadoc build cannot see generated sources](implementation/debt/debt-012-javadoc-build-cannot-see-generated-sources.md) | Javadoc build cannot see generated sources | 0.3.0 |
 | [Shared read timeout is a trap](implementation/debt/debt-009-shared-read-timeout-is-a-trap.md) | Shared read timeout is a trap | 0.4.0 |
