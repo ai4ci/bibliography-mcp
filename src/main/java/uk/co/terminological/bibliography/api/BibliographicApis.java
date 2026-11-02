@@ -16,8 +16,8 @@ import uk.co.terminological.bibliography.api.entrez.EntrezClient;
 import uk.co.terminological.bibliography.api.europepmc.EuropePMCClient;
 import uk.co.terminological.bibliography.api.medrxiv.MedrxivClient;
 import uk.co.terminological.bibliography.api.opencitations.OpenCitationsClient;
+import uk.co.terminological.bibliography.api.openalex.OpenAlexClient;
 import uk.co.terminological.bibliography.api.pmcidconv.PMCIDClient;
-import uk.co.terminological.bibliography.api.unpaywall.UnpaywallClient;
 
 public class BibliographicApis {
 
@@ -49,6 +49,7 @@ public class BibliographicApis {
 		String xrefToken = prop.getProperty("crossref-clickthroughtoken");
 		String developerEmail = prop.getProperty("developer-email");
 		String pubmedApiToken = prop.getProperty("pubmed-apikey");
+		String openAlexApiKey = prop.getProperty("openalex-apikey");
 		String appId = prop.getProperty("app-id");
 
 		String cacheDir = prop.getProperty("cache-directory");
@@ -58,10 +59,13 @@ public class BibliographicApis {
 				developerEmail,
 				xrefToken,
 				pubmedApiToken,
+				openAlexApiKey,
 				Paths.get(cacheDir.replace("~", System.getProperty("user.home")))
 			);
 		} else {
-			return create(appId, developerEmail, xrefToken, pubmedApiToken);
+			return create(
+				appId, developerEmail, xrefToken, pubmedApiToken, openAlexApiKey
+			);
 		}
 
 	}
@@ -74,9 +78,13 @@ public class BibliographicApis {
 		String xrefToken = prop.getProperty("crossref-clickthroughtoken");
 		String developerEmail = prop.getProperty("developer-email");
 		String pubmedApiToken = prop.getProperty("pubmed-apikey");
+		String openAlexApiKey = prop.getProperty("openalex-apikey");
 		String appId = prop.getProperty("app-id");
 
-		return create(appId, developerEmail, xrefToken, pubmedApiToken, cacheDir);
+		return create(
+				appId, developerEmail, xrefToken, pubmedApiToken, openAlexApiKey,
+				cacheDir
+		);
 
 	}
 
@@ -85,7 +93,8 @@ public class BibliographicApis {
 			String pubmedApiToken
 	) {
 		return new BibliographicApis(
-				appId, developerEmail, xrefToken, pubmedApiToken, Optional.empty()
+				appId, developerEmail, xrefToken, pubmedApiToken, null,
+				Optional.empty()
 		);
 	}
 
@@ -94,7 +103,31 @@ public class BibliographicApis {
 			String pubmedApiToken, Path cacheDir
 	) {
 		return new BibliographicApis(
-				appId, developerEmail, xrefToken, pubmedApiToken,
+				appId, developerEmail, xrefToken, pubmedApiToken, null,
+				Optional.ofNullable(cacheDir)
+		);
+	}
+
+	/**
+	 * @param openAlexApiKey the OpenAlex token, or null to use the free tier. OpenAlex works without a key, so unlike the
+	 * other credentials this one being absent is ordinary rather than a misconfiguration — it just means a smaller budget.
+	 */
+	public static BibliographicApis create(
+			String appId, String developerEmail, String xrefToken,
+			String pubmedApiToken, String openAlexApiKey
+	) {
+		return new BibliographicApis(
+				appId, developerEmail, xrefToken, pubmedApiToken, openAlexApiKey,
+				Optional.empty()
+		);
+	}
+
+	public static BibliographicApis create(
+			String appId, String developerEmail, String xrefToken,
+			String pubmedApiToken, String openAlexApiKey, Path cacheDir
+	) {
+		return new BibliographicApis(
+				appId, developerEmail, xrefToken, pubmedApiToken, openAlexApiKey,
 				Optional.ofNullable(cacheDir)
 		);
 	}
@@ -102,15 +135,15 @@ public class BibliographicApis {
 	private EntrezClient entrez;
 	private PMCIDClient pmcIdConv;
 	private CrossRefClient crossref;
-	private UnpaywallClient unpaywall;
 	private PdfFetcher pdfFetcher;
 	private EuropePMCClient europepmc;
 	private OpenCitationsClient opencitations;
 	private MedrxivClient medrxiv;
+	private OpenAlexClient openalex;
 
 	private BibliographicApis(
 			String appId, String developerEmail, String xrefToken,
-			String pubmedApiToken, Optional<Path> cacheDir
+			String pubmedApiToken, String openAlexApiKey, Optional<Path> cacheDir
 	) {
 
 		logger.info(
@@ -135,16 +168,10 @@ public class BibliographicApis {
 			cacheDir.map(o -> o.resolve("xref"))
 				.orElse(null)
 		);
-		unpaywall = UnpaywallClient.create(
-			developerEmail,
-			cacheDir.map(o -> o.resolve("unpaywall"))
-				.orElse(null)
-		);
 		pdfFetcher = PdfFetcher.create(
 			cacheDir.map(o -> o.resolve("pdf"))
 				.orElse(null)
 		);
-		unpaywall.withPdfFetcher(pdfFetcher);
 		europepmc = EuropePMCClient.create(
 			developerEmail,
 			cacheDir.map(o -> o.resolve("europepmc"))
@@ -158,16 +185,22 @@ public class BibliographicApis {
 			cacheDir.map(o -> o.resolve("medrxiv"))
 				.orElse(null)
 		);
+		openalex = OpenAlexClient.create(
+			openAlexApiKey,
+			developerEmail,
+			cacheDir.map(o -> o.resolve("openalex"))
+				.orElse(null)
+		);
 	}
 
 	public BibliographicApis debugMode() {
 		entrez.debugMode();
 		pmcIdConv.debugMode();
 		crossref.debugMode();
-		unpaywall.debugMode();
 		europepmc.debugMode();
 		opencitations.debugMode();
 		medrxiv.debugMode();
+		openalex.debugMode();
 		return this;
 	}
 
@@ -175,10 +208,10 @@ public class BibliographicApis {
 		entrez.shutdown();
 		pmcIdConv.shutdown();
 		crossref.shutdown();
-		unpaywall.shutdown();
 		europepmc.shutdown();
 		opencitations.shutdown();
 		medrxiv.shutdown();
+		openalex.shutdown();
 		return this;
 	}
 
@@ -188,8 +221,6 @@ public class BibliographicApis {
 
 	public CrossRefClient getCrossref() { return crossref; }
 
-	public UnpaywallClient getUnpaywall() { return unpaywall; }
-
 	public PdfFetcher getPdfFetcher() { return pdfFetcher; }
 
 	public EuropePMCClient getEuropePMC() { return europepmc; }
@@ -198,6 +229,9 @@ public class BibliographicApis {
 
 	public OpenCitationsClient getOpenCitationsClient() { return opencitations; }
 
+	/** OpenAlex: the citation graph, the identifier crosswalk and the open-access locator. */
+	public OpenAlexClient getOpenAlex() { return openalex; }
+
 	public void disableCache() {
 		this.entrez.disableCache();
 		this.crossref.disableCache();
@@ -205,7 +239,7 @@ public class BibliographicApis {
 		this.opencitations.disableCache();
 		this.pdfFetcher.disableCache();
 		this.pmcIdConv.disableCache();
-		this.unpaywall.disableCache();
+		this.openalex.disableCache();
 	}
 
 	public void enableCache() {
@@ -215,7 +249,7 @@ public class BibliographicApis {
 		this.opencitations.enableCache();
 		this.pdfFetcher.enableCache();
 		this.pmcIdConv.enableCache();
-		this.unpaywall.enableCache();
+		this.openalex.enableCache();
 	}
 
 }

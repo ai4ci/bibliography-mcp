@@ -20,8 +20,9 @@ import uk.co.terminological.bibliography.api.crossref.CrossRefClient;
 import uk.co.terminological.bibliography.api.crossref.CrossRefSingleResult;
 import uk.co.terminological.bibliography.api.crossref.CrossRefWork;
 import uk.co.terminological.bibliography.api.entrez.EntrezClient;
+import uk.co.terminological.bibliography.api.openalex.OpenAlexClient;
 import uk.co.terminological.bibliography.api.pmcidconv.PMCIDClient;
-import uk.co.terminological.bibliography.api.unpaywall.UnpaywallClient;
+import uk.co.terminological.bibliography.record.Builder;
 import uk.co.terminological.bibliography.record.IdType;
 
 public class TestEndToEnd {
@@ -63,8 +64,11 @@ public class TestEndToEnd {
 		var mapper = PMCIDClient
 			.create(appId, developerEmail, ehcache.resolve("idconv"));
 		var xref = CrossRefClient.create(developerEmail, ehcache.resolve("xref"));
-		var unpaywall = UnpaywallClient
-			.create(developerEmail, ehcache.resolve("unpaywall"));
+		var openalex = OpenAlexClient.create(
+			prop.getProperty("openalex-apikey"),
+			developerEmail,
+			ehcache.resolve("openalex")
+		);
 
 		var result = pubmed.buildQuery()
 			.searchTerm("machine learning")
@@ -105,8 +109,13 @@ public class TestEndToEnd {
 		System.out.println("Extra dois found by id mapper");
 		tmp2.forEach(System.out::println);
 
-		System.out.println("Unpaywall entries");
-		unpaywall.getUnpaywallByDois(dois2)
+		System.out.println("OpenAlex entries");
+		openalex.fetch(
+			dois2.stream()
+				.map(doi -> Builder.recordReference(IdType.DOI, doi))
+				.collect(Collectors.toList())
+		)
+			.values()
 			.stream()
 			.forEach(
 				res -> System.out.println(

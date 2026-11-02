@@ -64,7 +64,7 @@ list of it. The status vocabulary lives in the table above; what a version
 | Version | Theme | Named by |
 |---------|-------|----------|
 | 0.0.x | The library: one client per bibliographic API, a unified `Record`, a merge policy. Shipped before the MCP server existed, so no design document names these. | — |
-| 0.1.0 | **MCP server usable.** Search deduplicated across APIs, and the open bugs that stop a tool returning what it should. | [plan-008](../implementation/plans/plan-008-search-deduplication.md), [issue-016](../implementation/issues/issue-016-unpaywall-preprint-doi-not-resolved.md), [issue-017](../implementation/issues/issue-017-generic-search-builder-withQuery-noop.md) |
+| 0.1.0 | **MCP server usable.** Search deduplicated across APIs, and the open bugs that stop a tool returning what it should. | [plan-008](../implementation/plans/plan-008-search-deduplication.md), [feature-011](../features/feat-011-openalex-as-a-provider.md), [issue-017](../implementation/issues/issue-017-generic-search-builder-withQuery-noop.md) |
 | 0.2.0 | **Citation links that survive non-DOI endpoints.** OpenCitations Meta enrichment, and contract tests that catch third-party drift before it reaches a user. | [feature-004](../features/feat-004-opencitations-meta-enrichment.md), [plan-001](../implementation/plans/plan-001-opencitations-meta-idmap.md), [prototype-001](../prototypes/prototype-001-opencitations-meta-pids.md), [issue-001](../implementation/issues/issue-001-non-doi-citation-links-dropped.md), [issue-002](../implementation/issues/issue-002-third-party-api-endpoint-drift.md), [debt-002](../implementation/debt/debt-002-opencitations-queries-dois-only.md) |
 | 0.3.0 | **A record means what it says.** Dates that are publication dates, query translation, one failing API not emptying a search, and the cache and session fixes the open debt records describe. | [issue-008](../implementation/issues/issue-008-crossref-query-translation-is-broken.md), [issue-013](../implementation/issues/issue-013-one-failing-api-empties-a-multi-api-search.md), [issue-014](../implementation/issues/issue-014-entrez-record-dates-are-not-publication-dates.md), [issue-015](../implementation/issues/issue-015-preprint-html-search-is-blocked-by-cloudflare.md), [test-002](../test-scripts/test-002-api-behaviour-tests.md), [debt-001](../implementation/debt/debt-001-session-persistence-uses-java-serialization.md), [debt-003](../implementation/debt/debt-003-analysis-recomputes-topic-model-per-call.md), [debt-005](../implementation/debt/debt-005-fetch-is-incomplete-by-id-type.md), [debt-007](../implementation/debt/debt-007-cache-stores-break-on-cached-class-changes.md) |
 | 0.4.0 | **The curated library.** Read a Zotero collection as records and write records and citations back. | [feature-005](../features/feat-005-zotero-curated-repository-bridge.md), [debt-009](../implementation/debt/debt-009-shared-read-timeout-is-a-trap.md), [debt-010](../implementation/debt/debt-010-europepmc-duplicates-its-citation-loops.md) |
@@ -866,7 +866,7 @@ and the publish half of
 
 ---
 
-## 10. OpenAlex as a provider — `proposed`, effort M
+## 10. OpenAlex as a provider — `done`, effort M
 
 ### Context
 
@@ -901,6 +901,18 @@ inside the record makes depth-1 crawling an order of magnitude cheaper, and that
 changes what a sensible default `depth` and `maxRecords` are. Keep Unpaywall
 until OpenAlex is proven to cover what the Zotero clean-up path needs from it;
 deprecating a client is a separate decision with evidence behind it.
+
+### Decision (2026-11-02)
+
+**B, taken, and Unpaywall retired in the same change.** `OpenAlexClient` implements
+all five roles and is registered in `BiblioFacade.defaultApis()` for search, cites,
+citedBy, fetch and idMap; `UnpaywallClient`, its tests and its fixtures are deleted,
+and `MergePolicy` names `openalex` where it named `unpaywall`. The evidence the
+recommendation asked for is
+`TestOpenAlexClientEndToEnd.theOpenAccessPdfIsInTheSamePayloadAsTheMetadata`, which
+resolves the preprint DOI issue-016 could not: the medRxiv pdf URL arrives inside the
+metadata payload, in no second call to no second provider. plan-011 can now assume
+one call per seed for a depth-1 downward crawl.
 
 Needs a contract-test entry in
 [test-002](/design/test-scripts/test-002-api-behaviour-tests.md) like every other

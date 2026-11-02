@@ -325,7 +325,7 @@ public class TestMetadataComparison {
 
 	@Test
 	public void placeholderAuthorNamesAreIgnored() throws Exception {
-		// Unpaywall says "Unknown" for every author when it has no author data; that
+		// A source says "Unknown" for every author when it has no author data; that
 		// must not read as a disagreement with every item it appears on
 		var report = MetadataComparison.compare(
 			this.mapper,
@@ -334,7 +334,7 @@ public class TestMetadataComparison {
 						+ "\"creators\":[{\"firstName\":\"Ada\",\"lastName\":\"Lovelace\",\"creatorType\":\"author\"}]}"
 			),
 			List.of(
-				recordWithAuthors("unpaywall", "T", List.of("Unknown")),
+				recordWithAuthors("europepmc", "T", List.of("Unknown")),
 				recordWithAuthors("crossref", "T", List.of("Lovelace"))
 			)
 		);
@@ -348,7 +348,7 @@ public class TestMetadataComparison {
 		);
 		assertTrue(
 			creators.get("apiSurnames")
-				.get("unpaywall") == null
+				.get("europepmc") == null
 		);
 	}
 

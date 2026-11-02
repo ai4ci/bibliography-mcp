@@ -47,6 +47,8 @@ public class PublicationTypes {
 	public static final String SONG = "song";
 	public static final String SPEECH = "speech";
 	public static final String STANDARD = "standard";
+	public static final String LETTER = "letter";
+	public static final String EDITORIAL = "editorial";
 	public static final String THESIS = "thesis";
 	public static final String WEBPAGE = "webpage";
 	public static final String OTHER = "other";
@@ -70,6 +72,33 @@ public class PublicationTypes {
 		Map.entry("journal-issue", DOCUMENT),
 		Map.entry("journal-volume", DOCUMENT),
 		Map.entry("component", DOCUMENT),
+		Map.entry("other", OTHER)
+	);
+
+	/**
+	 * OpenAlex's {@code type} vocabulary. Close to CSL but not identical: {@code preprint} is what makes the preprint
+	 * ownership rule in {@code MergePolicy} fire, since posted content is owned by its preprint server.
+	 */
+	private static final Map<String, String> OPENALEX = Map.ofEntries(
+		Map.entry("article", ARTICLE_JOURNAL),
+		Map.entry("book", BOOK),
+		Map.entry("book-chapter", CHAPTER),
+		Map.entry("book-section", CHAPTER),
+		Map.entry("book-part", CHAPTER),
+		Map.entry("entry", ENTRY),
+		Map.entry("preprint", POSTED_CONTENT),
+		Map.entry("report", REPORT),
+		Map.entry("research-article", ARTICLE_JOURNAL),
+		Map.entry("dataset", DATASET),
+		Map.entry("dissertation", THESIS),
+		Map.entry("letter", LETTER),
+		Map.entry("review", REVIEW),
+		Map.entry("editorial", EDITORIAL),
+		Map.entry("proceedings", PAPER_CONFERENCE),
+		Map.entry("proceedings-article", PAPER_CONFERENCE),
+		Map.entry("conference-paper", PAPER_CONFERENCE),
+		Map.entry("conference", PAPER_CONFERENCE),
+		Map.entry("paratext", DOCUMENT),
 		Map.entry("other", OTHER)
 	);
 
@@ -176,6 +205,10 @@ public class PublicationTypes {
 
 	public static Optional<String> fromCrossRef(String nativeType) {
 		return lookup(CROSSREF, nativeType);
+	}
+
+	public static Optional<String> fromOpenAlex(String nativeType) {
+		return lookup(OPENALEX, nativeType);
 	}
 
 	public static Optional<String> fromZotero(String itemType) {

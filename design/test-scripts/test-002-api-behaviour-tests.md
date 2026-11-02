@@ -13,6 +13,7 @@ HAS_FEATURE:
 - feature:feat-003-analyse-citation-graphs-and-topics.md
 - feature:feat-006-classify-records-by-type-with-provenance.md
 - feature:feat-007-predictable-record-merging.md
+- feature:feat-011-openalex-as-a-provider.md
 HAS_INTERFACE:
 - interface:interface-001-mcp-stdio-protocol.md
 TESTED_BY:
@@ -21,6 +22,9 @@ TESTED_BY:
 - test:java/uk/co/terminological/legacy/TestCombinedApi.java
 - test:java/uk/co/terminological/bibliography/record/TestRecordMerge.java
 - test:java/uk/co/terminological/bibliography/record/TestRecordModel.java
+- test:java/uk/co/terminological/bibliography/api/openalex/TestOpenAlexExtraction.java
+- test:java/uk/co/terminological/bibliography/api/openalex/TestOpenAlexClientEndToEnd.java
+- test:java/uk/co/terminological/bibliography/client/TestQueryTranslation.java
 ---
 
 ### 1) Citation network and analysis end to end
@@ -89,3 +93,33 @@ design.
 
 [TestRecordMerge.java](/src/test/java/uk/co/terminological/bibliography/record/TestRecordMerge.java)
 
+
+### 5) OpenAlex: record shape, cost and citation direction
+
+ 1. Setup: recorded `/works` payloads (a preprint, a published work, a batch
+    answer, a `cites:` answer), plus a live client built from a real secrets file
+    and a disk cache.
+ 2. Execution: parse the fixtures into `OpenAlexRecord` and read title, authors,
+    container, date, identifiers, licence, pdf location and the reassembled
+    abstract; then, live, fetch by DOI and by PMCID, map identifiers, walk both
+    citation directions, search, and read back the credit headers.
+ 3. Expectation: the container title comes out of the nested
+    `primary_location.source` (the flat-vs-nested trap that produced issue-012);
+    the inverted abstract index reassembles in reading order; identifiers are
+    normalised — the PMC id keeps the `PMC` prefix other sources use, so a work
+    asked for as `13141338` and one carrying `PMC13141338` are the same work;
+    the open-access pdf arrives in the same payload as the metadata, which is
+    what retired Unpaywall (issue-016); citation edges run source-cites-target in
+    both directions (the convention that closed issue-007); and cost is asserted
+    as well as content — a filtered batch is 1 credit, a text search is 10, and
+    the daily budget is visible from the response headers.
+ 4. Cleanup: offline tests leave nothing; live tests leave a warm cache.
+
+[TestOpenAlexExtraction.java](/src/test/java/uk/co/terminological/bibliography/api/openalex/TestOpenAlexExtraction.java)
+[TestOpenAlexClientEndToEnd.java](/src/test/java/uk/co/terminological/bibliography/api/openalex/TestOpenAlexClientEndToEnd.java)
+
+Notes: the endpoint shape (`/works`, `filter=cites:`, `filter=doi:A|B`) is exactly
+what changes without notice (issue-002). `filter=referenced_works:` looks like the
+reference list and is not — it is the citing works, identical to `cites:` — so
+`filter=cites:` is used deliberately and the offline tests pin the filter string
+rather than trusting the name.

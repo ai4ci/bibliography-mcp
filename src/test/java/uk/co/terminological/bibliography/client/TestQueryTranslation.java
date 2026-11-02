@@ -7,12 +7,14 @@ import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.Test;
 
 import uk.co.terminological.bibliography.api.crossref.CrossRefClient;
 import uk.co.terminological.bibliography.api.entrez.EntrezClient;
 import uk.co.terminological.bibliography.api.europepmc.EuropePMCClient;
+import uk.co.terminological.bibliography.api.openalex.OpenAlexClient;
 
 /**
  * Every API gets the same {@link Query} and has to turn it into its own syntax. These assert that translation against
@@ -423,6 +425,164 @@ public class TestQueryTranslation {
 //		assertTrue(query, query.contains("numresults:17"));
 //	}
 
+	// ---- OpenAlex -----------------------------------------------------------
+
+	private static OpenAlexClient openalex() {
+		return OpenAlexClient.create(null, "test@example.com");
+	}
+
+	@Test
+	public void openAlexCombinesEveryTermInOneFilterParameter() {
+		// repeating `filter=` does not AND: measured, a second filter parameter is
+		// ignored outright and the hit count runs to the millions. Conditions have to
+		// be comma-joined inside a single parameter or the query silently stops meaning
+		// what was asked
+		var builder = openalex().buildQuery();
+		builder.withQuery(everything());
+
+		var filter = builder.filter();
+
+		assertFalse(
+			"a second filter parameter would be ignored by the API: " + filter,
+			filter.contains("filter=")
+		);
+		assertTrue(filter, filter.contains("default.search:sars-cov-2"));
+		assertTrue(filter, filter.contains("title_and_abstract.search:transmission"));
+		assertTrue(filter, filter.contains("raw_author_name.search:Challen"));
+		assertTrue(
+			"the journal term was dropped: " + filter,
+			builder.journalName()
+				.isPresent()
+		);
+	}
+
+	@Test
+	public void openAlexFiltersOnPublicationDate() {
+		var builder = openalex().buildQuery();
+		builder.withQuery(everything());
+
+		var filter = builder.filter();
+
+		assertTrue(filter, filter.contains("from_publication_date:2020-01-01"));
+		assertTrue(filter, filter.contains("to_publication_date:2020-12-31"));
+	}
+
+	@Test
+	public void openAlexSendsAOneSidedDateWindowAsAsked() {
+		// Entrez needs both ends or it ignores the range; OpenAlex does not, so closing
+		// an open-ended "since" at today would invent a bound the caller never set
+		var builder = openalex().buildQuery();
+		builder.withQuery(
+			ImmutableQuery.builder()
+				.allFields("malaria")
+				.after(LocalDate.of(2015, 3, 1))
+				.build()
+		);
+
+		var filter = builder.filter();
+
+		assertTrue(filter, filter.contains("from_publication_date:2015-03-01"));
+		assertFalse(
+			"a bound was invented for an open-ended window: " + filter,
+			filter.contains("to_publication_date")
+		);
+	}
+
+	@Test
+	public void openAlexLeavesAnUnaskedDateWindowAlone() {
+		var builder = openalex().buildQuery();
+		builder.withQuery(dateless("malaria"));
+
+		assertFalse(
+			"a date filter was invented for an undated query: " + builder.filter(),
+			builder.filter()
+				.contains("publication_date")
+		);
+	}
+
+	@Test
+	public void openAlexChargesATextSearchOnceNotOncePerFilter() {
+		// measured against the live API: an ISSN filter ANDed with a text search costs
+		// 10 credits, not 11, and two text filters together cost 10, not 20. A request
+		// is priced by its dearest condition, so summing would over-report spend against
+		// a daily budget the crawl is meant to stop on
+		var builder = openalex().buildQuery();
+		builder.titleAndAbstract("malaria");
+		builder.journal("1471-2334");
+		builder.between(
+				Optional.of(LocalDate.of(2020, 1, 1)),
+				Optional.of(LocalDate.of(2020, 12, 31))
+		);
+
+		assertEquals(
+			"a request costs the most expensive thing it asks for",
+			10,
+			builder.cost()
+		);
+	}
+
+	@Test
+	public void openAlexPassesAnIssnThroughAsAnExactRestriction() {
+		// OpenAlex cannot filter works by container name, only by ISSN. Given an ISSN the
+		// client needs no lookup, so this must appear in the filter rather than waiting
+		// behind journalName() like a name does
+		var builder = openalex().buildQuery();
+		builder.journal("1471-2334");
+
+		assertTrue(
+			builder.filter(),
+			builder.filter()
+				.contains("primary_location.source.issn:1471-2334")
+		);
+	}
+
+	@Test
+	public void openAlexPassesALimitThroughAsThePageSize() {
+		var builder = openalex().buildQuery();
+		builder.withQuery(everything());
+
+		assertEquals(17, builder.perPage());
+	}
+
+	@Test
+	public void openAlexKeepsThePageSizeWithinTheDocumentedMaximum() {
+		// per-page above 200 is a 400 ("Pagination error"), so an oversized limit has to
+		// be clamped rather than sent
+		var builder = openalex().buildQuery();
+		builder.withQuery(
+			ImmutableQuery.builder()
+				.allFields("malaria")
+				.limit(5000)
+				.build()
+		);
+
+		assertTrue("per-page was " + builder.perPage(), builder.perPage() <= 200);
+	}
+
+	@Test
+	public void openAlexPassesANativeQueryThrough() {
+		var builder = openalex().buildQuery();
+		builder.withQuery(
+			ImmutableQuery.builder()
+				.nativeQuery("cites:W3134566701")
+				.build()
+		);
+
+		assertEquals("cites:W3134566701", builder.filter());
+	}
+
+	@Test
+	public void openAlexAsksForNothingWhenNothingWasAsked() {
+		// an empty filter is not "match nothing" to this API, it is an unfiltered
+		// request over the whole corpus: 1 credit for every work there is
+		assertTrue(
+			"an empty query would be sent as an unfiltered request",
+			openalex().buildQuery()
+				.execute()
+				.isEmpty()
+		);
+	}
+
 	// ---- the shared contract ------------------------------------------------
 
 	@Test
@@ -476,6 +636,8 @@ public class TestQueryTranslation {
 			() -> entrez().buildQuery()
 				.withQuery(qry),
 			() -> europepmc().buildQuery()
+				.withQuery(qry),
+			() -> openalex().buildQuery()
 				.withQuery(qry)
 		);
 

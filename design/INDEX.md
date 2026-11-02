@@ -38,7 +38,6 @@ fails the build instead of quietly lying.
 
 | uri | title | status | targetVersion |
 | --- | --- | --- | --- |
-| [Unpaywall preprint doi not resolved](implementation/issues/issue-016-unpaywall-preprint-doi-not-resolved.md) | Unpaywall preprint doi not resolved | open | 0.1.0 |
 | [Generic search builder withquery noop](implementation/issues/issue-017-generic-search-builder-withQuery-noop.md) | Generic search builder withquery noop | open | 0.1.0 |
 | [Tool output drops authors and print details](implementation/issues/issue-018-tool-output-drops-authors-and-print-details.md) | Tool output drops authors and print details | open | 0.1.0 |
 | [Citation styles are listed but cannot be selected](implementation/issues/issue-019-citation-styles-cannot-be-selected.md) | Citation styles are listed but cannot be selected | open | 0.1.0 |
@@ -71,6 +70,6 @@ fails the build instead of quietly lying.
 
 | status | features |
 | --- | --- |
-| draft | 4 |
-| final | 7 |
+| draft | 3 |
+| final | 8 |
 <!-- loom view: features_by_state end -->

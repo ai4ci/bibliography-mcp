@@ -100,7 +100,7 @@ rule into what the user actually needs, which is the distinction below.
 
 Both tools are implemented and were exercised live against a real collection: the
 report matched titles, dates, abstracts, publishers, containers, DOIs, URLs and
-creators against CrossRef, Europe PMC and Unpaywall, attributing each value to the
+creators against CrossRef, Europe PMC and OpenAlex, attributing each value to the
 source that asserted it and cleaning markup out of the values it offers; an
 explicit update changed exactly the two fields named, reported what they had been
 before, and left the item's tags and title untouched.
@@ -120,7 +120,7 @@ Three defects the live run exposed, all fixed: CrossRef abstracts arrived as JAT
 XML (a markup-wrapped abstract read as a conflict with itself, and could have been
 written into `abstractNote` verbatim); the container was compared against a
 non-existent `container` field, so it was always reported as fillable and an update
-using that name would have been refused; and Unpaywall reports every author as
+using that name would have been refused; and a source reports every author as
 "Unknown", which made every item it appeared on look like an author conflict.
 
 

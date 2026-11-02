@@ -1,6 +1,6 @@
 ---
 title: Unpaywall preprint doi not resolved
-status: open
+status: closed
 sinceVersion: 0.0.6
 targetVersion: 0.1.0
 tags:
@@ -9,7 +9,7 @@ tags:
 - timeout
 - unpaywall
 TESTED_BY:
-- test:java/uk/co/terminological/bibliography/api/unpaywall/TestUnpaywallClientEndToEnd.java
+- test:java/uk/co/terminological/bibliography/api/openalex/TestOpenAlexClientEndToEnd.java
 ---
 
 ## Issue desc
@@ -95,6 +95,21 @@ checked and none holds:
 `this.setReadTimeout(30_000)` in the `UnpaywallClient` constructor, as
 `OpenCitationsClient` already does. The general fix — a per-API timeout in
 configuration rather than a constant in the shared base — is debt-009.
+
+## Resolution (2026-11-02)
+
+Not fixed — **retired**. `UnpaywallClient` and its tests are deleted; OpenAlex
+now supplies the open-access location, and the preprint this record could not
+fetch is the assertion that proves the replacement:
+`TestOpenAlexClientEndToEnd.theOpenAccessPdfIsInTheSamePayloadAsTheMetadata`
+resolves `10.64898/2025.12.12.25342129` and expects the medRxiv pdf URL,
+arriving in the same payload as the metadata rather than in a second call to a
+second provider.
+
+The root cause stands as a lesson for debt-009: a slow API behind a shared
+3-second timeout does not fail, it returns "nothing". Unpaywall was the source
+that proved it. `MergePolicy`'s PDF priority now names `openalex` where it named
+`unpaywall`.
 
 
 [TestUnpaywallClientEndToEnd.java](/src/test/java/uk/co/terminological/bibliography/api/unpaywall/TestUnpaywallClientEndToEnd.java)

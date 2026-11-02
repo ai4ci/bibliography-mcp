@@ -48,7 +48,7 @@ public final class TestPaperFixtures {
 	/** Expected journal ISO/MEDLINE abbreviation */
 	public static final String EXPECTED_JOURNAL_ABBR = "BMC Infect Dis";
 
-	/** Expected repository/server for the preprint (Zotero {@code repository} field; Unpaywall {@code journal_name}) */
+	/** Expected repository/server for the preprint (Zotero {@code repository} field; OpenAlex {@code primary_location.source.display_name}) */
 	public static final String EXPECTED_REPOSITORY = "medRxiv";
 
 	/** Expected 16 author surnames in author order from Zotero */

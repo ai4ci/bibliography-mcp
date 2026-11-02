@@ -280,8 +280,8 @@ public class MetadataComparison {
 	}
 
 	/**
-	 * Unpaywall reports placeholders ("Unknown") when it has no author data, which would otherwise read as a disagreement
-	 * with every item it appears on and train a reader to ignore the creators line altogether.
+	 * Sources report placeholders ("Unknown", "AUTHOR UNKNOWN") when they have no author data, which would otherwise
+	 * read as a disagreement with every item they appear on and train a reader to ignore the creators line altogether.
 	 */
 	private static boolean isPlaceholder(String surname) {
 		var normalised = ZoteroMatching.text(surname);

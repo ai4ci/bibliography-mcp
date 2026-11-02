@@ -1,0 +1,2138 @@
+{
+ "id": "https://openalex.org/W7140411570",
+ "doi": "https://doi.org/10.1186/s12879-026-13122-y",
+ "title": "Trends in invasive and non-invasive Streptococcus pneumoniae disease in adults hospitalised in Bristol and Bath: a retrospective cohort study, 2006–2022",
+ "display_name": "Trends in invasive and non-invasive Streptococcus pneumoniae disease in adults hospitalised in Bristol and Bath: a retrospective cohort study, 2006–2022",
+ "publication_year": 2026,
+ "publication_date": "2026-03-26",
+ "ids": {
+  "openalex": "https://openalex.org/W7140411570",
+  "doi": "https://doi.org/10.1186/s12879-026-13122-y",
+  "pmid": "https://pubmed.ncbi.nlm.nih.gov/41888721",
+  "pmcid": "https://www.ncbi.nlm.nih.gov/pmc/articles/13141338"
+ },
+ "language": "en",
+ "primary_location": {
+  "id": "doi:10.1186/s12879-026-13122-y",
+  "doi": "https://doi.org/10.1186/s12879-026-13122-y",
+  "is_oa": true,
+  "landing_page_url": "https://doi.org/10.1186/s12879-026-13122-y",
+  "pdf_url": null,
+  "source": {
+   "id": "https://openalex.org/S171015910",
+   "display_name": "BMC Infectious Diseases",
+   "issn_l": "1471-2334",
+   "issn": [
+    "1471-2334"
+   ],
+   "is_oa": true,
+   "is_in_doaj": true,
+   "is_core": true,
+   "listed_in": [
+    "anvur-scientific",
+    "cwts-core",
+    "doaj",
+    "dongbi-d",
+    "doyens",
+    "jufo-1",
+    "ki-jl-1",
+    "medline",
+    "norway-1",
+    "oarl",
+    "poland-100",
+    "russia-white-list-2",
+    "vabb-shw"
+   ],
+   "host_organization": "https://openalex.org/P4310320256",
+   "host_organization_name": "BioMed Central",
+   "host_organization_lineage": [
+    "https://openalex.org/P4310320256",
+    "https://openalex.org/P4310319965"
+   ],
+   "host_organization_lineage_names": [
+    "BioMed Central",
+    "Springer Nature"
+   ],
+   "type": "journal"
+  },
+  "license": "cc-by",
+  "license_id": "https://openalex.org/licenses/cc-by",
+  "version": "publishedVersion",
+  "is_accepted": true,
+  "is_published": true,
+  "raw_source_name": "BMC Infectious Diseases",
+  "raw_type": "journal-article"
+ },
+ "volume": null,
+ "type": "article",
+ "indexed_in": [
+  "crossref",
+  "doaj",
+  "pubmed"
+ ],
+ "open_access": {
+  "is_oa": true,
+  "oa_status": "gold",
+  "oa_url": "https://doi.org/10.1186/s12879-026-13122-y",
+  "any_repository_has_fulltext": true
+ },
+ "authorships": [
+  {
+   "author_position": "first",
+   "author": {
+    "id": "https://openalex.org/A5024515720",
+    "display_name": "Robert Challen",
+    "orcid": "https://orcid.org/0000-0002-5504-7768",
+    "observed_orcids": [
+     "https://orcid.org/0000-0002-5504-7768"
+    ]
+   },
+   "institutions": [
+    {
+     "id": "https://openalex.org/I36234482",
+     "display_name": "University of Bristol",
+     "ror": "https://ror.org/0524sp257",
+     "country_code": "GB",
+     "type": "education",
+     "lineage": [
+      "https://openalex.org/I36234482"
+     ]
+    }
+   ],
+   "countries": [
+    "GB"
+   ],
+   "is_corresponding": true,
+   "raw_author_name": "Robert Challen",
+   "raw_affiliation_strings": [
+    "Bristol Vaccine Centre, Schools of Cellular and Molecular Medicine and of Population Health Sciences, University of Bristol, Bristol, UK. rob.challen@bristol.ac.uk",
+    "Engineering Mathematics, University of Bristol, Bristol, UK. rob.challen@bristol.ac.uk"
+   ],
+   "raw_orcid": null,
+   "affiliations": [
+    {
+     "raw_affiliation_string": "Bristol Vaccine Centre, Schools of Cellular and Molecular Medicine and of Population Health Sciences, University of Bristol, Bristol, UK. rob.challen@bristol.ac.uk",
+     "institution_ids": [
+      "https://openalex.org/I36234482"
+     ]
+    },
+    {
+     "raw_affiliation_string": "Engineering Mathematics, University of Bristol, Bristol, UK. rob.challen@bristol.ac.uk",
+     "institution_ids": [
+      "https://openalex.org/I36234482"
+     ]
+    }
+   ]
+  },
+  {
+   "author_position": "middle",
+   "author": {
+    "id": "https://openalex.org/A5049947539",
+    "display_name": "Catherine J. Hyams",
+    "orcid": "https://orcid.org/0000-0003-3923-1773",
+    "observed_orcids": [
+     "https://orcid.org/0000-0003-3923-1773"
+    ]
+   },
+   "institutions": [
+    {
+     "id": "https://openalex.org/I2801253297",
+     "display_name": "Southmead Hospital",
+     "ror": "https://ror.org/05d576879",
+     "country_code": "GB",
+     "type": "healthcare",
+     "lineage": [
+      "https://openalex.org/I2801253297",
+      "https://openalex.org/I4405276282"
+     ]
+    },
+    {
+     "id": "https://openalex.org/I36234482",
+     "display_name": "University of Bristol",
+     "ror": "https://ror.org/0524sp257",
+     "country_code": "GB",
+     "type": "education",
+     "lineage": [
+      "https://openalex.org/I36234482"
+     ]
+    }
+   ],
+   "countries": [
+    "GB"
+   ],
+   "is_corresponding": false,
+   "raw_author_name": "Catherine Hyams",
+   "raw_affiliation_strings": [
+    "Academic Respiratory Unit, Learning and Research Building, Southmead Hospital, Bristol, UK",
+    "Bristol Vaccine Centre, Schools of Cellular and Molecular Medicine and of Population Health Sciences, University of Bristol, Bristol, UK"
+   ],
+   "raw_orcid": null,
+   "affiliations": [
+    {
+     "raw_affiliation_string": "Academic Respiratory Unit, Learning and Research Building, Southmead Hospital, Bristol, UK",
+     "institution_ids": [
+      "https://openalex.org/I2801253297"
+     ]
+    },
+    {
+     "raw_affiliation_string": "Bristol Vaccine Centre, Schools of Cellular and Molecular Medicine and of Population Health Sciences, University of Bristol, Bristol, UK",
+     "institution_ids": [
+      "https://openalex.org/I36234482"
+     ]
+    }
+   ]
+  },
+  {
+   "author_position": "middle",
+   "author": {
+    "id": "https://openalex.org/A5027188686",
+    "display_name": "David Hettle",
+    "orcid": "https://orcid.org/0000-0002-7606-986X",
+    "observed_orcids": [
+     "https://orcid.org/0000-0002-7606-986X"
+    ]
+   },
+   "institutions": [
+    {
+     "id": "https://openalex.org/I2802901496",
+     "display_name": "Bristol Royal Infirmary",
+     "ror": "https://ror.org/031p4kj21",
+     "country_code": "GB",
+     "type": "healthcare",
+     "lineage": [
+      "https://openalex.org/I2802901496",
+      "https://openalex.org/I4405276282"
+     ]
+    }
+   ],
+   "countries": [
+    "GB"
+   ],
+   "is_corresponding": false,
+   "raw_author_name": "David Hettle",
+   "raw_affiliation_strings": [
+    "Department of Microbiology, Bristol Royal Infirmary, Upper Maudlin Street, Bristol, UK"
+   ],
+   "raw_orcid": null,
+   "affiliations": [
+    {
+     "raw_affiliation_string": "Department of Microbiology, Bristol Royal Infirmary, Upper Maudlin Street, Bristol, UK",
+     "institution_ids": [
+      "https://openalex.org/I2802901496"
+     ]
+    }
+   ]
+  },
+  {
+   "author_position": "middle",
+   "author": {
+    "id": "https://openalex.org/A5063218764",
+    "display_name": "Zahin Amin‐Chowdhury",
+    "orcid": "https://orcid.org/0000-0002-3106-992X",
+    "observed_orcids": [
+     "https://orcid.org/0000-0002-3106-992X"
+    ]
+   },
+   "institutions": [
+    {
+     "id": "https://openalex.org/I4387153084",
+     "display_name": "UK Health Security Agency",
+     "ror": "https://ror.org/018h10037",
+     "country_code": "GB",
+     "type": "government",
+     "lineage": [
+      "https://openalex.org/I1311074006",
+      "https://openalex.org/I4387153084"
+     ]
+    }
+   ],
+   "countries": [
+    "GB"
+   ],
+   "is_corresponding": false,
+   "raw_author_name": "Zahin Amin-Chowdhury",
+   "raw_affiliation_strings": [
+    "Immunisation Department, UK Health Security Agency (UKHSA), London, UK"
+   ],
+   "raw_orcid": null,
+   "affiliations": [
+    {
+     "raw_affiliation_string": "Immunisation Department, UK Health Security Agency (UKHSA), London, UK",
+     "institution_ids": [
+      "https://openalex.org/I4387153084"
+     ]
+    }
+   ]
+  },
+  {
+   "author_position": "middle",
+   "author": {
+    "id": "https://openalex.org/A5063696719",
+    "display_name": "Charli Grimes",
+    "orcid": "https://orcid.org/0000-0002-0171-0704",
+    "observed_orcids": [
+     "https://orcid.org/0000-0002-0171-0704"
+    ]
+   },
+   "institutions": [
+    {
+     "id": "https://openalex.org/I2802901496",
+     "display_name": "Bristol Royal Infirmary",
+     "ror": "https://ror.org/031p4kj21",
+     "country_code": "GB",
+     "type": "healthcare",
+     "lineage": [
+      "https://openalex.org/I2802901496",
+      "https://openalex.org/I4405276282"
+     ]
+    }
+   ],
+   "countries": [
+    "GB"
+   ],
+   "is_corresponding": false,
+   "raw_author_name": "Charli Grimes",
+   "raw_affiliation_strings": [
+    "Department of Microbiology, Bristol Royal Infirmary, Upper Maudlin Street, Bristol, UK"
+   ],
+   "raw_orcid": null,
+   "affiliations": [
+    {
+     "raw_affiliation_string": "Department of Microbiology, Bristol Royal Infirmary, Upper Maudlin Street, Bristol, UK",
+     "institution_ids": [
+      "https://openalex.org/I2802901496"
+     ]
+    }
+   ]
+  },
+  {
+   "author_position": "middle",
+   "author": {
+    "id": "https://openalex.org/A5082924728",
+    "display_name": "Gabriella Ruffino",
+    "orcid": "https://orcid.org/0000-0002-1549-9364",
+    "observed_orcids": [
+     "https://orcid.org/0000-0002-1549-9364"
+    ]
+   },
+   "institutions": [
+    {
+     "id": "https://openalex.org/I2801253297",
+     "display_name": "Southmead Hospital",
+     "ror": "https://ror.org/05d576879",
+     "country_code": "GB",
+     "type": "healthcare",
+     "lineage": [
+      "https://openalex.org/I2801253297",
+      "https://openalex.org/I4405276282"
+     ]
+    }
+   ],
+   "countries": [
+    "GB"
+   ],
+   "is_corresponding": false,
+   "raw_author_name": "Gabriella Ruffino",
+   "raw_affiliation_strings": [
+    "Academic Respiratory Unit, Learning and Research Building, Southmead Hospital, Bristol, UK"
+   ],
+   "raw_orcid": null,
+   "affiliations": [
+    {
+     "raw_affiliation_string": "Academic Respiratory Unit, Learning and Research Building, Southmead Hospital, Bristol, UK",
+     "institution_ids": [
+      "https://openalex.org/I2801253297"
+     ]
+    }
+   ]
+  },
+  {
+   "author_position": "middle",
+   "author": {
+    "id": "https://openalex.org/A5026295613",
+    "display_name": "Rauri Conway",
+    "orcid": null,
+    "observed_orcids": []
+   },
+   "institutions": [
+    {
+     "id": "https://openalex.org/I2801253297",
+     "display_name": "Southmead Hospital",
+     "ror": "https://ror.org/05d576879",
+     "country_code": "GB",
+     "type": "healthcare",
+     "lineage": [
+      "https://openalex.org/I2801253297",
+      "https://openalex.org/I4405276282"
+     ]
+    }
+   ],
+   "countries": [
+    "GB"
+   ],
+   "is_corresponding": false,
+   "raw_author_name": "Rauri Conway",
+   "raw_affiliation_strings": [
+    "Academic Respiratory Unit, Learning and Research Building, Southmead Hospital, Bristol, UK"
+   ],
+   "raw_orcid": null,
+   "affiliations": [
+    {
+     "raw_affiliation_string": "Academic Respiratory Unit, Learning and Research Building, Southmead Hospital, Bristol, UK",
+     "institution_ids": [
+      "https://openalex.org/I2801253297"
+     ]
+    }
+   ]
+  },
+  {
+   "author_position": "middle",
+   "author": {
+    "id": "https://openalex.org/A5061474069",
+    "display_name": "Robyn Heath",
+    "orcid": "https://orcid.org/0000-0002-2853-4552",
+    "observed_orcids": [
+     "https://orcid.org/0000-0002-2853-4552"
+    ]
+   },
+   "institutions": [
+    {
+     "id": "https://openalex.org/I36234482",
+     "display_name": "University of Bristol",
+     "ror": "https://ror.org/0524sp257",
+     "country_code": "GB",
+     "type": "education",
+     "lineage": [
+      "https://openalex.org/I36234482"
+     ]
+    }
+   ],
+   "countries": [
+    "GB"
+   ],
+   "is_corresponding": false,
+   "raw_author_name": "Robyn Heath",
+   "raw_affiliation_strings": [
+    "Bristol Vaccine Centre, Schools of Cellular and Molecular Medicine and of Population Health Sciences, University of Bristol, Bristol, UK"
+   ],
+   "raw_orcid": null,
+   "affiliations": [
+    {
+     "raw_affiliation_string": "Bristol Vaccine Centre, Schools of Cellular and Molecular Medicine and of Population Health Sciences, University of Bristol, Bristol, UK",
+     "institution_ids": [
+      "https://openalex.org/I36234482"
+     ]
+    }
+   ]
+  },
+  {
+   "author_position": "middle",
+   "author": {
+    "id": "https://openalex.org/A5008074980",
+    "display_name": "Paul North",
+    "orcid": null,
+    "observed_orcids": []
+   },
+   "institutions": [
+    {
+     "id": "https://openalex.org/I2802901496",
+     "display_name": "Bristol Royal Infirmary",
+     "ror": "https://ror.org/031p4kj21",
+     "country_code": "GB",
+     "type": "healthcare",
+     "lineage": [
+      "https://openalex.org/I2802901496",
+      "https://openalex.org/I4405276282"
+     ]
+    }
+   ],
+   "countries": [
+    "GB"
+   ],
+   "is_corresponding": false,
+   "raw_author_name": "Paul North",
+   "raw_affiliation_strings": [
+    "Department of Microbiology, Bristol Royal Infirmary, Upper Maudlin Street, Bristol, UK"
+   ],
+   "raw_orcid": null,
+   "affiliations": [
+    {
+     "raw_affiliation_string": "Department of Microbiology, Bristol Royal Infirmary, Upper Maudlin Street, Bristol, UK",
+     "institution_ids": [
+      "https://openalex.org/I2802901496"
+     ]
+    }
+   ]
+  },
+  {
+   "author_position": "middle",
+   "author": {
+    "id": null,
+    "display_name": "Adam Malin",
+    "orcid": null,
+    "observed_orcids": []
+   },
+   "institutions": [
+    {
+     "id": "https://openalex.org/I2800549715",
+     "display_name": "Royal United Hospital",
+     "ror": "https://ror.org/00a858n67",
+     "country_code": "GB",
+     "type": "healthcare",
+     "lineage": [
+      "https://openalex.org/I2800549715",
+      "https://openalex.org/I4210161895"
+     ]
+    }
+   ],
+   "countries": [
+    "GB"
+   ],
+   "is_corresponding": false,
+   "raw_author_name": "Adam Malin",
+   "raw_affiliation_strings": [
+    "Department of Respiratory Medicine, The Royal United Hospital, Bath, UK"
+   ],
+   "raw_orcid": null,
+   "affiliations": [
+    {
+     "raw_affiliation_string": "Department of Respiratory Medicine, The Royal United Hospital, Bath, UK",
+     "institution_ids": [
+      "https://openalex.org/I2800549715"
+     ]
+    }
+   ]
+  },
+  {
+   "author_position": "middle",
+   "author": {
+    "id": "https://openalex.org/A5081633297",
+    "display_name": "Nick A. Maskell",
+    "orcid": "https://orcid.org/0000-0002-1276-6500",
+    "observed_orcids": [
+     "https://orcid.org/0000-0002-1276-6500"
+    ]
+   },
+   "institutions": [
+    {
+     "id": "https://openalex.org/I2801253297",
+     "display_name": "Southmead Hospital",
+     "ror": "https://ror.org/05d576879",
+     "country_code": "GB",
+     "type": "healthcare",
+     "lineage": [
+      "https://openalex.org/I2801253297",
+      "https://openalex.org/I4405276282"
+     ]
+    }
+   ],
+   "countries": [
+    "GB"
+   ],
+   "is_corresponding": false,
+   "raw_author_name": "Nick A. Maskell",
+   "raw_affiliation_strings": [
+    "Academic Respiratory Unit, Learning and Research Building, Southmead Hospital, Bristol, UK"
+   ],
+   "raw_orcid": null,
+   "affiliations": [
+    {
+     "raw_affiliation_string": "Academic Respiratory Unit, Learning and Research Building, Southmead Hospital, Bristol, UK",
+     "institution_ids": [
+      "https://openalex.org/I2801253297"
+     ]
+    }
+   ]
+  },
+  {
+   "author_position": "middle",
+   "author": {
+    "id": "https://openalex.org/A5023505197",
+    "display_name": "Philip F. C. Williams",
+    "orcid": null,
+    "observed_orcids": []
+   },
+   "institutions": [
+    {
+     "id": "https://openalex.org/I2802901496",
+     "display_name": "Bristol Royal Infirmary",
+     "ror": "https://ror.org/031p4kj21",
+     "country_code": "GB",
+     "type": "healthcare",
+     "lineage": [
+      "https://openalex.org/I2802901496",
+      "https://openalex.org/I4405276282"
+     ]
+    }
+   ],
+   "countries": [
+    "GB"
+   ],
+   "is_corresponding": false,
+   "raw_author_name": "Philip Williams",
+   "raw_affiliation_strings": [
+    "Department of Microbiology, Bristol Royal Infirmary, Upper Maudlin Street, Bristol, UK"
+   ],
+   "raw_orcid": null,
+   "affiliations": [
+    {
+     "raw_affiliation_string": "Department of Microbiology, Bristol Royal Infirmary, Upper Maudlin Street, Bristol, UK",
+     "institution_ids": [
+      "https://openalex.org/I2802901496"
+     ]
+    }
+   ]
+  },
+  {
+   "author_position": "middle",
+   "author": {
+    "id": "https://openalex.org/A5053260654",
+    "display_name": "O. Martin Williams",
+    "orcid": "https://orcid.org/0000-0002-6358-6307",
+    "observed_orcids": [
+     "https://orcid.org/0000-0002-6358-6307"
+    ]
+   },
+   "institutions": [
+    {
+     "id": "https://openalex.org/I2802901496",
+     "display_name": "Bristol Royal Infirmary",
+     "ror": "https://ror.org/031p4kj21",
+     "country_code": "GB",
+     "type": "healthcare",
+     "lineage": [
+      "https://openalex.org/I2802901496",
+      "https://openalex.org/I4405276282"
+     ]
+    }
+   ],
+   "countries": [
+    "GB"
+   ],
+   "is_corresponding": false,
+   "raw_author_name": "O. Martin Williams",
+   "raw_affiliation_strings": [
+    "Department of Microbiology, Bristol Royal Infirmary, Upper Maudlin Street, Bristol, UK"
+   ],
+   "raw_orcid": null,
+   "affiliations": [
+    {
+     "raw_affiliation_string": "Department of Microbiology, Bristol Royal Infirmary, Upper Maudlin Street, Bristol, UK",
+     "institution_ids": [
+      "https://openalex.org/I2802901496"
+     ]
+    }
+   ]
+  },
+  {
+   "author_position": "middle",
+   "author": {
+    "id": "https://openalex.org/A5060485846",
+    "display_name": "S Ladhani",
+    "orcid": "https://orcid.org/0000-0002-0856-2476",
+    "observed_orcids": [
+     "https://orcid.org/0000-0002-0856-2476"
+    ]
+   },
+   "institutions": [
+    {
+     "id": "https://openalex.org/I4387153084",
+     "display_name": "UK Health Security Agency",
+     "ror": "https://ror.org/018h10037",
+     "country_code": "GB",
+     "type": "government",
+     "lineage": [
+      "https://openalex.org/I1311074006",
+      "https://openalex.org/I4387153084"
+     ]
+    }
+   ],
+   "countries": [
+    "GB"
+   ],
+   "is_corresponding": false,
+   "raw_author_name": "Shamez N. Ladhani",
+   "raw_affiliation_strings": [
+    "Immunisation Department, UK Health Security Agency (UKHSA), London, UK"
+   ],
+   "raw_orcid": null,
+   "affiliations": [
+    {
+     "raw_affiliation_string": "Immunisation Department, UK Health Security Agency (UKHSA), London, UK",
+     "institution_ids": [
+      "https://openalex.org/I4387153084"
+     ]
+    }
+   ]
+  },
+  {
+   "author_position": "middle",
+   "author": {
+    "id": "https://openalex.org/A5042656326",
+    "display_name": "León Danon",
+    "orcid": "https://orcid.org/0000-0002-7076-1871",
+    "observed_orcids": [
+     "https://orcid.org/0000-0002-7076-1871"
+    ]
+   },
+   "institutions": [
+    {
+     "id": "https://openalex.org/I36234482",
+     "display_name": "University of Bristol",
+     "ror": "https://ror.org/0524sp257",
+     "country_code": "GB",
+     "type": "education",
+     "lineage": [
+      "https://openalex.org/I36234482"
+     ]
+    }
+   ],
+   "countries": [
+    "GB"
+   ],
+   "is_corresponding": false,
+   "raw_author_name": "Leon Danon",
+   "raw_affiliation_strings": [
+    "Engineering Mathematics, University of Bristol, Bristol, UK"
+   ],
+   "raw_orcid": null,
+   "affiliations": [
+    {
+     "raw_affiliation_string": "Engineering Mathematics, University of Bristol, Bristol, UK",
+     "institution_ids": [
+      "https://openalex.org/I36234482"
+     ]
+    }
+   ]
+  },
+  {
+   "author_position": "last",
+   "author": {
+    "id": "https://openalex.org/A5034393834",
+    "display_name": "Adam H.R. Finn",
+    "orcid": "https://orcid.org/0000-0003-1756-5668",
+    "observed_orcids": [
+     "https://orcid.org/0000-0003-1756-5668"
+    ]
+   },
+   "institutions": [
+    {
+     "id": "https://openalex.org/I36234482",
+     "display_name": "University of Bristol",
+     "ror": "https://ror.org/0524sp257",
+     "country_code": "GB",
+     "type": "education",
+     "lineage": [
+      "https://openalex.org/I36234482"
+     ]
+    }
+   ],
+   "countries": [
+    "GB"
+   ],
+   "is_corresponding": false,
+   "raw_author_name": "Adam Finn",
+   "raw_affiliation_strings": [
+    "Bristol Vaccine Centre, Schools of Cellular and Molecular Medicine and of Population Health Sciences, University of Bristol, Bristol, UK"
+   ],
+   "raw_orcid": null,
+   "affiliations": [
+    {
+     "raw_affiliation_string": "Bristol Vaccine Centre, Schools of Cellular and Molecular Medicine and of Population Health Sciences, University of Bristol, Bristol, UK",
+     "institution_ids": [
+      "https://openalex.org/I36234482"
+     ]
+    }
+   ]
+  }
+ ],
+ "institutions": [],
+ "countries_distinct_count": 1,
+ "institutions_distinct_count": 5,
+ "corresponding_author_ids": [
+  "https://openalex.org/A5024515720"
+ ],
+ "corresponding_institution_ids": [
+  "https://openalex.org/I36234482"
+ ],
+ "apc_list": {
+  "value": 3090,
+  "currency": "USD",
+  "value_usd": 3090
+ },
+ "apc_paid": {
+  "value": 3090,
+  "currency": "USD",
+  "value_usd": 3090
+ },
+ "fwci": 0.0,
+ "has_fulltext": false,
+ "cited_by_count": 0,
+ "citation_normalized_percentile": {
+  "value": 0.17820551,
+  "is_in_top_1_percent": false,
+  "is_in_top_10_percent": false
+ },
+ "cited_by_percentile_year": null,
+ "biblio": {
+  "volume": "26",
+  "issue": "1",
+  "first_page": null,
+  "last_page": null
+ },
+ "is_retracted": false,
+ "is_paratext": false,
+ "is_xpac": false,
+ "primary_topic": {
+  "id": "https://openalex.org/T10654",
+  "display_name": "Pneumonia and Respiratory Infections",
+  "score": 0.9994999766349792,
+  "subfield": {
+   "id": "https://openalex.org/subfields/2713",
+   "display_name": "Epidemiology"
+  },
+  "field": {
+   "id": "https://openalex.org/fields/27",
+   "display_name": "Medicine"
+  },
+  "domain": {
+   "id": "https://openalex.org/domains/4",
+   "display_name": "Health Sciences"
+  }
+ },
+ "topics": [
+  {
+   "id": "https://openalex.org/T10654",
+   "display_name": "Pneumonia and Respiratory Infections",
+   "score": 0.9994999766349792,
+   "subfield": {
+    "id": "https://openalex.org/subfields/2713",
+    "display_name": "Epidemiology"
+   },
+   "field": {
+    "id": "https://openalex.org/fields/27",
+    "display_name": "Medicine"
+   },
+   "domain": {
+    "id": "https://openalex.org/domains/4",
+    "display_name": "Health Sciences"
+   }
+  },
+  {
+   "id": "https://openalex.org/T10873",
+   "display_name": "Bacterial Infections and Vaccines",
+   "score": 0.0003000000142492354,
+   "subfield": {
+    "id": "https://openalex.org/subfields/2404",
+    "display_name": "Microbiology"
+   },
+   "field": {
+    "id": "https://openalex.org/fields/24",
+    "display_name": "Immunology and Microbiology"
+   },
+   "domain": {
+    "id": "https://openalex.org/domains/1",
+    "display_name": "Life Sciences"
+   }
+  },
+  {
+   "id": "https://openalex.org/T11153",
+   "display_name": "Streptococcal Infections and Treatments",
+   "score": 9.999999747378752e-05,
+   "subfield": {
+    "id": "https://openalex.org/subfields/2739",
+    "display_name": "Public Health, Environmental and Occupational Health"
+   },
+   "field": {
+    "id": "https://openalex.org/fields/27",
+    "display_name": "Medicine"
+   },
+   "domain": {
+    "id": "https://openalex.org/domains/4",
+    "display_name": "Health Sciences"
+   }
+  }
+ ],
+ "keywords": [
+  {
+   "id": "https://openalex.org/keywords/streptococcus-pneumoniae",
+   "display_name": "Streptococcus pneumoniae",
+   "score": 0.9919999837875366
+  },
+  {
+   "id": "https://openalex.org/keywords/pneumococcal-disease",
+   "display_name": "pneumococcal infection",
+   "score": 0.8949999809265137
+  },
+  {
+   "id": "https://openalex.org/keywords/invasive-pneumococcal-disease",
+   "display_name": "invasive pneumococcal disease",
+   "score": 0.9369999766349792
+  },
+  {
+   "id": "https://openalex.org/keywords/non-invasive-pneumococcal-disease",
+   "display_name": "non-invasive pneumococcal disease",
+   "score": 0.9760000109672546
+  },
+  {
+   "id": "https://openalex.org/keywords/pneumococcal-meningitis",
+   "display_name": "pneumococcal meningitis",
+   "score": 0.8679999709129333
+  },
+  {
+   "id": "https://openalex.org/keywords/case-fatality-rate",
+   "display_name": "case fatality rate",
+   "score": 0.6520000100135803
+  },
+  {
+   "id": "https://openalex.org/keywords/serotype-distribution",
+   "display_name": "serotype distribution",
+   "score": 0.9089999794960022
+  },
+  {
+   "id": "https://openalex.org/keywords/lower-respiratory-tract-infection",
+   "display_name": "lower respiratory tract infection",
+   "score": 0.7879999876022339
+  },
+  {
+   "id": "https://openalex.org/keywords/pneumococcal-vaccination",
+   "display_name": "pneumococcal vaccination",
+   "score": 0.7110000252723694
+  },
+  {
+   "id": "https://openalex.org/keywords/disease-burden",
+   "display_name": "disease burden",
+   "score": 0.5809999704360962
+  },
+  {
+   "id": "https://openalex.org/keywords/hospitalized-adults",
+   "display_name": "hospitalized adults",
+   "score": 0.6679999828338623
+  },
+  {
+   "id": "https://openalex.org/keywords/intensive-care-unit-admission",
+   "display_name": "intensive care unit admission",
+   "score": 0.8379999995231628
+  },
+  {
+   "id": "https://openalex.org/keywords/length-of-hospital-stay",
+   "display_name": "length of hospital stay",
+   "score": 0.781000018119812
+  }
+ ],
+ "concepts": [
+  {
+   "id": "https://openalex.org/C71924100",
+   "wikidata": "https://www.wikidata.org/wiki/Q11190",
+   "display_name": "Medicine",
+   "level": 0,
+   "score": 0.8414000272750854
+  },
+  {
+   "id": "https://openalex.org/C2781253189",
+   "wikidata": "https://www.wikidata.org/wiki/Q221179",
+   "display_name": "Streptococcus pneumoniae",
+   "level": 3,
+   "score": 0.7268000245094299
+  },
+  {
+   "id": "https://openalex.org/C167135981",
+   "wikidata": "https://www.wikidata.org/wiki/Q2146302",
+   "display_name": "Retrospective cohort study",
+   "level": 2,
+   "score": 0.6200000047683716
+  },
+  {
+   "id": "https://openalex.org/C3020803494",
+   "wikidata": "https://www.wikidata.org/wiki/Q2712836",
+   "display_name": "Pneumococcal disease",
+   "level": 4,
+   "score": 0.5501000285148621
+  },
+  {
+   "id": "https://openalex.org/C126322002",
+   "wikidata": "https://www.wikidata.org/wiki/Q11180",
+   "display_name": "Internal medicine",
+   "level": 1,
+   "score": 0.5297999978065491
+  },
+  {
+   "id": "https://openalex.org/C72563966",
+   "wikidata": "https://www.wikidata.org/wiki/Q1303415",
+   "display_name": "Cohort",
+   "level": 2,
+   "score": 0.5278000235557556
+  },
+  {
+   "id": "https://openalex.org/C2781026528",
+   "wikidata": "https://www.wikidata.org/wiki/Q48143",
+   "display_name": "Meningitis",
+   "level": 2,
+   "score": 0.5059000253677368
+  },
+  {
+   "id": "https://openalex.org/C190139176",
+   "wikidata": "https://www.wikidata.org/wiki/Q598976",
+   "display_name": "Medical microbiology",
+   "level": 2,
+   "score": 0.46380001306533813
+  },
+  {
+   "id": "https://openalex.org/C2776152631",
+   "wikidata": "https://www.wikidata.org/wiki/Q4366062",
+   "display_name": "Pneumococcal infections",
+   "level": 4,
+   "score": 0.4627000093460083
+  },
+  {
+   "id": "https://openalex.org/C2779134260",
+   "wikidata": "https://www.wikidata.org/wiki/Q12136",
+   "display_name": "Disease",
+   "level": 2,
+   "score": 0.43709999322891235
+  },
+  {
+   "id": "https://openalex.org/C10389963",
+   "wikidata": "https://www.wikidata.org/wiki/Q848328",
+   "display_name": "Serotype",
+   "level": 2,
+   "score": 0.42879998683929443
+  },
+  {
+   "id": "https://openalex.org/C2776012195",
+   "wikidata": "https://www.wikidata.org/wiki/Q754447",
+   "display_name": "Respiratory tract infections",
+   "level": 3,
+   "score": 0.40959998965263367
+  },
+  {
+   "id": "https://openalex.org/C187212893",
+   "wikidata": "https://www.wikidata.org/wiki/Q123028",
+   "display_name": "Pediatrics",
+   "level": 1,
+   "score": 0.39899998903274536
+  },
+  {
+   "id": "https://openalex.org/C201903717",
+   "wikidata": "https://www.wikidata.org/wiki/Q1778788",
+   "display_name": "Cohort study",
+   "level": 2,
+   "score": 0.39309999346733093
+  },
+  {
+   "id": "https://openalex.org/C2776399701",
+   "wikidata": "https://www.wikidata.org/wiki/Q3631290",
+   "display_name": "Lower respiratory tract infection",
+   "level": 4,
+   "score": 0.3499999940395355
+  },
+  {
+   "id": "https://openalex.org/C177713679",
+   "wikidata": "https://www.wikidata.org/wiki/Q679690",
+   "display_name": "Intensive care medicine",
+   "level": 1,
+   "score": 0.30640000104904175
+  },
+  {
+   "id": "https://openalex.org/C205545832",
+   "wikidata": "https://www.wikidata.org/wiki/Q17156455",
+   "display_name": "Young adult",
+   "level": 2,
+   "score": 0.3001999855041504
+  },
+  {
+   "id": "https://openalex.org/C2779301066",
+   "wikidata": "https://www.wikidata.org/wiki/Q14538008",
+   "display_name": "Pneumococcal vaccine",
+   "level": 4,
+   "score": 0.27639999985694885
+  },
+  {
+   "id": "https://openalex.org/C107130276",
+   "wikidata": "https://www.wikidata.org/wiki/Q133805",
+   "display_name": "Epidemiology",
+   "level": 2,
+   "score": 0.2685000002384186
+  },
+  {
+   "id": "https://openalex.org/C2779443120",
+   "wikidata": "https://www.wikidata.org/wiki/Q650912",
+   "display_name": "Bacteremia",
+   "level": 3,
+   "score": 0.2540999948978424
+  },
+  {
+   "id": "https://openalex.org/C203014093",
+   "wikidata": "https://www.wikidata.org/wiki/Q101929",
+   "display_name": "Immunology",
+   "level": 1,
+   "score": 0.25119999051094055
+  }
+ ],
+ "mesh": [
+  {
+   "descriptor_ui": "D000328",
+   "descriptor_name": "Adult",
+   "qualifier_ui": null,
+   "qualifier_name": null,
+   "is_major_topic": false
+  },
+  {
+   "descriptor_ui": "D000368",
+   "descriptor_name": "Aged",
+   "qualifier_ui": null,
+   "qualifier_name": null,
+   "is_major_topic": false
+  },
+  {
+   "descriptor_ui": "D000369",
+   "descriptor_name": "Aged, 80 and over",
+   "qualifier_ui": null,
+   "qualifier_name": null,
+   "is_major_topic": false
+  },
+  {
+   "descriptor_ui": "D005260",
+   "descriptor_name": "Female",
+   "qualifier_ui": null,
+   "qualifier_name": null,
+   "is_major_topic": false
+  },
+  {
+   "descriptor_ui": "D006760",
+   "descriptor_name": "Hospitalization",
+   "qualifier_ui": "Q000706",
+   "qualifier_name": "statistics & numerical data",
+   "is_major_topic": false
+  },
+  {
+   "descriptor_ui": "D006801",
+   "descriptor_name": "Humans",
+   "qualifier_ui": null,
+   "qualifier_name": null,
+   "is_major_topic": false
+  },
+  {
+   "descriptor_ui": "D008137",
+   "descriptor_name": "Longitudinal Studies",
+   "qualifier_ui": null,
+   "qualifier_name": null,
+   "is_major_topic": false
+  },
+  {
+   "descriptor_ui": "D008297",
+   "descriptor_name": "Male",
+   "qualifier_ui": null,
+   "qualifier_name": null,
+   "is_major_topic": false
+  },
+  {
+   "descriptor_ui": "D008875",
+   "descriptor_name": "Middle Aged",
+   "qualifier_ui": null,
+   "qualifier_name": null,
+   "is_major_topic": false
+  },
+  {
+   "descriptor_ui": "D011008",
+   "descriptor_name": "Pneumococcal Infections",
+   "qualifier_ui": "Q000382",
+   "qualifier_name": "microbiology",
+   "is_major_topic": true
+  },
+  {
+   "descriptor_ui": "D011008",
+   "descriptor_name": "Pneumococcal Infections",
+   "qualifier_ui": "Q000401",
+   "qualifier_name": "mortality",
+   "is_major_topic": true
+  },
+  {
+   "descriptor_ui": "D011008",
+   "descriptor_name": "Pneumococcal Infections",
+   "qualifier_ui": "Q000453",
+   "qualifier_name": "epidemiology",
+   "is_major_topic": true
+  },
+  {
+   "descriptor_ui": "D012189",
+   "descriptor_name": "Retrospective Studies",
+   "qualifier_ui": null,
+   "qualifier_name": null,
+   "is_major_topic": false
+  },
+  {
+   "descriptor_ui": "D013296",
+   "descriptor_name": "Streptococcus pneumoniae",
+   "qualifier_ui": "Q000145",
+   "qualifier_name": "classification",
+   "is_major_topic": true
+  },
+  {
+   "descriptor_ui": "D013296",
+   "descriptor_name": "Streptococcus pneumoniae",
+   "qualifier_ui": "Q000302",
+   "qualifier_name": "isolation & purification",
+   "is_major_topic": true
+  },
+  {
+   "descriptor_ui": "D065288",
+   "descriptor_name": "Serogroup",
+   "qualifier_ui": null,
+   "qualifier_name": null,
+   "is_major_topic": false
+  }
+ ],
+ "locations_count": 4,
+ "locations": [
+  {
+   "id": "doi:10.1186/s12879-026-13122-y",
+   "doi": "https://doi.org/10.1186/s12879-026-13122-y",
+   "is_oa": true,
+   "landing_page_url": "https://doi.org/10.1186/s12879-026-13122-y",
+   "pdf_url": null,
+   "source": {
+    "id": "https://openalex.org/S171015910",
+    "display_name": "BMC Infectious Diseases",
+    "issn_l": "1471-2334",
+    "issn": [
+     "1471-2334"
+    ],
+    "is_oa": true,
+    "is_in_doaj": true,
+    "is_core": true,
+    "listed_in": [
+     "anvur-scientific",
+     "cwts-core",
+     "doaj",
+     "dongbi-d",
+     "doyens",
+     "jufo-1",
+     "ki-jl-1",
+     "medline",
+     "norway-1",
+     "oarl",
+     "poland-100",
+     "russia-white-list-2",
+     "vabb-shw"
+    ],
+    "host_organization": "https://openalex.org/P4310320256",
+    "host_organization_name": "BioMed Central",
+    "host_organization_lineage": [
+     "https://openalex.org/P4310320256",
+     "https://openalex.org/P4310319965"
+    ],
+    "host_organization_lineage_names": [
+     "BioMed Central",
+     "Springer Nature"
+    ],
+    "type": "journal"
+   },
+   "license": "cc-by",
+   "license_id": "https://openalex.org/licenses/cc-by",
+   "version": "publishedVersion",
+   "is_accepted": true,
+   "is_published": true,
+   "raw_source_name": "BMC Infectious Diseases",
+   "raw_type": "journal-article"
+  },
+  {
+   "id": "pmid:41888721",
+   "doi": null,
+   "is_oa": false,
+   "landing_page_url": "https://pubmed.ncbi.nlm.nih.gov/41888721",
+   "pdf_url": null,
+   "source": {
+    "id": "https://openalex.org/S4306525036",
+    "display_name": "PubMed",
+    "issn_l": null,
+    "issn": null,
+    "is_oa": false,
+    "is_in_doaj": false,
+    "is_core": false,
+    "listed_in": [],
+    "host_organization": "https://openalex.org/I1299303238",
+    "host_organization_name": "National Institutes of Health",
+    "host_organization_lineage": [
+     "https://openalex.org/I1299303238"
+    ],
+    "host_organization_lineage_names": [],
+    "type": "repository"
+   },
+   "license": null,
+   "license_id": null,
+   "version": "publishedVersion",
+   "is_accepted": true,
+   "is_published": true,
+   "raw_source_name": "BMC infectious diseases",
+   "raw_type": "Journal Article"
+  },
+  {
+   "id": "pmh:oai:research-information.bris.ac.uk:openaire/795536be-d8bf-4ec9-ad21-20a3f410f39f",
+   "doi": null,
+   "is_oa": true,
+   "landing_page_url": "https://research-information.bris.ac.uk/en/publications/795536be-d8bf-4ec9-ad21-20a3f410f39f",
+   "pdf_url": null,
+   "source": {
+    "id": "https://openalex.org/S4306400895",
+    "display_name": "Bristol Research (University of Bristol)",
+    "issn_l": null,
+    "issn": null,
+    "is_oa": false,
+    "is_in_doaj": false,
+    "is_core": false,
+    "listed_in": [],
+    "host_organization": "https://openalex.org/I36234482",
+    "host_organization_name": "University of Bristol",
+    "host_organization_lineage": [
+     "https://openalex.org/I36234482"
+    ],
+    "host_organization_lineage_names": [],
+    "type": "repository"
+   },
+   "license": "cc-by",
+   "license_id": "https://openalex.org/licenses/cc-by",
+   "version": "publishedVersion",
+   "is_accepted": true,
+   "is_published": true,
+   "raw_source_name": "Challen, R J, Hyams, C, Hettle, D B, Amin-Chowdhury, Z, Grimes, C, Ruffino, G, Conway, R, Heath, R, North, P, Malin, A, Maskell, N A, Williams, P, Williams, O M, Ladhani, S, Danon, L & Finn, A H R 2026, 'Trends in invasive and non-invasive Streptococcus pneumoniae disease in adults hospitalised in Bristol and Bath : a retrospective cohort study, 2006–2022', BMC Infectious Diseases, vol. 26, no. 1, 898. https://doi.org/10.1186/s12879-026-13122-y",
+   "raw_type": "info:eu-repo/semantics/article"
+  },
+  {
+   "id": "pmh:oai:research-information.bris.ac.uk:openaire_cris_publications/795536be-d8bf-4ec9-ad21-20a3f410f39f",
+   "doi": null,
+   "is_oa": true,
+   "landing_page_url": "https://hdl.handle.net/1983/795536be-d8bf-4ec9-ad21-20a3f410f39f",
+   "pdf_url": null,
+   "source": {
+    "id": "https://openalex.org/S7407055359",
+    "display_name": "Explore Bristol Research",
+    "issn_l": null,
+    "issn": null,
+    "is_oa": false,
+    "is_in_doaj": false,
+    "is_core": false,
+    "listed_in": [],
+    "host_organization": null,
+    "host_organization_name": null,
+    "host_organization_lineage": [],
+    "host_organization_lineage_names": [],
+    "type": "repository"
+   },
+   "license": "cc-by",
+   "license_id": "https://openalex.org/licenses/cc-by",
+   "version": "submittedVersion",
+   "is_accepted": false,
+   "is_published": false,
+   "raw_source_name": "Challen, R J, Hyams, C, Hettle, D B, Amin-Chowdhury, Z, Grimes, C, Ruffino, G, Conway, R, Heath, R, North, P, Malin, A, Maskell, N A, Williams, P, Williams, O M, Ladhani, S, Danon, L & Finn, A H R 2026, 'Trends in invasive and non-invasive Streptococcus pneumoniae disease in adults hospitalised in Bristol and Bath : a retrospective cohort study, 2006–2022', BMC Infectious Diseases, vol. 26, no. 1, 898. https://doi.org/10.1186/s12879-026-13122-y",
+   "raw_type": "info:eu-repo/semantics/article"
+  }
+ ],
+ "best_oa_location": {
+  "id": "doi:10.1186/s12879-026-13122-y",
+  "doi": "https://doi.org/10.1186/s12879-026-13122-y",
+  "is_oa": true,
+  "landing_page_url": "https://doi.org/10.1186/s12879-026-13122-y",
+  "pdf_url": null,
+  "source": {
+   "id": "https://openalex.org/S171015910",
+   "display_name": "BMC Infectious Diseases",
+   "issn_l": "1471-2334",
+   "issn": [
+    "1471-2334"
+   ],
+   "is_oa": true,
+   "is_in_doaj": true,
+   "is_core": true,
+   "listed_in": [
+    "anvur-scientific",
+    "cwts-core",
+    "doaj",
+    "dongbi-d",
+    "doyens",
+    "jufo-1",
+    "ki-jl-1",
+    "medline",
+    "norway-1",
+    "oarl",
+    "poland-100",
+    "russia-white-list-2",
+    "vabb-shw"
+   ],
+   "host_organization": "https://openalex.org/P4310320256",
+   "host_organization_name": "BioMed Central",
+   "host_organization_lineage": [
+    "https://openalex.org/P4310320256",
+    "https://openalex.org/P4310319965"
+   ],
+   "host_organization_lineage_names": [
+    "BioMed Central",
+    "Springer Nature"
+   ],
+   "type": "journal"
+  },
+  "license": "cc-by",
+  "license_id": "https://openalex.org/licenses/cc-by",
+  "version": "publishedVersion",
+  "is_accepted": true,
+  "is_published": true,
+  "raw_source_name": "BMC Infectious Diseases",
+  "raw_type": "journal-article"
+ },
+ "sustainable_development_goals": [
+  {
+   "score": 1.0,
+   "display_name": "Good health and well-being",
+   "id": "https://metadata.un.org/sdg/3"
+  }
+ ],
+ "study_designs": [
+  {
+   "display_name": "Observational Study",
+   "id": "https://openalex.org/study-designs/observational-study"
+  }
+ ],
+ "awards": [
+  {
+   "id": "https://openalex.org/G5582858970",
+   "display_name": null,
+   "funder_award_id": "ACF-2015-25-002",
+   "funder_id": "https://openalex.org/F4320319990",
+   "funder_display_name": "National Institute for Health and Care Research"
+  }
+ ],
+ "funders": [
+  {
+   "id": "https://openalex.org/F4320319990",
+   "display_name": "National Institute for Health and Care Research",
+   "ror": "https://ror.org/0187kwz08"
+  }
+ ],
+ "has_content": {
+  "pdf": false,
+  "grobid_xml": false
+ },
+ "content_urls": null,
+ "referenced_works_count": 23,
+ "referenced_works": [
+  "https://openalex.org/W1832749456",
+  "https://openalex.org/W1967969088",
+  "https://openalex.org/W2016403213",
+  "https://openalex.org/W2102361557",
+  "https://openalex.org/W2106578604",
+  "https://openalex.org/W2121861720",
+  "https://openalex.org/W2149176649",
+  "https://openalex.org/W2495448885",
+  "https://openalex.org/W2621519800",
+  "https://openalex.org/W2758802475",
+  "https://openalex.org/W2784744055",
+  "https://openalex.org/W2794519236",
+  "https://openalex.org/W2889562406",
+  "https://openalex.org/W2946137043",
+  "https://openalex.org/W2963020689",
+  "https://openalex.org/W3128860369",
+  "https://openalex.org/W3164196706",
+  "https://openalex.org/W4200352202",
+  "https://openalex.org/W4226498226",
+  "https://openalex.org/W4311271580",
+  "https://openalex.org/W4385212909",
+  "https://openalex.org/W4386944531",
+  "https://openalex.org/W4388295070"
+ ],
+ "related_works": [
+  "https://openalex.org/W7160335916",
+  "https://openalex.org/W4232134764",
+  "https://openalex.org/W2400745448",
+  "https://openalex.org/W4415386157",
+  "https://openalex.org/W7149335538",
+  "https://openalex.org/W4300981337",
+  "https://openalex.org/W2757453782",
+  "https://openalex.org/W2926708180",
+  "https://openalex.org/W2107019142",
+  "https://openalex.org/W2097032193"
+ ],
+ "abstract_inverted_index": {
+  "BACKGROUND:": [
+   0
+  ],
+  "Pneumococcal": [
+   1
+  ],
+  "surveillance": [
+   2,
+   263
+  ],
+  "typically": [
+   3
+  ],
+  "focuses": [
+   4
+  ],
+  "on": [
+   5,
+   25,
+   257,
+   267
+  ],
+  "cases": [
+   6,
+   94,
+   137,
+   149,
+   193
+  ],
+  "identified": [
+   7
+  ],
+  "by": [
+   8,
+   253,
+   262
+  ],
+  "positive": [
+   9,
+   269
+  ],
+  "microbiology": [
+   10
+  ],
+  "and": [
+   11,
+   42,
+   59,
+   70,
+   80,
+   87,
+   91,
+   172,
+   212
+  ],
+  "collects": [
+   12
+  ],
+  "limited": [
+   13
+  ],
+  "clinical": [
+   14,
+   48,
+   103,
+   238
+  ],
+  "data.": [
+   15
+  ],
+  "The": [
+   16,
+   85,
+   191
+  ],
+  "majority": [
+   17
+  ],
+  "of": [
+   18,
+   34,
+   55,
+   68,
+   89,
+   98,
+   115,
+   128,
+   175,
+   216,
+   231,
+   246,
+   279,
+   319
+  ],
+  "pneumococcal": [
+   19,
+   37,
+   56,
+   72,
+   134,
+   247
+  ],
+  "studies": [
+   20,
+   254
+  ],
+  "in": [
+   21,
+   75,
+   101,
+   118,
+   147,
+   177,
+   276,
+   297
+  ],
+  "the": [
+   22,
+   180,
+   188,
+   277,
+   292,
+   306,
+   317
+  ],
+  "literature": [
+   23
+  ],
+  "focus": [
+   24,
+   256,
+   265
+  ],
+  "invasive": [
+   26,
+   44,
+   69,
+   90,
+   99,
+   110,
+   119,
+   140,
+   164,
+   182,
+   258,
+   300
+  ],
+  "respiratory": [
+   27,
+   111,
+   141,
+   189,
+   209,
+   259,
+   301,
+   311
+  ],
+  "disease.": [
+   28,
+   112,
+   142
+  ],
+  "This": [
+   29
+  ],
+  "study": [
+   30
+  ],
+  "includes": [
+   31
+  ],
+  "a": [
+   32,
+   51,
+   129,
+   154,
+   232,
+   243,
+   286
+  ],
+  "cohort": [
+   33,
+   67
+  ],
+  "all": [
+   35,
+   132
+  ],
+  "cause": [
+   36,
+   133
+  ],
+  "disease,": [
+   38,
+   135,
+   260,
+   302
+  ],
+  "including": [
+   39
+  ],
+  "non-invasive": [
+   40,
+   71,
+   92,
+   282
+  ],
+  "disease": [
+   41,
+   45,
+   57,
+   73,
+   100,
+   120,
+   144,
+   152,
+   165,
+   248,
+   270,
+   283,
+   312
+  ],
+  "non-respiratory": [
+   43
+  ],
+  "with": [
+   46,
+   195,
+   207
+  ],
+  "detailed": [
+   47
+  ],
+  "outcomes,": [
+   49
+  ],
+  "allowing": [
+   50
+  ],
+  "more": [
+   52
+  ],
+  "complete": [
+   53
+  ],
+  "view": [
+   54
+  ],
+  "burden,": [
+   58
+  ],
+  "particularly": [
+   60,
+   105,
+   274
+  ],
+  "meningitis": [
+   61,
+   196,
+   298
+  ],
+  "cases.": [
+   62
+  ],
+  "METHODS:": [
+   63
+  ],
+  "A": [
+   64
+  ],
+  "longitudinal": [
+   65
+  ],
+  "adult": [
+   66
+  ],
+  "inpatients": [
+   74
+  ],
+  "three": [
+   76
+  ],
+  "hospitals": [
+   77
+  ],
+  "between": [
+   78,
+   236
+  ],
+  "2006": [
+   79
+  ],
+  "2022,": [
+   81
+  ],
+  "was": [
+   82,
+   145
+  ],
+  "retrospectively": [
+   83
+  ],
+  "collected.": [
+   84
+  ],
+  "demographics": [
+   86
+  ],
+  "outcomes": [
+   88
+  ],
+  "hospitalised": [
+   93
+  ],
+  "were": [
+   95,
+   107,
+   121,
+   139,
+   186,
+   197
+  ],
+  "compared.": [
+   96
+  ],
+  "Features": [
+   97
+  ],
+  "different": [
+   102,
+   116,
+   233,
+   237
+  ],
+  "presentations,": [
+   104
+  ],
+  "meningitis,": [
+   106,
+   280
+  ],
+  "compared": [
+   108,
+   122
+  ],
+  "to": [
+   109,
+   316
+  ],
+  "Serotype": [
+   113
+  ],
+  "distributions": [
+   114
+  ],
+  "presentations": [
+   117
+  ],
+  "using": [
+   123
+  ],
+  "bootstrap": [
+   124
+  ],
+  "resampling.": [
+   125
+  ],
+  "RESULTS:": [
+   126
+  ],
+  "Out": [
+   127
+  ],
+  "total": [
+   130
+  ],
+  "3719": [
+   131
+  ],
+  "1419": [
+   136
+  ],
+  "(38.2%)": [
+   138
+  ],
+  "Non-invasive": [
+   143,
+   151
+  ],
+  "seen": [
+   146
+  ],
+  "2033": [
+   148
+  ],
+  "(54.7%).": [
+   150
+  ],
+  "had": [
+   153,
+   213
+  ],
+  "lower": [
+   155,
+   208
+  ],
+  "(but": [
+   156
+  ],
+  "clinically": [
+   157
+  ],
+  "substantial)": [
+   158
+  ],
+  "30": [
+   159
+  ],
+  "day": [
+   160
+  ],
+  "case-fatality": [
+   161
+  ],
+  "rate": [
+   162
+  ],
+  "than": [
+   163,
+   205
+  ],
+  "(11.7%": [
+   166
+  ],
+  "versus": [
+   167
+  ],
+  "14.8%;": [
+   168
+  ],
+  "P": [
+   169,
+   202,
+   224
+  ],
+  "=": [
+   170
+  ],
+  "0.005),": [
+   171
+  ],
+  "similar": [
+   173
+  ],
+  "lengths": [
+   174
+  ],
+  "stay": [
+   176
+  ],
+  "hospital.": [
+   178
+  ],
+  "Among": [
+   179
+  ],
+  "1686": [
+   181
+  ],
+  "cases,": [
+   183
+  ],
+  "258": [
+   184
+  ],
+  "(15.3%)": [
+   185
+  ],
+  "outside": [
+   187
+  ],
+  "tract.": [
+   190
+  ],
+  "172": [
+   192
+  ],
+  "presenting": [
+   194
+  ],
+  "younger": [
+   198
+  ],
+  "(54.9y": [
+   199
+  ],
+  "vs.": [
+   200,
+   221
+  ],
+  "66.8y;": [
+   201
+  ],
+  "<": [
+   203,
+   225
+  ],
+  "0.001)": [
+   204
+  ],
+  "those": [
+   206
+  ],
+  "tract": [
+   210
+  ],
+  "infection;": [
+   211
+  ],
+  "high": [
+   214,
+   287
+  ],
+  "rates": [
+   215
+  ],
+  "intensive": [
+   217
+  ],
+  "care": [
+   218
+  ],
+  "admission": [
+   219
+  ],
+  "(63.4%": [
+   220
+  ],
+  "LRTI": [
+   222
+  ],
+  "10.2%;": [
+   223
+  ],
+  "0.001).": [
+   226
+  ],
+  "We": [
+   227
+  ],
+  "found": [
+   228,
+   296
+  ],
+  "no": [
+   229
+  ],
+  "evidence": [
+   230
+  ],
+  "serotype": [
+   234
+  ],
+  "distribution": [
+   235
+  ],
+  "presentations.": [
+   239
+  ],
+  "CONCLUSIONS:": [
+   240
+  ],
+  "There": [
+   241
+  ],
+  "is": [
+   242,
+   250
+  ],
+  "substantial": [
+   244
+  ],
+  "burden": [
+   245
+  ],
+  "that": [
+   249,
+   255,
+   264,
+   305,
+   309
+  ],
+  "not": [
+   251
+  ],
+  "represented": [
+   252
+  ],
+  "or": [
+   261
+  ],
+  "only": [
+   266
+  ],
+  "culture": [
+   268
+  ],
+  "alone.": [
+   271
+  ],
+  "Outcomes": [
+   272
+  ],
+  "are": [
+   273,
+   295
+  ],
+  "poor": [
+   275
+  ],
+  "case": [
+   278,
+   288
+  ],
+  "but": [
+   281
+  ],
+  "also": [
+   284
+  ],
+  "has": [
+   285
+  ],
+  "fatality": [
+   289
+  ],
+  "rate.": [
+   290
+  ],
+  "Given": [
+   291
+  ],
+  "same": [
+   293,
+   307
+  ],
+  "serotypes": [
+   294
+  ],
+  "as": [
+   299
+  ],
+  "we": [
+   303
+  ],
+  "anticipate": [
+   304
+  ],
+  "vaccines": [
+   308
+  ],
+  "target": [
+   310
+  ],
+  "should": [
+   313
+  ],
+  "be": [
+   314
+  ],
+  "relevant": [
+   315
+  ],
+  "prevention": [
+   318
+  ],
+  "meningitis.": [
+   320
+  ]
+ },
+ "counts_by_year": [],
+ "updated_date": "2026-10-31T12:09:11.096373",
+ "created_date": "2026-03-27T00:00:00"
+}

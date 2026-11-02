@@ -3,8 +3,8 @@
  * {@code ..bibliography.record}, which is what it can <em>say</em>.
  *
  * There is no single {@code BibliographicClient} interface, and that is the main design decision in this package. The
- * sources genuinely differ in what they can do: Unpaywall resolves an identifier to an open-access copy and nothing
- * else; OpenCitations only knows about citation edges and holds no metadata; CrossRef and medRxiv can hand over a
+ * sources genuinely differ in what they can do: OpenCitations only knows about citation edges and holds no
+ * metadata; CrossRef and medRxiv can hand over a
  * work's own reference list but cannot say who cites it; Entrez does all five. One fat interface would force every
  * client to stub out most of it, and would leave callers unable to tell "this API has nothing for you" from "this API
  * cannot be asked". Instead a client implements only the interfaces it can honour, and {@code BiblioFacade} keeps a

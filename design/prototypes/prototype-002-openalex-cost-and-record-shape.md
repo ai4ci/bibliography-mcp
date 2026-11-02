@@ -101,13 +101,47 @@ Top-level fields relevant to `Record`: `display_name`, `publication_date`
 
 ## Risks spotted while probing
 
-- `search=` as a plain parameter resolved to `fulltext.search` (543 hits for
-  "CRISPR kelp"). Full-text search is a different thing from title/abstract
-  search and costs the same 10 credits. `title_and_abstract.search` exists as a
-  filter and is the one that matches what `Query.getAllFields()` means here.
-  Verify which is right before wiring it.
-- Batch OR filters with 100 ids will produce a long URL. **Not probed** —
-  needs a real 100-id request before plan-013 commits to a batch size.
 - Costs and the free budget are commercial terms and can change without notice;
   this whole document is a snapshot. Keep the header-parsing so the client
   notices.
+
+## Answers to the questions plan-013 was waiting on
+
+Measured 2026-11-02, same key and host as above.
+
+**Batch size is 100 values, and that is a hard limit, not a URL-length one.**
+`filter=openalex:W…|…` with 100 ids → `200`, 1 credit; with 101 ids → `400`
+`"Maximum number of values exceeded for openalex. Decrease values to 100 or
+below"`. Shortening the ids does not help: 150 six-character ids fail the same
+way at 1349 characters, so the count is checked before the URL. `fetch` must
+chunk at 100 or the first hundred-and-first identifier turns the whole call into
+a 400 — which `CachingApiClient` reports as "nothing", not as an error
+(issue-013).
+
+**`search=` is not the right parameter, and `title_and_abstract.search` is.**
+`search=…` routes to `fulltext.search` (543 hits for "CRISPR kelp"), which is a
+different question from the one `Query.getAllFields()` asks and costs the same 10
+credits. The valid field list returned by an intentional `filter=bogus:1` lists
+`title_and_abstract.search`, `title.search`, `abstract.search`,
+`default.search` and `raw_author_name.search` as filters, so the structured
+fields of `Query` all have a native home here — including `getJournal()`, which
+has to be `primary_location.source.issn`.
+
+**`journal.issn` is not a field.** It answers `400` naming the valid fields;
+the journal constraint is `primary_location.source.issn` (verified: 58 hits for
+`title_and_abstract.search:thermometry,primary_location.source.issn:0028-0836`,
+all in Nature). A journal *name* has to be resolved to an ISSN through
+`/sources?search=`, which costs 10 credits — so the client resolves it and the
+cost is documented rather than hidden.
+
+**DOI lookup tolerates the two things that bite elsewhere.** `doi:` in a filter
+and in the `/works/doi:` path segment both accept upper-case DOIs containing
+parentheses (`10.1016/S0140-6736(20)30183-5` → 200 both ways), so the CrossRef
+`%2F` encoding trap (issue-016) does not repeat here. Percent-encoding the
+parentheses is also accepted, so either spelling is safe.
+
+**The preprint from issue-016 resolves here.** `GET /works/doi:10.64898/2025.12.12.25342129`
+→ `200`, and the record carries the medRxiv PDF URL and a 127-word abstract.
+Unpaywall returns nothing for that DOI via this client and 200 via curl; OpenAlex
+answers it outright, which is the concrete evidence for retiring Unpaywall rather
+than debugging it.

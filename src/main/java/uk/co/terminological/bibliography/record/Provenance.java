@@ -20,11 +20,11 @@ public interface Provenance {
 	String CROSSREF = "crossref";
 	String ENTREZ = "entrez";
 	String EUROPEPMC = "europepmc";
-	String UNPAYWALL = "unpaywall";
 	String MEDRXIV = "medrxiv";
 	String BIORXIV = "biorxiv";
 	String ARXIV = "arxiv";
 	String ZOTERO = "zotero";
+	String OPENALEX = "openalex";
 
 	static Provenance of(String source, String nativeType) {
 		return ImmutableProvenance.builder()

@@ -25,7 +25,7 @@ TESTED_BY:
     name the item type uses (`publicationTitle`, `bookTitle`, …) so an update can be
     written from it; a year-only date against a full date is a conflict rather than a
     silent upgrade; markup (JATS abstracts) is not treated as content nor offered for
-    writing; placeholder author names such as Unpaywall's "Unknown" are ignored while
+    writing; placeholder author names such as "Unknown" are ignored while
     a real difference in authors still conflicts; creators carry a note that an
     update must supply the array itself.
  4. Cleanup: none — offline.

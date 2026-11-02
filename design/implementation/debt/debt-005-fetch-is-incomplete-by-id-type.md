@@ -9,7 +9,6 @@ tags:
 IMPACTS:
 - main:java/uk/co/terminological/bibliography/api/crossref/CrossRefClient.java
 - main:java/uk/co/terminological/bibliography/api/BiblioFacade.java
-- main:java/uk/co/terminological/bibliography/api/unpaywall/UnpaywallClient.java
 ---
 
 ## Debt desc
@@ -21,7 +20,6 @@ nothing and the merged record is quietly thinner than it should be:
 |---|---|---|---|
 | CrossRef | 1 | **0** | `fetch` only accepts DOI refs, and CrossRef has **no `pmid` filter** — `filter=pmid:…` is rejected with `filter-not-available` (checked live 2026-09), so a PMID must be resolved to a DOI before the call |
 | Europe PMC | 1 | 1 | handles DOI, PMID and PMCID natively (`getById`) |
-| Unpaywall | 1 | **0** | DOI-keyed API by design (`/v2/{doi}`) |
 
 (An earlier version of this record claimed Europe PMC missed DOIs. That was
 wrong: it was measuring a cached **truncated response body**, not a code gap — see
@@ -29,7 +27,7 @@ wrong: it was measuring a cached **truncated response body**, not a code gap —
 Europe PMC handles DOI, PMID and PMCID correctly.)
 
 Consequence: an agent that only has a PMID gets Europe PMC's record but not
-CrossRef's publisher/type or Unpaywall's open-access location, and nothing in the
+CrossRef's publisher/type or OpenAlex's open-access location, and nothing in the
 response says a source was skipped.
 
 

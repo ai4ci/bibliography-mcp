@@ -74,7 +74,6 @@ public class FixtureRecorder {
 		var EPMC = "https://www.ebi.ac.uk/europepmc/webservices/rest/";
 		var XC = "https://api.crossref.org/works/";
 		var OC = "https://api.opencitations.net/index/v2/";
-		var UPW = "https://api.unpaywall.org/v2/";
 		var BID = "https://api.biorxiv.org/";
 		var IDCONV = "https://pmc.ncbi.nlm.nih.gov/tools/idconv/api/v1/articles/";
 
@@ -115,20 +114,6 @@ public class FixtureRecorder {
 			outDir,
 			"europepmc/references-ppr.json",
 			EPMC + "PPR/" + PPR + "/references?format=json"
-		);
-
-		// Unpaywall: OA record + preprint record (both real for this corpus)
-		rec(
-			http,
-			outDir,
-			"unpaywall/oa-published.json",
-			UPW + enc(PUB_DOI) + "?email=" + enc(email)
-		);
-		rec(
-			http,
-			outDir,
-			"unpaywall/preprint.json",
-			UPW + enc(PREP_DOI) + "?email=" + enc(email)
 		);
 
 		// OpenCitations v2 wants the id as a handle: prefix the DOI with the doi: scheme

@@ -118,10 +118,10 @@ public class TestRecordMerge {
 			"Entrez abstract"
 		);
 		var b = record(
-			"unpaywall",
+			"openalex",
 			"Journal Article",
 			"Same title",
-			"Unpaywall abstract"
+			"OpenAlex abstract"
 		);
 		var c = record(
 			"crossref",
@@ -219,7 +219,7 @@ public class TestRecordMerge {
 				record("europepmc", "Journal Article", "T", "EuropePMC abstract")
 			);
 		var third = MergedRecord.from(
-			record("unpaywall", "journal-article", "T", "Unpaywall abstract")
+			record("openalex", "journal-article", "T", "OpenAlex abstract")
 		);
 
 		var merged = third.merge(twoApis);
@@ -238,16 +238,18 @@ public class TestRecordMerge {
 	}
 
 	@Test
-	public void pdfLocationPrefersUnpaywallOverCrossRef() {
+	public void pdfLocationPrefersOpenAlexOverCrossRef() {
 		// the policy cannot rank a source that reports no provenance, which is why
-		// UnpaywallResult and EntrezEntry now carry one
+		// OpenAlexRecord and EntrezEntry now carry one. OpenAlex took over this role
+		// from Unpaywall: it publishes the open-access link in the same payload as the
+		// metadata, so naming it here is the whole of the replacement
 		var crossref = (Stub) record("crossref", "journal-article", "T", "A");
-		var unpaywall = ((Stub) record("unpaywall", "journal-article", "T", "A"))
+		var openalex = ((Stub) record("openalex", "journal-article", "T", "A"))
 			.withPdf("https://example.org/oa.pdf");
 		crossref.withPdf("https://example.org/paywalled.pdf");
 
 		var merged = MergedRecord.from(crossref)
-			.merge(unpaywall);
+			.merge(openalex);
 
 		assertEquals(
 			"https://example.org/oa.pdf",

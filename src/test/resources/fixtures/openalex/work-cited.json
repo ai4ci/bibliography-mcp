@@ -1,0 +1,2137 @@
+{
+ "id": "https://openalex.org/W3134566701",
+ "doi": "https://doi.org/10.1136/bmj.n579",
+ "title": "Risk of mortality in patients infected with SARS-CoV-2 variant of concern 202012/1: matched cohort study",
+ "display_name": "Risk of mortality in patients infected with SARS-CoV-2 variant of concern 202012/1: matched cohort study",
+ "publication_year": 2021,
+ "publication_date": "2021-03-09",
+ "ids": {
+  "openalex": "https://openalex.org/W3134566701",
+  "doi": "https://doi.org/10.1136/bmj.n579",
+  "mag": "3134566701",
+  "pmid": "https://pubmed.ncbi.nlm.nih.gov/33687922",
+  "pmcid": "https://www.ncbi.nlm.nih.gov/pmc/articles/7941603"
+ },
+ "language": "en",
+ "primary_location": {
+  "id": "doi:10.1136/bmj.n579",
+  "doi": "https://doi.org/10.1136/bmj.n579",
+  "is_oa": true,
+  "landing_page_url": "https://doi.org/10.1136/bmj.n579",
+  "pdf_url": "https://www.bmj.com/content/bmj/372/bmj.n579.full.pdf",
+  "source": {
+   "id": "https://openalex.org/S4393917726",
+   "display_name": "BMJ",
+   "issn_l": "1756-1833",
+   "issn": [
+    "1756-1833"
+   ],
+   "is_oa": false,
+   "is_in_doaj": false,
+   "is_core": true,
+   "listed_in": [
+    "cwts-core",
+    "dongbi-a",
+    "doyens",
+    "jufo-2",
+    "ki-jl-3",
+    "medline",
+    "norway-2",
+    "poland-200",
+    "russia-white-list-1",
+    "vabb-shw"
+   ],
+   "host_organization": null,
+   "host_organization_name": null,
+   "host_organization_lineage": [],
+   "host_organization_lineage_names": [],
+   "type": "journal"
+  },
+  "license": "cc-by",
+  "license_id": "https://openalex.org/licenses/cc-by",
+  "version": "publishedVersion",
+  "is_accepted": true,
+  "is_published": true,
+  "raw_source_name": "BMJ",
+  "raw_type": "journal-article"
+ },
+ "volume": null,
+ "type": "article",
+ "indexed_in": [
+  "crossref",
+  "pubmed"
+ ],
+ "open_access": {
+  "is_oa": true,
+  "oa_status": "hybrid",
+  "oa_url": "https://www.bmj.com/content/bmj/372/bmj.n579.full.pdf",
+  "any_repository_has_fulltext": true
+ },
+ "authorships": [
+  {
+   "author_position": "first",
+   "author": {
+    "id": "https://openalex.org/A5024515720",
+    "display_name": "Robert Challen",
+    "orcid": "https://orcid.org/0000-0002-5504-7768",
+    "observed_orcids": [
+     "https://orcid.org/0000-0002-5504-7768"
+    ]
+   },
+   "institutions": [
+    {
+     "id": "https://openalex.org/I23923803",
+     "display_name": "University of Exeter",
+     "ror": "https://ror.org/03yghzc09",
+     "country_code": "GB",
+     "type": "education",
+     "lineage": [
+      "https://openalex.org/I23923803"
+     ]
+    },
+    {
+     "id": "https://openalex.org/I4210122580",
+     "display_name": "Taunton & Somerset NHS Foundation Trust",
+     "ror": "https://ror.org/02y5f7327",
+     "country_code": "GB",
+     "type": "nonprofit",
+     "lineage": [
+      "https://openalex.org/I4210122580",
+      "https://openalex.org/I4401726752"
+     ]
+    }
+   ],
+   "countries": [
+    "GB"
+   ],
+   "is_corresponding": true,
+   "raw_author_name": "Robert Challen",
+   "raw_affiliation_strings": [
+    "College of Engineering, Mathematics and Physical Sciences, University of Exeter, Exeter, Devon, UK",
+    "Joint Universities Pandemic and Epidemiological Research (JUNIPER) consortium",
+    "Somerset NHS Foundation Trust, Taunton, Somerset, UK",
+    "College of Engineering, Mathematics and Physical Sciences, University of Exeter, Exeter, UK",
+    "Somerset NHS Foundation Trust, Taunton, UK"
+   ],
+   "raw_orcid": "https://orcid.org/0000-0002-5504-7768",
+   "affiliations": [
+    {
+     "raw_affiliation_string": "College of Engineering, Mathematics and Physical Sciences, University of Exeter, Exeter, Devon, UK",
+     "institution_ids": [
+      "https://openalex.org/I23923803"
+     ]
+    },
+    {
+     "raw_affiliation_string": "Joint Universities Pandemic and Epidemiological Research (JUNIPER) consortium",
+     "institution_ids": []
+    },
+    {
+     "raw_affiliation_string": "Somerset NHS Foundation Trust, Taunton, Somerset, UK",
+     "institution_ids": [
+      "https://openalex.org/I4210122580"
+     ]
+    },
+    {
+     "raw_affiliation_string": "College of Engineering, Mathematics and Physical Sciences, University of Exeter, Exeter, UK",
+     "institution_ids": [
+      "https://openalex.org/I23923803"
+     ]
+    },
+    {
+     "raw_affiliation_string": "Somerset NHS Foundation Trust, Taunton, UK",
+     "institution_ids": [
+      "https://openalex.org/I4210122580"
+     ]
+    }
+   ]
+  },
+  {
+   "author_position": "middle",
+   "author": {
+    "id": "https://openalex.org/A5051888884",
+    "display_name": "Ellen Brooks‐Pollock",
+    "orcid": "https://orcid.org/0000-0002-5984-4932",
+    "observed_orcids": [
+     "https://orcid.org/0000-0002-5984-4932"
+    ]
+   },
+   "institutions": [
+    {
+     "id": "https://openalex.org/I36234482",
+     "display_name": "University of Bristol",
+     "ror": "https://ror.org/0524sp257",
+     "country_code": "GB",
+     "type": "education",
+     "lineage": [
+      "https://openalex.org/I36234482"
+     ]
+    }
+   ],
+   "countries": [
+    "GB"
+   ],
+   "is_corresponding": false,
+   "raw_author_name": "Ellen Brooks-Pollock",
+   "raw_affiliation_strings": [
+    "Bristol Medical School, Population Health Sciences, University of Bristol, Bristol, UK",
+    "Joint Universities Pandemic and Epidemiological Research (JUNIPER) consortium",
+    "University of Bristol, Bristol Veterinary School, Langford, Bristol, UK"
+   ],
+   "raw_orcid": "https://orcid.org/0000-0002-5984-4932",
+   "affiliations": [
+    {
+     "raw_affiliation_string": "Bristol Medical School, Population Health Sciences, University of Bristol, Bristol, UK",
+     "institution_ids": [
+      "https://openalex.org/I36234482"
+     ]
+    },
+    {
+     "raw_affiliation_string": "Joint Universities Pandemic and Epidemiological Research (JUNIPER) consortium",
+     "institution_ids": []
+    },
+    {
+     "raw_affiliation_string": "University of Bristol, Bristol Veterinary School, Langford, Bristol, UK",
+     "institution_ids": [
+      "https://openalex.org/I36234482"
+     ]
+    }
+   ]
+  },
+  {
+   "author_position": "middle",
+   "author": {
+    "id": "https://openalex.org/A5048886512",
+    "display_name": "Jonathan Michael Read",
+    "orcid": "https://orcid.org/0000-0002-9697-0962",
+    "observed_orcids": [
+     "https://orcid.org/0000-0002-9697-0962"
+    ]
+   },
+   "institutions": [
+    {
+     "id": "https://openalex.org/I67415387",
+     "display_name": "Lancaster University",
+     "ror": "https://ror.org/04f2nsd36",
+     "country_code": "GB",
+     "type": "education",
+     "lineage": [
+      "https://openalex.org/I67415387"
+     ]
+    }
+   ],
+   "countries": [
+    "GB"
+   ],
+   "is_corresponding": false,
+   "raw_author_name": "Jonathan M Read",
+   "raw_affiliation_strings": [
+    "Joint Universities Pandemic and Epidemiological Research (JUNIPER) consortium",
+    "Lancaster Medical School, Lancaster University, Bailrigg, Lancaster, UK"
+   ],
+   "raw_orcid": "https://orcid.org/0000-0002-9697-0962",
+   "affiliations": [
+    {
+     "raw_affiliation_string": "Joint Universities Pandemic and Epidemiological Research (JUNIPER) consortium",
+     "institution_ids": []
+    },
+    {
+     "raw_affiliation_string": "Lancaster Medical School, Lancaster University, Bailrigg, Lancaster, UK",
+     "institution_ids": [
+      "https://openalex.org/I67415387"
+     ]
+    }
+   ]
+  },
+  {
+   "author_position": "middle",
+   "author": {
+    "id": "https://openalex.org/A5001578642",
+    "display_name": "Louise Dyson",
+    "orcid": "https://orcid.org/0000-0001-9788-4858",
+    "observed_orcids": [
+     "https://orcid.org/0000-0001-9788-4858"
+    ]
+   },
+   "institutions": [
+    {
+     "id": "https://openalex.org/I39555362",
+     "display_name": "University of Warwick",
+     "ror": "https://ror.org/01a77tt86",
+     "country_code": "GB",
+     "type": "education",
+     "lineage": [
+      "https://openalex.org/I39555362"
+     ]
+    }
+   ],
+   "countries": [
+    "GB"
+   ],
+   "is_corresponding": false,
+   "raw_author_name": "Louise Dyson",
+   "raw_affiliation_strings": [
+    "Joint Universities Pandemic and Epidemiological Research (JUNIPER) consortium",
+    "The Zeeman Institute for Systems Biology & Infectious Disease Epidemiology Research, School of Life Sciences and Mathematics Institute, University of Warwick, Coventry, UK",
+    "The Zeeman Institute for Systems Biology and Infectious Disease Epidemiology Research, School of Life Sciences and Mathematics Institute, University of Warwick, Coventry, UK"
+   ],
+   "raw_orcid": "https://orcid.org/0000-0001-9788-4858",
+   "affiliations": [
+    {
+     "raw_affiliation_string": "Joint Universities Pandemic and Epidemiological Research (JUNIPER) consortium",
+     "institution_ids": []
+    },
+    {
+     "raw_affiliation_string": "The Zeeman Institute for Systems Biology & Infectious Disease Epidemiology Research, School of Life Sciences and Mathematics Institute, University of Warwick, Coventry, UK",
+     "institution_ids": [
+      "https://openalex.org/I39555362"
+     ]
+    },
+    {
+     "raw_affiliation_string": "The Zeeman Institute for Systems Biology and Infectious Disease Epidemiology Research, School of Life Sciences and Mathematics Institute, University of Warwick, Coventry, UK",
+     "institution_ids": [
+      "https://openalex.org/I39555362"
+     ]
+    }
+   ]
+  },
+  {
+   "author_position": "middle",
+   "author": {
+    "id": "https://openalex.org/A5033339412",
+    "display_name": "Krasimira T. Tsaneva-Atanasova",
+    "orcid": "https://orcid.org/0000-0002-6294-7051",
+    "observed_orcids": [
+     "https://orcid.org/0000-0002-6294-7051"
+    ]
+   },
+   "institutions": [
+    {
+     "id": "https://openalex.org/I23923803",
+     "display_name": "University of Exeter",
+     "ror": "https://ror.org/03yghzc09",
+     "country_code": "GB",
+     "type": "education",
+     "lineage": [
+      "https://openalex.org/I23923803"
+     ]
+    },
+    {
+     "id": "https://openalex.org/I4210128584",
+     "display_name": "The Alan Turing Institute",
+     "ror": "https://ror.org/035dkdb55",
+     "country_code": "GB",
+     "type": "facility",
+     "lineage": [
+      "https://openalex.org/I4210128584"
+     ]
+    }
+   ],
+   "countries": [
+    "GB"
+   ],
+   "is_corresponding": false,
+   "raw_author_name": "Krasimira Tsaneva-Atanasova",
+   "raw_affiliation_strings": [
+    "College of Engineering, Mathematics and Physical Sciences, University of Exeter, Exeter, Devon, UK",
+    "The Alan Turing Institute, British Library, 96 Euston Rd, London, UK",
+    "College of Engineering, Mathematics and Physical Sciences, University of Exeter, Exeter, UK",
+    "The Alan Turing Institute, British Library, London, UK"
+   ],
+   "raw_orcid": "https://orcid.org/0000-0002-6294-7051",
+   "affiliations": [
+    {
+     "raw_affiliation_string": "College of Engineering, Mathematics and Physical Sciences, University of Exeter, Exeter, Devon, UK",
+     "institution_ids": [
+      "https://openalex.org/I23923803"
+     ]
+    },
+    {
+     "raw_affiliation_string": "The Alan Turing Institute, British Library, 96 Euston Rd, London, UK",
+     "institution_ids": [
+      "https://openalex.org/I4210128584"
+     ]
+    },
+    {
+     "raw_affiliation_string": "College of Engineering, Mathematics and Physical Sciences, University of Exeter, Exeter, UK",
+     "institution_ids": [
+      "https://openalex.org/I23923803"
+     ]
+    },
+    {
+     "raw_affiliation_string": "The Alan Turing Institute, British Library, London, UK",
+     "institution_ids": [
+      "https://openalex.org/I4210128584"
+     ]
+    }
+   ]
+  },
+  {
+   "author_position": "last",
+   "author": {
+    "id": "https://openalex.org/A5042656326",
+    "display_name": "León Danon",
+    "orcid": "https://orcid.org/0000-0002-7076-1871",
+    "observed_orcids": [
+     "https://orcid.org/0000-0002-7076-1871"
+    ]
+   },
+   "institutions": [
+    {
+     "id": "https://openalex.org/I36234482",
+     "display_name": "University of Bristol",
+     "ror": "https://ror.org/0524sp257",
+     "country_code": "GB",
+     "type": "education",
+     "lineage": [
+      "https://openalex.org/I36234482"
+     ]
+    },
+    {
+     "id": "https://openalex.org/I4210128584",
+     "display_name": "The Alan Turing Institute",
+     "ror": "https://ror.org/035dkdb55",
+     "country_code": "GB",
+     "type": "facility",
+     "lineage": [
+      "https://openalex.org/I4210128584"
+     ]
+    }
+   ],
+   "countries": [
+    "GB"
+   ],
+   "is_corresponding": false,
+   "raw_author_name": "Leon Danon",
+   "raw_affiliation_strings": [
+    "Bristol Medical School, Population Health Sciences, University of Bristol, Bristol, UK",
+    "Department of Engineering Mathematics, University of Bristol, UK",
+    "Joint Universities Pandemic and Epidemiological Research (JUNIPER) consortium",
+    "The Alan Turing Institute, British Library, 96 Euston Rd, London, UK",
+    "Department of Engineering Mathematics, University of Bristol, Bristol, UK",
+    "The Alan Turing Institute, British Library, London, UK"
+   ],
+   "raw_orcid": "https://orcid.org/0000-0002-7076-1871",
+   "affiliations": [
+    {
+     "raw_affiliation_string": "Bristol Medical School, Population Health Sciences, University of Bristol, Bristol, UK",
+     "institution_ids": [
+      "https://openalex.org/I36234482"
+     ]
+    },
+    {
+     "raw_affiliation_string": "Department of Engineering Mathematics, University of Bristol, UK",
+     "institution_ids": [
+      "https://openalex.org/I36234482"
+     ]
+    },
+    {
+     "raw_affiliation_string": "Joint Universities Pandemic and Epidemiological Research (JUNIPER) consortium",
+     "institution_ids": []
+    },
+    {
+     "raw_affiliation_string": "The Alan Turing Institute, British Library, 96 Euston Rd, London, UK",
+     "institution_ids": [
+      "https://openalex.org/I4210128584"
+     ]
+    },
+    {
+     "raw_affiliation_string": "Department of Engineering Mathematics, University of Bristol, Bristol, UK",
+     "institution_ids": [
+      "https://openalex.org/I36234482"
+     ]
+    },
+    {
+     "raw_affiliation_string": "The Alan Turing Institute, British Library, London, UK",
+     "institution_ids": [
+      "https://openalex.org/I4210128584"
+     ]
+    }
+   ]
+  }
+ ],
+ "institutions": [],
+ "countries_distinct_count": 1,
+ "institutions_distinct_count": 6,
+ "corresponding_author_ids": [
+  "https://openalex.org/A5024515720"
+ ],
+ "corresponding_institution_ids": [
+  "https://openalex.org/I23923803",
+  "https://openalex.org/I4210122580"
+ ],
+ "apc_list": null,
+ "apc_paid": null,
+ "fwci": 59.4989,
+ "has_fulltext": true,
+ "cited_by_count": 776,
+ "citation_normalized_percentile": {
+  "value": 0.99911254,
+  "is_in_top_1_percent": true,
+  "is_in_top_10_percent": true
+ },
+ "cited_by_percentile_year": {
+  "min": 93,
+  "max": 100
+ },
+ "biblio": {
+  "volume": "372",
+  "issue": null,
+  "first_page": "n579",
+  "last_page": "n579"
+ },
+ "is_retracted": false,
+ "is_paratext": false,
+ "is_xpac": false,
+ "primary_topic": {
+  "id": "https://openalex.org/T10118",
+  "display_name": "SARS-CoV-2 and COVID-19 Research",
+  "score": 0.8529999852180481,
+  "subfield": {
+   "id": "https://openalex.org/subfields/2725",
+   "display_name": "Infectious Diseases"
+  },
+  "field": {
+   "id": "https://openalex.org/fields/27",
+   "display_name": "Medicine"
+  },
+  "domain": {
+   "id": "https://openalex.org/domains/4",
+   "display_name": "Health Sciences"
+  }
+ },
+ "topics": [
+  {
+   "id": "https://openalex.org/T10118",
+   "display_name": "SARS-CoV-2 and COVID-19 Research",
+   "score": 0.8529999852180481,
+   "subfield": {
+    "id": "https://openalex.org/subfields/2725",
+    "display_name": "Infectious Diseases"
+   },
+   "field": {
+    "id": "https://openalex.org/fields/27",
+    "display_name": "Medicine"
+   },
+   "domain": {
+    "id": "https://openalex.org/domains/4",
+    "display_name": "Health Sciences"
+   }
+  },
+  {
+   "id": "https://openalex.org/T10041",
+   "display_name": "COVID-19 Clinical Research Studies",
+   "score": 0.12890000641345978,
+   "subfield": {
+    "id": "https://openalex.org/subfields/2725",
+    "display_name": "Infectious Diseases"
+   },
+   "field": {
+    "id": "https://openalex.org/fields/27",
+    "display_name": "Medicine"
+   },
+   "domain": {
+    "id": "https://openalex.org/domains/4",
+    "display_name": "Health Sciences"
+   }
+  },
+  {
+   "id": "https://openalex.org/T10410",
+   "display_name": "COVID-19 epidemiological studies",
+   "score": 0.009600000455975533,
+   "subfield": {
+    "id": "https://openalex.org/subfields/2611",
+    "display_name": "Modeling and Simulation"
+   },
+   "field": {
+    "id": "https://openalex.org/fields/26",
+    "display_name": "Mathematics"
+   },
+   "domain": {
+    "id": "https://openalex.org/domains/3",
+    "display_name": "Physical Sciences"
+   }
+  }
+ ],
+ "keywords": [
+  {
+   "id": "https://openalex.org/keywords/sars-cov-2",
+   "display_name": "SARS-CoV-2",
+   "score": 0.921999990940094
+  },
+  {
+   "id": "https://openalex.org/keywords/omicron-variant",
+   "display_name": "Omicron variant",
+   "score": 0.9480000138282776
+  },
+  {
+   "id": "https://openalex.org/keywords/covid-19-mortality",
+   "display_name": "COVID-19 mortality",
+   "score": 0.9559999704360962
+  },
+  {
+   "id": "https://openalex.org/keywords/variants-of-concern",
+   "display_name": "variants of concern",
+   "score": 0.6069999933242798
+  },
+  {
+   "id": "https://openalex.org/keywords/mortality-risk",
+   "display_name": "mortality risk",
+   "score": 0.46299999952316284
+  },
+  {
+   "id": "https://openalex.org/keywords/healthcare-capacity-planning",
+   "display_name": "healthcare capacity planning",
+   "score": 0.6399999856948853
+  },
+  {
+   "id": "https://openalex.org/keywords/pandemic-policy-responses",
+   "display_name": "pandemic response policy",
+   "score": 0.6240000128746033
+  }
+ ],
+ "concepts": [
+  {
+   "id": "https://openalex.org/C72563966",
+   "wikidata": "https://www.wikidata.org/wiki/Q1303415",
+   "display_name": "Cohort",
+   "level": 2,
+   "score": 0.6629931926727295
+  },
+  {
+   "id": "https://openalex.org/C3007834351",
+   "wikidata": "https://www.wikidata.org/wiki/Q82069695",
+   "display_name": "Severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2)",
+   "level": 5,
+   "score": 0.5988634824752808
+  },
+  {
+   "id": "https://openalex.org/C3008058167",
+   "wikidata": "https://www.wikidata.org/wiki/Q84263196",
+   "display_name": "Coronavirus disease 2019 (COVID-19)",
+   "level": 4,
+   "score": 0.5546659827232361
+  },
+  {
+   "id": "https://openalex.org/C71924100",
+   "wikidata": "https://www.wikidata.org/wiki/Q11190",
+   "display_name": "Medicine",
+   "level": 0,
+   "score": 0.5219601988792419
+  },
+  {
+   "id": "https://openalex.org/C201903717",
+   "wikidata": "https://www.wikidata.org/wiki/Q1778788",
+   "display_name": "Cohort study",
+   "level": 2,
+   "score": 0.49197694659233093
+  },
+  {
+   "id": "https://openalex.org/C3006700255",
+   "wikidata": "https://www.wikidata.org/wiki/Q81068910",
+   "display_name": "2019-20 coronavirus outbreak",
+   "level": 3,
+   "score": 0.4741353690624237
+  },
+  {
+   "id": "https://openalex.org/C3020799909",
+   "wikidata": "https://www.wikidata.org/wiki/Q85438966",
+   "display_name": "Sars virus",
+   "level": 5,
+   "score": 0.44023823738098145
+  },
+  {
+   "id": "https://openalex.org/C159047783",
+   "wikidata": "https://www.wikidata.org/wiki/Q7215",
+   "display_name": "Virology",
+   "level": 1,
+   "score": 0.32078951597213745
+  },
+  {
+   "id": "https://openalex.org/C126322002",
+   "wikidata": "https://www.wikidata.org/wiki/Q11180",
+   "display_name": "Internal medicine",
+   "level": 1,
+   "score": 0.2567719519138336
+  },
+  {
+   "id": "https://openalex.org/C116675565",
+   "wikidata": "https://www.wikidata.org/wiki/Q3241045",
+   "display_name": "Outbreak",
+   "level": 2,
+   "score": 0.13519316911697388
+  },
+  {
+   "id": "https://openalex.org/C2779134260",
+   "wikidata": "https://www.wikidata.org/wiki/Q12136",
+   "display_name": "Disease",
+   "level": 2,
+   "score": 0.09665849804878235
+  },
+  {
+   "id": "https://openalex.org/C524204448",
+   "wikidata": "https://www.wikidata.org/wiki/Q788926",
+   "display_name": "Infectious disease (medical specialty)",
+   "level": 3,
+   "score": 0.06994450092315674
+  }
+ ],
+ "mesh": [
+  {
+   "descriptor_ui": "D000086382",
+   "descriptor_name": "COVID-19",
+   "qualifier_ui": "Q000401",
+   "qualifier_name": "mortality",
+   "is_major_topic": true
+  },
+  {
+   "descriptor_ui": "D000086382",
+   "descriptor_name": "COVID-19",
+   "qualifier_ui": "Q000821",
+   "qualifier_name": "virology",
+   "is_major_topic": true
+  },
+  {
+   "descriptor_ui": "D000086402",
+   "descriptor_name": "SARS-CoV-2",
+   "qualifier_ui": "Q000235",
+   "qualifier_name": "genetics",
+   "is_major_topic": true
+  },
+  {
+   "descriptor_ui": "D000086742",
+   "descriptor_name": "COVID-19 Testing",
+   "qualifier_ui": "Q000706",
+   "qualifier_name": "statistics & numerical data",
+   "is_major_topic": true
+  },
+  {
+   "descriptor_ui": "D000328",
+   "descriptor_name": "Adult",
+   "qualifier_ui": null,
+   "qualifier_name": null,
+   "is_major_topic": false
+  },
+  {
+   "descriptor_ui": "D000368",
+   "descriptor_name": "Aged",
+   "qualifier_ui": null,
+   "qualifier_name": null,
+   "is_major_topic": false
+  },
+  {
+   "descriptor_ui": "D000369",
+   "descriptor_name": "Aged, 80 and over",
+   "qualifier_ui": null,
+   "qualifier_name": null,
+   "is_major_topic": false
+  },
+  {
+   "descriptor_ui": "D005260",
+   "descriptor_name": "Female",
+   "qualifier_ui": null,
+   "qualifier_name": null,
+   "is_major_topic": false
+  },
+  {
+   "descriptor_ui": "D006113",
+   "descriptor_name": "United Kingdom",
+   "qualifier_ui": "Q000453",
+   "qualifier_name": "epidemiology",
+   "is_major_topic": false
+  },
+  {
+   "descriptor_ui": "D006801",
+   "descriptor_name": "Humans",
+   "qualifier_ui": null,
+   "qualifier_name": null,
+   "is_major_topic": false
+  },
+  {
+   "descriptor_ui": "D008297",
+   "descriptor_name": "Male",
+   "qualifier_ui": null,
+   "qualifier_name": null,
+   "is_major_topic": false
+  },
+  {
+   "descriptor_ui": "D008875",
+   "descriptor_name": "Middle Aged",
+   "qualifier_ui": null,
+   "qualifier_name": null,
+   "is_major_topic": false
+  },
+  {
+   "descriptor_ui": "D012307",
+   "descriptor_name": "Risk Factors",
+   "qualifier_ui": null,
+   "qualifier_name": null,
+   "is_major_topic": false
+  },
+  {
+   "descriptor_ui": "D015331",
+   "descriptor_name": "Cohort Studies",
+   "qualifier_ui": null,
+   "qualifier_name": null,
+   "is_major_topic": false
+  },
+  {
+   "descriptor_ui": "D016016",
+   "descriptor_name": "Proportional Hazards Models",
+   "qualifier_ui": null,
+   "qualifier_name": null,
+   "is_major_topic": false
+  }
+ ],
+ "locations_count": 11,
+ "locations": [
+  {
+   "id": "doi:10.1136/bmj.n579",
+   "doi": "https://doi.org/10.1136/bmj.n579",
+   "is_oa": true,
+   "landing_page_url": "https://doi.org/10.1136/bmj.n579",
+   "pdf_url": "https://www.bmj.com/content/bmj/372/bmj.n579.full.pdf",
+   "source": {
+    "id": "https://openalex.org/S4393917726",
+    "display_name": "BMJ",
+    "issn_l": "1756-1833",
+    "issn": [
+     "1756-1833"
+    ],
+    "is_oa": false,
+    "is_in_doaj": false,
+    "is_core": true,
+    "listed_in": [
+     "cwts-core",
+     "dongbi-a",
+     "doyens",
+     "jufo-2",
+     "ki-jl-3",
+     "medline",
+     "norway-2",
+     "poland-200",
+     "russia-white-list-1",
+     "vabb-shw"
+    ],
+    "host_organization": null,
+    "host_organization_name": null,
+    "host_organization_lineage": [],
+    "host_organization_lineage_names": [],
+    "type": "journal"
+   },
+   "license": "cc-by",
+   "license_id": "https://openalex.org/licenses/cc-by",
+   "version": "publishedVersion",
+   "is_accepted": true,
+   "is_published": true,
+   "raw_source_name": "BMJ",
+   "raw_type": "journal-article"
+  },
+  {
+   "id": "doi:10.1101/2021.02.09.21250937",
+   "doi": "https://doi.org/10.1101/2021.02.09.21250937",
+   "is_oa": true,
+   "landing_page_url": "https://doi.org/10.1101/2021.02.09.21250937",
+   "pdf_url": "https://www.medrxiv.org/content/medrxiv/early/2021/03/05/2021.02.09.21250937.full.pdf",
+   "source": {
+    "id": "https://openalex.org/S3005729997",
+    "display_name": "medRxiv",
+    "issn_l": null,
+    "issn": null,
+    "is_oa": false,
+    "is_in_doaj": false,
+    "is_core": true,
+    "listed_in": [
+     "cwts-core"
+    ],
+    "host_organization": null,
+    "host_organization_name": null,
+    "host_organization_lineage": [
+     "https://openalex.org/P4310315909"
+    ],
+    "host_organization_lineage_names": [
+     "Cold Spring Harbor Laboratory Press"
+    ],
+    "type": "repository"
+   },
+   "license": "cc-by",
+   "license_id": "https://openalex.org/licenses/cc-by",
+   "version": "acceptedVersion",
+   "is_accepted": true,
+   "is_published": false,
+   "raw_source_name": "medRxiv",
+   "raw_type": "posted-content"
+  },
+  {
+   "id": "pmh:oai:pubmedcentral.nih.gov:7941603",
+   "doi": null,
+   "is_oa": true,
+   "landing_page_url": "https://www.ncbi.nlm.nih.gov/pmc/articles/7941603",
+   "pdf_url": null,
+   "source": {
+    "id": "https://openalex.org/S2764455111",
+    "display_name": "PubMed Central",
+    "issn_l": null,
+    "issn": null,
+    "is_oa": true,
+    "is_in_doaj": false,
+    "is_core": false,
+    "listed_in": [],
+    "host_organization": "https://openalex.org/I1299303238",
+    "host_organization_name": "National Institutes of Health",
+    "host_organization_lineage": [
+     "https://openalex.org/I1299303238"
+    ],
+    "host_organization_lineage_names": [],
+    "type": "repository"
+   },
+   "license": "cc-by",
+   "license_id": "https://openalex.org/licenses/cc-by",
+   "version": "publishedVersion",
+   "is_accepted": true,
+   "is_published": true,
+   "raw_source_name": "BMJ",
+   "raw_type": "Text"
+  },
+  {
+   "id": "pmid:33687922",
+   "doi": null,
+   "is_oa": false,
+   "landing_page_url": "https://pubmed.ncbi.nlm.nih.gov/33687922",
+   "pdf_url": null,
+   "source": {
+    "id": "https://openalex.org/S4306525036",
+    "display_name": "PubMed",
+    "issn_l": null,
+    "issn": null,
+    "is_oa": false,
+    "is_in_doaj": false,
+    "is_core": false,
+    "listed_in": [],
+    "host_organization": "https://openalex.org/I1299303238",
+    "host_organization_name": "National Institutes of Health",
+    "host_organization_lineage": [
+     "https://openalex.org/I1299303238"
+    ],
+    "host_organization_lineage_names": [],
+    "type": "repository"
+   },
+   "license": null,
+   "license_id": null,
+   "version": "publishedVersion",
+   "is_accepted": true,
+   "is_published": true,
+   "raw_source_name": "BMJ (Clinical research ed.)",
+   "raw_type": "Journal Article"
+  },
+  {
+   "id": "pmh:oai:wrap.warwick.ac.uk:149792",
+   "doi": null,
+   "is_oa": false,
+   "landing_page_url": "https://wrap.warwick.ac.uk/149792/1/WRAP-risk-mortality-patients-infected-SARS-CoV-2-variant-concern-Dyson-2021.pdf",
+   "pdf_url": "https://wrap.warwick.ac.uk/149792/1/WRAP-risk-mortality-patients-infected-SARS-CoV-2-variant-concern-Dyson-2021.pdf",
+   "source": {
+    "id": "https://openalex.org/S4306400665",
+    "display_name": "Warwick Research Archive Portal (University of Warwick)",
+    "issn_l": null,
+    "issn": null,
+    "is_oa": false,
+    "is_in_doaj": false,
+    "is_core": false,
+    "listed_in": [],
+    "host_organization": "https://openalex.org/I39555362",
+    "host_organization_name": "University of Warwick",
+    "host_organization_lineage": [
+     "https://openalex.org/I39555362"
+    ],
+    "host_organization_lineage_names": [],
+    "type": "repository"
+   },
+   "license": null,
+   "license_id": null,
+   "version": "acceptedVersion",
+   "is_accepted": true,
+   "is_published": false,
+   "raw_source_name": "",
+   "raw_type": "Journal Article"
+  },
+  {
+   "id": "pmh:oai:eprints.lancs.ac.uk:153136",
+   "doi": null,
+   "is_oa": false,
+   "landing_page_url": "https://eprints.lancs.ac.uk/id/eprint/153136/",
+   "pdf_url": null,
+   "source": {
+    "id": "https://openalex.org/S4306401916",
+    "display_name": "Lancaster EPrints (Lancaster University)",
+    "issn_l": null,
+    "issn": null,
+    "is_oa": false,
+    "is_in_doaj": false,
+    "is_core": false,
+    "listed_in": [],
+    "host_organization": "https://openalex.org/I67415387",
+    "host_organization_name": "Lancaster University",
+    "host_organization_lineage": [
+     "https://openalex.org/I67415387"
+    ],
+    "host_organization_lineage_names": [],
+    "type": "repository"
+   },
+   "license": null,
+   "license_id": null,
+   "version": "submittedVersion",
+   "is_accepted": false,
+   "is_published": false,
+   "raw_source_name": null,
+   "raw_type": "Journal Article"
+  },
+  {
+   "id": "pmh:oai:figshare.com:article/29777957",
+   "doi": null,
+   "is_oa": true,
+   "landing_page_url": "https://figshare.com/articles/journal_contribution/Risk_of_mortality_in_patients_infected_with_SARS-CoV-2_variant_of_concern_202012_1_matched_cohort_study/29777957",
+   "pdf_url": null,
+   "source": {
+    "id": "https://openalex.org/S4377196282",
+    "display_name": "Figshare",
+    "issn_l": null,
+    "issn": null,
+    "is_oa": false,
+    "is_in_doaj": false,
+    "is_core": false,
+    "listed_in": [],
+    "host_organization": "https://openalex.org/I4210132348",
+    "host_organization_name": "Figshare (United Kingdom)",
+    "host_organization_lineage": [
+     "https://openalex.org/I4210132348"
+    ],
+    "host_organization_lineage_names": [],
+    "type": "repository"
+   },
+   "license": "cc-by",
+   "license_id": "https://openalex.org/licenses/cc-by",
+   "version": "submittedVersion",
+   "is_accepted": false,
+   "is_published": false,
+   "raw_source_name": null,
+   "raw_type": "Text"
+  },
+  {
+   "id": "pmh:oai:ore.exeter.ac.uk:10871/125083",
+   "doi": null,
+   "is_oa": true,
+   "landing_page_url": "http://hdl.handle.net/10871/125083",
+   "pdf_url": null,
+   "source": {
+    "id": "https://openalex.org/S4306401998",
+    "display_name": "Open Research Exeter (University of Exeter)",
+    "issn_l": null,
+    "issn": null,
+    "is_oa": false,
+    "is_in_doaj": false,
+    "is_core": false,
+    "listed_in": [],
+    "host_organization": "https://openalex.org/I23923803",
+    "host_organization_name": "University of Exeter",
+    "host_organization_lineage": [
+     "https://openalex.org/I23923803"
+    ],
+    "host_organization_lineage_names": [],
+    "type": "repository"
+   },
+   "license": "cc-by",
+   "license_id": "https://openalex.org/licenses/cc-by",
+   "version": "submittedVersion",
+   "is_accepted": false,
+   "is_published": false,
+   "raw_source_name": null,
+   "raw_type": "Article"
+  },
+  {
+   "id": "pmh:oai:research-information.bris.ac.uk:openaire/0d6d2f99-ee79-42b8-bcb4-70c65970f9e3",
+   "doi": null,
+   "is_oa": true,
+   "landing_page_url": "https://research-information.bris.ac.uk/files/286136515/Full_text_PDF_final_published_version_.pdf",
+   "pdf_url": null,
+   "source": {
+    "id": "https://openalex.org/S7407055359",
+    "display_name": "Explore Bristol Research",
+    "issn_l": null,
+    "issn": null,
+    "is_oa": false,
+    "is_in_doaj": false,
+    "is_core": false,
+    "listed_in": [],
+    "host_organization": null,
+    "host_organization_name": null,
+    "host_organization_lineage": [],
+    "host_organization_lineage_names": [],
+    "type": "repository"
+   },
+   "license": "cc-by",
+   "license_id": "https://openalex.org/licenses/cc-by",
+   "version": "submittedVersion",
+   "is_accepted": false,
+   "is_published": false,
+   "raw_source_name": "Challen, R, Brooks-Pollock, E, Read, J M, Dyson, L, Tsaneva-Atanasova, K & Danon, L 2021, 'Risk of mortality in patients infected with SARS-CoV-2 variant of concern 202012/1 : Matched cohort study', BMJ, vol. 372, n579. https://doi.org/10.1136/bmj.n579",
+   "raw_type": "info:eu-repo/semantics/article"
+  },
+  {
+   "id": "pmh:oai:research-information.bris.ac.uk:openaire_cris_publications/0d6d2f99-ee79-42b8-bcb4-70c65970f9e3",
+   "doi": null,
+   "is_oa": true,
+   "landing_page_url": "https://research-information.bris.ac.uk/en/publications/0d6d2f99-ee79-42b8-bcb4-70c65970f9e3",
+   "pdf_url": null,
+   "source": {
+    "id": "https://openalex.org/S4306400895",
+    "display_name": "Bristol Research (University of Bristol)",
+    "issn_l": null,
+    "issn": null,
+    "is_oa": false,
+    "is_in_doaj": false,
+    "is_core": false,
+    "listed_in": [],
+    "host_organization": "https://openalex.org/I36234482",
+    "host_organization_name": "University of Bristol",
+    "host_organization_lineage": [
+     "https://openalex.org/I36234482"
+    ],
+    "host_organization_lineage_names": [],
+    "type": "repository"
+   },
+   "license": "cc-by",
+   "license_id": "https://openalex.org/licenses/cc-by",
+   "version": "submittedVersion",
+   "is_accepted": false,
+   "is_published": false,
+   "raw_source_name": "Challen, R, Brooks-Pollock, E, Read, J M, Dyson, L, Tsaneva-Atanasova, K & Danon, L 2021, 'Risk of mortality in patients infected with SARS-CoV-2 variant of concern 202012/1 : Matched cohort study', BMJ, vol. 372, n579. https://doi.org/10.1136/bmj.n579",
+   "raw_type": "info:eu-repo/semantics/article"
+  },
+  {
+   "id": "pmh:oai:research-information.bris.ac.uk:openaire_cris_publications/82db01e4-47a7-499b-92db-958b5df697cc",
+   "doi": null,
+   "is_oa": false,
+   "landing_page_url": "https://hdl.handle.net/1983/82db01e4-47a7-499b-92db-958b5df697cc",
+   "pdf_url": null,
+   "source": {
+    "id": "https://openalex.org/S4306400895",
+    "display_name": "Bristol Research (University of Bristol)",
+    "issn_l": null,
+    "issn": null,
+    "is_oa": false,
+    "is_in_doaj": false,
+    "is_core": false,
+    "listed_in": [],
+    "host_organization": "https://openalex.org/I36234482",
+    "host_organization_name": "University of Bristol",
+    "host_organization_lineage": [
+     "https://openalex.org/I36234482"
+    ],
+    "host_organization_lineage_names": [],
+    "type": "repository"
+   },
+   "license": null,
+   "license_id": null,
+   "version": "submittedVersion",
+   "is_accepted": false,
+   "is_published": false,
+   "raw_source_name": "Challen, R, Brooks-Pollock, E, Read, J M, Dyson, L, Tsaneva-Atanasova, K & Danon, L 2021, Increased hazard of mortality in cases compatible with SARS-CoV-2 variant of concern 202012/1 - a matched cohort study. https://doi.org/10.1101/2021.02.09.21250937",
+   "raw_type": "info:eu-repo/semantics/other"
+  }
+ ],
+ "best_oa_location": {
+  "id": "doi:10.1136/bmj.n579",
+  "doi": "https://doi.org/10.1136/bmj.n579",
+  "is_oa": true,
+  "landing_page_url": "https://doi.org/10.1136/bmj.n579",
+  "pdf_url": "https://www.bmj.com/content/bmj/372/bmj.n579.full.pdf",
+  "source": {
+   "id": "https://openalex.org/S4393917726",
+   "display_name": "BMJ",
+   "issn_l": "1756-1833",
+   "issn": [
+    "1756-1833"
+   ],
+   "is_oa": false,
+   "is_in_doaj": false,
+   "is_core": true,
+   "listed_in": [
+    "cwts-core",
+    "dongbi-a",
+    "doyens",
+    "jufo-2",
+    "ki-jl-3",
+    "medline",
+    "norway-2",
+    "poland-200",
+    "russia-white-list-1",
+    "vabb-shw"
+   ],
+   "host_organization": null,
+   "host_organization_name": null,
+   "host_organization_lineage": [],
+   "host_organization_lineage_names": [],
+   "type": "journal"
+  },
+  "license": "cc-by",
+  "license_id": "https://openalex.org/licenses/cc-by",
+  "version": "publishedVersion",
+  "is_accepted": true,
+  "is_published": true,
+  "raw_source_name": "BMJ",
+  "raw_type": "journal-article"
+ },
+ "sustainable_development_goals": [
+  {
+   "display_name": "Good health and well-being",
+   "score": 0.9922999739646912,
+   "id": "https://metadata.un.org/sdg/3"
+  }
+ ],
+ "study_designs": [
+  {
+   "display_name": "Observational Study",
+   "id": "https://openalex.org/study-designs/observational-study"
+  }
+ ],
+ "awards": [
+  {
+   "id": "https://openalex.org/G1088240470",
+   "display_name": null,
+   "funder_award_id": "MR/V009761/1",
+   "funder_id": "https://openalex.org/F4320319990",
+   "funder_display_name": "National Institute for Health and Care Research"
+  },
+  {
+   "id": "https://openalex.org/G1309768829",
+   "display_name": null,
+   "funder_award_id": "EP/N510129/1.",
+   "funder_id": "https://openalex.org/F4320313467",
+   "funder_display_name": "Alan Turing Institute"
+  },
+  {
+   "id": "https://openalex.org/G1346748436",
+   "display_name": null,
+   "funder_award_id": "MR/V009761/1",
+   "funder_id": "https://openalex.org/F4320334627",
+   "funder_display_name": "Engineering and Physical Sciences Research Council"
+  },
+  {
+   "id": "https://openalex.org/G1436783943",
+   "display_name": null,
+   "funder_award_id": "EP/N014391/1",
+   "funder_id": "https://openalex.org/F4320334627",
+   "funder_display_name": "Engineering and Physical Sciences Research Council"
+  },
+  {
+   "id": "https://openalex.org/G160926654",
+   "display_name": null,
+   "funder_award_id": "MR/S004793/1",
+   "funder_id": "https://openalex.org/F4320319990",
+   "funder_display_name": "National Institute for Health and Care Research"
+  },
+  {
+   "id": "https://openalex.org/G1633672591",
+   "display_name": null,
+   "funder_award_id": "N510129",
+   "funder_id": "https://openalex.org/F4320334627",
+   "funder_display_name": "Engineering and Physical Sciences Research Council"
+  },
+  {
+   "id": "https://openalex.org/G2087514139",
+   "display_name": "Drivers of Resistance in Uganda and Malawi: The DRUM Consortium",
+   "funder_award_id": "MR/S004793/1",
+   "funder_id": "https://openalex.org/F4320334626",
+   "funder_display_name": "Medical Research Council"
+  },
+  {
+   "id": "https://openalex.org/G218040429",
+   "display_name": null,
+   "funder_award_id": "MC/PC/19067",
+   "funder_id": "https://openalex.org/F4320334626",
+   "funder_display_name": "Medical Research Council"
+  },
+  {
+   "id": "https://openalex.org/G3855435662",
+   "display_name": null,
+   "funder_award_id": "N510129",
+   "funder_id": "https://openalex.org/F4320313467",
+   "funder_display_name": "Alan Turing Institute"
+  },
+  {
+   "id": "https://openalex.org/G444630160",
+   "display_name": null,
+   "funder_award_id": "EP/N510129/",
+   "funder_id": "https://openalex.org/F4320334627",
+   "funder_display_name": "Engineering and Physical Sciences Research Council"
+  },
+  {
+   "id": "https://openalex.org/G4500485203",
+   "display_name": "The Alan Turing Institute",
+   "funder_award_id": "EP/N510129/1",
+   "funder_id": "https://openalex.org/F4320334627",
+   "funder_display_name": "Engineering and Physical Sciences Research Council"
+  },
+  {
+   "id": "https://openalex.org/G4578647440",
+   "display_name": null,
+   "funder_award_id": "MR/S004793/1",
+   "funder_id": "https://openalex.org/F4320334626",
+   "funder_display_name": "Medical Research Council"
+  },
+  {
+   "id": "https://openalex.org/G4936643394",
+   "display_name": null,
+   "funder_award_id": "MR/V038613/1",
+   "funder_id": "https://openalex.org/F4320319990",
+   "funder_display_name": "National Institute for Health and Care Research"
+  },
+  {
+   "id": "https://openalex.org/G5420266884",
+   "display_name": null,
+   "funder_award_id": "EP/N510129/1",
+   "funder_id": "https://openalex.org/F4320319990",
+   "funder_display_name": "National Institute for Health and Care Research"
+  },
+  {
+   "id": "https://openalex.org/G6585126884",
+   "display_name": null,
+   "funder_award_id": "MR/V038613/1",
+   "funder_id": "https://openalex.org/F4320334627",
+   "funder_display_name": "Engineering and Physical Sciences Research Council"
+  },
+  {
+   "id": "https://openalex.org/G660543699",
+   "display_name": "Nosocomial transmission of SARS-CoV-2",
+   "funder_award_id": "MR/V028456/1",
+   "funder_id": "https://openalex.org/F4320334626",
+   "funder_display_name": "Medical Research Council"
+  },
+  {
+   "id": "https://openalex.org/G688401098",
+   "display_name": "EPSRC Centre for Predictive Modelling in Healthcare",
+   "funder_award_id": "EP/N014391/1",
+   "funder_id": "https://openalex.org/F4320334627",
+   "funder_display_name": "Engineering and Physical Sciences Research Council"
+  },
+  {
+   "id": "https://openalex.org/G6983460074",
+   "display_name": "Uncertainty Quantification for Expensive COVID-19 Simulation Models (UQ4Covid)",
+   "funder_award_id": "EP/V051555/1",
+   "funder_id": "https://openalex.org/F4320334627",
+   "funder_display_name": "Engineering and Physical Sciences Research Council"
+  },
+  {
+   "id": "https://openalex.org/G7156302826",
+   "display_name": "EPSRC Hub for Quantitative Modelling in Healthcare",
+   "funder_award_id": "EP/T017856/1",
+   "funder_id": "https://openalex.org/F4320334627",
+   "funder_display_name": "Engineering and Physical Sciences Research Council"
+  },
+  {
+   "id": "https://openalex.org/G7173905922",
+   "display_name": "EPSRC Centre for New Mathematical Sciences Capabilities for Healthcare Technologies",
+   "funder_award_id": "EP/N014499/1",
+   "funder_id": "https://openalex.org/F4320334627",
+   "funder_display_name": "Engineering and Physical Sciences Research Council"
+  },
+  {
+   "id": "https://openalex.org/G7378826991",
+   "display_name": "Mathematical modeling and adaptive control to inform real time decision making for the COVID-19 pandemic at the local, regional and national scale",
+   "funder_award_id": "MR/V009761/1",
+   "funder_id": "https://openalex.org/F4320334626",
+   "funder_display_name": "Medical Research Council"
+  },
+  {
+   "id": "https://openalex.org/G777199097",
+   "display_name": null,
+   "funder_award_id": "EPSRC grant EP/N510129/1",
+   "funder_id": "https://openalex.org/F4320334627",
+   "funder_display_name": "Engineering and Physical Sciences Research Council"
+  },
+  {
+   "id": "https://openalex.org/G8285415669",
+   "display_name": null,
+   "funder_award_id": "EP/N014499/1",
+   "funder_id": "https://openalex.org/F4320334626",
+   "funder_display_name": "Medical Research Council"
+  },
+  {
+   "id": "https://openalex.org/G8356995930",
+   "display_name": null,
+   "funder_award_id": "EP/T017856/1",
+   "funder_id": "https://openalex.org/F4320334627",
+   "funder_display_name": "Engineering and Physical Sciences Research Council"
+  },
+  {
+   "id": "https://openalex.org/G8373959845",
+   "display_name": "COVID-19 Modelling Consortium: quantitative epidemiological predictions in response to an evolving pandemic",
+   "funder_award_id": "MR/V038613/1",
+   "funder_id": "https://openalex.org/F4320334626",
+   "funder_display_name": "Medical Research Council"
+  },
+  {
+   "id": "https://openalex.org/G8415457339",
+   "display_name": null,
+   "funder_award_id": "COVID-19",
+   "funder_id": "https://openalex.org/F4320334626",
+   "funder_display_name": "Medical Research Council"
+  },
+  {
+   "id": "https://openalex.org/G8672101347",
+   "display_name": null,
+   "funder_award_id": "EP/N014499/1",
+   "funder_id": "https://openalex.org/F4320334627",
+   "funder_display_name": "Engineering and Physical Sciences Research Council"
+  },
+  {
+   "id": "https://openalex.org/G8795210754",
+   "display_name": null,
+   "funder_award_id": "EP/N510129/1",
+   "funder_id": "https://openalex.org/F4320334626",
+   "funder_display_name": "Medical Research Council"
+  },
+  {
+   "id": "https://openalex.org/G8992914112",
+   "display_name": null,
+   "funder_award_id": "S004793/1",
+   "funder_id": "https://openalex.org/F4320334626",
+   "funder_display_name": "Medical Research Council"
+  }
+ ],
+ "funders": [
+  {
+   "id": "https://openalex.org/F4320313467",
+   "display_name": "Alan Turing Institute",
+   "ror": "https://ror.org/035dkdb55"
+  },
+  {
+   "id": "https://openalex.org/F4320318095",
+   "display_name": "National Institute for Health Research Health Protection Research Unit",
+   "ror": null
+  },
+  {
+   "id": "https://openalex.org/F4320319990",
+   "display_name": "National Institute for Health and Care Research",
+   "ror": "https://ror.org/0187kwz08"
+  },
+  {
+   "id": "https://openalex.org/F4320320360",
+   "display_name": "University of Bristol",
+   "ror": "https://ror.org/0524sp257"
+  },
+  {
+   "id": "https://openalex.org/F4320321067",
+   "display_name": "Public Health England",
+   "ror": "https://ror.org/00vbvha87"
+  },
+  {
+   "id": "https://openalex.org/F4320334626",
+   "display_name": "Medical Research Council",
+   "ror": "https://ror.org/03x94j517"
+  },
+  {
+   "id": "https://openalex.org/F4320334627",
+   "display_name": "Engineering and Physical Sciences Research Council",
+   "ror": "https://ror.org/0439y7842"
+  }
+ ],
+ "has_content": {
+  "grobid_xml": true,
+  "pdf": true
+ },
+ "content_urls": {
+  "pdf": "https://content.openalex.org/works/W3134566701.pdf",
+  "grobid_xml": "https://content.openalex.org/works/W3134566701.grobid-xml"
+ },
+ "referenced_works_count": 17,
+ "referenced_works": [
+  "https://openalex.org/W1570622790",
+  "https://openalex.org/W2136883754",
+  "https://openalex.org/W2208406193",
+  "https://openalex.org/W2582743722",
+  "https://openalex.org/W3047144258",
+  "https://openalex.org/W3048714202",
+  "https://openalex.org/W3094101509",
+  "https://openalex.org/W3112362785",
+  "https://openalex.org/W3119321472",
+  "https://openalex.org/W3122877585",
+  "https://openalex.org/W3126084341",
+  "https://openalex.org/W3133469263",
+  "https://openalex.org/W3133794453",
+  "https://openalex.org/W3134208712",
+  "https://openalex.org/W3136588845",
+  "https://openalex.org/W3196485311",
+  "https://openalex.org/W4282965214"
+ ],
+ "related_works": [
+  "https://openalex.org/W3138794458",
+  "https://openalex.org/W3136104126",
+  "https://openalex.org/W3211677196",
+  "https://openalex.org/W4280560622",
+  "https://openalex.org/W3170126470",
+  "https://openalex.org/W4224211113",
+  "https://openalex.org/W3203507661",
+  "https://openalex.org/W4403280149",
+  "https://openalex.org/W7160320776",
+  "https://openalex.org/W3175272665"
+ ],
+ "abstract_inverted_index": {
+  "OBJECTIVE:": [
+   0
+  ],
+  "To": [
+   1
+  ],
+  "establish": [
+   2
+  ],
+  "whether": [
+   3
+  ],
+  "there": [
+   4
+  ],
+  "is": [
+   5,
+   198,
+   204,
+   209
+  ],
+  "any": [
+   6
+  ],
+  "change": [
+   7
+  ],
+  "in": [
+   8,
+   24,
+   44,
+   69,
+   160,
+   167,
+   180
+  ],
+  "mortality": [
+   9,
+   137,
+   197,
+   224,
+   247
+  ],
+  "from": [
+   10,
+   182,
+   264
+  ],
+  "infection": [
+   11,
+   142,
+   147,
+   201,
+   214
+  ],
+  "with": [
+   12,
+   28,
+   141,
+   143,
+   146,
+   148,
+   202,
+   215,
+   226,
+   245
+  ],
+  "a": [
+   13,
+   19
+  ],
+  "new": [
+   14
+  ],
+  "variant": [
+   15,
+   20
+  ],
+  "of": [
+   16,
+   21,
+   54,
+   62,
+   93,
+   104,
+   112,
+   128,
+   196
+  ],
+  "SARS-CoV-2,": [
+   17
+  ],
+  "designated": [
+   18
+  ],
+  "concern": [
+   22
+  ],
+  "(VOC-202012/1)": [
+   23
+  ],
+  "December": [
+   25
+  ],
+  "2020,": [
+   26
+  ],
+  "compared": [
+   27,
+   145,
+   225
+  ],
+  "circulating": [
+   29,
+   150,
+   228
+  ],
+  "SARS-CoV-2": [
+   30,
+   68,
+   132
+  ],
+  "variants.": [
+   31,
+   229
+  ],
+  "DESIGN:": [
+   32
+  ],
+  "Matched": [
+   33
+  ],
+  "cohort": [
+   34
+  ],
+  "study.": [
+   35
+  ],
+  "SETTING:": [
+   36
+  ],
+  "Community": [
+   37
+  ],
+  "based": [
+   38
+  ],
+  "(pillar": [
+   39
+  ],
+  "2)": [
+   40
+  ],
+  "covid-19": [
+   41,
+   166
+  ],
+  "testing": [
+   42
+  ],
+  "centres": [
+   43
+  ],
+  "the": [
+   45,
+   48,
+   113,
+   118,
+   129,
+   168,
+   194,
+   218,
+   251
+  ],
+  "UK": [
+   46
+  ],
+  "using": [
+   47,
+   117
+  ],
+  "TaqPath": [
+   49,
+   119
+  ],
+  "assay": [
+   50
+  ],
+  "(a": [
+   51
+  ],
+  "proxy": [
+   52
+  ],
+  "measure": [
+   53
+  ],
+  "VOC-202012/1": [
+   55,
+   144,
+   216
+  ],
+  "infection).": [
+   56
+  ],
+  "PARTICIPANTS:": [
+   57
+  ],
+  "54": [
+   58
+  ],
+  "906": [
+   59
+  ],
+  "matched": [
+   60,
+   87
+  ],
+  "pairs": [
+   61
+  ],
+  "participants": [
+   63
+  ],
+  "who": [
+   64,
+   162
+  ],
+  "tested": [
+   65,
+   163
+  ],
+  "positive": [
+   66,
+   105,
+   131,
+   164
+  ],
+  "for": [
+   67,
+   165
+  ],
+  "pillar": [
+   70
+  ],
+  "2": [
+   71
+  ],
+  "between": [
+   72
+  ],
+  "1": [
+   73
+  ],
+  "October": [
+   74
+  ],
+  "2020": [
+   75
+  ],
+  "and": [
+   76,
+   101,
+   107,
+   233,
+   235,
+   256
+  ],
+  "29": [
+   77
+  ],
+  "January": [
+   78
+  ],
+  "2021,": [
+   79
+  ],
+  "followed-up": [
+   80
+  ],
+  "until": [
+   81
+  ],
+  "12": [
+   82
+  ],
+  "February": [
+   83
+  ],
+  "2021.": [
+   84
+  ],
+  "Participants": [
+   85
+  ],
+  "were": [
+   86
+  ],
+  "on": [
+   88
+  ],
+  "age,": [
+   89
+  ],
+  "sex,": [
+   90
+  ],
+  "ethnicity,": [
+   91
+  ],
+  "index": [
+   92
+  ],
+  "multiple": [
+   94
+  ],
+  "deprivation,": [
+   95
+  ],
+  "lower": [
+   96
+  ],
+  "tier": [
+   97
+  ],
+  "local": [
+   98
+  ],
+  "authority": [
+   99
+  ],
+  "region,": [
+   100
+  ],
+  "sample": [
+   102
+  ],
+  "date": [
+   103
+  ],
+  "specimens,": [
+   106
+  ],
+  "differed": [
+   108
+  ],
+  "only": [
+   109
+  ],
+  "by": [
+   110,
+   200,
+   242
+  ],
+  "detectability": [
+   111
+  ],
+  "spike": [
+   114
+  ],
+  "protein": [
+   115
+  ],
+  "gene": [
+   116
+  ],
+  "assay.": [
+   120
+  ],
+  "MAIN": [
+   121
+  ],
+  "OUTCOME": [
+   122
+  ],
+  "MEASURE:": [
+   123
+  ],
+  "Death": [
+   124
+  ],
+  "within": [
+   125
+  ],
+  "28": [
+   126
+  ],
+  "days": [
+   127
+  ],
+  "first": [
+   130
+  ],
+  "test": [
+   133
+  ],
+  "result.": [
+   134
+  ],
+  "RESULTS:": [
+   135
+  ],
+  "The": [
+   136,
+   191
+  ],
+  "hazard": [
+   138
+  ],
+  "ratio": [
+   139
+  ],
+  "associated": [
+   140
+  ],
+  "previously": [
+   149,
+   227
+  ],
+  "variants": [
+   151
+  ],
+  "was": [
+   152
+  ],
+  "1.64": [
+   153
+  ],
+  "(95%": [
+   154
+  ],
+  "confidence": [
+   155
+  ],
+  "interval": [
+   156
+  ],
+  "1.32": [
+   157
+  ],
+  "to": [
+   158,
+   184,
+   211,
+   220,
+   250,
+   261
+  ],
+  "2.04)": [
+   159
+  ],
+  "patients": [
+   161
+  ],
+  "community.": [
+   169
+  ],
+  "In": [
+   170
+  ],
+  "this": [
+   171,
+   176,
+   207,
+   243
+  ],
+  "comparatively": [
+   172
+  ],
+  "low": [
+   173
+  ],
+  "risk": [
+   174,
+   195
+  ],
+  "group,": [
+   175
+  ],
+  "represents": [
+   177
+  ],
+  "an": [
+   178
+  ],
+  "increase": [
+   179
+  ],
+  "deaths": [
+   181,
+   263
+  ],
+  "2.5": [
+   183
+  ],
+  "4.1": [
+   185
+  ],
+  "per": [
+   186
+  ],
+  "1000": [
+   187
+  ],
+  "detected": [
+   188
+  ],
+  "cases.": [
+   189
+  ],
+  "CONCLUSIONS:": [
+   190
+  ],
+  "probability": [
+   192
+  ],
+  "that": [
+   193,
+   253
+  ],
+  "increased": [
+   199,
+   246
+  ],
+  "VOC-202012/01": [
+   203
+  ],
+  "high.": [
+   205
+  ],
+  "If": [
+   206
+  ],
+  "finding": [
+   208
+  ],
+  "generalisable": [
+   210
+  ],
+  "other": [
+   212
+  ],
+  "populations,": [
+   213
+  ],
+  "has": [
+   217
+  ],
+  "potential": [
+   219
+  ],
+  "cause": [
+   221
+  ],
+  "substantial": [
+   222
+  ],
+  "additional": [
+   223
+  ],
+  "Healthcare": [
+   230
+  ],
+  "capacity": [
+   231
+  ],
+  "planning": [
+   232
+  ],
+  "national": [
+   234
+  ],
+  "international": [
+   236
+  ],
+  "control": [
+   237
+  ],
+  "policies": [
+   238
+  ],
+  "are": [
+   239,
+   259
+  ],
+  "all": [
+   240
+  ],
+  "impacted": [
+   241
+  ],
+  "finding,": [
+   244
+  ],
+  "lending": [
+   248
+  ],
+  "weight": [
+   249
+  ],
+  "argument": [
+   252
+  ],
+  "further": [
+   254
+  ],
+  "coordinated": [
+   255
+  ],
+  "stringent": [
+   257
+  ],
+  "measures": [
+   258
+  ],
+  "justified": [
+   260
+  ],
+  "reduce": [
+   262
+  ],
+  "SARS-CoV-2.": [
+   265
+  ]
+ },
+ "counts_by_year": [
+  {
+   "year": 2026,
+   "cited_by_count": 7
+  },
+  {
+   "year": 2025,
+   "cited_by_count": 20
+  },
+  {
+   "year": 2024,
+   "cited_by_count": 48
+  },
+  {
+   "year": 2023,
+   "cited_by_count": 100
+  },
+  {
+   "year": 2022,
+   "cited_by_count": 242
+  },
+  {
+   "year": 2021,
+   "cited_by_count": 356
+  },
+  {
+   "year": 2020,
+   "cited_by_count": 2
+  }
+ ],
+ "updated_date": "2026-10-31T12:09:11.096373",
+ "created_date": "2021-03-15T00:00:00"
+}

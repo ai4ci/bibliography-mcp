@@ -18,8 +18,8 @@ import uk.co.terminological.bibliography.record.RecordReference;
  * An API that can resolve an identifier into what it knows about that work.
  *
  * The counterpart to {@link Searcher}: this answers "tell me about this", not "find me something". Nearly every
- * source implements it, including ones that implement nothing else — Unpaywall exists in this project only to turn a
- * DOI into an open-access pdf location.
+ * source implements it, but the coverage is not uniform: a DOI-keyed source such as PMC IDConverter resolves only one
+ * identifier type, which is what debt-005 is about.
  */
 public interface RecordFetcher {
 

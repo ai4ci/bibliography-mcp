@@ -10,7 +10,7 @@ tags:
 
 A Java MCP (Model Context Protocol) server exposing clients for multiple
 bibliographic APIs (Entrez/PubMed, CrossRef, Europe PMC, OpenCitations,
-Unpaywall, medRxiv/bioRxiv, PMC IDConverter, Cermine PDF parsing) behind a
+OpenAlex, medRxiv/bioRxiv, PMC IDConverter, Cermine PDF parsing) behind a
 unified record format, plus a plain-Java facade over the same functionality.
 
 This document says what the project is. What is *built* and what is *intended*
@@ -29,7 +29,7 @@ becomes a feature, plan, issue or debt record.
 | Entrez / PubMed | `api/entrez/EntrezClient` | search, fetch by PMID/PMCID |
 | Europe PMC | `api/europepmc/EuropePMCClient` | search, fetch, both citation directions |
 | OpenCitations Index v2 | `api/opencitations/OpenCitationsClient` | citation edges by DOI |
-| Unpaywall | `api/unpaywall/UnpaywallClient` | open-access PDF location |
+| OpenAlex | `api/openalex/OpenAlexClient` | search, fetch, both citation directions, identifier mapping, open-access PDF location |
 | medRxiv / bioRxiv | `api/medrxiv/MedrxivClient` | preprint search and fetch |
 | PMC ID Converter | `api/pmcid/PMCIDClient` | DOI ↔ PMCID ↔ PMID mapping |
 | Cermine | `api/cermine/PdfFetcher` | parse references out of a PDF |

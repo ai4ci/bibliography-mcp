@@ -47,7 +47,7 @@ Mechanism, all three steps needed:
 3. The HTTP status was 2xx, so `CachingApiClient.call` treated it as a success and
    `cache.put` stored the broken body. Europe PMC uses the 7-day `week` cache, so
    the wrong answer persists for a week; clients that call `cacheForever()`
-   (CrossRef, Unpaywall, PMCIDClient, PdfFetcher) would pin it indefinitely.
+   (CrossRef, PMCIDClient, PdfFetcher) would pin it indefinitely.
 
 **Not a data update and not ordinary API inconsistency.** The record was in the
 index before the incident (an earlier run returned it) and after it (six

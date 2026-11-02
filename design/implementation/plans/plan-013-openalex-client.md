@@ -1,6 +1,6 @@
 ---
 title: OpenAlex client
-status: draft
+status: final
 targetVersion: unassigned
 tags:
 - openalex
@@ -110,21 +110,53 @@ Contract test entry in
 shape (`/works`, `filter=cites:`, `filter=doi:`) is exactly the kind of thing that
 changes silently (issue-002).
 
-## Open questions
+## Open questions — answered during implementation
 
-- Which search expression expresses `Query.getAllFields()`:
-  `title_and_abstract.search` (semantically right, must confirm it is 10 credits
-  and that it exists as a filter), or full-text `search` (what the probe
-  accidentally used)? Crossref gets `query.title` etc., and the client's job is
-  to translate intent, not to pick the cheapest.
-- Does `getOtherIdentifiers()` carry the OpenAlex id, or does `IdType.OPENALEX`
-  need to appear in `RecordReference` too? The dedupe in plan-008 keys off
-  identifiers, so this decides whether OpenAlex results merge with Crossref ones
-  automatically or need mapping first. (They should merge on DOI — verify rather
-  than assume.)
-- Does OpenAlex belong in `searchApis` at all, at 10 credits a call against
-  1,000 searches a day, when three free search sources already exist? Proposal:
-  register it for fetch/citations/ids/OA, and make search opt-in per call.
-- `related_works` is in the response and is neither up nor down. Ignore it for
-  now, but decide before someone wires it into `CitedByMapper` and silently
-  corrupts the graph.
+- **Which search expression expresses `Query.getAllFields()`?** `default.search`.
+  Measured, it and a bare `search=` parameter return an identical count (674,724
+  for "photosynthesis") and the API describes both as full text; it is written as a
+  filter rather than as the parameter only because one `filter` parameter has to
+  carry every condition. `title_and_abstract.search` is used for
+  `Query.getTitleAbstract()`, which is the narrower intent.
+- **Does `getOtherIdentifiers()` carry the OpenAlex id?** Yes, and `IdType.OPENALEX`
+  already existed (declared unused — debt-011). OpenAlex results therefore merge with
+  CrossRef and Europe PMC ones on DOI in the plan-008 dedupe without a mapping round
+  trip, which was the thing to verify rather than assume.
+- **Does OpenAlex belong in `searchApis`?** **No — and it is not.** 10 credits per
+  call against ~1,000 searches a day, when three free search sources exist. It is
+  registered for cites, citedBy, fetch and idMap only. Search stays available through
+  `OpenAlexClient.buildQuery()`/`search()` for a caller who wants it.
+- **`related_works`?** Ignored, as decided: it is neither up nor down, and it is not
+  wired into `CitedByMapper`.
+
+## Status: done, with follow-ups
+
+Implemented 2026-11-02: `OpenAlexClient` (five roles), `OpenAlexRecord`,
+`OpenAlexAuthor`, `OpenAlexListResult`, registered in `BiblioFacade.defaultApis()` and
+`BibliographicApis`; `PublicationTypes.fromOpenAlex`; `Provenance.OPENALEX` and
+`MergePolicy` updated; Unpaywall retired (issue-016 closed). `mvn -o clean test`: 190
+tests, 0 failures. Live tier: 13 tests in `TestOpenAlexClientEndToEnd`, 0 failures.
+
+Things this round did **not** do, in the order they are worth taking:
+
+1. **`pom.xml` is at `0.0.10-SNAPSHOT` — a patch bump, and the milestone question is
+   still open.** feat-011 is written against `0.1.0`, whose theme ("MCP server
+   usable") is not reached while issue-017 is open. Deciding whether this work ships
+   as 0.0.10 or folds into 0.1.0 belongs to the developer (ADR-0001: the version
+   carries the milestone).
+2. **`interface-002` now documents `openalex-apikey` and `openalex-daily-credits`,
+   but only `openalex-apikey` is read.** Nothing enforces a daily credit ceiling;
+   `creditsRemaining()` is exposed and the crawl engine (plan-011) is where it should
+   be spent. That is the intended shape, not an oversight — but a caller who ignores
+   `creditsRemaining()` will discover the budget by exhausting it.
+3. **Budget exhaustion is untested.** plan-013 said not to burn 10,000 credits to
+   provoke it, and the live test therefore asserts only that the budget is *visible*
+   after a call. Whether an over-budget refusal surfaces as a named failure or as
+   "found nothing" is still unknown, and issue-013 says the latter is the habit of
+   this codebase (`CachingApiClient` maps every non-2xx to empty).
+4. **`IdType.OPENALEX` is now used, so debt-011 (a declared-but-unused id type) can
+   be closed** — not done here, to keep this change to one client.
+5. **`MergePolicy`'s other tables do not rank OpenAlex at all** except `FALLBACK` and
+   `PDF`. OpenAlex's title, date and abstract are third-hand (an aggregation of the
+   sources this project already queries directly), so leaving them in `FALLBACK`
+   behind CrossRef/EuropePMC/Entrez is probably right, but it was not measured.

@@ -14,7 +14,7 @@ IMPLEMENTED_BY:
 - main:java/uk/co/terminological/bibliography/api/entrez/EntrezEntry.java
 - main:java/uk/co/terminological/bibliography/record/MergePolicy.java
 - main:java/uk/co/terminological/bibliography/record/MergedRecord.java
-- main:java/uk/co/terminological/bibliography/api/unpaywall/UnpaywallResult.java
+- main:java/uk/co/terminological/bibliography/api/openalex/OpenAlexRecord.java
 ---
 
 ## Description

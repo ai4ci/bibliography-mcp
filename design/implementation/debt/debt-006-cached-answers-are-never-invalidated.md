@@ -24,8 +24,8 @@ apis.getEuropePMC().fetch({DOI:10.1136/bmjqs-2018-008370})
 Failures are *not* cached — `CachingApiClient.call` returns before `cache.put`
 on a non-success status or a parse exception — so what is being served is a
 **successful response that happened to contain no results**. The caches are named
-`forever` (no expiration) and `week` (7-day TTL), and CrossRef, Unpaywall,
-PMCIDClient and PdfFetcher each opt in explicitly via `cacheForever()`, so an
+`forever` (no expiration) and `week` (7-day TTL), and CrossRef, PMCIDClient
+and PdfFetcher each opt in explicitly via `cacheForever()`, so an
 empty result can be pinned indefinitely.
 
 The MCP tools expose no cache bypass either, so an agent that gets a wrong answer

@@ -1,7 +1,7 @@
 ---
 title: OpenAlex as a provider
-status: draft
-targetVersion: unassigned
+status: final
+targetVersion: 0.1.0
 tags:
 - openalex
 - citations
@@ -15,6 +15,12 @@ HAS_TEST:
 - testscript:test-002-api-behaviour-tests.md
 HAS_INTERFACE:
 - interface:interface-002-configuration-and-secrets.md
+IMPLEMENTED_BY:
+- main:java/uk/co/terminological/bibliography/api/openalex/OpenAlexClient.java
+- main:java/uk/co/terminological/bibliography/api/openalex/OpenAlexRecord.java
+- main:java/uk/co/terminological/bibliography/api/openalex/OpenAlexListResult.java
+- main:java/uk/co/terminological/bibliography/api/BiblioFacade.java
+- main:java/uk/co/terminological/bibliography/record/MergePolicy.java
 ---
 
 ## Why

@@ -73,13 +73,21 @@ public class BiblioFacade
 			"cites",
 			List.of("crossref", "entrez", "europepmc", "opencitations", "medrxiv")
 		);
-		out.put("citedBy", List.of("opencitations", "entrez", "europepmc"));
+		// OpenAlex joins citedBy as the only source that answers "what cites this"
+		// for a preprint, and it is the only one that costs credits: a cited-by crawl
+		// is 1 credit per page, so the budget is the thing to watch there, not the rate
+		out.put("citedBy", List.of("opencitations", "entrez", "europepmc", "openalex"));
 		out.put(
 			"fetch",
-			List.of("crossref", "entrez", "europepmc", "unpaywall", "medrxiv")
+			List.of(
+				"crossref", "entrez", "europepmc", "medrxiv",
+				"openalex"
+			)
 		);
-		// the preprint-to-published-article mapping
-		out.put("idMap", List.of("pmcid"));
+		// The preprint-to-published-article mapping. OpenAlex follows pmcid: idconv is
+		// the free specialist for DOI/PMID/PMCID and is asked first, while OpenAlex
+		// resolves OpenAlex ids and the identifier types idconv has never heard of.
+		out.put("idMap", List.of("pmcid", "openalex"));
 		return out;
 	}
 
@@ -193,6 +201,9 @@ public class BiblioFacade
 			} else if (citesApi.equals("medrxiv")) {
 				tmp = this.api.getMedrxiv()
 					.citesReferences(refs);
+			} else if (citesApi.equals("openalex")) {
+				tmp = this.api.getOpenAlex()
+					.citesReferences(refs);
 			}
 			log.info(
 				"Cites search found {} references in {} for {} articles",
@@ -224,6 +235,9 @@ public class BiblioFacade
 			} else if (citesApi.equals("opencitations")) {
 				tmp = this.api.getOpenCitationsClient()
 					.referencesCiting(refs);
+			} else if (citesApi.equals("openalex")) {
+				tmp = this.api.getOpenAlex()
+					.referencesCiting(refs);
 			}
 			log.info(
 				"Cited by search found {} references in {} for {} articles",
@@ -252,11 +266,11 @@ public class BiblioFacade
 			} else if (fetchApi.equals("europepmc")) {
 				tmp = this.api.getEuropePMC()
 					.fetch(ids);
-			} else if (fetchApi.equals("unpaywall")) {
-				tmp = this.api.getUnpaywall()
-					.fetch(ids);
 			} else if (fetchApi.equals("medrxiv")) {
 				tmp = this.api.getMedrxiv()
+					.fetch(ids);
+			} else if (fetchApi.equals("openalex")) {
+				tmp = this.api.getOpenAlex()
 					.fetch(ids);
 			}
 			log.info(
@@ -293,8 +307,8 @@ public class BiblioFacade
 			} else if (fetchApi.equals("europepmc")) {
 				fetched = this.api.getEuropePMC()
 					.fetch(ids);
-			} else if (fetchApi.equals("unpaywall")) {
-				fetched = this.api.getUnpaywall()
+			} else if (fetchApi.equals("openalex")) {
+				fetched = this.api.getOpenAlex()
 					.fetch(ids);
 			} else {
 				fetched = new HashMap<>();
@@ -325,6 +339,9 @@ public class BiblioFacade
 					.mappings(ids);
 			} else if (idMapApi.equals("pmcid")) {
 				tmp = this.api.getPmcIdConv()
+					.mappings(ids);
+			} else if (idMapApi.equals("openalex")) {
+				tmp = this.api.getOpenAlex()
 					.mappings(ids);
 			}
 			log.info(

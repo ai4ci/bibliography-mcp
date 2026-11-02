@@ -168,7 +168,11 @@ public abstract class CachingApiClient {
 	private static final Logger logger = LoggerFactory
 		.getLogger(CachingApiClient.class);
 	protected Client client;
-	private TokenBucket rateLimiter;
+	/**
+	 * The bucket that paces this client. Protected so a client can replace it with the budget the
+	 * API actually reports (OpenAlex meters credits rather than requests).
+	 */
+	protected TokenBucket rateLimiter;
 
 	/**
 	 * Raise the read timeout for an API that answers slowly.

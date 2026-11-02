@@ -57,6 +57,8 @@ startup. Keys in the same properties file:
 | `zotero-user-id` | `0` | `0` means the locally logged-in user, which the local API accepts |
 | `zotero-allow-writes` | `false` | writes are refused unless this is true |
 | `zotero-write-collection` | (none) | the **only** collection writes may touch; a sub-collection created by the bridge is always a child of it |
+| `openalex-apikey` | (none) | OpenAlex token, sent as `Authorization: Bearer`. OpenAlex works without one at 1/10th the budget — see below |
+| `openalex-daily-credits` | `10000` | the credit budget a crawl stops on; the real figure is read back from the response headers, this is the ceiling |
 
 Local write permission is not a key you can put here: Zotero asks the user at
 runtime (`POST /api/local/authorize`), naming the application. The key it returns
@@ -77,7 +79,7 @@ other applications on this computer to communicate with Zotero").
 
 
 An EHCache disk cache keyed by URL + params, one cache per API
-(`crossref`, `entrez`, `europepmc`, `unpaywall`, `opencitations`, …) — this is
+(`crossref`, `entrez`, `europepmc`, `openalex`, `opencitations`, …) — this is
 what makes repeated citation-graph expansion cheap. Logging is verbose at
 DEBUG; grep stderr for `Calling url` to see real API traffic.
 

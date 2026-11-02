@@ -38,7 +38,7 @@ public class MergePolicy implements Serializable {
 		Provenance.CROSSREF,
 		Provenance.EUROPEPMC,
 		Provenance.ENTREZ,
-		Provenance.UNPAYWALL,
+		Provenance.OPENALEX,
 		// the preprint servers come after the indexed services: a preprint's copy
 		// of its own abstract is authoritative, but a PMC record of the same work
 		// is the better source where both exist
@@ -97,7 +97,7 @@ public class MergePolicy implements Serializable {
 					),
 					PDF,
 					List.of(
-						Provenance.UNPAYWALL,
+						Provenance.OPENALEX,
 						Provenance.EUROPEPMC,
 						Provenance.CROSSREF
 					),
