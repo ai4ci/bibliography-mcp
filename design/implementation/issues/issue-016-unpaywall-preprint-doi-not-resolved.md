@@ -6,6 +6,7 @@ targetVersion: 0.1.0
 tags:
 - maintenance
 - api-drift
+- timeout
 - unpaywall
 TESTED_BY:
 - test:java/uk/co/terminological/bibliography/api/unpaywall/TestUnpaywallClientEndToEnd.java
@@ -19,6 +20,11 @@ returns 0 records. A direct curl call against the same API endpoint with the
 same developer email returns the expected full record (HTTP 200, `is_oa: true`,
 `genre: posted-content`, 16 authors). The failure is therefore in the Java
 client's HTTP transport, not the availability of the record.
+
+The cause is the shared 3 second read timeout, not the URL encoding: Unpaywall
+answers this DOI in 3.5-4.6 seconds when the record is not already warm. See
+[debt-009](/design/implementation/debt/debt-009-shared-read-timeout-is-a-trap.md)
+— this is the third client to be bitten, after OpenCitations and medRxiv.
 
 
 ### Observed behaviour
@@ -41,30 +47,40 @@ curl "https://api.unpaywall.org/v2/10.64898/2025.12.12.25342129?email=..."  # �
 curl "https://api.unpaywall.org/v2/10.64898%2F2025.12.12.25342129?email=..."  # → 200, same
 ```
 
-Both the raw-slash and `%2F`-encoded forms work from curl.
+Both the raw-slash and `%2F`-encoded forms work from curl, and both answer in
+3.5-4.6 s for this DOI (0.4 s once warm, for either form).
 
-### Suspected root cause
+### Root cause: the shared read timeout, established 2026-11-02
 
-`UnpaywallClient.getUnpaywallByDoi(doi)` builds the URL as
-`"https://api.unpaywall.org/v2/" + encode(doi)` where `encode()` uses
-`URLEncoder.encode(doi, "UTF-8")`, producing `%2F` in the DOI path (e.g.
-`10.64898%2F2025.12.12.25342129`). Jersey 1.x (`WebResource`) decodes `%2F`
-back to `/` before sending, so the actual HTTP request path is
-`/v2/10.64898/2025.12.12.25342129`.
+Running the live test with `debugMode()` on a cold cache directory shows the
+exception the transport swallows:
 
-While Unpaywall's server handles both forms from curl, the Jersey client's
-behaviour (or the way the response is processed) differs. Possibilities:
+```
+com.sun.jersey.api.client.ClientHandlerException: java.net.SocketTimeoutException: Read timed out
+    at uk.co.terminological.bibliography.CachingApiClient.call(CachingApiClient.java:397)
+    at uk.co.terminological.bibliography.api.unpaywall.UnpaywallClient.getUnpaywallByDoi(UnpaywallClient.java:108)
+PROBE preprint: false
+PROBE known: true
+```
 
-1. **Path re-encoding mismatch**: Jersey re-encodes the path before the request,
-   potentially producing a different encoding that the server interprets
-   differently.
-2. **Singleton state poisoning**: `UnpaywallClient` uses a static singleton map
-   keyed by email. If a prior call cached a failed response (e.g. a 422 from
-   a transient misconfiguration), the singleton returns the cached empty result
-   for the entire JVM lifetime, and the `cacheForever()` policy prevents
-   revalidation.
-3. **Rate-limiter exhaustion**: The token-bucket rate limiter may block the
-   call silently.
+`CachingApiClient` sets `setReadTimeout(3000)` for every client, and
+`UnpaywallClient` is one of the clients that never overrides it. A
+`SocketTimeoutException` is caught by the general `catch (Exception e)` at
+`CachingApiClient.java:438` and becomes `Optional.empty()`, so a slow correct
+answer is indistinguishable from "no such record". The same call with a warm
+cache or a shorter response succeeds, which is why the second DOI in the same
+run returned a record while the first did not.
+
+The hypotheses in an earlier version of this record are withdrawn — each was
+checked and none holds:
+
+- **Path re-encoding.** Not the cause. Both encodings return 200, and
+  double-encoding (`%252F`) returns 404 for both Crossref and Unpaywall, so the
+  client's `encode()` is behaving as the API expects.
+- **Singleton state poisoning.** Not the cause. The probe above used a fresh
+  cache directory and a freshly built client, and still failed.
+- **Rate-limiter exhaustion.** Not the cause. The call was reached and timed out
+  in the socket read, three seconds later.
 
 ### Impact
 
@@ -76,15 +92,9 @@ behaviour (or the way the response is processed) differs. Possibilities:
 
 ### Suggested fix
 
-1. **Confirm** whether clearing the persistent Ehcache under `/tmp/ehcache/` and
-   isolating the `UnpaywallClient` singleton (e.g. creating a fresh instance
-   rather than reusing the singleton) resolves the issue.
-2. **If singleton caching is the cause**: either remove the singleton pattern
-   (UnpaywallClient has no expensive setup besides the cache path), or add a
-   `flushCache()` / `withNoCache()` method for test use.
-3. **If Jersey path encoding is the cause**: construct the DOI URL without
-   encoding the slash — pass the raw DOI into the URL path directly, i.e.
-   remove the URLEncoder call for the DOI portion.
+`this.setReadTimeout(30_000)` in the `UnpaywallClient` constructor, as
+`OpenCitationsClient` already does. The general fix — a per-API timeout in
+configuration rather than a constant in the shared base — is debt-009.
 
 
 [TestUnpaywallClientEndToEnd.java](/src/test/java/uk/co/terminological/bibliography/api/unpaywall/TestUnpaywallClientEndToEnd.java)

@@ -1,6 +1,6 @@
 ---
 title: Preprint html search is blocked by cloudflare
-status: open
+status: closed
 sinceVersion: 0.1.0
 targetVersion: 0.3.0
 tags:
@@ -49,14 +49,6 @@ preprint-to-published mapping and the JATS reference lists all go through
 This is the risk recorded generally in issue-002 (third-party endpoint drift)
 arriving concretely, and it is the kind of drift that cannot be fixed by
 adjusting a request.
-
-## Reproduced by
-
-[TestQueryTranslationLive.java](/src/test/java/uk/co/terminological/bibliography/client/TestQueryTranslationLive.java)
-
-`medrxivHonoursAPublicationDateWindow` fails with "medrxiv returned nothing".
-It is deliberately left failing: the preprint servers are a configured search
-source and silently returning nothing is the defect.
 
 ## Suggested fix: search preprints through Europe PMC
 
@@ -122,3 +114,21 @@ return nothing.
 Separately, and regardless of which route is taken: `BiblioFacade` should stop
 reporting a blocked source as an empty result — see issue-013. A 403 became
 "no preprints matched", which is how this stayed invisible.
+
+## Resolution
+
+Closed 2026-11-02 as fixed by removal. The client no longer offers the blocked
+path: `MedrxivClient` implements `RecordFetcher, CitesMapper` only — there is
+no `Searcher` — its `SearchQueryBuilder` and the `SEARCH` html endpoint are
+commented out, and `BiblioFacade.defaultApis().get("search")` is
+`crossref, entrez, europepmc` with no branch a `"medrxiv"` entry could reach.
+The silent-empty-403 failure mode is therefore unreachable, and
+`medrxivHonoursAPublicationDateWindow` in `TestQueryTranslationLive` is
+commented out rather than left failing.
+
+What is **not** delivered is the replacement capability: Europe PMC `SRC:PPR`
+search works with the current client (verified live, see the measurements
+above), but no `preprintsOnly()` toggle and no `"preprint"` search source
+exist yet, so agents cannot currently search preprints at all. That work is
+the subject of [feat-009](/design/features/feat-009-preprint-clients.md)
+(draft, 0.4.0), which retains the recommendation above.

@@ -121,11 +121,9 @@ public class TestEntrezExtraction {
 
 	@Test
 	public void theRecordDateIsWhenTheWorkWasPublished() {
-		// Still failing, and narrowed. getDate() now prefers Article/ArticleDate,
-		// which is the electronic publication date and the one PubMed's own pdat
-		// filter matches. This record has no ArticleDate, so it falls back to
-		// PubMedPubDate[@PubStatus='pubmed'] -- when the record entered PubMed --
-		// and reports 2026-03-27 where the issue date is 2026-03-26.
+		// getDate() prefers Article/ArticleDate, which is the electronic publication
+		// date and the one PubMed's own pdat filter matches. This record has one
+		// (2026-03-26), so the assertion holds.
 		//
 		// The remaining gap is the middle fallback: Article/Journal/JournalIssue/
 		// PubDate, deliberately not implemented because it carries partial

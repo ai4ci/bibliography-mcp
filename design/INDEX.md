@@ -42,10 +42,8 @@ fails the build instead of quietly lying.
 | [Citation styles are listed but cannot be selected](implementation/issues/issue-019-citation-styles-cannot-be-selected.md) | Citation styles are listed but cannot be selected | open | 0.1.0 |
 | [Non doi citation links dropped](implementation/issues/issue-001-non-doi-citation-links-dropped.md) | Non doi citation links dropped | open | 0.2.0 |
 | [Third party api endpoint drift](implementation/issues/issue-002-third-party-api-endpoint-drift.md) | Third party api endpoint drift | open | 0.2.0 |
-| [Crossref query translation is broken](implementation/issues/issue-008-crossref-query-translation-is-broken.md) | Crossref query translation is broken | open | 0.3.0 |
 | [One failing api empties a multi api search](implementation/issues/issue-013-one-failing-api-empties-a-multi-api-search.md) | One failing api empties a multi api search | open | 0.3.0 |
 | [Entrez record dates are not publication dates](implementation/issues/issue-014-entrez-record-dates-are-not-publication-dates.md) | Entrez record dates are not publication dates | open | 0.3.0 |
-| [Preprint html search is blocked by cloudflare](implementation/issues/issue-015-preprint-html-search-is-blocked-by-cloudflare.md) | Preprint html search is blocked by cloudflare | open | 0.3.0 |
 <!-- loom view: work_in_progress end -->
 
 ## Open debt

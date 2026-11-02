@@ -60,9 +60,14 @@ about the query rather than about the parsing.
 [TestEntrezExtraction.java](/src/test/java/uk/co/terminological/bibliography/api/entrez/TestEntrezExtraction.java)
 
 `theRecordDateIsWhenTheWorkWasPublished` pins `getDate()` against the recorded
-`fixtures/entrez/efetch-pmid.xml`, whose `PubDate` is 2026-03-26 while the
-parsed value is 2026-03-27.
+`fixtures/entrez/efetch-pmid.xml`, whose `Article/ArticleDate` is 2026-03-26
+while the `PubMedPubDate[pubmed]` fallback is 2026-03-27 — one day apart, so
+the test passes either way and proves only that the `ArticleDate` branch is
+reached. The four-year gap in the worked example above is the case no test
+covers, because it needs a record with no `ArticleDate`.
 
+
+## Suggested fix
 
 Make `getDate()` the earliest publication date, matching what `pdat` means:
 prefer `Article/ArticleDate` where present, fall back to
@@ -74,3 +79,23 @@ different and legitimate thing, and `PrintReference` is the right place for it.
 year plus a month name (`2019 Jun`), or a `MedlineDate` string such as
 `2019 Jun-Jul`, so the parser has to cope with partial precision rather than
 assuming day resolution.
+
+## Resolution
+
+Partly fixed 2026-11-02, so this stays open with a narrowed scope.
+
+`EntrezEntry.getDate()` now prefers `Article/ArticleDate` — the electronic
+publication date, and the one PubMed's `pdat` filter matches — falling back to
+`PubMedPubDate[@PubStatus='pubmed']`. On the recorded fixture the fixture's
+`ArticleDate` is 2026-03-26 and that is what `getDate()` returns, so
+`theRecordDateIsWhenTheWorkWasPublished` passes; its in-file comment still says
+"Still failing" and is wrong (the 2026-03-27 value it describes is the
+`PubMedPubDate[pubmed]` fallback at `fixtures/entrez/efetch-pmid.xml:279`, now
+taken only when there is no `ArticleDate`).
+
+What remains is the middle tier of the suggested chain, deliberately left
+unimplemented at `EntrezEntry.java:133-139`: `Article/Journal/JournalIssue/PubDate`
+carries partial precision — a bare year, `2019 Jun`, or a `MedlineDate` like
+`2019 Jun-Jul` — which `Optional<LocalDate>` cannot represent. Records with no
+`ArticleDate` therefore still report the PubMed entry date. Closing this needs
+a decision about how partial dates are modelled, not just a parser.

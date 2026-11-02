@@ -1,6 +1,6 @@
 ---
 title: Crossref query translation is broken
-status: open
+status: closed
 sinceVersion: 0.2.0
 targetVersion: 0.3.0
 tags:
@@ -26,7 +26,7 @@ this client, so it had never worked.
 |---|--------|--------|
 | 1 | `QueryBuilder.withQuery` ended `return null;` instead of `return this;` | fixed |
 | 2 | `getNativeQuery()` was not read at all | fixed |
-| 3 | `Field.AFFIILIATION` is misspelt, emitting `query.affiiliation` | **open** |
+| 3 | `Field.AFFIILIATION` is misspelt, emitting `query.affiiliation` | fixed |
 
 Defect 1 was worse than a broken client: `BiblioFacade.multiSearch` has no
 per-API error handling, so the NPE propagated out of the loop and **every**
@@ -81,9 +81,17 @@ accidental.
 [TestQueryTranslationLive.java](/src/test/java/uk/co/terminological/bibliography/client/TestQueryTranslationLive.java)
 
 `crossrefFieldNamesAreSpeltAsCrossrefSpellsThem` offline and
-`crossrefAcceptsEveryFieldQueryTheClientCanEmit` live both fail on
-`AFFIILIATION -> query.affiiliation`.
+`crossrefAcceptsEveryFieldQueryTheClientCanEmit` live both failed on
+`AFFIILIATION -> query.affiiliation` and now pass.
 
+## Resolution
 
-Rename `Field.AFFIILIATION` to `AFFILIATION`. It is referenced nowhere outside
-the enum, so the rename is self-contained.
+Closed 2026-11-02. All three defects are gone: `withQuery` returns `this`,
+`getNativeQuery()` is emitted as a term, and the enum constant is spelt
+`AFFILIATION` (`CrossRefClient.java`, `enum Field`), which is what Crossref
+accepts. `TestQueryTranslation` is green in the offline tier, including the
+spelling test that asserts every `Field` constant against Crossref's own list
+of valid field queries.
+
+Defect 3 was the last one open. The amplification it caused through
+`multiSearch` remains recorded as issue-013, which is still open.
