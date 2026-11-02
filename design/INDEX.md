@@ -69,6 +69,6 @@ fails the build instead of quietly lying.
 
 | status | features |
 | --- | --- |
-| draft | 2 |
+| draft | 3 |
 | final | 7 |
 <!-- loom view: features_by_state end -->

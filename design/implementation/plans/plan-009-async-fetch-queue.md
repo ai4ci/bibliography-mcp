@@ -10,6 +10,14 @@ DEPENDS_ON:
 
 # Plan 009 — Async queue-based fetch
 
+> **Superseded by
+> [plan-011](/design/implementation/plans/plan-011-background-crawl-engine.md)**
+> (2026-11-02). It solves fetch latency for a single call, and the crawl engine
+> needs a durable job store anyway — building both means building the same
+> executor twice. Its six open questions are answered in plan-011. The Problem
+> and Goals sections below still describe a real defect in `BiblioFacade.fetch()`
+> that plan-011 does not fix, so this is kept as the requirement, not deleted.
+
 ## Problem
 
 `BiblioFacade.fetch()` iterates all configured APIs sequentially. Each call

@@ -9,6 +9,7 @@ tags:
 - bibliographic-apis
 HAS_FEATURE:
 - feature:feat-004-opencitations-meta-enrichment.md
+- feature:feat-010-crawl-engine-with-zotero-mirror.md
 - feature:feat-005-zotero-curated-repository-bridge.md
 - feature:feat-006-classify-records-by-type-with-provenance.md
 - feature:feat-007-predictable-record-merging.md
@@ -67,7 +68,8 @@ list of it. The status vocabulary lives in the table above; what a version
 | 0.2.0 | **Citation links that survive non-DOI endpoints.** OpenCitations Meta enrichment, and contract tests that catch third-party drift before it reaches a user. | [feature-004](../features/feat-004-opencitations-meta-enrichment.md), [plan-001](../implementation/plans/plan-001-opencitations-meta-idmap.md), [prototype-001](../prototypes/prototype-001-opencitations-meta-pids.md), [issue-001](../implementation/issues/issue-001-non-doi-citation-links-dropped.md), [issue-002](../implementation/issues/issue-002-third-party-api-endpoint-drift.md), [debt-002](../implementation/debt/debt-002-opencitations-queries-dois-only.md) |
 | 0.3.0 | **A record means what it says.** Dates that are publication dates, query translation, one failing API not emptying a search, and the cache and session fixes the open debt records describe. | [issue-008](../implementation/issues/issue-008-crossref-query-translation-is-broken.md), [issue-013](../implementation/issues/issue-013-one-failing-api-empties-a-multi-api-search.md), [issue-014](../implementation/issues/issue-014-entrez-record-dates-are-not-publication-dates.md), [issue-015](../implementation/issues/issue-015-preprint-html-search-is-blocked-by-cloudflare.md), [test-002](../test-scripts/test-002-api-behaviour-tests.md), [debt-001](../implementation/debt/debt-001-session-persistence-uses-java-serialization.md), [debt-003](../implementation/debt/debt-003-analysis-recomputes-topic-model-per-call.md), [debt-005](../implementation/debt/debt-005-fetch-is-incomplete-by-id-type.md), [debt-007](../implementation/debt/debt-007-cache-stores-break-on-cached-class-changes.md) |
 | 0.4.0 | **The curated library.** Read a Zotero collection as records and write records and citations back. | [feature-005](../features/feat-005-zotero-curated-repository-bridge.md), [debt-009](../implementation/debt/debt-009-shared-read-timeout-is-a-trap.md), [debt-010](../implementation/debt/debt-010-europepmc-duplicates-its-citation-loops.md) |
-| 0.5.0 | **Analysis.** Citation graphs and topic models, with the async fetch queue that makes them viable over a cold cache. | [feature-003](../features/feat-003-analyse-citation-graphs-and-topics.md), [plan-009](../implementation/plans/plan-009-async-fetch-queue.md) |
+| 0.5.0 | **Analysis.** Citation graphs and topic models over the session. | [feature-003](../features/feat-003-analyse-citation-graphs-and-topics.md) |
+| 0.6.0 | **The crawl engine.** Durable repository, background citation crawl, workflow-shaped tools, Zotero as a one-way mirror. Proposed here; `targetVersion` is set when it is scheduled. | [feature-010](../features/feat-010-crawl-engine-with-zotero-mirror.md), [plan-010](../implementation/plans/plan-010-versioned-repository-store.md), [plan-011](../implementation/plans/plan-011-background-crawl-engine.md), [plan-012](../implementation/plans/plan-012-workflow-tool-surface.md) |
 
 `unassigned` means a document has no release yet — the roadmap decides that, not
 its author. See
@@ -804,7 +806,117 @@ the reports are about.
 
 ---
 
-## 9. (template for further ideas)
+## 9. MCP server as a crawl engine, Zotero as a mirror — `accepted`, effort L
+
+### Context
+
+The server exposes 29 primitive tools over one in-memory `Session`
+(`mcp/McpTools.java`, `mcp/Session.java`), served by a single-threaded stdio
+loop (`mcp/McpServer.java:111`). Seven workflows were written down as the thing
+the server is actually for; the mapping of each to the current surface is in
+[feat-010](/design/features/feat-010-crawl-engine-with-zotero-mirror.md).
+
+### Problem statement
+
+Two problems, one root. The surface is primitives, so the model has to sequence
+fourteen calls correctly and a wrong order is invisible until the output looks
+odd. And the parts that overlap Zotero — browsing, item CRUD, collections,
+tagging — are things Zotero already does and generic Zotero MCP servers already
+wrap, while the parts nobody else has (multi-API dedupe with RRF, provenance-aware
+merging, id-mapping, citation traversal) are the parts with no interface that
+makes them usable.
+
+### Options
+
+| # | Option | Gives | Effort | Risk |
+|---|--------|-------|--------|------|
+| A | Keep adding tools to the existing surface | nothing new breaks | S per tool | the workflow stays the model's problem; surface grows past 40 |
+| B | Workflow-shaped surface over a durable repository and a background crawl engine | the seven workflows as seven calls; overlap with Zotero ends | L | two new subsystems before either is proven |
+| C | Make Zotero the repository and drop the session | no persistence of our own | M | a crawl writes tens of thousands of records into a library the developer cares about |
+
+### Recommendation
+
+B, with the store and the crawl built as library-layer machinery so the tool
+collapse is the last diff rather than the first. C fails on write volume and on
+the developer's library being the thing a runaway crawl damages. A is the status
+quo and is what the complaint is about.
+
+Decided with the developer 2026-11-02: the repository is on disk and versioned;
+Zotero is a one-way mirror; the crawl uses a durable job store, not an
+in-process queue; and search, crawl, rank and select must all work with Zotero
+closed.
+
+Graduated as [feat-010](/design/features/feat-010-crawl-engine-with-zotero-mirror.md)
+with [plan-010](/design/implementation/plans/plan-010-versioned-repository-store.md),
+[plan-011](/design/implementation/plans/plan-011-background-crawl-engine.md) and
+[plan-012](/design/implementation/plans/plan-012-workflow-tool-surface.md).
+
+### Open questions
+
+- Where the default repository file lives (implicit directory or explicit path).
+- Whether twelve tools is actually better than twenty-nine well-named ones —
+  testable once the smoke script is rewritten against it.
+
+### Linked artefacts
+
+Supersedes [plan-009](/design/implementation/plans/plan-009-async-fetch-queue.md)
+and the publish half of
+[feat-005](/design/features/feat-005-zotero-curated-repository-bridge.md); closes
+[debt-001](/design/implementation/debt/debt-001-session-persistence-uses-java-serialization.md).
+
+---
+
+## 10. OpenAlex as a provider — `proposed`, effort M
+
+### Context
+
+Unpaywall was the OA-discovery source and is effectively superseded by OpenAlex,
+which also offers search, record fetch, `referenced_works`, `cited_by_count` and
+id mappings including `openalex:` and `omid:` ids the `IdType` enum cannot
+represent today (roadmap idea 3, tier 2). OpenAlex already appears in this
+project only as an id space in OpenCitations Meta output
+([prototype-001](/design/prototypes/prototype-001-opencitations-meta-pids.md)).
+
+### Problem statement
+
+Unpaywall answers in 3.5–4.6 s for some DOIs against a 3 s shared timeout and
+fails silently ([issue-016](/design/implementation/issues/issue-016-unpaywall-preprint-doi-not-resolved.md),
+[debt-009](/design/implementation/debt/debt-009-shared-read-timeout-is-a-trap.md)),
+and it does only one thing. The citation traversal in plan-011 pays N calls per
+seed across separate clients for information OpenAlex returns inside the record.
+
+### Options
+
+| # | Option | Gives | Effort | Risk |
+|---|--------|-------|--------|------|
+| A | OpenAlex as an OA source only, Unpaywall kept | replaces the flaky part | S | leaves search, fetch and citations as they are |
+| B | OpenAlex as `Searcher` + `RecordFetcher` + `CitesMapper` + `CitedByMapper` + OA | one API covers four roles; a depth-1 reference crawl becomes one call per seed | M | a fourth citation source to dedupe; `IdType` needs an `OPENALEX` member |
+| C | OpenAlex replaces Unpaywall, OpenCitations and Crossref search | smallest client set | L | Crossref and OpenCitations have coverage and semantics OpenAlex does not; throwing away tested code on an assumption |
+
+### Recommendation
+
+B, and **decide it before plan-011 hard-wires per-source traversal** — not
+because the engine changes, but because a mapper that ships the reference list
+inside the record makes depth-1 crawling an order of magnitude cheaper, and that
+changes what a sensible default `depth` and `maxRecords` are. Keep Unpaywall
+until OpenAlex is proven to cover what the Zotero clean-up path needs from it;
+deprecating a client is a separate decision with evidence behind it.
+
+Needs a contract-test entry in
+[test-002](/design/test-scripts/test-002-api-behaviour-tests.md) like every other
+client — this project's experience is that third parties change without notice
+([issue-002](/design/implementation/issues/issue-002-third-party-api-endpoint-drift.md)).
+
+### Open questions
+
+- Does `Record` need an OpenAlex id, or is `getOtherIdentifiers()` enough?
+- Mailbox parameter / polite-pool requirements and rate limits as they stand now.
+- Work vs. abstracted-inverted-index: which does fetch use, given `abstract_inverted_index`
+  needs reassembly before it can go in `Record.getAbstract()`?
+
+---
+
+## 11. (template for further ideas)
 
 Copy this shape for each new idea so the document stays comparable.
 
