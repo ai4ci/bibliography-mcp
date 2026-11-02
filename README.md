@@ -5,14 +5,17 @@ A Java MCP (Model Context Protocol) server exposing clients for various bibliogr
 ## Currently supported APIs
 * Entrez APIs including PubMed: eSearch, eFetch and eLinks
 * CrossRef API
-* Unpaywall API
+* OpenAlex — citation edges both ways, identifier mapping, open-access pdf location, and metered search (see below)
 * Europe PMC
 * Open Citations
 * PMC IDConverter API
 * Open access PDF retrieval and reference extraction including Cermine integration
-* medRxiv and bioRxiv — preprint **search** (a date window; a term is matched against
-  title and abstract), metadata, their reference lists from the JATS full text, and
-  which journal article a preprint became
+* medRxiv and bioRxiv — preprint metadata, their reference lists from the JATS full
+  text, and which journal article a preprint became. Their own search interface is
+  not reachable programmatically (bioRxiv serves a Cloudflare challenge), so
+  preprints are searched through Europe PMC, which indexes both servers essentially
+  completely — see
+  [issue-015](design/implementation/issues/issue-015-preprint-html-search-is-blocked-by-cloudflare.md)
 * Zotero — read and annotate the user's curated library through the desktop client's local API
 
 Design principles: respecting rate limits; multi-thread support; extensive caching of API results using EHCache; exception-free query results using Java 8 Optionals; arbitrarily large querying with batching to multiple API calls.
@@ -26,7 +29,7 @@ mvn package -DskipTests
 ```
 
 Register it in an MCP client (stdio transport). The first argument is the
-secrets file path (CrossRef/Entrez/Unpaywall API keys; falls back to the
+secrets file path (CrossRef/Entrez/OpenAlex API keys; falls back to the
 `BIBLIO_SECRETS_PATH` environment variable), the optional second argument is
 the EHCache directory:
 
@@ -36,7 +39,7 @@ the EHCache directory:
     "bibliographic-api-client": {
       "command": "java",
       "args": [
-        "-jar", "/path/to/target/bibliographic-api-client-0.0.9-SNAPSHOT.jar",
+        "-jar", "/path/to/target/bibliographic-api-client-0.0.11-SNAPSHOT.jar",
         "/path/to/.private/apis/secrets.prop",
         "/tmp/ehcache/biblio"
       ]
@@ -50,12 +53,15 @@ All logging goes to stderr; stdout is reserved for the protocol.
 ## Tools
 
 Core (stateless per call):
-* `search` — query crossref / entrez / europepmc with optional date range, limit and API filter
+* `search` — query crossref / entrez / europepmc / openalex with optional date range, limit and API filter
 * `fetch` — full record details for a list of ids (DOI, PMID, PMCID...)
 * `cites` / `cited_by` — citation graph queries
 * `map_ids` — alternate id types via id mapping APIs
 * `references_from_pdf` — download a pdf, extract and match its reference list
-* `citation_styles` — supported citation styles
+* `citation_styles` — list the supported citation styles
+* `citation_style` — choose one; every record returned afterwards carries a rendered
+  `citation` — except from the shaded jar, where rendering currently fails silently
+  ([issue-022](design/implementation/issues/issue-022-shaded-jar-cannot-render-citations.md))
 
 Session state (a long-lived repository held in memory):
 * `collect_search`, `collect_search_by_api`, `add_records`, `remove_records` — mutate the session
@@ -84,6 +90,17 @@ Zotero (optional; local API of a running desktop client):
   existing items, overwriting only those fields and reporting the old values
 
 Writes are off by default; see [Zotero configuration](design/external-interfaces/interface-002-configuration-and-secrets.md).
+
+### OpenAlex credits
+
+OpenAlex is the one metered source: a lookup by identifier is free, a filtered call
+costs 1 credit and a text search 10, against a daily allowance (10,000 with a key,
+a tenth of that without). Searching is therefore gated — `openalex-daily-credits`
+sets the ceiling and `openalex-search-credit-reserve` the part of it searching may
+not touch, so a day of searches cannot leave the citation and fetch calls, which no
+other source answers, unable to run. Below the reserve OpenAlex simply drops out of
+`search` and the free sources answer; it is never the reason a search fails. See
+[configuration](design/external-interfaces/interface-002-configuration-and-secrets.md).
 
 ## Plain-Java facade
 

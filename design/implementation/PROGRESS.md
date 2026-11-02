@@ -3,80 +3,104 @@
 Handover note, 2026-11-02. Not part of the graph (no frontmatter, no loom type);
 delete or absorb it whenever the items below are dealt with.
 
-Committed as `aaab0b1 Add OpenAlex as a provider and retire Unpaywall (feat-011,
-plan-013)` on `main`, ahead of `origin/main` by 4 commits. Working tree clean.
-`mvn -o clean test`: **190 tests, 0 failures**. `TestOpenAlexClientEndToEnd`
-(live): **13 tests, 0 failures**. `loom validate`: 0 errors. `loom render --check`:
-not stale. **`git push` is outstanding** — that is the developer's job.
+Branch `feat/mcp-usable-017-019-openalex-search`, off `main` at `6de0ec7`.
+`mvn -o clean test`: **209 tests, 0 failures**. `TestOpenAlexClientEndToEnd`
+(live): **14 tests, 0 failures**. `loom validate`: 0 errors. **`git push` is
+outstanding, and so is pushing the five commits already on `main`** — that is the
+developer's job.
 
-## What just landed
+## What just landed — 0.0.11
 
-`OpenAlexClient` implements all five SPI roles and is registered for cites,
-citedBy, fetch and idMap. It is **not** in `searchApis` (10 credits a call against
-~1,000 searches a day; three free search sources exist). Unpaywall is deleted,
-issue-016 closed by retirement rather than by a fix. `MergePolicy` names `openalex`
-where it named `unpaywall` — that test was written and proven to fail first, per
-AGENTS.md.
+Four things, each test-first:
 
-Plan-013 now carries the real follow-ups under **"Status: done, with follow-ups"**;
-read that rather than this file for detail on the client itself.
+1. **issue-017** — `GenericSearchBuilder.withQuery` assigns the query it is given.
+2. **issue-018** — `recordJson` emits `authors` (and `volume`/`issue`/`page` for a
+   record that is a `PrintReference`), so an agent can attribute, cite and
+   de-duplicate what it gets back.
+3. **issue-019** — a `citation_style` tool chooses the style, and the `citation`
+   field in `recordJson` is reachable at last. An unsupported name is refused
+   rather than stored, because the renderer answers an unloadable style with an
+   empty `Optional` and storing one would reproduce the bug silently. **It still
+   produces no citation from the shaded jar** — see issue-022 below.
+4. **OpenAlex is a search provider**, gated on credits. `openalex-daily-credits`
+   is the ceiling, the new `openalex-search-credit-reserve` (default 1,000) is
+   what searching may not touch, and `X-RateLimit-Remaining` is believed over both
+   once a response has reported it. Below the reserve OpenAlex drops out of the
+   search and the free sources answer alone; asked directly, it raises a named
+   refusal instead of returning nothing.
+
+The reasoning for reversing plan-013's "no" on search is in that plan, under
+**"Search, reconsidered — 0.0.11"**. Read that rather than this file.
+
+## Corrections to the previous version of this note
+
+Two of the loose ends listed on 2026-11-02 were already dealt with and should not
+be worked on:
+
+- **issue-008 is closed.** The `AFFIILIATION` spelling is recorded as fixed in the
+  issue's own defect table; the record was closed in `7420c3a`.
+- **issue-015 is closed**, by decision rather than by code: preprint search goes
+  through Europe PMC, which indexes medRxiv and bioRxiv at 99–100% coverage. The
+  Cloudflare block does not need working around. `README.md` claimed otherwise
+  until this commit.
 
 ## Loose ends, in the order they are worth taking
 
-1. **issue-017 — `GenericSearchBuilder.withQuery()` is a no-op** (returns `this`
-   without assigning `qry`), so `execute()` searches with a null query. Small,
-   blocks the 0.1.0 milestone ("MCP server usable"), and the fix is one line plus a
-   test. Best next thing.
-2. **issue-008 — `CrossRefClient.Field.AFFIILIATION` is misspelt**, and Crossref
-   rejects `query.affiiliation` outright. `CachingApiClient` maps a 4xx to empty, so
-   an author-affiliation search silently returns nothing. Rename only (enum member is
-   referenced nowhere else). Proven-to-fail test already exists:
-   `TestQueryTranslation.crossrefFieldNamesAreSpeltAsCrossrefSpellsThem`.
-3. **issue-014 — `EntrezEntry.getDate()` is the date PubMed *received* the record**,
-   not the publication date. Live evidence: PMID 31285980 reports 2019-07-10 for a
-   paper published 2015-03-23. Test `theRecordDateIsWhenTheWorkWasPublished` pins the
-   wrong behaviour and is currently green — fix the code, then the test. Watch partial
-   `PubDate` precision ("2019 Jun", MedlineDate "2019 Jun-Jul").
-4. **issue-015 — medRxiv search is dead**, not broken code. `biorxiv.org/search/`
-   returns `403 cf-mitigated: challenge` for every UA; the assembled query itself is
-   correct. Needs a decision between (A) the JSON window endpoint already stubbed in
-   `MedrxivClient.windowJson` + client-side term matching, (B) dropping preprint
-   search — Europe PMC covers many preprints, or (C) a browser-capable fetcher, which
-   means working around the operator's bot block and is not a technical call alone.
-5. **issue-013 — one failing API empties `multiSearch`/`fetch`.** No per-API
-   try/catch, so a single client throwing loses every source. Left open deliberately
-   by the developer. Related: whether an OpenAlex over-budget refusal surfaces as a
-   named failure or as "found nothing" is still untested (see plan-013 follow-up 3).
-6. **debt-011 can now be closed** — `IdType.OPENALEX` is no longer declared-but-unused.
-   Not done in this commit, to keep it to one client.
-7. **`openalex-daily-credits` is documented in interface-002 but nothing enforces it.**
-   `OpenAlexClient.creditsRemaining()` is exposed; spending it is plan-011's job.
-8. **`MergePolicy` ranks OpenAlex only via `FALLBACK` and `PDF`.** Probably right for
-   an aggregator whose title/date/abstract are second-hand, but it was not measured.
-9. **`EuropePMCClient.getById` prefixes an id it expects bare** (`:114-115`) while
+1. **issue-022 (new) — the shaded jar cannot render citations, silently.**
+   GraalJS needs a second Truffle language, `regex`, and both `js-19.2.1.jar` and
+   `regex-19.2.1.jar` register through a file at the same path
+   (`META-INF/truffle/language`), which the shade plugin does not merge — so the
+   `regex` registration is dropped and every `Record.render` in the deployed server
+   returns `Optional.empty()`. Pre-existing and as old as the shaded jar; invisible
+   to the tests, which run on the ordinary classpath where rendering works, and to
+   the smoke test, which lists styles without rendering one. Found by driving the
+   built jar over the protocol rather than by any test. Worth taking first: it is
+   what stands between issue-019's fix and an agent seeing a citation.
+2. **issue-020 (new) — the `search` tool offers `medrxiv`, which it cannot
+   dispatch.** The schema's enum names five APIs and `dispatchSearch` knows four;
+   `apis: ["medrxiv"]` is a search that can only return nothing. The fix is to
+   remove it from the enum, not to add a branch — see issue-015 above. Found while
+   adding `openalex` to the same enum.
+3. **issue-021 (new) — the secrets file is loaded into `System.getProperties()`.**
+   Every API key becomes a JVM-wide system property, and values bleed between
+   successive `BibliographicApis.create` calls because the table is never cleared.
+   Two-line fix; left alone because it is pre-existing.
+4. **`MergePolicy` ranks OpenAlex only via `FALLBACK` and `PDF`**, and this now
+   matters more than it did: OpenAlex contributes search hits that merge with
+   Crossref and Europe PMC ones, so where its title, date and abstract sit in the
+   ordering is a live question rather than a theoretical one. Still unmeasured.
+5. **issue-013 — one failing API empties `multiSearch`/`fetch`.** Still open, still
+   deliberate. The OpenAlex search path catches its own budget refusal rather than
+   letting it through, so this change does not make the blast radius any larger,
+   but it is the reason that catch has to exist.
+6. **issue-014 — `EntrezEntry.getDate()` is the date PubMed *received* the
+   record**, not a publication date.
+7. **`EuropePMCClient.getById` prefixes an id it expects bare** (`:114-115`) while
    `citesReferences`/`referencesCiting` pass already-prefixed ids into
-   `references(DataSources.PMC, id)`, which prefixes again → `PMCPMC13141338`. Found
-   during the OpenAlex work, not fixed (pre-existing).
-10. **`EuropePMCCoreResult.getVolume()`/`getIssue()`** — the flat-vs-nested check that
-    closed issue-012 for `getJournal()` was never repeated for these two.
+   `references(DataSources.PMC, id)`, which prefixes again → `PMCPMC13141338`.
+   Pre-existing, found during the OpenAlex work, still not written up as an issue.
+8. **`EuropePMCCoreResult.getVolume()`/`getIssue()`** — the flat-vs-nested check
+   that closed issue-012 for `getJournal()` was never repeated for these two. More
+   visible now that issue-018 puts volume and issue in the tool output.
+9. **debt-011 is partly overtaken but stays open**: `IdType.OPENALEX` is
+   constructed now, while `OpenCitationsCitation.pidFromPids` still labels
+   `openalex:` handles `UNK`. The other two items in that record are untouched.
 
 ## Version
 
-`pom.xml` is `0.0.10-SNAPSHOT` — a patch bump I made because AGENTS.md asks for one
-per change. The real question is open: feat-011 is written against **0.1.0**, whose
-theme is "MCP server usable", and that is not true while issue-017 stands. Either
-release 0.0.10 and let 0.1.0 come later, or fold this into 0.1.0. Per ADR-0001 the
-version carries the milestone, so that is a human decision.
+`pom.xml` is `0.0.11-SNAPSHOT`. The milestone question that stood here is settled:
+the OpenAlex client is 0.0.10, this work is 0.0.11, and **0.1.0 now needs only
+plan-008** (search deduplication) — the bugs that stopped a tool returning what it
+should are cleared. The roadmap's milestone table says the same.
 
-## Documentation debt still standing (unchanged, not started)
+## Documentation debt still standing
 
-- `design/implementation/issues/e2e-testing-issues.md` has no number and no frontmatter;
-  its claim that authors are dropped may already be fixed.
-- Two debt records share number 006 (`…cached-answers-have-no-invalidation-path.md` and
-  `…are-never-invalidated.md`). loom tolerates it; the numbering does not.
-- `README.md:39` names the jar `bibliographic-api-client-0.0.9-SNAPSHOT.jar`, now a
-  version behind the pom. Left alone until the version question above is settled.
-- Javadoc: most of `client/` (the SPI) is still undocumented, and `Record.java:19` says
-  `/** The */`.
-- `TestSearchDedupLive` reads `inst/secrets.properties`, which is not the path the other
-  live tests use (`~/.private/apis/secrets.prop`). It has never been run.
+- `design/implementation/issues/e2e-testing-issues.md` has no number and no
+  frontmatter; its claim that authors are dropped is now fixed (issue-018), so it
+  can probably be absorbed and deleted.
+- Two debt records share number 006 (`…cached-answers-have-no-invalidation-path.md`
+  and `…are-never-invalidated.md`). loom tolerates it; the numbering does not.
+- Javadoc: most of `client/` (the SPI) is still undocumented, and `Record.java:19`
+  says `/** The */`.
+- `TestSearchDedupLive` reads `inst/secrets.properties`, which is not the path the
+  other live tests use (`~/.private/apis/secrets.prop`). It has never been run.

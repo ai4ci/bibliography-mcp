@@ -11,6 +11,8 @@ HAS_INTERFACE:
 - interface:interface-001-mcp-stdio-protocol.md
 TESTED_BY:
 - scripts:mcp-smoke-test.sh
+- test:java/uk/co/terminological/bibliography/mcp/TestCitationStyleTool.java
+- test:java/uk/co/terminological/bibliography/mcp/TestMcpToolSurface.java
 ---
 
 [mcp-smoke-test.sh](/scripts/mcp-smoke-test.sh) pipes a handshake and

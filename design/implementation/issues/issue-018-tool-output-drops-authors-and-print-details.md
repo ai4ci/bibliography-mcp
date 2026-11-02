@@ -1,8 +1,8 @@
 ---
 title: Tool output drops authors and print details
-status: open
+status: closed
 sinceVersion: 0.0.6
-targetVersion: 0.1.0
+targetVersion: 0.0.11
 tags:
 - bug
 - mcp
@@ -10,7 +10,6 @@ tags:
 TESTED_BY:
 - test:java/uk/co/terminological/bibliography/record/TestRecordModel.java
 ---
-
 ## Issue desc
 
 `McpTools.recordJson` decides what an agent sees, and it never emits authors —
@@ -65,3 +64,23 @@ if (!r.getAuthors().isEmpty()) {
 Volume, issue and pages belong in the same object when the record is a printed
 one. `TestRecordModel.mcpRecordJsonIncludesTypePublisherAndProvenance` is the
 shape to extend.
+
+## Closed
+
+Fixed in 0.0.11. `recordJson` now emits:
+
+- `authors`, as an array of `{lastName, firstName?, initials?, ORCID?}`. A surname
+  is the only part every source supplies, so the rest appear only when the source
+  gave them rather than as empty strings, and an empty author list is an absent
+  field rather than an empty array.
+- `volume`, `issue` and `page`, for a record that is a `PrintReference` — the
+  sources that carry pagination (Entrez, Europe PMC). A record without them says
+  nothing rather than saying they are absent.
+
+Pinned by `mcpRecordJsonIncludesAuthors`,
+`mcpRecordJsonIncludesPrintDetailsWhenTheRecordHasThem` and
+`mcpRecordJsonOmitsPrintDetailsOfARecordThatHasNone` in `TestRecordModel`, all
+written and proven to fail first.
+
+The `citation` field this record mentions is now reachable too — see
+[issue-019](issue-019-citation-styles-cannot-be-selected.md).

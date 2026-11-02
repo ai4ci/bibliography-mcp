@@ -93,10 +93,26 @@ public class OpenAlexClient extends CachingApiClient
 	 */
 	private static final int MAX_LINKS_PER_WORK = 1000;
 
+	/** What a text search costs, and the only tariff here big enough to need a gate. */
+	public static final int SEARCH_COST = 10;
+
+	/** The daily allowance on an authenticated account; a tenth of it without a key. */
+	public static final long DEFAULT_DAILY_CREDITS = 10000;
+
+	/**
+	 * Credits held back from searching, so that a day of searches cannot leave a citation crawl or a batched fetch
+	 * unable to make its 1-credit calls. 1,000 of a 10,000 allowance still permits ~900 searches a day, which is far more
+	 * than an interactive session asks for.
+	 */
+	public static final long DEFAULT_SEARCH_CREDIT_RESERVE = 1000;
+
 	private String apiKey;
 	private String developerEmail;
 	private ObjectMapper objectMapper = new ObjectMapper();
 	private volatile Optional<Long> creditsRemaining = Optional.empty();
+	private volatile long dailyCredits = DEFAULT_DAILY_CREDITS;
+	private volatile long searchCreditReserve = DEFAULT_SEARCH_CREDIT_RESERVE;
+	private final java.util.concurrent.atomic.AtomicLong creditsSpent = new java.util.concurrent.atomic.AtomicLong();
 
 	private OpenAlexClient(
 			Optional<Path> cachePath, String apiKey, String developerEmail
@@ -192,6 +208,68 @@ public class OpenAlexClient extends CachingApiClient
 	 * refused before it runs and costs nothing, so stopping early is free and continuing is not.
 	 */
 	public Optional<Long> creditsRemaining() { return this.creditsRemaining; }
+
+	/**
+	 * Set the day's allowance and the part of it searching may not touch.
+	 *
+	 * A budget is a day's worth, so setting one starts the day over: the local tally is cleared and the figure last
+	 * reported by the API is forgotten, because neither describes the allowance just given.
+	 *
+	 * @param dailyCredits the ceiling, matching {@code openalex-daily-credits}
+	 * @param searchCreditReserve credits kept back from searching for the 1-credit calls, matching
+	 * {@code openalex-search-credit-reserve}
+	 */
+	public OpenAlexClient withBudget(
+			long dailyCredits, long searchCreditReserve
+	) {
+		this.dailyCredits = dailyCredits;
+		this.searchCreditReserve = searchCreditReserve;
+		this.creditsSpent.set(0);
+		this.creditsRemaining = Optional.empty();
+		return this;
+	}
+
+	/** Credits this process has spent: what was paid for, cache hits excluded, since they are not requests. */
+	public long creditsSpent() { return this.creditsSpent.get(); }
+
+	/**
+	 * Credits believed to be left today.
+	 *
+	 * The API's own figure when it has given one — the account is shared between processes and days, so our tally is
+	 * only a stand-in until a response has spoken — and the ceiling less what this process has spent before that.
+	 */
+	public long creditsAvailable() {
+		return this.creditsRemaining
+			.orElseGet(() -> this.dailyCredits - this.creditsSpent.get());
+	}
+
+	/** Whether a call of this price can be paid for out of the ordinary budget. */
+	public boolean canAfford(int cost) {
+		return this.creditsAvailable() >= cost;
+	}
+
+	/**
+	 * Whether a 10-credit search can be paid for without eating into the reserve.
+	 *
+	 * This is what makes OpenAlex usable as a search provider: searching is affordable at roughly 900 calls a day, and
+	 * the reserve is what stops a day of searching from leaving the citation and fetch paths — the roles OpenAlex is the
+	 * only source for — unable to make their 1-credit calls.
+	 */
+	public boolean canAffordSearch() {
+		return this.creditsAvailable() - SEARCH_COST >= this.searchCreditReserve;
+	}
+
+	/**
+	 * Count what a call costs as it is made.
+	 *
+	 * The cache is consulted before this point, so a cache hit never reaches here and never counts: the tally is credits
+	 * actually spent, not requests the code asked for.
+	 */
+	@Override
+	protected void rateLimit(int cost) {
+		this.creditsSpent.addAndGet(cost);
+		super.rateLimit(cost);
+	}
 
 	/**
 	 * Refuse a response that cannot be a complete OpenAlex list, so that CachingApiClient treats the call as failed
@@ -623,6 +701,23 @@ public class OpenAlexClient extends CachingApiClient
 		@Override
 		public Optional<OpenAlexListResult<OpenAlexRecord>> execute() {
 			if (this.filters.isEmpty() && this.journalName == null) return Optional.empty();
+			// Refuse by name rather than by returning nothing. An over-budget request
+			// is refused by the API before it runs, and CachingApiClient turns every
+			// non-2xx into an empty Optional (issue-013), so without this a caller
+			// cannot tell an exhausted budget from a search that found no papers.
+			if (this.cost >= SEARCH_COST && !this.client.canAffordSearch())
+				throw new BibliographicApiException(
+						"OpenAlex search refused: " + this.cost
+								+ " credits needed, " + this.client.creditsAvailable()
+								+ " available and "
+								+ this.client.searchCreditReserve
+								+ " reserved for fetch and citation calls"
+				);
+			if (!this.client.canAfford(this.cost))
+				throw new BibliographicApiException(
+						"OpenAlex call refused: " + this.cost + " credits needed, "
+								+ this.client.creditsAvailable() + " available"
+				);
 			// The journal name is resolved here rather than in journal() so that building a
 			// query costs nothing; the lookup is a 10 credit search
 			if (this.journalName != null) {

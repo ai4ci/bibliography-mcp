@@ -1,14 +1,15 @@
 ---
 title: Citation styles are listed but cannot be selected
-status: open
+status: closed
 sinceVersion: 0.0.6
-targetVersion: 0.1.0
+targetVersion: 0.0.11
 tags:
 - bug
 - mcp
 - citation-formatting
+TESTED_BY:
+- test:java/uk/co/terminological/bibliography/mcp/TestCitationStyleTool.java
 ---
-
 ## Issue desc
 
 The `citation_styles` tool lists ~9,500 CSL style names and describes itself as
@@ -48,3 +49,40 @@ validates against `getSupportedCitationStyles()` and sets the style, then delete
 this — `Session` is — but that is
 [debt-001](/design/implementation/debt/debt-001-session-persistence-uses-java-serialization.md)
 territory, and a working tool beats waiting for it.
+
+## Closed
+
+Fixed in 0.0.11 as option B. A `citation_style` tool takes a style name,
+validates it against `getSupportedCitationStyles()` — the same list
+`citation_styles` advertises — and sets it for the server; every record returned
+afterwards carries a `citation` field. Passing no style switches rendering off
+again.
+
+Two details worth keeping:
+
+- **An unknown style is refused, not stored.** `Record.render` returns an empty
+  `Optional` for a style it cannot load, so storing a bad name would silently drop
+  the citation field from every record afterwards and look exactly like the bug
+  this issue describes.
+- **The `f != null` guard in `recordJson` is gone.** Rendering is the record's own
+  job and never consulted the facade, so the guard only meant that a caller
+  passing no facade got no citation however the style was set.
+
+`withCitationStyle` is kept rather than deleted: it is now the setter the tool
+calls. Its proper home is still `Session` rather than a static field — that waits
+on [debt-001](../debt/debt-001-session-persistence-uses-java-serialization.md).
+
+Pinned by `TestCitationStyleTool`, written and proven to fail first.
+
+### One caveat, found while verifying this through the protocol
+
+Selecting a style works; **rendering does not, in the shaded jar**. The tool sets
+the style, the server accepts it, and no record carries a `citation` field —
+because `Record.render` fails inside the shaded jar for a packaging reason that
+has nothing to do with this issue, and fails silently. That is written up as
+[issue-022](issue-022-shaded-jar-cannot-render-citations.md).
+
+So this issue is closed on its own terms — the style is selectable and the
+condition in `recordJson` is reachable — and the capability it was about will not
+be visible to an agent until issue-022 is dealt with. The unit tests pass because
+they run on the ordinary classpath, where rendering works.

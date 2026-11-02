@@ -11,7 +11,6 @@ HAS_FEATURE:
 DEPENDS_ON:
 - plan:plan-008-search-deduplication.md
 ---
-
 # Plan 013 — OpenAlex client
 
 Implement `OpenAlexClient` covering the five SPI roles, register it, and retire
@@ -122,10 +121,11 @@ changes silently (issue-002).
   already existed (declared unused — debt-011). OpenAlex results therefore merge with
   CrossRef and Europe PMC ones on DOI in the plan-008 dedupe without a mapping round
   trip, which was the thing to verify rather than assume.
-- **Does OpenAlex belong in `searchApis`?** **No — and it is not.** 10 credits per
-  call against ~1,000 searches a day, when three free search sources exist. It is
-  registered for cites, citedBy, fetch and idMap only. Search stays available through
-  `OpenAlexClient.buildQuery()`/`search()` for a caller who wants it.
+- **Does OpenAlex belong in `searchApis`?** It was left out of this plan and **put
+  in afterwards, in 0.0.11, behind a credit gate** (see "Search, reconsidered"
+  below). The reasoning here — 10 credits a call against ~1,000 searches a day, when
+  three free search sources exist — turned out to argue for a reserve rather than
+  for exclusion.
 - **`related_works`?** Ignored, as decided: it is neither up nor down, and it is not
   wired into `CitedByMapper`.
 
@@ -160,3 +160,44 @@ Things this round did **not** do, in the order they are worth taking:
    `PDF`. OpenAlex's title, date and abstract are third-hand (an aggregation of the
    sources this project already queries directly), so leaving them in `FALLBACK`
    behind CrossRef/EuropePMC/Entrez is probably right, but it was not measured.
+
+## Search, reconsidered — 0.0.11
+
+The decision not to register OpenAlex as a search provider was reversed, with a
+gate rather than without one. The arithmetic that argued against it is the same:
+a search is 10 credits of a 10,000 daily allowance. What changed is reading it as
+a budget rather than as a prohibition — 10,000 credits is about 1,000 searches a
+day, which is more than an interactive session uses, and the fetch and idMap
+roles that OpenAlex is the only source for are free or 1 credit.
+
+So the risk was never the price of searching; it was searching spending the
+allowance that the citation crawl needs. A reserve addresses that directly:
+
+| | |
+|---|---|
+| `openalex-daily-credits` | the ceiling, default 10,000 |
+| `openalex-search-credit-reserve` | kept back from searching, default 1,000 |
+| gate | a search runs while `available - 10 >= reserve`; a 1-credit call while `available >= 1` |
+| source of `available` | `X-RateLimit-Remaining` when a response has reported it, else the ceiling less what this process has spent |
+
+Three consequences worth stating:
+
+- **A skipped search is not a failed one.** `BiblioFacade.dispatchSearch` logs the
+  skip and returns nothing from OpenAlex; Crossref, Entrez and Europe PMC still
+  answer, and the dedupe ranks what they return as usual.
+- **A refusal is named.** `OpenAlexClient.SearchQueryBuilder.execute()` throws a
+  `BibliographicApiException` saying how many credits were needed and how many are
+  left, which answers follow-up 3 below: an exhausted budget no longer looks like a
+  search that found no papers. The facade catches it, because until issue-013 is
+  dealt with an exception from one client empties every other client's results too.
+- **Cache hits are not charged.** The tally increments in `rateLimit(cost)`, which
+  the cache short-circuits, so a repeated search costs nothing and is not counted
+  as though it had.
+
+**Content download is still out of scope**, and is now the only expensive thing
+OpenAlex offers that this client does not do: a cached PDF is 10 credits and
+capped at 100 a day, while `best_oa_location.pdf_url` points at the publisher's
+own copy, which `PdfFetcher` takes for nothing.
+
+Follow-ups 2 and 3 below are closed by this. Follow-up 1 is settled too: the
+OpenAlex client shipped as 0.0.10 and this gate as 0.0.11.

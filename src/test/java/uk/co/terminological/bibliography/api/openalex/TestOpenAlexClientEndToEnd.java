@@ -357,6 +357,38 @@ public class TestOpenAlexClientEndToEnd {
 		);
 	}
 
+	@Test
+	public void theFacadeSearchesOpenAlexWhenItCanAffordTo() throws Exception {
+		// The registration this client was first written without: OpenAlex searching
+		// alongside the free sources, and the budget gate letting it through when
+		// there are credits to spend. Asserted through the facade because that is
+		// where the gate lives and where a registration that does not dispatch would
+		// look identical to a search that found nothing.
+		var facade = new uk.co.terminological.bibliography.api.BiblioFacade(
+				Paths.get(
+					System.getProperty("user.home") + "/.private/apis/secrets.prop"
+				), Paths.get("/tmp/ehcache/openalex-e2e-test")
+		).withSearchApis(List.of("openalex"));
+
+		assertTrue(
+			"the budget is what decides this; no credits means no test",
+			openAlex.canAffordSearch()
+		);
+		var results = facade.search(
+			ImmutableQuery.builder()
+				.titleAbstract("photosynthesis")
+				.limit(5)
+				.build()
+		);
+
+		assertFalse("OpenAlex returned nothing through the facade", results.isEmpty());
+		assertTrue(
+			"the search should have reported a budget",
+			openAlex.creditsRemaining()
+				.isPresent()
+		);
+	}
+
 	// ---- cost ----
 
 	@Test

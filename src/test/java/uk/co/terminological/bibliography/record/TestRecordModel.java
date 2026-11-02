@@ -283,6 +283,101 @@ public class TestRecordModel {
 	}
 
 	@Test
+	public void mcpRecordJsonIncludesAuthors() throws Exception {
+		Record record = new Stub(
+				"10.1/a", "Work", IdType.DOI,
+				List.of(
+					ImmutableAuthor.builder()
+						.lastName("Challen")
+						.firstName("Robert")
+						.oRCID("0000-0002-5504-7768")
+						.affiliations(Stream.of())
+						.build(),
+					ImmutableAuthor.builder()
+						.lastName("Denny")
+						.affiliations(Stream.of())
+						.build()
+				), "crossref", "journal-article", "BMJ"
+		);
+
+		var json = McpTools.recordJson(this.mapper, null, record);
+
+		var authors = json.get("authors");
+		assertEquals(2, authors.size());
+		assertEquals(
+			"Challen",
+			authors.get(0)
+				.get("lastName")
+				.asText()
+		);
+		assertEquals(
+			"Robert",
+			authors.get(0)
+				.get("firstName")
+				.asText()
+		);
+		assertEquals(
+			"0000-0002-5504-7768",
+			authors.get(0)
+				.get("ORCID")
+				.asText()
+		);
+		// a surname is the only field every source supplies; the rest stay absent
+		// rather than being emitted empty
+		assertEquals(
+			"Denny",
+			authors.get(1)
+				.get("lastName")
+				.asText()
+		);
+		assertTrue(
+			authors.get(1)
+				.get("firstName") == null
+		);
+	}
+
+	@Test
+	public void mcpRecordJsonIncludesPrintDetailsWhenTheRecordHasThem()
+			throws Exception {
+		Record record = new PrintStub("10.1/p", "Work", "377", "9775", "1234-40");
+
+		var json = McpTools.recordJson(this.mapper, null, record);
+
+		assertEquals(
+			"377",
+			json.get("volume")
+				.asText()
+		);
+		assertEquals(
+			"9775",
+			json.get("issue")
+				.asText()
+		);
+		assertEquals(
+			"1234-40",
+			json.get("page")
+				.asText()
+		);
+	}
+
+	@Test
+	public void mcpRecordJsonOmitsPrintDetailsOfARecordThatHasNone()
+			throws Exception {
+		Record record = new Stub(
+				"10.1/q", "Work", IdType.DOI, List.of(), "crossref",
+				"journal-article", "BMJ"
+		);
+
+		var json = McpTools.recordJson(this.mapper, null, record);
+
+		assertTrue(json.get("volume") == null);
+		assertTrue(json.get("issue") == null);
+		assertTrue(json.get("page") == null);
+		// an empty author list is an absent field, not an empty array
+		assertTrue(json.get("authors") == null);
+	}
+
+	@Test
 	public void mcpRecordJsonOmitsAbsentFields() throws Exception {
 		Record record = new Stub(
 				"10.1/n", "Work", IdType.DOI, List.of(), null, null, null
@@ -358,5 +453,42 @@ public class TestRecordModel {
 		}
 		@Override
 		public Provenance getProvenance() { return this.provenance; }
+	}
+
+	/** a source that also gives pagination, which is a {@link PrintRecord} and not merely a {@link Record} */
+	static class PrintStub extends Stub implements PrintRecord {
+
+		private final String volume;
+		private final String issue;
+		private final String page;
+
+		PrintStub(
+				String id, String title, String volume, String issue, String page
+		) {
+			super(
+					id, title, IdType.DOI, List.of(), "europepmc", "journal-article",
+					null
+			);
+			this.volume = volume;
+			this.issue = issue;
+			this.page = page;
+		}
+
+		@Override
+		public Optional<String> getFirstAuthorName() { return Optional.empty(); }
+		@Override
+		public Optional<String> getVolume() {
+			return Optional.ofNullable(this.volume);
+		}
+		@Override
+		public Optional<String> getIssue() {
+			return Optional.ofNullable(this.issue);
+		}
+		@Override
+		public Optional<Long> getYear() { return Optional.empty(); }
+		@Override
+		public Optional<String> getPage() {
+			return Optional.ofNullable(this.page);
+		}
 	}
 }

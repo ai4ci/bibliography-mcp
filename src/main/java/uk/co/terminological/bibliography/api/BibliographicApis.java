@@ -54,20 +54,64 @@ public class BibliographicApis {
 
 		String cacheDir = prop.getProperty("cache-directory");
 		if (cacheDir != null) {
-			return create(
-				appId,
-				developerEmail,
-				xrefToken,
-				pubmedApiToken,
-				openAlexApiKey,
-				Paths.get(cacheDir.replace("~", System.getProperty("user.home")))
+			return budgeted(
+				create(
+					appId,
+					developerEmail,
+					xrefToken,
+					pubmedApiToken,
+					openAlexApiKey,
+					Paths.get(cacheDir.replace("~", System.getProperty("user.home")))
+				), prop
 			);
 		} else {
-			return create(
-				appId, developerEmail, xrefToken, pubmedApiToken, openAlexApiKey
+			return budgeted(
+				create(
+					appId, developerEmail, xrefToken, pubmedApiToken, openAlexApiKey
+				), prop
 			);
 		}
 
+	}
+
+	/**
+	 * Apply the OpenAlex credit budget from the configuration.
+	 *
+	 * Only OpenAlex meters by credit, and the ceiling is a property rather than something the API will tell us before it
+	 * is reached. The reserve is what keeps searching — 10 credits a call — from spending the allowance that the fetch
+	 * and citation roles, which no other client fills, need at 1 credit a call.
+	 */
+	private static BibliographicApis budgeted(
+			BibliographicApis apis, Properties prop
+	) {
+		apis.getOpenAlex()
+			.withBudget(
+				longProperty(
+					prop, "openalex-daily-credits",
+					OpenAlexClient.DEFAULT_DAILY_CREDITS
+				),
+				longProperty(
+					prop, "openalex-search-credit-reserve",
+					OpenAlexClient.DEFAULT_SEARCH_CREDIT_RESERVE
+				)
+			);
+		return apis;
+	}
+
+	/** a configured number, or the default when it is absent or not a number — a typo should not disable the budget */
+	private static long longProperty(
+			Properties prop, String key, long fallback
+	) {
+		String value = prop.getProperty(key);
+		if (value == null) return fallback;
+		try {
+			return Long.parseLong(value.trim());
+		} catch (NumberFormatException e) {
+			logger.warn(
+				"{} is not a number ({}); using {}", key, value, fallback
+			);
+			return fallback;
+		}
 	}
 
 	public static BibliographicApis create(Path filePath, Path cacheDir)
@@ -81,9 +125,11 @@ public class BibliographicApis {
 		String openAlexApiKey = prop.getProperty("openalex-apikey");
 		String appId = prop.getProperty("app-id");
 
-		return create(
+		return budgeted(
+			create(
 				appId, developerEmail, xrefToken, pubmedApiToken, openAlexApiKey,
 				cacheDir
+			), prop
 		);
 
 	}

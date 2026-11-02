@@ -66,7 +66,13 @@ public class BiblioFacade
 
 	public static Map<String, List<String>> defaultApis() {
 		Map<String, List<String>> out = new LinkedHashMap<>();
-		out.put("search", List.of("crossref", "entrez", "europepmc"));
+		// OpenAlex searches alongside the three free sources. It is the only metered
+		// one — 10 credits a call against a daily allowance — so it is gated rather
+		// than merely registered: see dispatchSearch, where a search that would eat
+		// into the reserve is skipped and the other three still answer
+		out.put(
+			"search", List.of("crossref", "entrez", "europepmc", "openalex")
+		);
 		// medRxiv joins the citation sources as the only route to a preprint's own
 		// reference list, and ignores anything that is not a 10.1101 DOI
 		out.put(
@@ -455,7 +461,7 @@ public class BiblioFacade
 
 		@Override
 		public GenericSearchBuilder withQuery(Query qry) {
-
+			this.qry = qry;
 			return this;
 		}
 
@@ -641,8 +647,37 @@ public class BiblioFacade
 			.search(qry);
 		if (api.equals("europepmc")) return this.api.getEuropePMC()
 			.search(qry);
+		if (api.equals("openalex")) return searchOpenAlex(qry);
 		log.warn("No search available for API: {}", api);
 		return List.of();
+	}
+
+	/**
+	 * Search OpenAlex, unless today's credits are better spent elsewhere.
+	 *
+	 * The one search source that costs money. A search is 10 credits of a daily allowance and a fetch or citation call is
+	 * 1, so the gate keeps a reserve for the roles OpenAlex is the only source for; below it OpenAlex drops out of the
+	 * search and the free sources answer alone. That is a deliberate skip rather than a failure, and is logged as one.
+	 *
+	 * The refusal is also caught here rather than left to propagate: the budget can run out between the check and the
+	 * call, and until issue-013 is dealt with an exception out of one client empties every other client's results too.
+	 */
+	private Collection<? extends Record> searchOpenAlex(Query qry) {
+		var openalex = this.api.getOpenAlex();
+		if (!openalex.canAffordSearch()) {
+			log.info(
+				"Skipping OpenAlex search: {} credits available, {} needed and a reserve kept for fetch and citation calls",
+				openalex.creditsAvailable(),
+				uk.co.terminological.bibliography.api.openalex.OpenAlexClient.SEARCH_COST
+			);
+			return List.of();
+		}
+		try {
+			return openalex.search(qry);
+		} catch (BibliographicApiException e) {
+			log.warn("OpenAlex search refused: {}", e.getMessage());
+			return List.of();
+		}
 	}
 
 }

@@ -22,6 +22,7 @@ fails the build instead of quietly lying.
 - [Expose bibliographic apis over mcp](features/feat-001-expose-bibliographic-apis-over-mcp.md)
 - [Explore citation networks in a session](features/feat-002-explore-citation-networks-in-a-session.md)
 - [Analyse citation graphs and topics](features/feat-003-analyse-citation-graphs-and-topics.md)
+- [OpenAlex as a provider](features/feat-011-openalex-as-a-provider.md)
 - [Opencitations meta enrichment](features/feat-004-opencitations-meta-enrichment.md)
 - [Zotero curated repository bridge](features/feat-005-zotero-curated-repository-bridge.md)
 - [Classify records by type with provenance](features/feat-006-classify-records-by-type-with-provenance.md)
@@ -29,7 +30,6 @@ fails the build instead of quietly lying.
 - [Clean up collection metadata](features/feat-008-clean-up-collection-metadata.md)
 - [Preprint clients](features/feat-009-preprint-clients.md)
 - [Crawl engine with Zotero mirror](features/feat-010-crawl-engine-with-zotero-mirror.md)
-- [OpenAlex as a provider](features/feat-011-openalex-as-a-provider.md)
 <!-- loom:links end -->
 
 ## Work in progress
@@ -38,13 +38,13 @@ fails the build instead of quietly lying.
 
 | uri | title | status | targetVersion |
 | --- | --- | --- | --- |
-| [Generic search builder withquery noop](implementation/issues/issue-017-generic-search-builder-withQuery-noop.md) | Generic search builder withquery noop | open | 0.1.0 |
-| [Tool output drops authors and print details](implementation/issues/issue-018-tool-output-drops-authors-and-print-details.md) | Tool output drops authors and print details | open | 0.1.0 |
-| [Citation styles are listed but cannot be selected](implementation/issues/issue-019-citation-styles-cannot-be-selected.md) | Citation styles are listed but cannot be selected | open | 0.1.0 |
 | [Non doi citation links dropped](implementation/issues/issue-001-non-doi-citation-links-dropped.md) | Non doi citation links dropped | open | 0.2.0 |
 | [Third party api endpoint drift](implementation/issues/issue-002-third-party-api-endpoint-drift.md) | Third party api endpoint drift | open | 0.2.0 |
 | [One failing api empties a multi api search](implementation/issues/issue-013-one-failing-api-empties-a-multi-api-search.md) | One failing api empties a multi api search | open | 0.3.0 |
 | [Entrez record dates are not publication dates](implementation/issues/issue-014-entrez-record-dates-are-not-publication-dates.md) | Entrez record dates are not publication dates | open | 0.3.0 |
+| [Search tool offers an api it cannot dispatch](implementation/issues/issue-020-search-tool-offers-an-api-it-cannot-dispatch.md) | Search tool offers an api it cannot dispatch | open | unassigned |
+| [Secrets are loaded into system properties](implementation/issues/issue-021-secrets-are-loaded-into-system-properties.md) | Secrets are loaded into system properties | open | unassigned |
+| [Shaded jar cannot render citations](implementation/issues/issue-022-shaded-jar-cannot-render-citations.md) | Shaded jar cannot render citations | open | unassigned |
 <!-- loom view: work_in_progress end -->
 
 ## Open debt

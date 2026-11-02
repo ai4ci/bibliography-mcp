@@ -36,6 +36,7 @@ import uk.co.terminological.bibliography.record.Builder;
 import uk.co.terminological.bibliography.record.CitationLink;
 import uk.co.terminological.bibliography.record.IdType;
 import uk.co.terminological.bibliography.record.ImmutableRecordReference;
+import uk.co.terminological.bibliography.record.PrintReference;
 import uk.co.terminological.bibliography.record.Record;
 import uk.co.terminological.bibliography.record.RecordReference;
 import uk.co.terminological.datatypes.Tuple;
@@ -166,6 +167,13 @@ public class McpTools {
 		return Optional.of(out);
 	}
 
+	/**
+	 * Choose the CSL style records are rendered in, or {@code null} to render none.
+	 *
+	 * Static because the style is server-wide: it outlives any one tool call and belongs to the session rather than to a
+	 * record. {@link Session} is its proper home and cannot hold it until debt-001 is dealt with, so it sits here, where
+	 * the {@code citation_style} tool can reach it.
+	 */
 	@Deprecated
 	public static void withCitationStyle(String styleName) {
 		citationStyle = styleName;
@@ -240,6 +248,40 @@ public class McpTools {
 		r.getPublisher()
 			.ifPresent(v -> n.put("publisher", v));
 
+		// Who wrote it. Every client parses authors and none of them reached an agent
+		// before (issue-018): without them a record cannot be attributed, cited, or
+		// told apart from another work of the same title. A surname is the only part
+		// every source supplies, so the rest are emitted only when present rather than
+		// padded out with empty strings.
+		if (!r.getAuthors()
+			.isEmpty()) {
+			var authors = n.putArray("authors");
+			r.getAuthors()
+				.forEach(a -> {
+					var person = authors.addObject();
+					person.put("lastName", a.getLastName());
+					a.getFirstName()
+						.ifPresent(v -> person.put("firstName", v));
+					a.getInitials()
+						.ifPresent(v -> person.put("initials", v));
+					a.getORCID()
+						.ifPresent(v -> person.put("ORCID", v));
+				});
+		}
+
+		// Where it sits in print. Only a PrintRecord has these: they come from the
+		// sources that carry pagination (Entrez, Europe PMC), and a record without
+		// them says nothing rather than saying nothing is there.
+		if (r instanceof PrintReference) {
+			var print = (PrintReference) r;
+			print.getVolume()
+				.ifPresent(v -> n.put("volume", v));
+			print.getIssue()
+				.ifPresent(v -> n.put("issue", v));
+			print.getPage()
+				.ifPresent(v -> n.put("page", v));
+		}
+
 		var pn = n.putObject("provenance");
 		var p = r.getProvenance();
 		pn.put("source", p.getSource());
@@ -247,7 +289,9 @@ public class McpTools {
 			.ifPresent(t -> pn.put("nativeType", t));
 		if (p.isCurated()) { pn.put("curated", true); }
 
-		if (f != null && citationStyle != null) {
+		// The rendered citation, once a style has been chosen with the citation_style
+		// tool. Rendering is the record's own job, so the facade is not consulted.
+		if (citationStyle != null) {
 			r.render(citationStyle)
 				.ifPresent(v -> n.put("citation", v));
 		}
@@ -334,14 +378,15 @@ public class McpTools {
 		out.add(
 			new Tool(
 					"search",
-					"Search bibliographic APIs (crossref, entrez/pubmed, europepmc) for a query string.",
+					"Search bibliographic APIs (crossref, entrez/pubmed, europepmc, openalex) for a query string. "
+							+ "OpenAlex is metered and drops out of the search when its daily credits run low; the others always answer.",
 					schema(
 						m,
 						"{\"type\":\"object\",\"properties\":{\"query\":{\"type\":\"string\"},"
 								+ "\"from\":{\"type\":\"string\",\"description\":\"earliest date YYYY-MM-DD\"},"
 								+ "\"to\":{\"type\":\"string\",\"description\":\"latest date YYYY-MM-DD\"},"
 								+ "\"limit\":{\"type\":\"integer\"},"
-								+ "\"apis\":{\"type\":\"array\",\"items\":{\"type\":\"string\",\"enum\":[\"crossref\",\"entrez\",\"europepmc\",\"medrxiv\"]}}},"
+								+ "\"apis\":{\"type\":\"array\",\"items\":{\"type\":\"string\",\"enum\":[\"crossref\",\"entrez\",\"europepmc\",\"openalex\",\"medrxiv\"]}}},"
 								+ "\"required\":[\"query\"]}"
 					), args -> {
 						optStringList(args, "apis").ifPresent(facade::withSearchApis);
@@ -442,11 +487,43 @@ public class McpTools {
 		out.add(
 			new Tool(
 					"citation_styles",
-					"List supported citation styles for rendering references.",
+					"List supported citation styles. Choose one with citation_style to have records carry a rendered citation.",
 					emptySchema(m), args -> {
 						var outJson = m.createArrayNode();
 						facade.getSupportedCitationStyles()
 							.forEach(outJson::add);
+						return outJson;
+					}
+			)
+		);
+
+		out.add(
+			new Tool(
+					"citation_style",
+					"Choose the citation style records are rendered in, from the citation_styles list. "
+							+ "Every record returned afterwards carries a 'citation' field. Omit the style to switch rendering off.",
+					schema(
+						m,
+						"{\"type\":\"object\",\"properties\":{\"style\":{\"type\":\"string\","
+								+ "\"description\":\"a CSL style name as citation_styles lists it, e.g. ieee; null or absent to render no citation\"}}}"
+					), args -> {
+						var requested = args.get("style");
+						var style = requested == null || requested.isNull() ? null
+							: requested.asText();
+						// An unknown style is refused rather than stored: the renderer
+						// returns an empty Optional for one it cannot load, so storing it
+						// would silently drop the citation field from every record
+						// afterwards and look like the bug issue-019 described.
+						if (style != null && !facade.getSupportedCitationStyles()
+							.contains(style)) {
+							throw new IllegalArgumentException(
+									"Unsupported citation style: " + style
+											+ ". Use citation_styles to list the ones available."
+							);
+						}
+						withCitationStyle(style);
+						var outJson = m.createObjectNode();
+						outJson.put("style", style);
 						return outJson;
 					}
 			)

@@ -11,7 +11,6 @@ IMPACTS:
 - main:java/uk/co/terminological/bibliography/record/IdType.java
 - main:java/uk/co/terminological/bibliography/record/PrintRecordWithCitations.java
 ---
-
 ## Debt desc
 
 Three pieces of the record model are declared but never reached. Found while
@@ -53,3 +52,16 @@ Decide each independently rather than sweeping them together:
 - `IdType.OPENALEX`: either use it in `pidFromPids` in place of `UNK` for
   `openalex:` handles, or remove it. `MID`: remove unless a source is known.
 
+
+## Partly overtaken — 0.0.10
+
+`IdType.OPENALEX` is now constructed: `OpenAlexClient.workReference` builds
+references with it and `OpenAlexRecord` reports it among a work's identifiers, so
+it is no longer a value that exists for nothing.
+
+The specific complaint in this record still stands, though, which is why it stays
+open: `OpenCitationsCitation.pidFromPids` continues to label an `openalex:` handle
+as `UNK` while the enum value that names it is in use elsewhere. One client
+constructing it does not make the other client's `UNK` right.
+
+`PrintRecordWithCitations`, `getBibliographicId()` and `IdType.MID` are untouched.
