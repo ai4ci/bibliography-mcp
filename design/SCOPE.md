@@ -31,8 +31,8 @@ becomes a feature, plan, issue or debt record.
 | OpenCitations Index v2 | `api/opencitations/OpenCitationsClient` | citation edges by DOI |
 | OpenAlex | `api/openalex/OpenAlexClient` | search, fetch, both citation directions, identifier mapping, open-access PDF location |
 | medRxiv / bioRxiv | `api/medrxiv/MedrxivClient` | preprint search and fetch |
-| PMC ID Converter | `api/pmcid/PMCIDClient` | DOI ↔ PMCID ↔ PMID mapping |
-| Cermine | `api/cermine/PdfFetcher` | parse references out of a PDF |
+| PMC ID Converter | `api/pmcidconv/PMCIDClient` | DOI ↔ PMCID ↔ PMID mapping |
+| Cermine | `PdfFetcher` (root package) | parse references out of a PDF |
 
 ## Not in scope
 
