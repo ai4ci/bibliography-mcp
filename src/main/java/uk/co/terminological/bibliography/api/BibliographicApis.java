@@ -29,15 +29,15 @@ public class BibliographicApis {
 	// TODO: integrate CSL:
 	// https://michel-kraemer.github.io/citeproc-java/api/1.0.1/de/undercouch/citeproc/csl/CSLItemDataBuilder.html
 	// TODO: Consider a google scholar scraper
-	// TODO: https://www.crossref.org/labs/citation-formatting-service/
-	// TODO: http://api.altmetric.com/
-	// TODO: PDFBox or https://github.com/CeON/CERMINE
-	// TODO: https://api.altmetric.com/v1/doi/10.1038/480426a
+	// TODO https://www.crossref.org/labs/citation-formatting-service/
+	// TODO http://api.altmetric.com/
+	// TODO PDFBox or https://github.com/CeON/CERMINE
+	// TODO https://api.altmetric.com/v1/doi/10.1038/480426a
 
-	// TODO: https://github.com/joelittlejohn/jsonschema2pojo/wiki/Getting-Started#the-maven-plugin
+	// TODO https://github.com/joelittlejohn/jsonschema2pojo/wiki/Getting-Started#the-maven-plugin
 
-	// TODO: https://github.com/ncbi/JATSPreviewStylesheets
-	// TODO: https://github.com/PeerJ/jats-conversion/blob/master/src/data/xsl/jats-to-html.xsl
+	// TODO https://github.com/ncbi/JATSPreviewStylesheets
+	// TODO https://github.com/PeerJ/jats-conversion/blob/master/src/data/xsl/jats-to-html.xsl
 	private static final Logger logger = LoggerFactory
 		.getLogger(BibliographicApis.class);
 
