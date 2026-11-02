@@ -1,12 +1,20 @@
 ---
+title: Citation reference construction throws on absent fields
 status: closed
-since-version: 0.2.0
-target-version: 0.2.0
-tags: model, citations, refactor-regression, data-loss
+sinceVersion: 0.2.0
+targetVersion: 0.2.0
+tags:
+- model
+- citations
+- refactor-regression
+- data-loss
+TESTED_BY:
+- test:java/uk/co/terminological/bibliography/TestApiDriftParsing.java
+- test:java/uk/co/terminological/bibliography/api/crossref/TestCrossRefExtraction.java
+- test:java/uk/co/terminological/bibliography/api/medrxiv/TestMedrxivRecords.java
+- test:java/uk/co/terminological/bibliography/api/opencitations/TestOpenCitationsExtraction.java
+- test:java/uk/co/terminological/citations/TestCitationLinkParsing.java
 ---
-<!-- @required: status one of open|closed -->
-<!-- @required: target-version specified -->
-<!-- @optional: tags containing comma separated list of tags. -->
 
 ## Issue desc
 
@@ -42,13 +50,12 @@ with `Builder.java:135`, `Builder.java:136` or `Builder.java:167` in the trace.
 
 ## Reproduced by
 
-[TESTED_BY](/src/test/java/uk/co/terminological/bibliography/api/opencitations/TestOpenCitationsExtraction.java)
-[TESTED_BY](/src/test/java/uk/co/terminological/bibliography/api/crossref/TestCrossRefExtraction.java)
-[TESTED_BY](/src/test/java/uk/co/terminological/bibliography/api/medrxiv/TestMedrxivRecords.java)
-[TESTED_BY](/src/test/java/uk/co/terminological/bibliography/TestApiDriftParsing.java)
-[TESTED_BY](/src/test/java/uk/co/terminological/citations/TestCitationLinkParsing.java)
+[TestOpenCitationsExtraction.java](/src/test/java/uk/co/terminological/bibliography/api/opencitations/TestOpenCitationsExtraction.java)
+[TestCrossRefExtraction.java](/src/test/java/uk/co/terminological/bibliography/api/crossref/TestCrossRefExtraction.java)
+[TestMedrxivRecords.java](/src/test/java/uk/co/terminological/bibliography/api/medrxiv/TestMedrxivRecords.java)
+[TestApiDriftParsing.java](/src/test/java/uk/co/terminological/bibliography/TestApiDriftParsing.java)
+[TestCitationLinkParsing.java](/src/test/java/uk/co/terminological/citations/TestCitationLinkParsing.java)
 
-## Resolution
 
 Fixed by making absence explicit everywhere rather than tolerating `null` at the
 boundary:

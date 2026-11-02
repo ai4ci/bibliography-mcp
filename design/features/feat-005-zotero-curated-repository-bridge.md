@@ -1,11 +1,24 @@
 ---
+title: Zotero curated repository bridge
 status: final
-target-version: 0.2.0
-tags: zotero, repository, workflow
+targetVersion: 0.2.0
+tags:
+- zotero
+- repository
+- workflow
+HAS_PLAN:
+- plan:plan-004-zotero-bridge.md
+HAS_TEST:
+- testscript:test-003-zotero-bridge-tests.md
+IMPLEMENTED_BY:
+- main:java/uk/co/terminological/bibliography/api/zotero/ZoteroClient.java
+- main:java/uk/co/terminological/bibliography/api/zotero/ZoteroCollection.java
+- main:java/uk/co/terminological/bibliography/api/zotero/ZoteroConfig.java
+- main:java/uk/co/terminological/bibliography/api/zotero/ZoteroItem.java
+- main:java/uk/co/terminological/bibliography/api/zotero/ZoteroItemWriter.java
+- main:java/uk/co/terminological/bibliography/api/zotero/ZoteroLibraryIndex.java
+- main:java/uk/co/terminological/bibliography/api/zotero/ZoteroMatching.java
 ---
-<!-- @required: status one of draft|final|deprecated -->
-<!-- @required: target-version specified -->
-<!-- @optional: tags containing comma separated list of tags. -->
 
 ## Description
 
@@ -56,13 +69,13 @@ Scope boundaries:
   the user's own curation.
 - **Publication type is not modelled by `Record` today**, which limits ranking,
   publish mapping and enrichment for the ~25% of the library that is not a
-  journal article — see [roadmap idea 3](/design/roadmap.md).
+  journal article — see [roadmap idea 3](/design/roadmap/index.md).
 - **Matching cannot rely on DOIs.** Only 52.6% of items have one and 30.8% have
   no DOI, ISBN or URL at all, so novelty checks, publish idempotency and
   enrichment all need a title+year (+ first author) fallback key.
 
 Options, trade-offs and the recommended order are recorded in
-[roadmap idea 2](/design/roadmap.md). This is a proposal pending sign-off, not
+[roadmap idea 2](/design/roadmap/index.md). This is a proposal pending sign-off, not
 an accepted plan.
 
 ## What is implemented, and what is not
@@ -95,22 +108,6 @@ Not implemented:
   not change;
 - group libraries (local API only), and the web API.
 
-## Linked artefacts
-
-- [HAS_PLAN](/design/implementation/plans/plan-004-zotero-bridge.md)
-- [HAS_TEST](/design/test-scripts/test-003-zotero-bridge-tests.md)
-
-## Implemented by
-
-- [IMPLEMENTED_BY](/src/main/java/uk/co/terminological/zotero/ZoteroClient.java)
-- [IMPLEMENTED_BY](/src/main/java/uk/co/terminological/zotero/ZoteroItem.java)
-- [IMPLEMENTED_BY](/src/main/java/uk/co/terminological/zotero/ZoteroLibraryIndex.java)
-- [IMPLEMENTED_BY](/src/main/java/uk/co/terminological/zotero/ZoteroItemWriter.java)
-- [IMPLEMENTED_BY](/src/main/java/uk/co/terminological/zotero/ZoteroConfig.java)
-- [IMPLEMENTED_BY](/src/main/java/uk/co/terminological/zotero/ZoteroCollection.java)
-- [IMPLEMENTED_BY](/src/main/java/uk/co/terminological/zotero/ZoteroMatching.java)
-
-## Related records
 
 - [issue-002](/design/implementation/issues/issue-002-third-party-api-endpoint-drift.md) — the local API has its own behaviour differences (no `/items/new`, localised item types, local version namespace)
 - [debt-001](/design/implementation/debt/debt-001-session-persistence-uses-java-serialization.md) — a Zotero-backed session was considered and rejected as the fix: the two are different concepts

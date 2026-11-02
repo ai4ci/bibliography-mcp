@@ -11,5 +11,10 @@ search-github-project-issues
 manage-current-project-issues
 contribute-github-project-fix
 
+# Loom document graph: the CLI how-to, and the meta-skill for authoring
+# design/document-model.mmd and the document lifecycle rules.
+using-loom-cli
+creating-a-loom-workflow
+
 # This project's design method (.agents/em, design/).
 # practice-continuous-evolutionary-design

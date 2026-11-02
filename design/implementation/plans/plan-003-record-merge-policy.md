@@ -1,17 +1,19 @@
 ---
+title: Record merge policy
 status: final
-target-version: 0.2.0
-tags: model, merge
+targetVersion: 0.2.0
+tags:
+- model
+- merge
+HAS_FEATURE:
+- feature:feat-007-predictable-record-merging.md
 ---
-<!-- @required: status one of draft|final|deprecated -->
-<!-- @required: target-version specified -->
-<!-- @optional: tags containing comma separated list of tags. -->
 
 <!-- acts as a description of what will be implemented to allow review and sign-off -->
 
 ## Feature
 
-[HAS_FEATURE](/design/features/feat-007-predictable-record-merging.md)
+[feat-007-predictable-record-merging](/design/features/feat-007-predictable-record-merging.md)
 
 Terse implementation checklist. Depends on
 [feat-006](/design/features/feat-006-classify-records-by-type-with-provenance.md)
@@ -86,9 +88,8 @@ Terse implementation checklist. Depends on
 
 - [x] `mvn -o test -Dtest=TestRecordMerge` — 12/12
 - [x] `mvn -o test-compile`, `./scripts/mcp-smoke-test.sh`
-- [x] `Rscript …/design-check.R -d .` → 0 defects
+- [x] `loom validate` → ok: true
 
-## Open questions
 
 - Exact priority order per field (the table above is a proposal — CrossRef first
   for title/date, Europe PMC first for abstracts).

@@ -1,15 +1,15 @@
 ---
+title: Cache stores break on cached class changes
 status: open
-since-version: 0.1.0
-target-version: 0.3.0
-tags: cache, serialization
+sinceVersion: 0.1.0
+targetVersion: 0.3.0
+tags:
+- cache
+- serialization
+IMPACTS:
+- main:java/uk/co/terminological/bibliography/BinaryData.java
+- main:java/uk/co/terminological/bibliography/CachingApiClient.java
 ---
-<!-- @required: status one of open|closed -->
-<!-- @required: target-version specified -->
-<!-- @optional: since-version specified -->
-<!-- @optional: tags containing comma separated list of tags. -->
-
-## Debt desc
 
 Any change to the shape of a class that is **stored in the persistent cache**
 invalidates every existing cache store, and the failure is fatal rather than
@@ -37,7 +37,3 @@ open failure, warn, and start with an empty store (or clear and recreate it);
 consider a cache-format version in the directory name so a format change lands in
 a new directory instead of colliding; document that the cache is disposable.
 
-## Impacts
-
-- [IMPACTS](/src/main/java/uk/co/terminological/bibliography/CachingApiClient.java)
-- [IMPACTS](/src/main/java/uk/co/terminological/bibliography/BinaryData.java)

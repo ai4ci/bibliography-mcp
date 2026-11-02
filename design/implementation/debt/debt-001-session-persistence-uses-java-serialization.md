@@ -1,15 +1,14 @@
 ---
+title: Session persistence uses java serialization
 status: open
-since-version: 0.1.0
-target-version: 0.3.0
-tags: persistence, serialization
+sinceVersion: 0.1.0
+targetVersion: 0.3.0
+tags:
+- persistence
+- serialization
+IMPACTS:
+- main:java/uk/co/terminological/bibliography/mcp/Session.java
 ---
-<!-- @required: status one of open|closed -->
-<!-- @required: target-version specified -->
-<!-- @optional: since-version specified -->
-<!-- @optional: tags containing comma separated list of tags. -->
-
-## Debt desc
 
 `Session` is persisted with plain Java serialization
 ([Session.save](/src/main/java/uk/co/terminological/bibliography/mcp/Session.java)).
@@ -25,6 +24,3 @@ session. If saved sessions are meant to be durable (shared, versioned, or
 committed), this should become JSON or another schema'd format, with a
 version field and a migration/decoding error message that says what happened.
 
-## Impacts
-
-- [IMPACTS](/src/main/java/uk/co/terminological/bibliography/mcp/Session.java)

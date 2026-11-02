@@ -1,0 +1,178 @@
+%% @prefix roadmap: <repo:design/roadmap/> .
+%% @prefix feature: <repo:design/features/> .
+%% @prefix plan: <repo:design/implementation/plans/> .
+%% @prefix issue: <repo:design/implementation/issues/> .
+%% @prefix debt: <repo:design/implementation/debt/> .
+%% @prefix prototype: <repo:design/prototypes/> .
+%% @prefix testscript: <repo:design/test-scripts/> .
+%% @prefix interface: <repo:design/external-interfaces/> .
+%% @prefix adr: <repo:architecture/decision-records/> .
+%% @prefix main: <repo:src/main/> .
+%% @prefix test: <repo:src/test/> .
+%% @prefix scripts: <repo:scripts/> .
+classDiagram
+
+    %% ---------------------------------------------------------------- doc kinds
+    %% The folder decides the class. A file under design/implementation/issues/
+    %% is an issue; there is no `type` key to keep in step with it.
+    %%
+    %% Names are camelCase, and so are the frontmatter keys they describe
+    %% (`targetVersion`, not `target-version`): the mermaid grammar that parses
+    %% this file rejects '-' in a class, attribute or relation name, and '-' is
+    %% also illegal in a loom uri scheme. Directories keep their hyphens.
+
+    class roadmap {
+        +string title?
+        +DocStatus status
+        +string targetVersion
+        +List~string~ tags?
+    }
+
+    class feature {
+        +string title?
+        +DocStatus status
+        +string targetVersion
+        +string sinceVersion?
+        +List~string~ tags?
+    }
+
+    class plan {
+        +string title?
+        +DocStatus status
+        +string targetVersion
+        +string sinceVersion?
+        +List~string~ tags?
+    }
+
+    class prototype {
+        +string title?
+        +DocStatus status
+        +string targetVersion
+        +List~string~ tags?
+    }
+
+    class testscript {
+        +string title?
+        +DocStatus status
+        +string targetVersion
+        +List~string~ tags?
+    }
+
+    class interface {
+        +string title?
+        +DocStatus status
+        +string targetVersion
+        +List~string~ tags?
+    }
+
+    class adr {
+        +string title?
+        +DocStatus status
+        +string targetVersion
+        +List~string~ tags?
+    }
+
+    class issue {
+        +string title?
+        +IssueStatus status
+        +string targetVersion
+        +string sinceVersion?
+        +List~string~ tags?
+    }
+
+    class debt {
+        +string title?
+        +IssueStatus status
+        +string targetVersion
+        +string sinceVersion?
+        +List~string~ tags?
+    }
+
+    %% ------------------------------------------------------------- status sets
+    %% Declared in lifecycle order: loom projects these as native enums, so
+    %% ORDER BY / MIN follow this order rather than alphabetical.
+
+    class DocStatus {
+        <<enumeration>>
+        draft
+        final
+        deprecated
+    }
+
+    class IssueStatus {
+        <<enumeration>>
+        open
+        closed
+    }
+
+    %% ------------------------------------------------------- decomposition edges
+    %% The roadmap is the list of features. Each feature owns the artefacts that
+    %% deliver or prove it. Both directions are recorded, so a reader who lands
+    %% on a plan can see the feature it serves without a graph search.
+
+    roadmap "0..*" --> "0..*" feature : HAS_FEATURE
+    roadmap "0..*" --> "0..*" plan : HAS_PLAN
+    roadmap "0..*" --> "0..*" prototype : HAS_PROTOTYPE
+    roadmap "0..*" --> "0..*" testscript : HAS_TEST
+
+    feature "0..*" --> "0..*" plan : HAS_PLAN
+    feature "0..*" --> "0..*" testscript : HAS_TEST
+    feature "0..*" --> "0..*" interface : HAS_INTERFACE
+    feature "0..*" --> "0..*" prototype : HAS_PROTOTYPE
+
+    plan "0..*" --> "0..*" feature : HAS_FEATURE
+    plan "0..*" --> "0..*" plan : DEPENDS_ON
+    testscript "0..*" --> "0..*" feature : HAS_FEATURE
+    testscript "0..*" --> "0..*" interface : HAS_INTERFACE
+    interface "0..*" --> "0..*" feature : HAS_FEATURE
+    interface "0..*" --> "0..*" testscript : HAS_TEST
+    prototype "0..*" --> "0..*" feature : HAS_FEATURE
+
+    %% -------------------------------------------------------------- evidence edges
+    %% Which code carries a design, and which code proves it. Source targets are
+    %% whole files: loom writes these comments for R, TypeScript and Python only,
+    %% never Java, so the direction is always design -> code and the frontmatter
+    %% is the only copy that matters.
+    %%
+    %% TESTED_BY and IMPACTS aim at the `src` root, not at main/test/scripts
+    %% individually. Loom reads a frontmatter key as ONE relation, picked by name,
+    %% and keeps only the first declaration — so three `TESTED_BY` lines would
+    %% silently reject two thirds of a script's targets. Naming the parent says
+    %% "any source file" and lets `src <|--` decide what that covers.
+
+    feature "0..*" --> "0..*" main : IMPLEMENTED_BY
+    interface "0..*" --> "0..*" main : IMPLEMENTED_BY
+    issue "0..*" --> "0..*" src : TESTED_BY
+    testscript "0..*" --> "0..*" src : TESTED_BY
+    debt "0..*" --> "0..*" src : IMPACTS
+
+    %% ------------------------------------------------------------- source family
+    %% The roots are the directories; a subclass is a kind of file within one.
+    class src
+    class main
+    class test
+    class scripts
+    src <|-- main
+    src <|-- test
+    src <|-- scripts
+
+    %% ---------------------------------------------------------------- live views
+    %% Read-only reports. `loom render` expands the markers in design/INDEX.md;
+    %% `loom render --check` fails CI when a table has gone stale.
+
+    %% @view work_in_progress
+    %% SELECT uri, title, status, targetVersion
+    %% FROM issue
+    %% WHERE status = 'open'
+    %% ORDER BY targetVersion
+
+    %% @view open_debt
+    %% SELECT uri, title, targetVersion
+    %% FROM debt
+    %% WHERE status = 'open'
+    %% ORDER BY targetVersion
+
+    %% @view features_by_state
+    %% SELECT status, count(*) AS features
+    %% FROM feature
+    %% GROUP BY status

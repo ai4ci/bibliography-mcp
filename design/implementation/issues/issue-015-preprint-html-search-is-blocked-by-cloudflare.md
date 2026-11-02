@@ -1,12 +1,16 @@
 ---
+title: Preprint html search is blocked by cloudflare
 status: open
-since-version: 0.1.0
-target-version: 0.3.0
-tags: medrxiv, biorxiv, search, api-drift
+sinceVersion: 0.1.0
+targetVersion: 0.3.0
+tags:
+- medrxiv
+- biorxiv
+- search
+- api-drift
+TESTED_BY:
+- test:java/uk/co/terminological/bibliography/client/TestQueryTranslationLive.java
 ---
-<!-- @required: status one of open|closed -->
-<!-- @required: target-version specified -->
-<!-- @optional: tags containing comma separated list of tags. -->
 
 ## Issue desc
 
@@ -48,7 +52,7 @@ adjusting a request.
 
 ## Reproduced by
 
-[TESTED_BY](/src/test/java/uk/co/terminological/bibliography/client/TestQueryTranslationLive.java)
+[TestQueryTranslationLive.java](/src/test/java/uk/co/terminological/bibliography/client/TestQueryTranslationLive.java)
 
 `medrxivHonoursAPublicationDateWindow` fails with "medrxiv returned nothing".
 It is deliberately left failing: the preprint servers are a configured search
@@ -108,7 +112,6 @@ list, and the preprint-to-published-article mapping. Only `search(Query)` and
 its `SearchQueryBuilder` become dead and should be removed rather than left to
 return nothing.
 
-### Rejected alternatives
 
 | option | why not |
 |---|---|

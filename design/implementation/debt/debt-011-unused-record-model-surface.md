@@ -1,13 +1,16 @@
 ---
+title: Unused record model surface
 status: open
-since-version: 0.1.0
-target-version: 0.4.0
-tags: dead-code, model
+sinceVersion: 0.1.0
+targetVersion: 0.4.0
+tags:
+- dead-code
+- model
+IMPACTS:
+- main:java/uk/co/terminological/bibliography/record/CitationReference.java
+- main:java/uk/co/terminological/bibliography/record/IdType.java
+- main:java/uk/co/terminological/bibliography/record/PrintRecordWithCitations.java
 ---
-<!-- @required: status one of open|closed -->
-<!-- @required: target-version specified -->
-<!-- @optional: since-version specified -->
-<!-- @optional: tags containing comma separated list of tags. -->
 
 ## Debt desc
 
@@ -39,7 +42,6 @@ more interesting absence: OpenCitations returns `openalex:` handles and
 identifiers it would name are labelled unknown. `MID` has no apparent source at
 all.
 
-## Suggested resolution
 
 Decide each independently rather than sweeping them together:
 
@@ -51,8 +53,3 @@ Decide each independently rather than sweeping them together:
 - `IdType.OPENALEX`: either use it in `pidFromPids` in place of `UNK` for
   `openalex:` handles, or remove it. `MID`: remove unless a source is known.
 
-## Impacts
-
-- [IMPACTS](/src/main/java/uk/co/terminological/bibliography/record/PrintRecordWithCitations.java)
-- [IMPACTS](/src/main/java/uk/co/terminological/bibliography/record/CitationReference.java)
-- [IMPACTS](/src/main/java/uk/co/terminological/bibliography/record/IdType.java)

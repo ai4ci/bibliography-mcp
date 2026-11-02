@@ -1,17 +1,20 @@
 ---
+title: Preprint clients
 status: draft
-target-version: 0.4.0
-tags: arxiv, medrxiv, preprints
+targetVersion: 0.4.0
+tags:
+- arxiv
+- medrxiv
+- preprints
+HAS_FEATURE:
+- feature:feat-009-preprint-clients.md
 ---
-<!-- @required: status one of draft|final|deprecated -->
-<!-- @required: target-version specified -->
-<!-- @optional: tags containing comma separated list of tags. -->
 
 <!-- acts as a description of what will be implemented to allow review and sign-off -->
 
 ## Feature
 
-[HAS_FEATURE](/design/features/feat-009-preprint-clients.md) — which carries the
+[feat-009-preprint-clients](/design/features/feat-009-preprint-clients.md) — which carries the
 capability matrix measured against the live APIs, and the reasoning for what is not
 attempted (arXiv references).
 
@@ -91,9 +94,8 @@ attempted (arXiv references).
 
 ## Verification
 
-- [ ] `mvn -o test`, `./scripts/mcp-smoke-test.sh`, `Rscript …/design-check.R -d .`
+- [ ] `mvn -o test`, `./scripts/mcp-smoke-test.sh`, `loom validate`
 
-## Open questions
 
 - Should `search` on medRxiv honour a keyword by filtering the date window
   client-side, or only work as a date-window listing (with Europe PMC as the keyword

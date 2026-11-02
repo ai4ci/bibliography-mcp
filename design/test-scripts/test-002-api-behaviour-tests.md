@@ -1,13 +1,27 @@
 ---
+title: Api behaviour tests
 status: final
-target-version: 0.1.0
-tags: api-client, citations, analysis, parsing
+targetVersion: 0.1.0
+tags:
+- api-client
+- citations
+- analysis
+- parsing
+HAS_FEATURE:
+- feature:feat-001-expose-bibliographic-apis-over-mcp.md
+- feature:feat-002-explore-citation-networks-in-a-session.md
+- feature:feat-003-analyse-citation-graphs-and-topics.md
+- feature:feat-006-classify-records-by-type-with-provenance.md
+- feature:feat-007-predictable-record-merging.md
+HAS_INTERFACE:
+- interface:interface-001-mcp-stdio-protocol.md
+TESTED_BY:
+- scripts:run-live-tests.sh
+- test:java/uk/co/terminological/bibliography/TestApiDriftParsing.java
+- test:java/uk/co/terminological/legacy/TestCombinedApi.java
+- test:java/uk/co/terminological/bibliography/record/TestRecordMerge.java
+- test:java/uk/co/terminological/bibliography/record/TestRecordModel.java
 ---
-<!-- @required: status one of draft|final|deprecated -->
-<!-- @required: target-version specified -->
-<!-- @optional: tags containing comma separated list of tags. -->
-
-## Scripts
 
 ### 1) Citation network and analysis end to end
 
@@ -20,9 +34,8 @@ tags: api-client, citations, analysis, parsing
     a `.ser` file and the restored session reports the same counts.
  4. Cleanup: process exits; cache persists for cheaper reruns.
 
-[TESTED_BY](/src/test/java/uk/co/terminological/pubmedclient/TestCombinedApi.java)
-[TESTED_BY](/scripts/run-live-tests.sh)
-<!-- @optional: Paths to the test implementation -->
+[TestCombinedApi.java](/src/test/java/uk/co/terminological/legacy/TestCombinedApi.java)
+[run-live-tests.sh](/scripts/run-live-tests.sh)
 
 Notes: this is a `main()`-method harness, not a JUnit test — it hits live APIs
 and is therefore deliberately not executed by surefire. Cache-backed reruns
@@ -42,7 +55,7 @@ design.
     [issue-001](/design/implementation/issues/issue-001-non-doi-citation-links-dropped.md)).
  4. Cleanup: none — offline.
 
-[TESTED_BY](/src/test/java/uk/co/terminological/pubmedclient/TestApiDriftParsing.java)
+[TestApiDriftParsing.java](/src/test/java/uk/co/terminological/bibliography/TestApiDriftParsing.java)
 
 ### 3) Record model: type, publisher, provenance
 
@@ -59,9 +72,8 @@ design.
     `publicationType`/`publisher`/`provenance` while omitting absent fields.
  4. Cleanup: none — offline.
 
-[TESTED_BY](/src/test/java/uk/co/terminological/pubmedclient/TestRecordModel.java)
+[TestRecordModel.java](/src/test/java/uk/co/terminological/bibliography/record/TestRecordModel.java)
 
-### 4) Record merging: predictable and robust
 
  1. Setup: stub records carrying provenance, authors and a PDF location, merged
     in both insertion orders.
@@ -75,16 +87,5 @@ design.
     record absorbs its contributions instead of flattening them.
  4. Cleanup: none — offline.
 
-[TESTED_BY](/src/test/java/uk/co/terminological/pubmedclient/TestRecordMerge.java)
+[TestRecordMerge.java](/src/test/java/uk/co/terminological/bibliography/record/TestRecordMerge.java)
 
-## Features
-
-- [HAS_FEATURE](/design/features/feat-001-expose-bibliographic-apis-over-mcp.md)
-- [HAS_FEATURE](/design/features/feat-002-explore-citation-networks-in-a-session.md)
-- [HAS_FEATURE](/design/features/feat-003-analyse-citation-graphs-and-topics.md)
-- [HAS_FEATURE](/design/features/feat-006-classify-records-by-type-with-provenance.md)
-- [HAS_FEATURE](/design/features/feat-007-predictable-record-merging.md)
-
-## Interfaces
-
-- [HAS_INTERFACE](/design/external-interfaces/interface-001-mcp-stdio-protocol.md)

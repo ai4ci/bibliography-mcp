@@ -1,17 +1,20 @@
 ---
+title: Api test coverage
 status: final
-target-version: 0.4.0
-tags: testing, api-clients, fixtures
+targetVersion: 0.4.0
+tags:
+- testing
+- api-clients
+- fixtures
+HAS_FEATURE:
+- feature:feat-001-expose-bibliographic-apis-over-mcp.md
 ---
-<!-- @required: status one of draft|final|deprecated -->
-<!-- @required: target-version specified -->
-<!-- @optional: tags containing comma separated list of tags. -->
 
 <!-- acts as a description of what will be implemented to allow review and sign-off -->
 
 ## Feature
 
-[HAS_FEATURE](/design/features/feat-001-expose-bibliographic-apis-over-mcp.md) — every
+[feat-001-expose-bibliographic-apis-over-mcp](/design/features/feat-001-expose-bibliographic-apis-over-mcp.md) — every
 retrieval-capable client it exposes must be provably fetching and parsing.
 Related test scripts (prose, not typed links): `test-002-api-behaviour-tests`,
 `test-005-preprint-tests`.
@@ -139,7 +142,7 @@ in `TestPaperFixtures` javadoc.
       after phase 4; no test in the default build touches the network (all live
       `@Test`s carry `@Category(LiveTest)`).
 - [x] `./scripts/run-live-tests.sh` green against live APIs — 8/8 (2026-10-02).
-- [x] `Rscript …/design-check.R -d .` no new defects.
+- [x] `loom validate` → ok: true.
 
 ## Open questions
 
@@ -153,7 +156,6 @@ in `TestPaperFixtures` javadoc.
   asserts the *shape* — every row starts from the canonical PMID and points at a
   numeric PubMed id — not a fixed set.
 
-## Findings (recorded by the phase-4 extraction tests, each pinned to its source)
 
 - Title orthography is per-source and now deliberately pinned, not normalised in the
   parse layer: EuropePMC and Entrez append a trailing `.` to article titles; CrossRef

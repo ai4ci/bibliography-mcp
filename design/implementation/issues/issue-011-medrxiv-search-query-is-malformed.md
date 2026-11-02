@@ -1,12 +1,17 @@
 ---
+title: Medrxiv search query is malformed
 status: closed
-since-version: 0.1.0
-target-version: 0.3.0
-tags: medrxiv, biorxiv, search, query
+sinceVersion: 0.1.0
+targetVersion: 0.3.0
+tags:
+- medrxiv
+- biorxiv
+- search
+- query
+TESTED_BY:
+- test:java/uk/co/terminological/bibliography/client/TestQueryTranslation.java
+- test:java/uk/co/terminological/bibliography/client/TestQueryTranslationLive.java
 ---
-<!-- @required: status one of open|closed -->
-<!-- @required: target-version specified -->
-<!-- @optional: tags containing comma separated list of tags. -->
 
 ## Resolution
 
@@ -76,14 +81,13 @@ ANDed (`match-all`), making the query stricter than asked.
 
 ## Reproduced by
 
-[TESTED_BY](/src/test/java/uk/co/terminological/bibliography/client/TestQueryTranslation.java)
-[TESTED_BY](/src/test/java/uk/co/terminological/bibliography/client/TestQueryTranslationLive.java)
+[TestQueryTranslation.java](/src/test/java/uk/co/terminological/bibliography/client/TestQueryTranslation.java)
+[TestQueryTranslationLive.java](/src/test/java/uk/co/terminological/bibliography/client/TestQueryTranslationLive.java)
 
 `medrxivIncludesTheAuthorsItWasGiven`, `medrxivUsesEachTermOnce` and
 `medrxivEveryTermIsAFieldValuePair` offline;
 `medrxivHonoursAPublicationDateWindow` live.
 
-## Suggested fix
 
 1. `forEach(this::author)` rather than `map`.
 2. Remove the bare-value branch and keep the `fullText` mapping for

@@ -1,15 +1,14 @@
 ---
+title: Europepmc duplicates its citation loops
 status: open
-since-version: 0.1.0
-target-version: 0.5.0
-tags: duplication, europepmc
+sinceVersion: 0.1.0
+targetVersion: 0.5.0
+tags:
+- duplication
+- europepmc
+IMPACTS:
+- main:java/uk/co/terminological/bibliography/api/europepmc/EuropePMCClient.java
 ---
-<!-- @required: status one of open|closed -->
-<!-- @required: target-version specified -->
-<!-- @optional: since-version specified -->
-<!-- @optional: tags containing comma separated list of tags. -->
-
-## Debt desc
 
 `EuropePMCClient.citesReferences` and `referencesCiting` each contain near-identical
 loops, one per identifier type, and there are now six of them. That duplication is not
@@ -24,6 +23,3 @@ Cheapest useful step: one private method per direction, parameterised by the res
 source and id, so an identifier type is added in one place. Worth doing the next time
 either method is touched rather than as a dedicated refactor.
 
-## Impacts
-
-- [IMPACTS](/src/main/java/uk/co/terminological/bibliography/europepmc/EuropePMCClient.java)

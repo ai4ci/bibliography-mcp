@@ -1,20 +1,23 @@
 ---
+title: Opencitations meta idmap
 status: draft
-target-version: 0.2.0
-tags: opencitations, id-mapping, mcp
+targetVersion: 0.2.0
+tags:
+- opencitations
+- id-mapping
+- mcp
+HAS_FEATURE:
+- feature:feat-004-opencitations-meta-enrichment.md
 ---
-<!-- @required: status one of draft|final|deprecated -->
-<!-- @required: target-version specified -->
-<!-- @optional: tags containing comma separated list of tags. -->
 
 <!-- acts as a description of what will be implemented to allow review and sign-off -->
 
 ## Feature
 
-[HAS_FEATURE](/design/features/feat-004-opencitations-meta-enrichment.md) —
+[feat-004-opencitations-meta-enrichment](/design/features/feat-004-opencitations-meta-enrichment.md) —
 roadmap option A only: OpenCitations Meta as an **id-mapping source**, not a
 record fetcher and not a new analysis capability. Options B–E are out of
-scope for this plan (see [roadmap idea 1](/design/roadmap.md)).
+scope for this plan (see [roadmap idea 1](/design/roadmap/index.md)).
 
 Design decision on whether this is a separate client or a second operation set
 on `OpenCitationsClient` is still open (token-bucket sharing vs separation) —
@@ -52,7 +55,6 @@ resolve before implementation.
 - Regression: [test-001](/design/test-scripts/test-001-mcp-protocol-smoke-test.md)
   still passes.
 
-## Open questions
 
 - Prefer which PID when several are present (DOI > PMID > PMCID > OMID)?
 - Are `openalex:` and `omid:` mappings useful to the internal model at all, or

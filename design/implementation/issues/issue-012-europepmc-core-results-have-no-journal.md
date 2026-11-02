@@ -1,12 +1,16 @@
 ---
+title: Europepmc core results have no journal
 status: closed
-since-version: 0.1.0
-target-version: 0.3.0
-tags: europepmc, model, parsing
+sinceVersion: 0.1.0
+targetVersion: 0.3.0
+tags:
+- europepmc
+- model
+- parsing
+TESTED_BY:
+- test:java/uk/co/terminological/bibliography/api/europepmc/TestEuropePMCExtraction.java
+- test:java/uk/co/terminological/bibliography/client/TestQueryTranslationLive.java
 ---
-<!-- @required: status one of open|closed -->
-<!-- @required: target-version specified -->
-<!-- @optional: tags containing comma separated list of tags. -->
 
 ## Resolution
 
@@ -61,13 +65,12 @@ journal filter works while no result reports a journal.
 
 ## Reproduced by
 
-[TESTED_BY](/src/test/java/uk/co/terminological/bibliography/api/europepmc/TestEuropePMCExtraction.java)
-[TESTED_BY](/src/test/java/uk/co/terminological/bibliography/client/TestQueryTranslationLive.java)
+[TestEuropePMCExtraction.java](/src/test/java/uk/co/terminological/bibliography/api/europepmc/TestEuropePMCExtraction.java)
+[TestQueryTranslationLive.java](/src/test/java/uk/co/terminological/bibliography/client/TestQueryTranslationLive.java)
 
 `coreResultsReportTheirJournalThroughTheRecordInterface` offline, against the
 recorded `fixtures/europepmc/search-med.json`.
 
-## Suggested fix
 
 Override the container accessors in `EuropePMCCoreResult` to read the nested
 `journalInfo` path, falling back to the flat field so a lite payload parsed

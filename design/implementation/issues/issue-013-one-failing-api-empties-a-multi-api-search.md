@@ -1,12 +1,15 @@
 ---
+title: One failing api empties a multi api search
 status: open
-since-version: 0.1.0
-target-version: 0.3.0
-tags: facade, search, resilience
+sinceVersion: 0.1.0
+targetVersion: 0.3.0
+tags:
+- facade
+- search
+- resilience
+TESTED_BY:
+- test:java/uk/co/terminological/bibliography/client/TestQueryTranslationLive.java
 ---
-<!-- @required: status one of open|closed -->
-<!-- @required: target-version specified -->
-<!-- @optional: tags containing comma separated list of tags. -->
 
 ## Issue desc
 
@@ -45,13 +48,12 @@ reporting per-API hit counts.
 
 ## Reproduced by
 
-[TESTED_BY](/src/test/java/uk/co/terminological/bibliography/client/TestQueryTranslationLive.java)
+[TestQueryTranslationLive.java](/src/test/java/uk/co/terminological/bibliography/client/TestQueryTranslationLive.java)
 
 `theSameQueryRoutedToEveryApiReturnsSomethingFromEachOfThem` fails with the
 Crossref NPE, demonstrating that the Entrez, Europe PMC and medRxiv results are
 lost with it.
 
-## Suggested fix
 
 Catch per API inside the loop, log the failure against the API name that caused
 it (the loop already logs a per-API hit count, so the seam is there), and carry

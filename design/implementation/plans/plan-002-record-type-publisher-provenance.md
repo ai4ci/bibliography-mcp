@@ -1,21 +1,24 @@
 ---
+title: Record type publisher provenance
 status: final
-target-version: 0.2.0
-tags: model, provenance, zotero
+targetVersion: 0.2.0
+tags:
+- model
+- provenance
+- zotero
+HAS_FEATURE:
+- feature:feat-006-classify-records-by-type-with-provenance.md
 ---
-<!-- @required: status one of draft|final|deprecated -->
-<!-- @required: target-version specified -->
-<!-- @optional: tags containing comma separated list of tags. -->
 
 <!-- acts as a description of what will be implemented to allow review and sign-off -->
 
 ## Feature
 
-[HAS_FEATURE](/design/features/feat-006-classify-records-by-type-with-provenance.md)
+[feat-006-classify-records-by-type-with-provenance](/design/features/feat-006-classify-records-by-type-with-provenance.md)
 
 Implementation notes, deliberately terse — this is a working checklist for
 whoever implements it. Decisions are locked in
-[roadmap idea 3](/design/roadmap.md); do not re-litigate them mid-flight.
+[roadmap idea 3](/design/roadmap/index.md); do not re-litigate them mid-flight.
 
 ## Approach
 
@@ -90,9 +93,8 @@ plus the mappers we choose to fill in.
 - [x] `mvn -o test-compile` (all ~17 implementations still compile with no edits)
 - [x] `mvn -o test -Dtest=TestRecordModel` — 11/11
 - [x] `./scripts/mcp-smoke-test.sh` unchanged
-- [x] `Rscript …/design-check.R -d .` → 0 defects
+- [x] `loom validate` → ok: true
 
-## Pitfalls
 
 - Adding the fields to `Record` as abstract (not default) methods would force
   edits in every implementation — that is the whole reason for the default-method

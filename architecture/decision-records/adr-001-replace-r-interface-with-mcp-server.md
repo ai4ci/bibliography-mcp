@@ -1,9 +1,8 @@
 ---
+title: Replace r interface with mcp server
 status: final
-target-version: "0.1.0"
+targetVersion: 0.1.0
 ---
-<!-- @required: status one of draft|final|deprecated -->
-<!-- @required: target-version specified -->
 
 # Replace the R interface with an MCP server
 
@@ -39,7 +38,6 @@ orchestration logic that lived in `rjavaapi` into a plain-Java package
   graph traversal, analysis) is plain Java once the R types are removed, so
   the migration cost was mostly mechanical.
 
-## Consequences
 
 * R users lose the interface. The plain-Java `BiblioFacade`/`Session` remain
   directly usable from JVM code, and a future R binding could wrap those

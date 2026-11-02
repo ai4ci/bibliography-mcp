@@ -1,13 +1,18 @@
 ---
+title: Zotero bridge tests
 status: final
-target-version: 0.2.0
-tags: zotero, mcp, integration
+targetVersion: 0.2.0
+tags:
+- zotero
+- mcp
+- integration
+HAS_FEATURE:
+- feature:feat-005-zotero-curated-repository-bridge.md
+TESTED_BY:
+- test:java/uk/co/terminological/bibliography/api/zotero/TestZoteroItemWriter.java
+- test:java/uk/co/terminological/bibliography/api/zotero/TestZoteroLibraryIndex.java
+- test:java/uk/co/terminological/bibliography/api/zotero/TestZoteroMapping.java
 ---
-<!-- @required: status one of draft|final|deprecated -->
-<!-- @required: target-version specified -->
-<!-- @optional: tags containing comma separated list of tags. -->
-
-## Scripts
 
 ### 1) Mapping and matching (offline)
 
@@ -27,11 +32,10 @@ tags: zotero, mcp, integration
     refused rather than created.
  4. Cleanup: none — offline.
 
-[TESTED_BY](/src/test/java/uk/co/terminological/zotero/TestZoteroMapping.java)
-[TESTED_BY](/src/test/java/uk/co/terminological/zotero/TestZoteroLibraryIndex.java)
-[TESTED_BY](/src/test/java/uk/co/terminological/zotero/TestZoteroItemWriter.java)
+[TestZoteroMapping.java](/src/test/java/uk/co/terminological/bibliography/api/zotero/TestZoteroMapping.java)
+[TestZoteroLibraryIndex.java](/src/test/java/uk/co/terminological/bibliography/api/zotero/TestZoteroLibraryIndex.java)
+[TestZoteroItemWriter.java](/src/test/java/uk/co/terminological/bibliography/api/zotero/TestZoteroItemWriter.java)
 
-### 2) The live workflow (read, then write to a sanctioned collection)
 
  1. Setup: the Zotero desktop client running with the local API enabled; a
     properties file whose `zotero-write-collection` is the sanctioned test
@@ -53,6 +57,3 @@ tags: zotero, mcp, integration
 
 Recorded outcomes are in [feat-005](/design/features/feat-005-zotero-curated-repository-bridge.md).
 
-## Features
-
-- [HAS_FEATURE](/design/features/feat-005-zotero-curated-repository-bridge.md)

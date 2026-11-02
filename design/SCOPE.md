@@ -1,45 +1,46 @@
+---
+title: Scope
+status: final
+targetVersion: unassigned
+tags:
+- scope
+---
+
 # Bibliographic API client — MCP server
 
 A Java MCP (Model Context Protocol) server exposing clients for multiple
-bibliographic APIs (Entrez/PubMed, CrossRef, Europe PMC, Unpaywall,
-OpenCitations, PMC IDConverter, Cermine PDF parsing) behind a unified record
-format, plus a plain-Java facade over the same functionality.
+bibliographic APIs (Entrez/PubMed, CrossRef, Europe PMC, OpenCitations,
+Unpaywall, medRxiv/bioRxiv, PMC IDConverter, Cermine PDF parsing) behind a
+unified record format, plus a plain-Java facade over the same functionality.
 
-Versions below are feature-release markers, not Maven artefact versions
-(the Maven version is currently `master-SNAPSHOT`). Ideas under consideration
-are recorded in [roadmap.md](/design/roadmap.md) before they become features.
+This document says what the project is. What is *built* and what is *intended*
+drift apart fast enough that keeping two lists out of date is worse than having
+one, so the feature list is generated: see
+[design/INDEX.md](/design/INDEX.md), whose table `loom render` fills from the
+`features_by_state` view. What ships *when* is decided in the
+[roadmap](/design/roadmap/index.md), which is also where an idea lives before it
+becomes a feature, plan, issue or debt record.
 
-<!-- @required: An example description of the overall project -->
+## Supported APIs
 
-## v0.1.0 - MCP server baseline
+| API | Client | Role |
+|-----|--------|------|
+| CrossRef | `api/crossref/CrossRefClient` | search, fetch by DOI, citation list |
+| Entrez / PubMed | `api/entrez/EntrezClient` | search, fetch by PMID/PMCID |
+| Europe PMC | `api/europepmc/EuropePMCClient` | search, fetch, both citation directions |
+| OpenCitations Index v2 | `api/opencitations/OpenCitationsClient` | citation edges by DOI |
+| Unpaywall | `api/unpaywall/UnpaywallClient` | open-access PDF location |
+| medRxiv / bioRxiv | `api/medrxiv/MedrxivClient` | preprint search and fetch |
+| PMC ID Converter | `api/pmcid/PMCIDClient` | DOI ↔ PMCID ↔ PMID mapping |
+| Cermine | `api/cermine/PdfFetcher` | parse references out of a PDF |
 
-The R interface was replaced by an MCP server. Historical context:
-[ADR-001](/architecture/decision-records/adr-001-replace-r-interface-with-mcp-server.md).
+## Not in scope
 
-* [HAS_FEATURE](/design/features/feat-001-expose-bibliographic-apis-over-mcp.md) - query several bibliographic APIs through one unified record shape
-* [HAS_FEATURE](/design/features/feat-002-explore-citation-networks-in-a-session.md) - collect, merge and expand a citation network across tool calls
-* [HAS_FEATURE](/design/features/feat-003-analyse-citation-graphs-and-topics.md) - page rank and topic modelling over a session
-
-## v0.2.0 - implemented (unreleased)
-
-* [HAS_FEATURE](/design/features/feat-006-classify-records-by-type-with-provenance.md) - publication type, publisher and provenance on records
-* [HAS_FEATURE](/design/features/feat-007-predictable-record-merging.md) - one predictable source of truth when several APIs describe the same work
-* [HAS_FEATURE](/design/features/feat-005-zotero-curated-repository-bridge.md) - read, publish into and tag a curated Zotero library
-
-## v0.3.0 - implemented (unreleased)
-
-* [HAS_FEATURE](/design/features/feat-008-clean-up-collection-metadata.md) - clean up a collection's metadata against the APIs, with the agent deciding conflicts
-
-## v0.4.0 - planned
-
-* [HAS_FEATURE](/design/features/feat-009-preprint-clients.md) - medRxiv/bioRxiv and arXiv as search and fetch sources
-
-## Roadmap
-
-Under consideration, not yet accepted:
-
-* [HAS_FEATURE](/design/features/feat-004-opencitations-meta-enrichment.md) - OpenCitations Meta as an id-mapping source, rescuing non-DOI citation links
-* [HAS_FEATURE](/design/features/feat-005-zotero-curated-repository-bridge.md) - read, publish into and maintain a curated Zotero library
-
-<!-- @required: everything described in the ./features directory is linked to here -->
-<!-- @required: target of links to features must exist -->
+* Bibliographic data of our own: every record is someone else's, retrieved and
+  merged, never authored. See [debt-011](/design/implementation/debt/debt-011-unused-record-model-surface.md)
+  for the model surface that exists for a need nothing has yet.
+* A reference manager. Writing into a curated library is limited to what
+  [feature-005](/design/features/feat-005-zotero-curated-repository-bridge.md)
+  describes.
+* Client libraries for other languages. The MCP server is the interface for
+  anything that is not Java.

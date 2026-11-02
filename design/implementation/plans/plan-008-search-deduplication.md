@@ -1,12 +1,18 @@
 ---
+title: Search deduplication
 status: draft
-target-version: 0.1.0
-tags: search, dedup, model
+targetVersion: 0.1.0
+tags:
+- search
+- dedup
+- model
+HAS_FEATURE:
+- feature:feat-001-expose-bibliographic-apis-over-mcp.md
 ---
 
 ## Feature
 
-[HAS_FEATURE](/design/features/feat-001-expose-bibliographic-apis-over-mcp.md)
+[feat-001-expose-bibliographic-apis-over-mcp](/design/features/feat-001-expose-bibliographic-apis-over-mcp.md)
 (search: "deduplicates by identifier")
 
 Depends on:
@@ -97,8 +103,6 @@ BiblioFacade.search(query)
   → compute RRF score per group
   → sort by score descending
 ```
-
-## Implementation steps
 
 ### 1. Rewrite `search()` to collect per-API ranks, dedup, and rank by RRF
 
@@ -310,8 +314,6 @@ Longer-term, `CrossRefWork.getOtherIdentifiers()` could be wired to expose the
 `alternative-id` values (which include publisher IDs, ISSNs, etc.) but this is
 not needed for the dedup to work. Tracked as a future improvement.
 
-## Tests
-
 ### 6. New offline tests
 
 Location: `TestSearchDedup.java` (offline, no network)
@@ -365,11 +367,10 @@ happened). Not a strict equality test (API results change over time).
 - **MergedRecord vs findAny**: `MergedRecord.merge()` already uses
   `MergePolicy` with per-field priority — deterministic.
 
-## Verification
 
 - [ ] `mvn -o test -Dtest=TestSearchDedup` — all offline tests pass
 - [ ] `mvn -o test-compile` — no new compilation errors
 - [x] `./scripts/run-live-tests.sh -Dtest=TestSearchDedupLive` — dedup confirmed
-- [ ] `Rscript …/design-check.R -d .` → 0 defects
+- [ ] `loom validate` → ok: true
 - [ ] MCP smoke test: `search` returns fewer records when more APIs are enabled
 - [ ] `collect_search` still populates session correctly

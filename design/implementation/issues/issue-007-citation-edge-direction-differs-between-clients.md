@@ -1,12 +1,15 @@
 ---
+title: Citation edge direction differs between clients
 status: closed
-since-version: 0.1.0
-target-version: 0.3.0
-tags: citations, graph, data-integrity, entrez, europepmc
+sinceVersion: 0.1.0
+targetVersion: 0.3.0
+tags:
+- citations
+- graph
+- data-integrity
+- entrez
+- europepmc
 ---
-<!-- @required: status one of open|closed -->
-<!-- @required: target-version specified -->
-<!-- @optional: tags containing comma separated list of tags. -->
 
 ## Issue desc
 
@@ -74,7 +77,6 @@ asserting edge direction for any client.** The extraction tests assert that
 links are produced, not which way they point, which is why the defect survived
 this long. A fixture-based direction test per citation client is worth adding.
 
-## Suggested fix
 
 Settle the convention explicitly as **source cites target** — the one the
 majority already use, and the one that makes PageRank mean what it is being

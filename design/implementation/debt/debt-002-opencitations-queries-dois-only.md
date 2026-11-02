@@ -1,15 +1,15 @@
 ---
+title: Opencitations queries dois only
 status: open
-since-version: 0.1.0
-target-version: 0.2.0
-tags: opencitations, id-types
+sinceVersion: 0.1.0
+targetVersion: 0.2.0
+tags:
+- opencitations
+- id-types
+IMPACTS:
+- main:java/uk/co/terminological/bibliography/api/BiblioFacade.java
+- main:java/uk/co/terminological/bibliography/api/opencitations/OpenCitationsClient.java
 ---
-<!-- @required: status one of open|closed -->
-<!-- @required: target-version specified -->
-<!-- @optional: since-version specified -->
-<!-- @optional: tags containing comma separated list of tags. -->
-
-## Debt desc
 
 `OpenCitationsClient.citesReferences` / `referencesCiting` filter the input
 references to `IdType.DOI` before querying, because the links are built from
@@ -26,7 +26,3 @@ or resolve non-DOI references to DOIs first via id mapping
 Related: [issue-001](/design/implementation/issues/issue-001-non-doi-citation-links-dropped.md)
 is the mirror-image problem on the response side.
 
-## Impacts
-
-- [IMPACTS](/src/main/java/uk/co/terminological/bibliography/opencitations/OpenCitationsClient.java)
-- [IMPACTS](/src/main/java/uk/co/terminological/bibliography/mcp/BiblioFacade.java)

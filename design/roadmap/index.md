@@ -1,7 +1,27 @@
 ---
-target-version: 0.1.0
+title: Roadmap
+targetVersion: 0.1.0
 status: draft
-tags: roadmap, mcp, opencitations, bibliographic-apis
+tags:
+- roadmap
+- mcp
+- opencitations
+- bibliographic-apis
+HAS_FEATURE:
+- feature:feat-004-opencitations-meta-enrichment.md
+- feature:feat-005-zotero-curated-repository-bridge.md
+- feature:feat-006-classify-records-by-type-with-provenance.md
+- feature:feat-007-predictable-record-merging.md
+- feature:feat-008-clean-up-collection-metadata.md
+- feature:feat-009-preprint-clients.md
+HAS_PLAN:
+- plan:plan-001-opencitations-meta-idmap.md
+- plan:plan-002-record-type-publisher-provenance.md
+- plan:plan-003-record-merge-policy.md
+HAS_PROTOTYPE:
+- prototype:prototype-001-opencitations-meta-pids.md
+HAS_TEST:
+- testscript:test-003-zotero-bridge-tests.md
 ---
 
 # Roadmap
@@ -32,13 +52,37 @@ Effort is relative (S/M/L), not a timescale.
 
 ---
 
+## Milestones
+
+The version is the milestone. Each number in `pom.xml` is a release, and every
+document names the release it is aimed at in its `targetVersion` frontmatter, so
+`loom render` can list what is outstanding without anyone maintaining a second
+list of it. The status vocabulary lives in the table above; what a version
+*contains* is decided here and nowhere else.
+
+| Version | Theme | Named by |
+|---------|-------|----------|
+| 0.0.x | The library: one client per bibliographic API, a unified `Record`, a merge policy. Shipped before the MCP server existed, so no design document names these. | — |
+| 0.1.0 | **MCP server usable.** Search deduplicated across APIs, and the open bugs that stop a tool returning what it should. | [plan-008](../implementation/plans/plan-008-search-deduplication.md), [issue-016](../implementation/issues/issue-016-unpaywall-preprint-doi-not-resolved.md), [issue-017](../implementation/issues/issue-017-generic-search-builder-withQuery-noop.md) |
+| 0.2.0 | **Citation links that survive non-DOI endpoints.** OpenCitations Meta enrichment, and contract tests that catch third-party drift before it reaches a user. | [feature-004](../features/feat-004-opencitations-meta-enrichment.md), [plan-001](../implementation/plans/plan-001-opencitations-meta-idmap.md), [prototype-001](../prototypes/prototype-001-opencitations-meta-pids.md), [issue-001](../implementation/issues/issue-001-non-doi-citation-links-dropped.md), [issue-002](../implementation/issues/issue-002-third-party-api-endpoint-drift.md), [debt-002](../implementation/debt/debt-002-opencitations-queries-dois-only.md) |
+| 0.3.0 | **A record means what it says.** Dates that are publication dates, query translation, one failing API not emptying a search, and the cache and session fixes the open debt records describe. | [issue-008](../implementation/issues/issue-008-crossref-query-translation-is-broken.md), [issue-013](../implementation/issues/issue-013-one-failing-api-empties-a-multi-api-search.md), [issue-014](../implementation/issues/issue-014-entrez-record-dates-are-not-publication-dates.md), [issue-015](../implementation/issues/issue-015-preprint-html-search-is-blocked-by-cloudflare.md), [test-002](../test-scripts/test-002-api-behaviour-tests.md), [debt-001](../implementation/debt/debt-001-session-persistence-uses-java-serialization.md), [debt-003](../implementation/debt/debt-003-analysis-recomputes-topic-model-per-call.md), [debt-005](../implementation/debt/debt-005-fetch-is-incomplete-by-id-type.md), [debt-007](../implementation/debt/debt-007-cache-stores-break-on-cached-class-changes.md) |
+| 0.4.0 | **The curated library.** Read a Zotero collection as records and write records and citations back. | [feature-005](../features/feat-005-zotero-curated-repository-bridge.md), [debt-009](../implementation/debt/debt-009-shared-read-timeout-is-a-trap.md), [debt-010](../implementation/debt/debt-010-europepmc-duplicates-its-citation-loops.md) |
+| 0.5.0 | **Analysis.** Citation graphs and topic models, with the async fetch queue that makes them viable over a cold cache. | [feature-003](../features/feat-003-analyse-citation-graphs-and-topics.md), [plan-009](../implementation/plans/plan-009-async-fetch-queue.md) |
+
+`unassigned` means a document has no release yet — the roadmap decides that, not
+its author. See
+[ADR-0001](../../architecture/decision-records/adr-004-adopt-loom-for-documentation.md) for why the
+version carries the milestone instead of a separate board.
+
+---
+
 ## 1. OpenCitations Meta enrichment — `proposed`, effort M
 
 ### Context
 
 `OpenCitationsClient` currently uses only the **Index v2** API
 (`api.opencitations.net/index/v2/citations|references/{id}`, see
-[src/main/java/uk/co/terminological/bibliography/opencitations/OpenCitationsClient.java](/src/main/java/uk/co/terminological/bibliography/opencitations/OpenCitationsClient.java)).
+[src/main/java/uk/co/terminological/bibliography/opencitations/OpenCitationsClient.java](/src/main/java/uk/co/terminological/bibliography/api/opencitations/OpenCitationsClient.java)).
 Index v2 returns citing/cited entities as space-separated PID lists, e.g.
 `omid:br/061301957054 doi:10.1136/bmjqs-2018-008370 openalex:W2910707576`.
 `OpenCitationsCitation.doiFromPids` extracts the `doi:` token and returns
@@ -120,9 +164,6 @@ deciding that journal-level analysis is in scope.
 
 Option A has been written up in the framework's own form:
 
-- [HAS_FEATURE](/design/features/feat-004-opencitations-meta-enrichment.md)
-- [HAS_PLAN](/design/implementation/plans/plan-001-opencitations-meta-idmap.md)
-- [HAS_PROTOTYPE](/design/prototypes/prototype-001-opencitations-meta-pids.md)
 
 Related records:
 
@@ -203,7 +244,7 @@ These are settled; the options below only cover how to implement them.
   both reported with their own named scores and the agent picks, in discussion
   with the user. Relevance is *not* mechanistic, and the measure must be
   **extensible**: a future locally-hosted LLM embedding / vector-database
-  scorer ([idea 4](/design/roadmap.md)) has to slot in without changing the
+  scorer (idea 4 below) has to slot in without changing the
   tool contract. Practically: tools return a labelled score set
   (`{"pageRank": …, "topicSimilarity": …}`), never a single opaque
   "relevance" number.
@@ -221,7 +262,7 @@ These are settled; the options below only cover how to implement them.
   `date`, **`creators`** and **tags** — but see the overwrite-semantics
   question below, because `creators` and tags can hold the user's own curations.
 - **Item type needs a framework-level answer**, not a Zotero-local heuristic —
-  see [idea 3](/design/roadmap.md).
+  see idea 3 below.
 - **Duplicates are tolerated in the Zotero path only.** Zotero
   detects duplicates and gives the user a UI to resolve them, so an occasional
   duplicate is an acceptable outcome. Publish checks identifier and title+year
@@ -230,7 +271,7 @@ These are settled; the options below only cover how to implement them.
   treated as **linkage/provenance**, not as an identifier of the work, because
   it is scoped to one Zotero instance. This does *not* relax the discovery path:
   records from several APIs still have to merge into one predictable source of
-  truth, fixed up front in [idea 5](/design/roadmap.md).
+  truth, fixed up front in idea 5 below.
 - **Never overwrite a Zotero item with API-fetched values — that is where
   curation is enforced.** An item may be scraped from a publisher page and broken,
   or hand repaired, and the data does not say which: `libraryCatalog` names a
@@ -241,7 +282,7 @@ These are settled; the options below only cover how to implement them.
   let Zotero's duplicate detection and the user resolve it. A Zotero record
   therefore competes on the same per-field merge table as any other source
   rather than winning by virtue of being curated.
-- **The model change is the fundamental blocker** — see [idea 3](/design/roadmap.md)
+- **The model change is the fundamental blocker** — see idea 3 below
   for the minimum field set that supports ~90% of the library's content.
 
 ### Options
@@ -314,7 +355,7 @@ publishing into a sub-collection.
 - **Publication type / venue kind.** Zotero's `bookSection`, `preprint`,
   `report`, `blogPost` and `webpage` are genuinely different things from
   `journalArticle`, and `Record` cannot express that today — see
-  [idea 3](/design/roadmap.md). This affects ranking quality, publish mapping
+  idea 3 below. This affects ranking quality, publish mapping
   and enrichment (a report has no `publicationTitle` to refresh).
 - **Matching has to work without DOIs.** Only 52.6% of items carry a DOI and
   30.8% have no DOI, ISBN or URL at all, so DOI-keyed matching would report
@@ -323,7 +364,7 @@ publishing into a sub-collection.
   optional fallback: the library index needs composite keys, publish
   idempotency needs it too, and enrichment must be honest that DOI-less items
   cannot be refreshed from DOI-based APIs. This is also the strongest argument
-  for the future embedding scorer in [idea 4](/design/roadmap.md), which would
+  for the future embedding scorer in idea 4 below, which would
   address near-duplicate matching directly.
 - **Tagging convention.** Left to the agent's judgement by design, but the
   first convention adopted becomes a de facto contract for other agents —
@@ -337,11 +378,9 @@ publishing into a sub-collection.
 
 ### Linked artefacts
 
-- [HAS_FEATURE](/design/features/feat-005-zotero-curated-repository-bridge.md)
-- [HAS_TEST](/design/test-scripts/test-003-zotero-bridge-tests.md)
 
 Option **E1/E2** (report, then apply) is split out as
-[HAS_FEATURE](/design/features/feat-008-clean-up-collection-metadata.md), rescoped to one
+[feat-008-clean-up-collection-metadata](/design/features/feat-008-clean-up-collection-metadata.md), rescoped to one
 collection and made to include the write;
 option **C** (the full Meta client with author traversal) remains unstarted.
 
@@ -539,8 +578,6 @@ identifiers that the citation-link model currently discards (relevant to tier 2)
 
 Tier-1 decisions are settled and promoted:
 
-- [HAS_FEATURE](/design/features/feat-006-classify-records-by-type-with-provenance.md)
-- [HAS_PLAN](/design/implementation/plans/plan-002-record-type-publisher-provenance.md)
 
 ---
 
@@ -623,8 +660,6 @@ curated (Zotero) records excluded from merging altogether.
 
 ### Linked artefacts
 
-- [HAS_FEATURE](/design/features/feat-007-predictable-record-merging.md)
-- [HAS_PLAN](/design/implementation/plans/plan-003-record-merge-policy.md)
 
 ---
 
@@ -663,7 +698,7 @@ Answered by measuring more of the picture: Europe PMC does index preprints
 server's metadata (version, license, category, funder), the `jatsxml` full text and
 the explicit **preprint→published mapping**. So both are worth having, for
 different jobs, and the coverage question is folded into
-[HAS_FEATURE](/design/features/feat-009-preprint-clients.md) rather than decided
+[feat-009-preprint-clients](/design/features/feat-009-preprint-clients.md) rather than decided
 here.
 
 ### Correction (2026-10-17): coverage is not partial
@@ -693,7 +728,83 @@ of their native metadata, the JATS full text and the published-version mapping.
 
 ---
 
-## 7. (template for further ideas)
+## 7. Return formatted text, not raw JSON, from the record tools — `proposed`, effort S
+
+### Context
+
+Every tool that returns records serialises them with `McpTools.recordJson`: a
+broad search returns tens of kilobytes of nested objects, repeated keys and
+provenance blocks. The downstream skill notes the same problem
+([skills/using-bibliographic-apis](/skills/using-bibliographic-apis/SKILL.md)).
+
+### Problem statement
+
+An agent assessing literature needs authors, venue, year, a bounded abstract and
+the identifier. It gets all of that inside a structure it must parse before it
+can read, and a wide search can exhaust its context before it has chosen
+anything to read.
+
+### Options
+
+| # | Option | Gives | Effort | Risk |
+|---|--------|-------|--------|------|
+| A | Markdown by default, `format: "json"` to opt out | short output for the common case | S | an agent that wanted structure now parses prose |
+| B | Keep JSON, add a `fields` argument | caller chooses what to pay for | S | the agent must know the field names to ask |
+| C | A separate `render` tool, leave the rest alone | one cheap path to readable output | S | every other tool still floods the context |
+
+### Recommendation
+
+A. The structured form is what *code* needs and the MCP client is not code —
+Java callers use `BiblioFacade` directly and never see this JSON. Keep the JSON
+available for anything that does want it. Depends on
+[issue-018](/design/implementation/issues/issue-018-tool-output-drops-authors-and-print-details.md):
+authors must be in the record before they can be in its rendering.
+
+### Open questions
+
+- Does the abstract get truncated in the default view, and at how many characters?
+
+---
+
+## 8. Expose the structured query over MCP — `proposed`, effort S
+
+### Context
+
+`client/Query` already separates intent: `getTitleAbstract()`, `getAuthors()`,
+`getJournal()`, `getYear()`, and the clients translate each field into their own
+syntax (`query.author` for Crossref, `AUTH:` for Europe PMC, `[Author]` for
+Entrez) — the translations are pinned by
+`src/test/java/uk/co/terminological/bibliography/client/TestQueryTranslation.java`.
+The MCP `search` tool accepts one free-text `query` string and puts it in
+`allFields`, so none of that is reachable from a tool call.
+
+### Problem statement
+
+Mixed intent in one string behaves unpredictably per backend. Observed in a live
+session: `"Challen artificial intelligence safety"` returns nothing from
+Crossref, while the title alone returns the target paper at position 17.
+
+### Options
+
+| # | Option | Gives | Effort | Risk |
+|---|--------|-------|--------|------|
+| A | `title`, `author`, `journal`, `year` arguments alongside `query` | the model's structure reaches the agent | S | more arguments to describe |
+| B | Parse the free-text string into a Query heuristically | no schema change | M | guessing wrong is invisible to the caller |
+| C | Document the dialects and let the agent write them | nothing to build | S | pushes per-API syntax onto every caller |
+
+### Recommendation
+
+A. The translation layer exists and is tested; only the tool schema is missing.
+B is the kind of cleverness that fails silently. C was the status quo and is what
+the reports are about.
+
+### Open questions
+
+- Should `query` and `title` be mutually exclusive, or AND-combined?
+
+---
+
+## 9. (template for further ideas)
 
 Copy this shape for each new idea so the document stays comparable.
 
@@ -725,7 +836,8 @@ Which option, and why. What to defer.
 
 This project follows continuous evolutionary design (see the
 `practice-continuous-evolutionary-design` skill). When an idea here reaches
-`accepted` or `in-progress`, create the corresponding design artefacts:
+`accepted` or `in-progress`, create the artefact it needs and give it this
+release as its `targetVersion`:
 
 | Artefact | Location |
 |----------|----------|
@@ -733,19 +845,13 @@ This project follows continuous evolutionary design (see the
 | Implementation plan | `design/implementation/plans/plan-NNN-<name>.md` |
 | Defect / gap record | `design/implementation/issues/issue-NNN-<name>.md` |
 | Technical debt | `design/implementation/debt/debt-NNN-<name>.md` |
-| Scope (implemented + planned features) | `design/SCOPE.md` |
 
-Design documents are markdown with frontmatter containing at least
-`target-version` and `status`, plus a comma-separated `tags` list. Design
-artefacts and code are joined by markdown links whose alt text is the
-relationship in upper snake case — a feature links to its plan with
-`HAS_PLAN`, a class links to the feature it implements with `IMPLEMENTS`,
-and a test-script links to the feature it covers with `HAS_FEATURE`. See the
-[design documentation guide](/design/roadmap.md#conventions) for the
-relationship set. Link targets are checked by the framework's design-check
-script, so an illustrative link written in these documents becomes a real
-asserted relationship — describe the format rather than quoting a link when
-illustrating it.
+The folder decides what a document is; relations, `status` and `targetVersion`
+go in its frontmatter, and `design/document-model.mmd` is the authority on what
+is allowed where. `architecture/STANDARDS.md` covers the same ground from the
+code side. `loom validate` checks the whole tree, so a relationship asserted in
+prose-free frontmatter is a real claim — describe the format rather than
+illustrating it with a link you do not mean.
 
 ## Related documents
 

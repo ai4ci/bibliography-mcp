@@ -1,17 +1,20 @@
 ---
+title: Metadata cleanup
 status: final
-target-version: 0.3.0
-tags: zotero, enrichment, metadata
+targetVersion: 0.3.0
+tags:
+- zotero
+- enrichment
+- metadata
+HAS_FEATURE:
+- feature:feat-008-clean-up-collection-metadata.md
 ---
-<!-- @required: status one of draft|final|deprecated -->
-<!-- @required: target-version specified -->
-<!-- @optional: tags containing comma separated list of tags. -->
 
 <!-- acts as a description of what will be implemented to allow review and sign-off -->
 
 ## Feature
 
-[HAS_FEATURE](/design/features/feat-008-clean-up-collection-metadata.md)
+[feat-008-clean-up-collection-metadata](/design/features/feat-008-clean-up-collection-metadata.md)
 
 Terse implementation checklist. The comparison is pure and unit-tested; the write
 reuses the batched, version-preconditioned write from plan-004.
@@ -64,9 +67,8 @@ reuses the batched, version-preconditioned write from plan-004.
 
 ## Verification
 
-- [x] `mvn -o test` (70 tests), `./scripts/mcp-smoke-test.sh` (29 tools), `Rscript …/design-check.R -d .`
+- [x] `mvn -o test` (70 tests), `./scripts/mcp-smoke-test.sh` (29 tools), `loom validate`
 
-## Open questions
 
 - Should the report take an optional `fields` argument so a caller can scope the
   comparison (abstracts only, say)?

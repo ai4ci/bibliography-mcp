@@ -1,8 +1,11 @@
 ---
+title: Generic search builder withquery noop
 status: open
-since-version: 0.0.6
-target-version: 0.1.0
-tags: bug, search
+sinceVersion: 0.0.6
+targetVersion: 0.1.0
+tags:
+- bug
+- search
 ---
 
 ## Issue desc
@@ -29,7 +32,6 @@ clients do with a null Query.
 - No existing tests exercise this path (all callers go through
   `BiblioFacade.search()` directly), so the bug has not surfaced.
 
-### Suggested fix
 
 ```java
 @Override

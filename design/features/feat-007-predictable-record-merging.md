@@ -1,11 +1,21 @@
 ---
+title: Predictable record merging
 status: final
-target-version: 0.2.0
-tags: model, merge, accepted
+targetVersion: 0.2.0
+tags:
+- model
+- merge
+- accepted
+HAS_PLAN:
+- plan:plan-003-record-merge-policy.md
+HAS_TEST:
+- testscript:test-002-api-behaviour-tests.md
+IMPLEMENTED_BY:
+- main:java/uk/co/terminological/bibliography/api/entrez/EntrezEntry.java
+- main:java/uk/co/terminological/bibliography/record/MergePolicy.java
+- main:java/uk/co/terminological/bibliography/record/MergedRecord.java
+- main:java/uk/co/terminological/bibliography/api/unpaywall/UnpaywallResult.java
 ---
-<!-- @required: status one of draft|final|deprecated -->
-<!-- @required: target-version specified -->
-<!-- @optional: tags containing comma separated list of tags. -->
 
 ## Description
 
@@ -56,23 +66,13 @@ Curation therefore belongs to the **write** path, not to field precedence:
 
 See [feat-005](/design/features/feat-005-zotero-curated-repository-bridge.md).
 
-## Linked artefacts
-
-- [HAS_PLAN](/design/implementation/plans/plan-003-record-merge-policy.md)
-- [HAS_TEST](/design/test-scripts/test-002-api-behaviour-tests.md)
-
 ## Implemented by
 
-- [IMPLEMENTED_BY](/src/main/java/uk/co/terminological/bibliography/record/MergePolicy.java)
-- [IMPLEMENTED_BY](/src/main/java/uk/co/terminological/bibliography/record/MergedRecord.java)
-- [IMPLEMENTED_BY](/src/main/java/uk/co/terminological/bibliography/unpaywall/UnpaywallResult.java)
-- [IMPLEMENTED_BY](/src/main/java/uk/co/terminological/bibliography/entrez/EntrezEntry.java)
 
 Provenance was added to `UnpaywallResult` and `EntrezEntry` because the policy
 cannot rank a source that does not report one — without it the documented
 preference for Unpaywall's open-access PDF locations could never take effect.
 Their native publication types remain unparsed.
 
-## Related records
 
 - [issue-003](/design/implementation/issues/issue-003-merged-record-resolution-is-non-deterministic.md)

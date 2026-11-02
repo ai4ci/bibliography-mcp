@@ -1,13 +1,18 @@
 ---
+title: Metadata cleanup tests
 status: final
-target-version: 0.3.0
-tags: zotero, enrichment, metadata
+targetVersion: 0.3.0
+tags:
+- zotero
+- enrichment
+- metadata
+HAS_FEATURE:
+- feature:feat-008-clean-up-collection-metadata.md
+TESTED_BY:
+- test:java/uk/co/terminological/bibliography/record/TestPlainText.java
+- test:java/uk/co/terminological/bibliography/api/zotero/TestMetadataComparison.java
+- test:java/uk/co/terminological/bibliography/api/zotero/TestZoteroItemWriter.java
 ---
-<!-- @required: status one of draft|final|deprecated -->
-<!-- @required: target-version specified -->
-<!-- @optional: tags containing comma separated list of tags. -->
-
-## Scripts
 
 ### 1) Comparison (offline)
 
@@ -25,11 +30,10 @@ tags: zotero, enrichment, metadata
     update must supply the array itself.
  4. Cleanup: none — offline.
 
-[TESTED_BY](/src/test/java/uk/co/terminological/zotero/TestMetadataComparison.java)
-[TESTED_BY](/src/test/java/uk/co/terminological/zotero/TestZoteroItemWriter.java)
-[TESTED_BY](/src/test/java/uk/co/terminological/bibliography/record/TestPlainText.java)
+[TestMetadataComparison.java](/src/test/java/uk/co/terminological/bibliography/api/zotero/TestMetadataComparison.java)
+[TestZoteroItemWriter.java](/src/test/java/uk/co/terminological/bibliography/api/zotero/TestZoteroItemWriter.java)
+[TestPlainText.java](/src/test/java/uk/co/terminological/bibliography/record/TestPlainText.java)
 
-### 2) Clean-up against a real collection (report, then write)
 
  1. Setup: the local API enabled and a properties file whose write target is the
     sanctioned test collection.
@@ -44,6 +48,3 @@ tags: zotero, enrichment, metadata
 Recorded outcomes are in
 [feat-008](/design/features/feat-008-clean-up-collection-metadata.md).
 
-## Features
-
-- [HAS_FEATURE](/design/features/feat-008-clean-up-collection-metadata.md)

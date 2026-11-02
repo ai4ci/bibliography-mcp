@@ -1,8 +1,14 @@
 ---
+title: Unpaywall preprint doi not resolved
 status: open
-since-version: 0.0.6
-target-version: 0.1.0
-tags: maintenance, api-drift, unpaywall
+sinceVersion: 0.0.6
+targetVersion: 0.1.0
+tags:
+- maintenance
+- api-drift
+- unpaywall
+TESTED_BY:
+- test:java/uk/co/terminological/bibliography/api/unpaywall/TestUnpaywallClientEndToEnd.java
 ---
 
 ## Issue desc
@@ -80,6 +86,5 @@ behaviour (or the way the response is processed) differs. Possibilities:
    encoding the slash — pass the raw DOI into the URL path directly, i.e.
    remove the URLEncoder call for the DOI portion.
 
-## Reproduced by
 
-[TESTED_BY](/src/test/java/uk/co/terminological/bibliography/api/unpaywall/TestUnpaywallClientEndToEnd.java)
+[TestUnpaywallClientEndToEnd.java](/src/test/java/uk/co/terminological/bibliography/api/unpaywall/TestUnpaywallClientEndToEnd.java)

@@ -11,3 +11,13 @@ $HOME/.private/apis/secrets.prop
 $HOME/Git/m2repo
 $HOME/Git/fluentxml
 $HOME/Git/exotic-datatypes
+
+# The `loom` CLI (for the using-loom-cli / creating-a-loom-workflow skills).
+# Chain: ~/.local/bin/loom -> ~/.bun/bin/loom -> ~/.bun/install/global (where
+# `bun link` registers the package) -> the checkout it was linked from, so the
+# whole ~/.bun tree is granted. The bun runtime itself is /usr/local/bin/bun.
+# loom writes its DuckDB graph to design/.loom/ inside the project, which is
+# already read-write.
+$HOME/.local/bin/loom
+$HOME/.bun
+$HOME/Git/loom-cli

@@ -1,15 +1,14 @@
 ---
+title: Shared read timeout is a trap
 status: open
-since-version: 0.1.0
-target-version: 0.4.0
-tags: api-client, timeouts
+sinceVersion: 0.1.0
+targetVersion: 0.4.0
+tags:
+- api-client
+- timeouts
+IMPACTS:
+- main:java/uk/co/terminological/bibliography/CachingApiClient.java
 ---
-<!-- @required: status one of open|closed -->
-<!-- @required: target-version specified -->
-<!-- @optional: since-version specified -->
-<!-- @optional: tags containing comma separated list of tags. -->
-
-## Debt desc
 
 `CachingApiClient` gives every client a 3-second read timeout. That is right for most
 bibliographic APIs and wrong for several of them, and the failure is silent: every
@@ -34,6 +33,3 @@ rather than the reverse; or make the timeout a constructor argument, so each cli
 states its expectation where it is read; or log at WARN on a timeout, so an empty
 result can be told apart from a slow one.
 
-## Impacts
-
-- [IMPACTS](/src/main/java/uk/co/terminological/bibliography/CachingApiClient.java)

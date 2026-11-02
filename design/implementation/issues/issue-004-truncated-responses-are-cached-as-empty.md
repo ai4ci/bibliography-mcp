@@ -1,12 +1,15 @@
 ---
+title: Truncated responses are cached as empty
 status: closed
-since-version: 0.1.0
-target-version: 0.3.0
-tags: data-integrity, cache, europepmc
+sinceVersion: 0.1.0
+targetVersion: 0.3.0
+tags:
+- data-integrity
+- cache
+- europepmc
+TESTED_BY:
+- test:java/uk/co/terminological/bibliography/TestApiDriftParsing.java
 ---
-<!-- @required: status one of open|closed -->
-<!-- @required: target-version specified -->
-<!-- @optional: tags containing comma separated list of tags. -->
 
 ## Issue desc
 
@@ -59,7 +62,7 @@ be "fixed".
 
 ## Reproduced by
 
-[TESTED_BY](/src/test/java/uk/co/terminological/pubmedclient/TestApiDriftParsing.java)
+[TestApiDriftParsing.java](/src/test/java/uk/co/terminological/bibliography/TestApiDriftParsing.java)
 
 `aTruncatedSearchResponseIsIndistinguishableFromNoResults` pins the current
 behaviour: a body of `{"version":"6.9"}` yields zero items and no `hitCount`, so
@@ -106,12 +109,11 @@ Tests: `aTruncatedSearchResponseIsRecognisedAsBroken`,
 **Recommendation:** A **and** B — B is the general net, A is the guarantee that
 an ambiguous body is never mistaken for an answer.
 
-## Inspecting a poisoned cache
 
 Entries are greppable in the week store, which makes this diagnosable without
 guessing: keys appear as the JSON built by `keyFromApiQuery`, bodies follow.
 Clearing is safe — it is a cache: `rm -rf <cache-dir>/<client>` (or wait out the
 7-day TTL, though that does not apply to `cacheForever()` clients).
 
-Related: [debt-006](/design/implementation/debt/debt-006-cached-answers-have-no-invalidation-path.md)
+Related: [debt-006](/design/implementation/debt/debt-006-cached-answers-are-never-invalidated.md)
 (no invalidation path).

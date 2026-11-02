@@ -1,16 +1,19 @@
 ---
+title: Opencitations meta pids
 status: draft
-target-version: 0.2.0
-tags: opencitations, id-mapping, prototype
+targetVersion: 0.2.0
+tags:
+- opencitations
+- id-mapping
+- prototype
+HAS_FEATURE:
+- feature:feat-004-opencitations-meta-enrichment.md
 ---
-<!-- @required: status one of draft|final|deprecated -->
-<!-- @required: target-version specified -->
-<!-- @optional: tags containing comma separated list of tags. -->
 
 # Prototype: does OpenCitations Meta give a complete PID equivalence class?
 
 Exploration behind [feat-004](/design/features/feat-004-opencitations-meta-enrichment.md)
-and [roadmap idea 1](/design/roadmap.md). The question it answers: given one
+and [roadmap idea 1](/design/roadmap/index.md). The question it answers: given one
 identifier, does Meta return *all* the other identifiers for that entity, and
 specifically a DOI when the citation endpoint had none? If so, Meta can act as
 an id-mapping source that rescues citation links the Index v2 response cannot
@@ -73,7 +76,6 @@ For `pmid:30636200` (2026-09): four PIDs — `doi`, `pmid`, `omid`, `openalex`
 — and `representable as a DOI CitationLink: True`. Metadata fields
 (`title`, `pub_date`, `type`, `venue`) are populated; there is no abstract.
 
-## Limitations
 
 - No abstracts or citation links — Meta cannot replace the record fetchers.
 - `publisher`/`editor` values embed identifiers in brackets and need parsing.
@@ -82,6 +84,3 @@ For `pmid:30636200` (2026-09): four PIDs — `doi`, `pmid`, `omid`, `openalex`
   [ADR-003](/architecture/decision-records/adr-003-opencitations-index-v2.md)
   apply to any client built on it.
 
-## Features
-
-- [HAS_FEATURE](/design/features/feat-004-opencitations-meta-enrichment.md)

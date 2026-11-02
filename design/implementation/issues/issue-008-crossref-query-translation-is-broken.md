@@ -1,12 +1,17 @@
 ---
+title: Crossref query translation is broken
 status: open
-since-version: 0.2.0
-target-version: 0.3.0
-tags: crossref, search, query, refactor-regression
+sinceVersion: 0.2.0
+targetVersion: 0.3.0
+tags:
+- crossref
+- search
+- query
+- refactor-regression
+TESTED_BY:
+- test:java/uk/co/terminological/bibliography/client/TestQueryTranslation.java
+- test:java/uk/co/terminological/bibliography/client/TestQueryTranslationLive.java
 ---
-<!-- @required: status one of open|closed -->
-<!-- @required: target-version specified -->
-<!-- @optional: tags containing comma separated list of tags. -->
 
 ## Issue desc
 
@@ -72,14 +77,13 @@ accidental.
 
 ## Reproduced by
 
-[TESTED_BY](/src/test/java/uk/co/terminological/bibliography/client/TestQueryTranslation.java)
-[TESTED_BY](/src/test/java/uk/co/terminological/bibliography/client/TestQueryTranslationLive.java)
+[TestQueryTranslation.java](/src/test/java/uk/co/terminological/bibliography/client/TestQueryTranslation.java)
+[TestQueryTranslationLive.java](/src/test/java/uk/co/terminological/bibliography/client/TestQueryTranslationLive.java)
 
 `crossrefFieldNamesAreSpeltAsCrossrefSpellsThem` offline and
 `crossrefAcceptsEveryFieldQueryTheClientCanEmit` live both fail on
 `AFFIILIATION -> query.affiiliation`.
 
-## Suggested fix
 
 Rename `Field.AFFIILIATION` to `AFFILIATION`. It is referenced nowhere outside
 the enum, so the rename is self-contained.

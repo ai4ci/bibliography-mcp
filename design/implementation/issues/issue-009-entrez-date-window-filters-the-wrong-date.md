@@ -1,12 +1,16 @@
 ---
+title: Entrez date window filters the wrong date
 status: closed
-since-version: 0.1.0
-target-version: 0.3.0
-tags: entrez, search, query, dates
+sinceVersion: 0.1.0
+targetVersion: 0.3.0
+tags:
+- entrez
+- search
+- query
+- dates
+TESTED_BY:
+- test:java/uk/co/terminological/bibliography/client/TestQueryTranslation.java
 ---
-<!-- @required: status one of open|closed -->
-<!-- @required: target-version specified -->
-<!-- @optional: tags containing comma separated list of tags. -->
 
 ## Resolution
 
@@ -53,12 +57,11 @@ has both, so this only bites callers who set the bounds directly — which the M
 
 ## Reproduced by
 
-[TESTED_BY](/src/test/java/uk/co/terminological/bibliography/client/TestQueryTranslation.java)
+[TestQueryTranslation.java](/src/test/java/uk/co/terminological/bibliography/client/TestQueryTranslation.java)
 
 `entrezFiltersOnPublicationDateNotEntrezDate` and
 `entrezAlwaysSendsBothEndsOfADateRange`.
 
-## Suggested fix
 
 Use `datetype=pdat` in both `since()` and `until()`. For the one-sided case,
 fill the missing end in `withQuery` rather than in the builder methods — an open

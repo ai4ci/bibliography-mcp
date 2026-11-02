@@ -1,11 +1,26 @@
 ---
+title: Classify records by type with provenance
 status: final
-target-version: 0.2.0
-tags: model, provenance, zotero, accepted
+targetVersion: 0.2.0
+tags:
+- model
+- provenance
+- zotero
+- accepted
+HAS_PLAN:
+- plan:plan-002-record-type-publisher-provenance.md
+HAS_TEST:
+- testscript:test-002-api-behaviour-tests.md
+IMPLEMENTED_BY:
+- main:java/uk/co/terminological/bibliography/api/crossref/CrossRefWork.java
+- main:java/uk/co/terminological/bibliography/api/europepmc/EuropePMCLiteResult.java
+- main:java/uk/co/terminological/bibliography/mcp/McpTools.java
+- main:java/uk/co/terminological/bibliography/record/Record.java
+- main:java/uk/co/terminological/bibliography/record/MergedRecord.java
+- main:java/uk/co/terminological/bibliography/record/Provenance.java
+- main:java/uk/co/terminological/bibliography/record/PublicationTypes.java
+- main:java/uk/co/terminological/bibliography/record/Record.java
 ---
-<!-- @required: status one of draft|final|deprecated -->
-<!-- @required: target-version specified -->
-<!-- @optional: tags containing comma separated list of tags. -->
 
 ## Description
 
@@ -39,7 +54,7 @@ Measured against the developer's library (2060 top-level items):
 `article-journal` 75.2%, `webpage` 6.6%, `report` 4.8%, `document` 4.3% — a type
 field plus a publisher field covers **90.9%** of content faithfully; the
 remaining 9% is a tail needing one extra thing each (container, ISBN, version).
-Decisions and the full evidence are in [roadmap idea 3](/design/roadmap.md).
+Decisions and the full evidence are in [roadmap idea 3](/design/roadmap/index.md).
 
 ## Not in scope
 
@@ -49,26 +64,12 @@ engine (duplicates are tolerated and resolved in Zotero). Type is deliberately
 **not** added to `RecordReference` — the graph acquires types when nodes are
 fetched, and only one of four citation sources carries a type at all.
 
-## Linked artefacts
-
-- [HAS_PLAN](/design/implementation/plans/plan-002-record-type-publisher-provenance.md)
-- [HAS_TEST](/design/test-scripts/test-002-api-behaviour-tests.md)
-
 ## Implemented by
 
-- [IMPLEMENTED_BY](/src/main/java/uk/co/terminological/bibliography/record/Provenance.java)
-- [IMPLEMENTED_BY](/src/main/java/uk/co/terminological/bibliography/record/PublicationTypes.java)
-- [IMPLEMENTED_BY](/src/main/java/uk/co/terminological/bibliography/record/Record.java)
-- [IMPLEMENTED_BY](/src/main/java/uk/co/terminological/bibliography/record/ImmutableRecord.java)
-- [IMPLEMENTED_BY](/src/main/java/uk/co/terminological/bibliography/record/MergedRecord.java)
-- [IMPLEMENTED_BY](/src/main/java/uk/co/terminological/bibliography/crossref/CrossRefWork.java)
-- [IMPLEMENTED_BY](/src/main/java/uk/co/terminological/bibliography/europepmc/EuropePMCLiteResult.java)
-- [IMPLEMENTED_BY](/src/main/java/uk/co/terminological/bibliography/mcp/McpTools.java)
 
 The Zotero-side population (itemType, institution/publisher) lands with
 [feat-005](/design/features/feat-005-zotero-curated-repository-bridge.md);
 Entrez `PublicationTypeList` is deliberately left unparsed.
 
-## Related records
 
 - [issue-003](/design/implementation/issues/issue-003-merged-record-resolution-is-non-deterministic.md)

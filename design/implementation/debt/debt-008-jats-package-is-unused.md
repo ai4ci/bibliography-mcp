@@ -1,13 +1,14 @@
 ---
+title: Jats package is unused
 status: closed
-since-version: 0.1.0
-target-version: 0.4.0
-tags: dead-code, jats
+sinceVersion: 0.1.0
+targetVersion: 0.4.0
+tags:
+- dead-code
+- jats
+IMPACTS:
+- main:java/uk/co/terminological/bibliography/jats/JatsEntry.java
 ---
-<!-- @required: status one of open|closed -->
-<!-- @required: target-version specified -->
-<!-- @optional: since-version specified -->
-<!-- @optional: tags containing comma separated list of tags. -->
 
 ## Resolution
 
@@ -17,7 +18,6 @@ reference list — the only route to the references of a preprint that Europe PM
 not index. Two defects in it were fixed in the process (`getTitle()` scoped to the
 front matter, and the dropped citation index in `ImmutableCitationLink`).
 
-## Debt desc
 
 The `uk.co.terminological.bibliography.jats` package (`JatsEntry`, `JatsAuthor`,
 `JatsReference`, `JatsCitedAuthor`) is imported by nothing outside itself, and the
@@ -36,6 +36,3 @@ abstracts), which `PlainText` reduces to text. If the bridge ever ingests
 bioRxiv/medRxiv JATS documents properly, this is the starting point; otherwise it
 should be deleted.
 
-## Impacts
-
-- [IMPACTS](/src/main/java/uk/co/terminological/bibliography/jats/JatsEntry.java)

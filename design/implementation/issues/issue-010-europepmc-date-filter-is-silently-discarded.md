@@ -1,12 +1,18 @@
 ---
+title: Europepmc date filter is silently discarded
 status: closed
-since-version: 0.1.0
-target-version: 0.3.0
-tags: europepmc, search, query, dates, data-integrity
+sinceVersion: 0.1.0
+targetVersion: 0.3.0
+tags:
+- europepmc
+- search
+- query
+- dates
+- data-integrity
+TESTED_BY:
+- test:java/uk/co/terminological/bibliography/client/TestQueryTranslation.java
+- test:java/uk/co/terminological/bibliography/client/TestQueryTranslationLive.java
 ---
-<!-- @required: status one of open|closed -->
-<!-- @required: target-version specified -->
-<!-- @optional: tags containing comma separated list of tags. -->
 
 ## Resolution
 
@@ -66,15 +72,14 @@ with a larger limit passes it straight through.
 
 ## Reproduced by
 
-[TESTED_BY](/src/test/java/uk/co/terminological/bibliography/client/TestQueryTranslation.java)
-[TESTED_BY](/src/test/java/uk/co/terminological/bibliography/client/TestQueryTranslationLive.java)
+[TestQueryTranslation.java](/src/test/java/uk/co/terminological/bibliography/client/TestQueryTranslation.java)
+[TestQueryTranslationLive.java](/src/test/java/uk/co/terminological/bibliography/client/TestQueryTranslationLive.java)
 
 `europePmcBuildsABalancedQuery`, `europePmcLeavesAnUnaskedDateWindowAlone`,
 `europePmcRestrictsAJournalTermToTheJournalField` and
 `europePmcKeepsPageSizeWithinTheDocumentedMaximum` offline;
 `europePmcHonoursAPublicationDateWindow` live.
 
-## Suggested fix
 
 1. Drop the stray `)`. The offline balanced-parenthesis assertion will keep it
    from coming back.

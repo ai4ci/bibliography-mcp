@@ -1,12 +1,15 @@
 ---
+title: Merged record resolution is non deterministic
 status: closed
-since-version: 0.1.0
-target-version: 0.2.0
-tags: model, merge, data-integrity
+sinceVersion: 0.1.0
+targetVersion: 0.2.0
+tags:
+- model
+- merge
+- data-integrity
+TESTED_BY:
+- test:java/uk/co/terminological/bibliography/record/TestRecordMerge.java
 ---
-<!-- @required: status one of open|closed -->
-<!-- @required: target-version specified -->
-<!-- @optional: tags containing comma separated list of tags. -->
 
 ## Issue desc
 
@@ -30,12 +33,12 @@ and gives the user a UI to resolve them.
 Reproduction: `TestRecordMerge` demonstrates that swapping insertion order
 changes the returned title, and that a shared author appears twice.
 
-Supersedes [debt-004](/design/implementation/debt/debt-004-merged-field-resolution-has-no-policy.md),
-which recorded this as deferred debt when it should have been a defect.
+This was first recorded as deferred debt, which understated it: a merge that
+depends on insertion order is a defect, not a trade-off.
 
 ## Reproduced by
 
-[TESTED_BY](/src/test/java/uk/co/terminological/pubmedclient/TestRecordMerge.java)
+[TestRecordMerge.java](/src/test/java/uk/co/terminological/bibliography/record/TestRecordMerge.java)
 
 ## Resolution
 
@@ -46,7 +49,6 @@ fields, and curated values treated as authoritative. Fixed a second defect found
 while doing so: merging a `MergedRecord` into another flattened it to a single
 record, silently discarding every contribution but the first.
 
-## Fix
 
 [feat-007](/design/features/feat-007-predictable-record-merging.md) /
 [plan-003](/design/implementation/plans/plan-003-record-merge-policy.md).

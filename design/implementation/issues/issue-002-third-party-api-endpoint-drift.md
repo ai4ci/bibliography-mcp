@@ -1,12 +1,14 @@
 ---
+title: Third party api endpoint drift
 status: open
-since-version: 0.1.0
-target-version: 0.2.0
-tags: maintenance, api-drift
+sinceVersion: 0.1.0
+targetVersion: 0.2.0
+tags:
+- maintenance
+- api-drift
+TESTED_BY:
+- test:java/uk/co/terminological/bibliography/TestApiDriftParsing.java
 ---
-<!-- @required: status one of open|closed -->
-<!-- @required: target-version specified -->
-<!-- @optional: tags containing comma separated list of tags. -->
 
 ## Issue desc
 
@@ -24,8 +26,7 @@ The general lesson: treat a single-API empty result as suspicious rather than
 authoritative, and check the API's docs before assuming the query is wrong.
 
 No automated detection exists yet — a periodic live-API check would turn this
-from reactive into proactive (see [roadmap](/design/roadmap.md)).
+from reactive into proactive (see [roadmap](/design/roadmap/index.md)).
 
-## Reproduced by
 
-[TESTED_BY](/src/test/java/uk/co/terminological/pubmedclient/TestApiDriftParsing.java)
+[TestApiDriftParsing.java](/src/test/java/uk/co/terminological/bibliography/TestApiDriftParsing.java)

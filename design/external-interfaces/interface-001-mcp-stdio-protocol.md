@@ -1,11 +1,21 @@
 ---
+title: Mcp stdio protocol
 status: final
-target-version: 0.1.0
-tags: mcp, protocol
+targetVersion: 0.1.0
+tags:
+- mcp
+- protocol
+HAS_FEATURE:
+- feature:feat-001-expose-bibliographic-apis-over-mcp.md
+- feature:feat-002-explore-citation-networks-in-a-session.md
+- feature:feat-003-analyse-citation-graphs-and-topics.md
+HAS_TEST:
+- testscript:test-001-mcp-protocol-smoke-test.md
+- testscript:test-002-api-behaviour-tests.md
+IMPLEMENTED_BY:
+- main:java/uk/co/terminological/bibliography/mcp/McpServer.java
+- main:java/uk/co/terminological/bibliography/mcp/McpTools.java
 ---
-<!-- @required: status one of draft|final|deprecated -->
-<!-- @required: target-version specified -->
-<!-- @optional: tags containing comma separated list of tags. -->
 
 # MCP stdio protocol
 
@@ -52,7 +62,6 @@ Protocol failure — JSON-RPC error object:
 {"jsonrpc":"2.0","id":1,"error":{"code":-32601,"message":"Method not found: bogus"}}
 ```
 
-## Error codes
 
 | Code | When |
 |------|------|
@@ -65,15 +74,3 @@ Protocol failure — JSON-RPC error object:
 Worked examples for every workflow are in
 [skills/using-bibliographic-apis/references/mcp-call-sequences.md](/skills/using-bibliographic-apis/references/mcp-call-sequences.md).
 
-## Implemented by
-
-- [IMPLEMENTED_BY](/src/main/java/uk/co/terminological/bibliography/mcp/McpServer.java)
-- [IMPLEMENTED_BY](/src/main/java/uk/co/terminological/bibliography/mcp/McpTools.java)
-
-## Features
-
-- [HAS_FEATURE](/design/features/feat-001-expose-bibliographic-apis-over-mcp.md)
-- [HAS_FEATURE](/design/features/feat-002-explore-citation-networks-in-a-session.md)
-- [HAS_FEATURE](/design/features/feat-003-analyse-citation-graphs-and-topics.md)
-- [HAS_TEST](/design/test-scripts/test-001-mcp-protocol-smoke-test.md)
-- [HAS_TEST](/design/test-scripts/test-002-api-behaviour-tests.md)

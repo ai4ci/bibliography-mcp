@@ -1,7 +1,11 @@
 ---
+title: Async fetch queue
 status: draft
-parent-feature: feat-001-expose-bibliographic-apis-over-mcp
-depends-on: plan-008-search-deduplication.md
+targetVersion: unassigned
+HAS_FEATURE:
+- feature:feat-001-expose-bibliographic-apis-over-mcp.md
+DEPENDS_ON:
+- plan:plan-008-search-deduplication.md
 ---
 
 # Plan 009 — Async queue-based fetch
@@ -82,8 +86,6 @@ These are not canonical metadata sources. They are consulted only when a
 specific tool asks for OA location (Unpaywall) or preprint reference lists
 (medRxiv). They are not part of the fetch loop by default.
 
-## Changes needed
-
 ### `BiblioFacade.fetch()` — rewrite
 
 Replace the sequential `fetchApis.forEach(...)` block (lines ~243-267) with
@@ -152,7 +154,6 @@ private Map<ImmutableRecordReference, ? extends Record> fetchFromApi(
    can produce this — it just needs to track which API contributed which
    fields.
 
-## Risks
 
 - Threading complexity: the current code is purely synchronous. Introducing
   concurrent workers adds a new class of bugs (race conditions on the shared

@@ -1,13 +1,13 @@
 ---
+title: Javadoc build cannot see generated sources
 status: open
-since-version: 0.1.0
-target-version: 0.3.0
-tags: build, documentation, immutables
+sinceVersion: 0.1.0
+targetVersion: 0.3.0
+tags:
+- build
+- documentation
+- immutables
 ---
-<!-- @required: status one of open|closed -->
-<!-- @required: target-version specified -->
-<!-- @optional: since-version specified -->
-<!-- @optional: tags containing comma separated list of tags. -->
 
 ## Debt desc
 
@@ -43,6 +43,5 @@ real problems in several hundred lines of noise, so whatever configuration is
 added should also set the doclint level deliberately rather than leaving it at
 the default.
 
-## Impacts
 
 - [IMPACTS](/pom.xml)

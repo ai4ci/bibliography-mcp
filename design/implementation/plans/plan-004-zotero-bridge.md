@@ -1,18 +1,21 @@
 ---
+title: Zotero bridge
 status: final
-target-version: 0.2.0
-tags: zotero, mcp, repository
+targetVersion: 0.2.0
+tags:
+- zotero
+- mcp
+- repository
+HAS_FEATURE:
+- feature:feat-005-zotero-curated-repository-bridge.md
 ---
-<!-- @required: status one of draft|final|deprecated -->
-<!-- @required: target-version specified -->
-<!-- @optional: tags containing comma separated list of tags. -->
 
 <!-- acts as a description of what will be implemented to allow review and sign-off -->
 
 ## Feature
 
-[HAS_FEATURE](/design/features/feat-005-zotero-curated-repository-bridge.md)
-Design context: [roadmap idea 2](/design/roadmap.md).
+[feat-005-zotero-curated-repository-bridge](/design/features/feat-005-zotero-curated-repository-bridge.md)
+Design context: [roadmap idea 2](/design/roadmap/index.md).
 
 ## Approach
 
@@ -52,7 +55,7 @@ Design context: [roadmap idea 2](/design/roadmap.md).
       `zotero_publish` (sub-collection + add missing items), `zotero_tag`
       (union tags, version-preconditioned, retry once on 412).
 - [ ] `zotero_enrich_report` (dry-run gaps report, no writes) — moved to
-      [feat-008](/design/features/feat-008-report-stale-library-metadata.md).
+      [feat-008](/design/features/feat-008-clean-up-collection-metadata.md).
 - [x] Batch the tagging: tags are applied to up to 50 items in **one** request,
       because a Zotero write authorisation is usually single-use and each request is
       a permission prompt (Zotero allows five prompts a minute).
@@ -86,9 +89,8 @@ Design context: [roadmap idea 2](/design/roadmap.md).
 
 - [x] `mvn -o test` (52 tests), `mvn -o test-compile`
 - [x] `./scripts/mcp-smoke-test.sh` (27 tools listed, offline round trips)
-- [x] `Rscript …/design-check.R -d .` → 0 defects
+- [x] `loom validate` → ok: true
 
-## Open questions
 
 - Date precision: a year-only Zotero date cannot be a `LocalDate`; plan is to map
   `YYYY` → Jan 1 and `YYYY-MM` → the 1st, documented as lossy, rather than dropping

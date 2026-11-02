@@ -1,9 +1,8 @@
 ---
+title: Hand rolled mcp protocol
 status: final
-target-version: "0.1.0"
+targetVersion: 0.1.0
 ---
-<!-- @required: status one of draft|final|deprecated -->
-<!-- @required: target-version specified -->
 
 # Hand-roll the MCP protocol rather than adopt an SDK
 
@@ -33,7 +32,6 @@ Hand-roll the protocol in `McpServer` using Jackson, with tool definitions in
 * Keeping the dependency surface small preserves offline builds and matches
   the project's existing minimal-dependency style.
 
-## Consequences
 
 * Only the subset is implemented: no resources, prompts, subscriptions,
   `listChanged` notifications, or protocol-version negotiation beyond echoing

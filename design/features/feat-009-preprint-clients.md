@@ -1,11 +1,20 @@
 ---
+title: Preprint clients
 status: draft
-target-version: 0.4.0
-tags: arxiv, medrxiv, preprints, proposed
+targetVersion: 0.4.0
+tags:
+- arxiv
+- medrxiv
+- preprints
+- proposed
+HAS_PLAN:
+- plan:plan-006-preprint-clients.md
+HAS_TEST:
+- testscript:test-005-preprint-tests.md
+IMPLEMENTED_BY:
+- main:java/uk/co/terminological/bibliography/api/medrxiv/MedrxivClient.java
+- main:java/uk/co/terminological/bibliography/api/medrxiv/MedrxivRecord.java
 ---
-<!-- @required: status one of draft|final|deprecated -->
-<!-- @required: target-version specified -->
-<!-- @optional: tags containing comma separated list of tags. -->
 
 ## Description
 
@@ -189,20 +198,10 @@ already exists.
   is a different interface with a different shape.
 - Replacing the medRxiv HTML search scraper — left in place, unused.
 
-## References
 
-- [arXiv API User's Manual](/docs/references/arXiv%20API%20User's%20Manual.md) —
+- [arXiv API User's Manual](<docs/references/arXiv API User's Manual.md>) —
   the parameters, paging limits, sort options, Atom fields and error behaviour this
   plan is based on. Kept outside `design/` because it is a verbatim third-party
   document rather than a design artefact, and because its external URLs would be
   read as repo-relative links by the design checker.
 
-## Linked artefacts
-
-- [HAS_PLAN](/design/implementation/plans/plan-006-preprint-clients.md)
-- [HAS_TEST](/design/test-scripts/test-005-preprint-tests.md)
-
-## Implemented by
-
-- [IMPLEMENTED_BY](/src/main/java/uk/co/terminological/bibliography/medrxiv/MedrxivClient.java)
-- [IMPLEMENTED_BY](/src/main/java/uk/co/terminological/bibliography/medrxiv/MedrxivRecord.java)

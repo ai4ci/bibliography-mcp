@@ -1,13 +1,16 @@
 ---
+title: Fetch is incomplete by id type
 status: open
-since-version: 0.1.0
-target-version: 0.3.0
-tags: api-client, id-types
+sinceVersion: 0.1.0
+targetVersion: 0.3.0
+tags:
+- api-client
+- id-types
+IMPACTS:
+- main:java/uk/co/terminological/bibliography/api/crossref/CrossRefClient.java
+- main:java/uk/co/terminological/bibliography/api/BiblioFacade.java
+- main:java/uk/co/terminological/bibliography/api/unpaywall/UnpaywallClient.java
 ---
-<!-- @required: status one of open|closed -->
-<!-- @required: target-version specified -->
-<!-- @optional: since-version specified -->
-<!-- @optional: tags containing comma separated list of tags. -->
 
 ## Debt desc
 
@@ -29,7 +32,6 @@ Consequence: an agent that only has a PMID gets Europe PMC's record but not
 CrossRef's publisher/type or Unpaywall's open-access location, and nothing in the
 response says a source was skipped.
 
-## Options
 
 | # | Option | Effort | Risk |
 |---|--------|--------|------|
@@ -42,8 +44,3 @@ in practice. Recorded rather than fixed because an open issue is expected to car
 a reproducing test and there is no offline seam today — the same reason the
 `getById` behaviour cannot be asserted without network.
 
-## Impacts
-
-- [IMPACTS](/src/main/java/uk/co/terminological/bibliography/crossref/CrossRefClient.java)
-- [IMPACTS](/src/main/java/uk/co/terminological/bibliography/unpaywall/UnpaywallClient.java)
-- [IMPACTS](/src/main/java/uk/co/terminological/bibliography/mcp/BiblioFacade.java)

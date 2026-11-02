@@ -36,7 +36,7 @@ the EHCache directory:
     "bibliographic-api-client": {
       "command": "java",
       "args": [
-        "-jar", "/path/to/target/bibliographic-api-client-master-SNAPSHOT.jar",
+        "-jar", "/path/to/target/bibliographic-api-client-0.0.9-SNAPSHOT.jar",
         "/path/to/.private/apis/secrets.prop",
         "/tmp/ehcache/biblio"
       ]
@@ -88,7 +88,8 @@ Writes are off by default; see [Zotero configuration](design/external-interfaces
 ## Plain-Java facade
 
 The same functionality is available programmatically without MCP, via
-`uk.co.terminological.bibliography.mcp.BiblioFacade` and `Session`:
+`uk.co.terminological.bibliography.api.BiblioFacade` and
+`uk.co.terminological.bibliography.mcp.Session`:
 
 ```java
 BiblioFacade facade = new BiblioFacade(secretsPath, cacheDir);

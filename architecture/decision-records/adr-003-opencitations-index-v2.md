@@ -1,9 +1,8 @@
 ---
+title: Opencitations index v2
 status: final
-target-version: "0.1.0"
+targetVersion: 0.1.0
 ---
-<!-- @required: status one of draft|final|deprecated -->
-<!-- @required: target-version specified -->
 
 # Use OpenCitations Index v2, with a longer read timeout
 
@@ -37,7 +36,6 @@ identifier, parse the PID list to extract the DOI token, give
   needs ([issue-001](/design/implementation/issues/issue-001-non-doi-citation-links-dropped.md)).
 * The parsing changes are small and local to `OpenCitationsCitation`.
 
-## Consequences
 
 * The published rate limit (180/minute) is now respected; the previous
   50/second bucket was ~17× over it.

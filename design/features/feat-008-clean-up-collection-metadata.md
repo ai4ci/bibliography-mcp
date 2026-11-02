@@ -1,11 +1,23 @@
 ---
+title: Clean up collection metadata
 status: final
-target-version: 0.3.0
-tags: zotero, enrichment, metadata
+targetVersion: 0.3.0
+tags:
+- zotero
+- enrichment
+- metadata
+HAS_PLAN:
+- plan:plan-005-metadata-cleanup.md
+HAS_TEST:
+- testscript:test-004-metadata-cleanup-tests.md
+IMPLEMENTED_BY:
+- main:java/uk/co/terminological/bibliography/api/crossref/CrossRefWork.java
+- main:java/uk/co/terminological/bibliography/mcp/McpTools.java
+- main:java/uk/co/terminological/bibliography/record/PlainText.java
+- main:java/uk/co/terminological/bibliography/api/zotero/MetadataComparison.java
+- main:java/uk/co/terminological/bibliography/api/zotero/ZoteroClient.java
+- main:java/uk/co/terminological/bibliography/api/zotero/ZoteroItemWriter.java
 ---
-<!-- @required: status one of draft|final|deprecated -->
-<!-- @required: target-version specified -->
-<!-- @optional: tags containing comma separated list of tags. -->
 
 ## Description
 
@@ -111,21 +123,6 @@ non-existent `container` field, so it was always reported as fillable and an upd
 using that name would have been refused; and Unpaywall reports every author as
 "Unknown", which made every item it appeared on look like an author conflict.
 
-## Linked artefacts
-
-- [HAS_PLAN](/design/implementation/plans/plan-005-metadata-cleanup.md)
-- [HAS_TEST](/design/test-scripts/test-004-metadata-cleanup-tests.md)
-
-## Implemented by
-
-- [IMPLEMENTED_BY](/src/main/java/uk/co/terminological/zotero/MetadataComparison.java)
-- [IMPLEMENTED_BY](/src/main/java/uk/co/terminological/bibliography/record/PlainText.java)
-- [IMPLEMENTED_BY](/src/main/java/uk/co/terminological/bibliography/crossref/CrossRefWork.java)
-- [IMPLEMENTED_BY](/src/main/java/uk/co/terminological/zotero/ZoteroClient.java)
-- [IMPLEMENTED_BY](/src/main/java/uk/co/terminological/zotero/ZoteroItemWriter.java)
-- [IMPLEMENTED_BY](/src/main/java/uk/co/terminological/bibliography/mcp/McpTools.java)
-
-## Not in scope
 
 - Attachments and PDF retrieval (roadmap E3): file uploads are the least reversible
   write and need a separate Zotero instance to test against.

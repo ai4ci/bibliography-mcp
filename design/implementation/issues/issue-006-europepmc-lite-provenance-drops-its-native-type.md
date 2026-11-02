@@ -1,12 +1,16 @@
 ---
+title: Europepmc lite provenance drops its native type
 status: closed
-since-version: 0.2.0
-target-version: 0.2.0
-tags: model, provenance, europepmc, refactor-regression
+sinceVersion: 0.2.0
+targetVersion: 0.2.0
+tags:
+- model
+- provenance
+- europepmc
+- refactor-regression
+TESTED_BY:
+- test:java/uk/co/terminological/bibliography/record/TestRecordModel.java
 ---
-<!-- @required: status one of open|closed -->
-<!-- @required: target-version specified -->
-<!-- @optional: tags containing comma separated list of tags. -->
 
 ## Issue desc
 
@@ -37,12 +41,11 @@ not have caught the regression either.
 
 ## Reproduced by
 
-[TESTED_BY](/src/test/java/uk/co/terminological/bibliography/record/TestRecordModel.java)
+[TestRecordModel.java](/src/test/java/uk/co/terminological/bibliography/record/TestRecordModel.java)
 
 `europePmcLitePubTypeStringMapsToCsl` asserts the native pubType string survives
 on provenance.
 
-## Resolution
 
 Fixed in [EuropePMCLiteResult](/src/main/java/uk/co/terminological/bibliography/api/europepmc/EuropePMCLiteResult.java):
 the provenance is built from the native pub types, falling back to the

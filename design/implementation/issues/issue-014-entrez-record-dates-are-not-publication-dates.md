@@ -1,12 +1,16 @@
 ---
+title: Entrez record dates are not publication dates
 status: open
-since-version: 0.1.0
-target-version: 0.3.0
-tags: entrez, model, dates, parsing
+sinceVersion: 0.1.0
+targetVersion: 0.3.0
+tags:
+- entrez
+- model
+- dates
+- parsing
+TESTED_BY:
+- test:java/uk/co/terminological/bibliography/api/entrez/TestEntrezExtraction.java
 ---
-<!-- @required: status one of open|closed -->
-<!-- @required: target-version specified -->
-<!-- @optional: tags containing comma separated list of tags. -->
 
 ## Issue desc
 
@@ -53,13 +57,12 @@ about the query rather than about the parsing.
 
 ## Reproduced by
 
-[TESTED_BY](/src/test/java/uk/co/terminological/bibliography/api/entrez/TestEntrezExtraction.java)
+[TestEntrezExtraction.java](/src/test/java/uk/co/terminological/bibliography/api/entrez/TestEntrezExtraction.java)
 
 `theRecordDateIsWhenTheWorkWasPublished` pins `getDate()` against the recorded
 `fixtures/entrez/efetch-pmid.xml`, whose `PubDate` is 2026-03-26 while the
 parsed value is 2026-03-27.
 
-## Suggested fix
 
 Make `getDate()` the earliest publication date, matching what `pdat` means:
 prefer `Article/ArticleDate` where present, fall back to

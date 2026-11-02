@@ -1,13 +1,19 @@
 ---
+title: Preprint tests
 status: final
-target-version: 0.4.0
-tags: medrxiv, preprint, jats
+targetVersion: 0.4.0
+tags:
+- medrxiv
+- preprint
+- jats
+HAS_FEATURE:
+- feature:feat-009-preprint-clients.md
+TESTED_BY:
+- test:java/uk/co/terminological/bibliography/api/TestCitationDedupe.java
+- test:java/uk/co/terminological/bibliography/api/medrxiv/TestMedrxivRecords.java
+- test:java/uk/co/terminological/citations/TestCitationLinkParsing.java
+- test:java/uk/co/terminological/jats/TestJatsReferences.java
 ---
-<!-- @required: status one of draft|final|deprecated -->
-<!-- @required: target-version specified -->
-<!-- @optional: tags containing comma separated list of tags. -->
-
-## Scripts
 
 ### 1) medRxiv records and references (offline)
 
@@ -26,7 +32,7 @@ tags: medrxiv, preprint, jats
     position, and a reference without a DOI is still a (incomplete) citation.
  4. Cleanup: none — offline.
 
-[TESTED_BY](/src/test/java/uk/co/terminological/bibliography/medrxiv/TestMedrxivRecords.java)
+[TestMedrxivRecords.java](/src/test/java/uk/co/terminological/bibliography/api/medrxiv/TestMedrxivRecords.java)
 
 ### 2) The reference-list parser (offline)
 
@@ -42,7 +48,7 @@ tags: medrxiv, preprint, jats
     still returned as an incomplete reference rather than dropped.
  4. Cleanup: none — offline.
 
-[TESTED_BY](/src/test/java/uk/co/terminological/jats/TestJatsReferences.java)
+[TestJatsReferences.java](/src/test/java/uk/co/terminological/jats/TestJatsReferences.java)
 
 ### 3) Citations from two sources are one citation (offline)
 
@@ -54,7 +60,7 @@ tags: medrxiv, preprint, jats
     distinct citations (which happened in a live run: 31 references became 17).
  4. Cleanup: none — offline.
 
-[TESTED_BY](/src/test/java/uk/co/terminological/bibliography/mcp/TestCitationDedupe.java)
+[TestCitationDedupe.java](/src/test/java/uk/co/terminological/bibliography/api/TestCitationDedupe.java)
 
 ### 4) Searching a window (offline)
 
@@ -67,7 +73,7 @@ tags: medrxiv, preprint, jats
     was removed rather than answer "unpublished" wrongly (see feat-009).
  4. Cleanup: none — offline.
 
-[TESTED_BY](/src/test/java/uk/co/terminological/bibliography/medrxiv/TestMedrxivRecords.java)
+[TestMedrxivRecords.java](/src/test/java/uk/co/terminological/bibliography/api/medrxiv/TestMedrxivRecords.java)
 
 ### 5) The citation sources whose links were unusable (offline)
 
@@ -83,9 +89,8 @@ tags: medrxiv, preprint, jats
     and the total fell to 64 because the links now deduplicate properly.
  4. Cleanup: none — offline.
 
-[TESTED_BY](/src/test/java/uk/co/terminological/citations/TestCitationLinkParsing.java)
+[TestCitationLinkParsing.java](/src/test/java/uk/co/terminological/citations/TestCitationLinkParsing.java)
 
-### 6) Live, read-only
 
  1. Setup: a medRxiv DOI (`10.1101/2021.02.09.21250937`) and the MCP server.
  2. Execution: `cites` and `cited_by` with that DOI.
@@ -97,6 +102,3 @@ tags: medrxiv, preprint, jats
     exercised: `fetch` by the same DOI.
  4. Cleanup: none.
 
-## Features
-
-- [HAS_FEATURE](/design/features/feat-009-preprint-clients.md)
