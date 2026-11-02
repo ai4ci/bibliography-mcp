@@ -97,6 +97,9 @@ interface above hides which is in place.
 ## Work items
 
 1. Prototype A and B against the goals; record the measurements here and pick.
+   Repository lives under
+   [adr-005](/architecture/decision-records/adr-005-repository-uses-xdg-data-home.md),
+   not the `/tmp` cache.
 2. `RepositoryStore` interface + DTO layer + schema version constant.
 3. Migration reader: decode an old `.ser` file once, write it into the new
    format, report what could not be read. `load_repository` calls it when the
@@ -112,12 +115,16 @@ to delegate: `add`, `merge`, `status`, `records`,
 
 ## Open questions
 
-- Where does the default repository live? Options: the `cache-directory` from
-  `interface-002`, a new `repository-directory`, or an explicit path per
-  `save`. Explicit beats implicit for a file the developer will want to keep.
+- ~~Where does the default repository live?~~ Decided 2026-11-02: an implicit
+  `$XDG_DATA_HOME/bibliographic-api-client/repositories/` with a
+  `repository-directory` override, one repository per subdirectory. See
+  [adr-005](/architecture/decision-records/adr-005-repository-uses-xdg-data-home.md).
+  It must **not** reuse `cache-directory`, which points under `/tmp` and is
+  wipeable by design.
+- Confirm the repository-name scheme (a `name` argument rather than a path) is
+  workable for `repository(action=save|load)` once the smoke script exercises it.
 - Does one store hold multiple named repositories, or one repository per file?
-  Multiple named repositories matches "create a repository from these search
-  results" better but complicates the tool arguments.
+  ADR-005 assumes the former; revisit if the tool arguments get awkward.
 - Retention: does a finished crawl's frontier stay in the file forever?
 - Is `MergePolicy` applied on `putRecord` (write-time merge, cheap to read) or
   on read (keeps provenance per source, expensive)? Write-time is what

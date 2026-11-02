@@ -14,6 +14,8 @@ HAS_PLAN:
 - plan:plan-012-workflow-tool-surface.md
 HAS_INTERFACE:
 - interface:interface-001-mcp-stdio-protocol.md
+HAS_PROTOTYPE:
+- prototype:prototype-003-zotero-attachment-paths.md
 HAS_TEST:
 - testscript:test-001-mcp-protocol-smoke-test.md
 ---

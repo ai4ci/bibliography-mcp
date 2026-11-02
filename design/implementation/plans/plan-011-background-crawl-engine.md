@@ -68,7 +68,8 @@ CrawlJob {
   int maxRecords; Map<RecordReference,Integer> depthOf;
   Deque<RecordReference> frontier; Set<RecordReference> visited;
   JobStatus status;                 // RUNNING | PAUSED | DONE | CANCELLED | FAILED
-  Map<String,Integer> callsPerApi;  int errors; Instant startedAt, finishedAt;
+  Map<String,Integer> callsPerApi;  Map<String,Integer> creditsPerApi;
+  int errors; Instant startedAt, finishedAt;
 }
 ```
 
@@ -89,16 +90,23 @@ CrawlJob {
   mid-socket. Same decision plan-009 reached for queue cancellation: do not
   touch in-flight HTTP.
 - **Politeness.** Per-API rate limits already exist (`TokenBuckets`) and are
-  inherited for free. The job adds `maxCalls`; when the ceiling is hit the job
-  ends `DONE` with `stoppedBy: callCeiling` recorded, so status explains why it
-  stopped rather than looking truncated.
+  inherited for free. The job adds a **spend ceiling**: free APIs count calls,
+  and OpenAlex counts **credits read back from `X-RateLimit-Credits-Used`**,
+  because a downward crawl there is free per node while an upward one costs 1 per
+  seed and a search costs 10 — see
+  [prototype-002](/design/prototypes/prototype-002-openalex-cost-and-record-shape.md).
+  A call-count ceiling alone would be wrong in both directions on that source.
+  When the ceiling is hit the job ends `DONE` with `stoppedBy: spendCeiling`
+  recorded, so status explains why it stopped rather than looking truncated.
 - **Failure.** A client that throws marks the record `ERROR`, increments
   `errors`, and continues. Never let one bad id kill a crawl. Note that
-  `CachingApiClient` maps non-2xx to `Optional.empty()`, so "no result" and
-  "API broken" are indistinguishable at this layer — that is
+  `CachingApiClient` maps non-2xx to `Optional.empty()` (`CachingApiClient.java:403`),
+  so "no result" and "API broken" are indistinguishable at this layer — that is
   [issue-013](/design/implementation/issues/issue-013-one-failing-api-empties-multisearch.md)
   and the crawl inherits it; the error count only catches exceptions that do
-  escape.
+  escape. It also means a **rate-limit refusal looks like an empty result** on a
+  credit-metered API, which is the strongest argument for fixing issue-013 before
+  a large crawl depends on it.
 
 ### Resolved from plan-009's open questions
 
@@ -154,5 +162,9 @@ Live, `@Category(LiveTest.class)`, one small job:
 - Should `start_crawl` accept a saved query or a selection instead of an
   explicit id list, so workflow 3 reads "crawl what I selected"? That is a
   plan-012 argument-shaping question; the engine takes ids either way.
+  **Reconsidered:** with OpenAlex the default `depth` and `maxRecords` can be far
+  larger than anything sensible today, since a downward hop is free there — so if
+  [feat-011](/design/features/feat-011-openalex-as-a-provider.md) lands first,
+  revisit the defaults here rather than inheriting OpenCitations-era ones.
 - Single job at a time is decided; does that need to be a lock on the store, in
   case two server processes open the same repository?

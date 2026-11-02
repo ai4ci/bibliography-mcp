@@ -28,6 +28,8 @@ fails the build instead of quietly lying.
 - [Predictable record merging](features/feat-007-predictable-record-merging.md)
 - [Clean up collection metadata](features/feat-008-clean-up-collection-metadata.md)
 - [Preprint clients](features/feat-009-preprint-clients.md)
+- [Crawl engine with Zotero mirror](features/feat-010-crawl-engine-with-zotero-mirror.md)
+- [OpenAlex as a provider](features/feat-011-openalex-as-a-provider.md)
 <!-- loom:links end -->
 
 ## Work in progress
@@ -69,6 +71,6 @@ fails the build instead of quietly lying.
 
 | status | features |
 | --- | --- |
-| draft | 3 |
+| draft | 4 |
 | final | 7 |
 <!-- loom view: features_by_state end -->
