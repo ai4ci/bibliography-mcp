@@ -2,14 +2,16 @@
 class: issue
 id: issue-022-shaded-jar-cannot-render-citations.md
 title: Shaded jar cannot render citations
-status: open
+status: closed
 sinceVersion: 0.0.6
-targetVersion: unassigned
+targetVersion: 0.0.11
 tags:
 - bug
 - packaging
 - citation-formatting
 - mcp
+TESTED_BY:
+- scripts:RenderCheck.java
 ---
 ## Issue desc
 
@@ -92,3 +94,42 @@ in order of preference:
 
 Whichever is chosen, the smoke test should render one citation rather than only
 listing styles, since that is the assertion that would have caught this.
+
+## Closed
+
+Fixed in 0.0.11 by option 1: **the build no longer shades**. `maven-shade-plugin`
+is replaced by `maven-dependency-plugin` copying the runtime dependencies to
+`target/lib/`, and `maven-jar-plugin` writing a manifest that names them —
+`Main-Class` plus a `Class-Path` of `lib/*`. `java -jar target/<jar>` works as
+before; `lib/` has to stay beside the jar.
+
+Each dependency keeps its own archive, so each keeps its own
+`META-INF/truffle/language`, and the `regex` language is registered again. The
+artefact also went from ~122 MB to ~460 KB plus 82 dependency jars. The size was
+the original reason for shading — minimising an R package — and ADR-001 records
+that the R interface is gone, so the reason went with it.
+
+Verified three ways rather than asserted:
+
+| | before | after |
+|---|---|---|
+| `Record.render("ieee")` on the built jar | `Optional.empty` | the rendered citation |
+| `citation_style` + `fetch` over the stdio protocol | no `citation` field | `[1]R. Challen, "Artificial intelligence, bias and clinical safety.," BMJ Qual Saf, Jan. 2019.` |
+| `scripts/RenderCheck.java` on the built jar | exit 1 | exit 0 |
+
+The middle row is the one that matters: it is the server an agent talks to.
+
+### The check that would have caught it
+
+`scripts/RenderCheck.java` renders one citation from a literal record, using the
+built jar's classpath, and `scripts/mcp-smoke-test.sh` runs it after the protocol
+round trips. It was run against a rebuilt shaded jar first and **failed**, so it
+tests what it claims to.
+
+It is deliberately not a surefire test. Surefire runs against the separate
+dependency jars however the build packages them, so no unit test can see this
+class of failure — which is why a 190-test suite was green throughout.
+
+Option 3 is also worth doing and is **not** done: `Record.render` still answers an
+exception with `Optional.empty()` and logs nothing, which is what let this hide.
+That is now the remaining part of this story, and it is cheap.

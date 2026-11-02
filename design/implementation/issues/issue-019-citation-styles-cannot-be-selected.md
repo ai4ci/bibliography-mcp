@@ -74,15 +74,23 @@ on [debt-001](../debt/debt-001-session-persistence-uses-java-serialization.md).
 
 Pinned by `TestCitationStyleTool`, written and proven to fail first.
 
-### One caveat, found while verifying this through the protocol
+### A caveat, found while verifying this through the protocol — and since fixed
 
-Selecting a style works; **rendering does not, in the shaded jar**. The tool sets
-the style, the server accepts it, and no record carries a `citation` field —
-because `Record.render` fails inside the shaded jar for a packaging reason that
-has nothing to do with this issue, and fails silently. That is written up as
-[issue-022](issue-022-shaded-jar-cannot-render-citations.md).
+Selecting a style worked immediately; **rendering did not, in the shaded jar**.
+The tool set the style, the server accepted it, and no record carried a
+`citation` field, because `Record.render` failed inside the shaded jar for a
+packaging reason with nothing to do with this issue — and failed silently. That
+was written up as
+[issue-022](issue-022-shaded-jar-cannot-render-citations.md) and fixed in the
+same release by dropping the shading.
 
-So this issue is closed on its own terms — the style is selectable and the
-condition in `recordJson` is reachable — and the capability it was about will not
-be visible to an agent until issue-022 is dealt with. The unit tests pass because
-they run on the ordinary classpath, where rendering works.
+The end-to-end result, over the stdio protocol against the built jar:
+
+```
+citation_style {"style":"ieee"}  ->  {"style":"ieee"}
+fetch 10.1136/bmjqs-2018-008370  ->  "citation": "[1]R. Challen, “Artificial
+    intelligence, bias and clinical safety.,” BMJ Qual Saf, Jan. 2019."
+```
+
+The silence that hid it is recorded separately as
+[debt-013](../debt/debt-013-record-render-swallows-its-failures.md).

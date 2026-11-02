@@ -1,10 +1,14 @@
 package uk.co.terminological.bibliography.mcp;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -44,14 +48,42 @@ public class TestMcpToolSurface {
 			.orElseThrow();
 	}
 
-	@Test
-	public void theSearchToolOffersOpenAlexAsAnApi() {
-		var apis = tool("search").inputSchema.get("properties")
+	/** the `apis` enum the search tool advertises, in order */
+	private static List<String> advertisedSearchApis() {
+		List<String> out = new ArrayList<>();
+		tool("search").inputSchema.get("properties")
 			.get("apis")
 			.get("items")
 			.get("enum")
-			.toString();
-		assertTrue(apis, apis.contains("openalex"));
+			.forEach(n -> out.add(n.asText()));
+		return out;
+	}
+
+	@Test
+	public void theSearchToolOffersOpenAlexAsAnApi() {
+		assertTrue(
+			advertisedSearchApis().toString(),
+			advertisedSearchApis()
+				.contains("openalex")
+		);
+	}
+
+	@Test
+	public void theSearchToolOffersExactlyTheApisTheFacadeCanSearch() {
+		// issue-020: the enum named an API the facade cannot route, so asking for it
+		// was a search that could only ever return nothing. One list, named here, is
+		// what stops the two drifting apart again.
+		assertEquals(BiblioFacade.searchableApis(), advertisedSearchApis());
+	}
+
+	@Test
+	public void medrxivIsNotOfferedAsASearchApi() {
+		// not an oversight: bioRxiv serves a Cloudflare challenge to any programmatic
+		// client, and preprints are searched through Europe PMC instead (issue-015)
+		assertFalse(
+			advertisedSearchApis()
+				.contains("medrxiv")
+		);
 	}
 
 }

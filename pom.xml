@@ -199,38 +199,48 @@
 				</configuration>
 			</plugin>
 
+			<!-- The runnable artefact is a thin jar beside target/lib, not a fat one.
+			     maven-shade used to flatten every dependency into one jar, which silently
+			     dropped resources that two jars publish at the same path: GraalJS and its
+			     regex language both register through META-INF/truffle/language, only one
+			     survived, and every citation render in the built server failed as a result
+			     (issue-022). Keeping the dependency jars intact keeps their resources
+			     intact, and `java -jar` still works because the manifest names them. -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-shade-plugin</artifactId>
-				<version>3.6.2</version>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>3.7.0</version>
 				<executions>
 					<execution>
-						<phase>package</phase>
+						<id>copy-runtime-dependencies</id>
+						<phase>prepare-package</phase>
 						<goals>
-							<goal>shade</goal>
+							<goal>copy-dependencies</goal>
 						</goals>
 						<configuration>
-							<transformers>
-								<transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
-								<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-									<mainClass>uk.co.terminological.bibliography.mcp.McpServer</mainClass>
-								</transformer>
-							</transformers>
-							<filters>
-								<filter>
-									<artifact>*:*</artifact>
-									<excludes>
-										<exclude>META-INF/*.SF</exclude>
-										<exclude>META-INF/*.DSA</exclude>
-										<exclude>META-INF/*.RSA</exclude>
-									</excludes>
-								</filter>
-							</filters>
+							<outputDirectory>${project.build.directory}/lib</outputDirectory>
+							<includeScope>runtime</includeScope>
+							<overWriteReleases>false</overWriteReleases>
+							<overWriteSnapshots>true</overWriteSnapshots>
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
-			
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.4.2</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>uk.co.terminological.bibliography.mcp.McpServer</mainClass>
+							<addClasspath>true</addClasspath>
+							<classpathPrefix>lib/</classpathPrefix>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>			
 		</plugins>
 	</build>
 </project>

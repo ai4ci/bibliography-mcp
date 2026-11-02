@@ -1,7 +1,8 @@
 #!/bin/bash
 # [TESTS](/design/test-scripts/test-001-mcp-protocol-smoke-test.md)
 # Smoke test for the MCP stdio server: runs offline protocol round trips
-# against the shaded jar and asserts valid JSON-RPC responses.
+# against the built jar and asserts valid JSON-RPC responses, then checks that the
+# packaging can still render a citation (issue-022).
 # Usage: scripts/mcp-smoke-test.sh [path-to-jar] [secrets-path]
 set -e
 JAR=${1:-$(ls target/bibliographic-api-client-*.jar 2>/dev/null | head -1)}
@@ -27,7 +28,15 @@ assert 2 in by_id and "tools" in by_id[2]["result"], "tools/list failed"
 names = [t["name"] for t in by_id[2]["result"]["tools"]]
 assert "search" in names and "page_rank" in names and "topic_model" in names, f"missing tools: {names}"
 assert 3 in by_id and by_id[3]["result"]["isError"] is False, "citation_styles failed"
+assert "citation_style" in names, f"no way to select a style: {names}"
 assert 4 in by_id and "Records:" in by_id[4]["result"]["content"][0]["text"], "session_status failed"
 assert 5 in by_id and by_id[5]["error"]["code"] == -32601, "unknown method not handled"
 print(f"MCP smoke test PASSED: {len(names)} tools, protocol round trips OK")
 '
+
+# Rendering a citation goes through a javascript engine whose language registration
+# lives in a dependency's resources, so it is the packaging rather than the code that
+# decides whether it works — and the test suite cannot tell, because surefire runs
+# against the separate dependency jars whatever the build packages (issue-022).
+# Offline: the record is a literal.
+java -cp "$JAR" scripts/RenderCheck.java

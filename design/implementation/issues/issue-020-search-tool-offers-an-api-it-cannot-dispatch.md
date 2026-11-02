@@ -2,13 +2,15 @@
 class: issue
 id: issue-020-search-tool-offers-an-api-it-cannot-dispatch.md
 title: Search tool offers an api it cannot dispatch
-status: open
+status: closed
 sinceVersion: 0.0.6
-targetVersion: unassigned
+targetVersion: 0.0.11
 tags:
 - bug
 - mcp
 - search
+TESTED_BY:
+- test:java/uk/co/terminological/bibliography/mcp/TestMcpToolSurface.java
 ---
 ## Issue desc
 
@@ -44,3 +46,16 @@ name the schema no longer offers.
 
 A test that the schema's enum and the dispatcher's branches are the same set would
 stop the two drifting again; `TestMcpToolSurface` is where it belongs.
+
+## Closed
+
+Fixed in 0.0.11, and by removing the second list rather than by removing one
+entry from it. `BiblioFacade.searchableApis()` is now the only statement of what
+can be searched: `defaultApis().get("search")` returns it, and the tool's schema
+builds its `apis` enum from it, so the enum cannot name an API the dispatcher
+has no branch for. The tool description says preprints are searched through
+Europe PMC.
+
+Pinned by `theSearchToolOffersExactlyTheApisTheFacadeCanSearch` and
+`medrxivIsNotOfferedAsASearchApi` in `TestMcpToolSurface`, written and proven to
+fail first.

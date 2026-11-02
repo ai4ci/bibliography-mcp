@@ -22,11 +22,19 @@ Design principles: respecting rate limits; multi-thread support; extensive cachi
 
 ## Running the MCP server
 
-Build the shaded jar:
+Build it:
 
 ```bash
 mvn package -DskipTests
 ```
+
+That produces `target/bibliographic-api-client-<version>.jar` and
+`target/lib/`, which holds the dependencies. The jar's manifest names them by
+relative path, so **`lib/` has to stay beside the jar** — copy both, or neither.
+It is deliberately not a fat jar: merging the dependencies into one archive
+silently dropped resources that two of them publish at the same path, which broke
+citation rendering in the built server and nothing in the test suite could see it
+([issue-022](design/implementation/issues/issue-022-shaded-jar-cannot-render-citations.md)).
 
 Register it in an MCP client (stdio transport). The first argument is the
 secrets file path (CrossRef/Entrez/OpenAlex API keys; falls back to the
@@ -59,9 +67,7 @@ Core (stateless per call):
 * `map_ids` — alternate id types via id mapping APIs
 * `references_from_pdf` — download a pdf, extract and match its reference list
 * `citation_styles` — list the supported citation styles
-* `citation_style` — choose one; every record returned afterwards carries a rendered
-  `citation` — except from the shaded jar, where rendering currently fails silently
-  ([issue-022](design/implementation/issues/issue-022-shaded-jar-cannot-render-citations.md))
+* `citation_style` — choose one; every record returned afterwards carries a rendered `citation`
 
 Session state (a long-lived repository held in memory):
 * `collect_search`, `collect_search_by_api`, `add_records`, `remove_records` — mutate the session

@@ -64,15 +64,28 @@ public class BiblioFacade
 
 	Optional<Integer> limit = Optional.of(50);
 
+	/**
+	 * The APIs {@link #dispatchSearch} can route a search to, in the order they are asked.
+	 *
+	 * The single list of them, because there were two: the MCP tool's schema offered an API the dispatcher had no branch
+	 * for, so asking for it was a search that could only ever return nothing (issue-020). Anything that advertises what
+	 * can be searched reads this rather than keeping its own copy.
+	 *
+	 * OpenAlex is here despite being the only metered source — 10 credits a call against a daily allowance — because it
+	 * is gated rather than merely registered: see {@link #searchOpenAlex}, where a search that would eat into the reserve
+	 * is skipped and the free sources still answer.
+	 *
+	 * medRxiv is deliberately absent. bioRxiv serves a Cloudflare challenge to any programmatic client, so its search
+	 * interface cannot be reached from here; preprints are searched through Europe PMC, which indexes both servers
+	 * essentially completely (issue-015).
+	 */
+	public static List<String> searchableApis() {
+		return List.of("crossref", "entrez", "europepmc", "openalex");
+	}
+
 	public static Map<String, List<String>> defaultApis() {
 		Map<String, List<String>> out = new LinkedHashMap<>();
-		// OpenAlex searches alongside the three free sources. It is the only metered
-		// one — 10 credits a call against a daily allowance — so it is gated rather
-		// than merely registered: see dispatchSearch, where a search that would eat
-		// into the reserve is skipped and the other three still answer
-		out.put(
-			"search", List.of("crossref", "entrez", "europepmc", "openalex")
-		);
+		out.put("search", searchableApis());
 		// medRxiv joins the citation sources as the only route to a preprint's own
 		// reference list, and ignores anything that is not a 10.1101 DOI
 		out.put(

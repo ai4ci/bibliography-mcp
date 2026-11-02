@@ -378,15 +378,27 @@ public class McpTools {
 		out.add(
 			new Tool(
 					"search",
-					"Search bibliographic APIs (crossref, entrez/pubmed, europepmc, openalex) for a query string. "
-							+ "OpenAlex is metered and drops out of the search when its daily credits run low; the others always answer.",
+					"Search bibliographic APIs (" + String.join(
+						", ", BiblioFacade.searchableApis()
+					) + ") for a query string. "
+							+ "OpenAlex is metered and drops out of the search when its daily credits run low; the others always answer. "
+							+ "Preprints are searched through europepmc, which indexes medRxiv and bioRxiv.",
 					schema(
 						m,
 						"{\"type\":\"object\",\"properties\":{\"query\":{\"type\":\"string\"},"
 								+ "\"from\":{\"type\":\"string\",\"description\":\"earliest date YYYY-MM-DD\"},"
 								+ "\"to\":{\"type\":\"string\",\"description\":\"latest date YYYY-MM-DD\"},"
 								+ "\"limit\":{\"type\":\"integer\"},"
-								+ "\"apis\":{\"type\":\"array\",\"items\":{\"type\":\"string\",\"enum\":[\"crossref\",\"entrez\",\"europepmc\",\"openalex\",\"medrxiv\"]}}},"
+								// the enum is built from the facade's own list rather than
+								// written out here: the two drifted apart once already and
+								// an API the dispatcher cannot route is a search that can
+								// only return nothing (issue-020)
+								+ "\"apis\":{\"type\":\"array\",\"items\":{\"type\":\"string\",\"enum\":["
+								+ BiblioFacade.searchableApis()
+									.stream()
+									.map(a -> "\"" + a + "\"")
+									.collect(Collectors.joining(","))
+								+ "]}}},"
 								+ "\"required\":[\"query\"]}"
 					), args -> {
 						optStringList(args, "apis").ifPresent(facade::withSearchApis);

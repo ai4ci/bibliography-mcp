@@ -42,8 +42,11 @@ orchestration logic that lived in `rjavaapi` into a plain-Java package
 * R users lose the interface. The plain-Java `BiblioFacade`/`Session` remain
   directly usable from JVM code, and a future R binding could wrap those
   rather than the R-era classes.
-* The build no longer produces an R package, and the `maven-shade-plugin` now
-  produces a runnable server jar instead of a jar for rJava.
+* The build no longer produces an R package: it produces a runnable server jar
+  instead of a jar for rJava. (It did that by shading until 0.0.11, when the
+  packaging became a thin jar beside `lib/` — see
+  [issue-022](/design/implementation/issues/issue-022-shaded-jar-cannot-render-citations.md).
+  Minimising the artefact mattered for an R package and does not here.)
 * End-to-end tests imported `rjavaapi.ApiClient` and were re-pointed at
   `BiblioFacade`.
 * `R6`-specific quirks disappeared with the code (e.g. DataFrame-shaped
