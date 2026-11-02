@@ -501,6 +501,47 @@ public class TestQueryTranslation {
 	}
 
 	@Test
+	public void openAlexAsksForAModestPageWhenNoLimitWasGiven() {
+		// A search with no limit is someone looking, not a bulk export. Asking for the
+		// API maximum made OpenAlex contribute ~200 records to a facade search where
+		// Crossref contributed 20 — ten times the weight in the ranking, and ten times
+		// the identifiers for the dedup to map, which is minutes rather than seconds.
+		var builder = openalex().buildQuery();
+		builder.withQuery(dateless("malaria"));
+
+		assertEquals(
+			OpenAlexClient.DEFAULT_PAGE,
+			builder.perPage()
+		);
+	}
+
+	@Test
+	public void openAlexAsksForWhatTheQueryLimitSays() {
+		var builder = openalex().buildQuery();
+		builder.withQuery(
+			ImmutableQuery.builder()
+				.allFields("malaria")
+				.limit(7)
+				.build()
+		);
+
+		assertEquals(7, builder.perPage());
+	}
+
+	@Test
+	public void openAlexWillNotAskForMoreThanTheApiWillSend() {
+		var builder = openalex().buildQuery();
+		builder.withQuery(
+			ImmutableQuery.builder()
+				.allFields("malaria")
+				.limit(5000)
+				.build()
+		);
+
+		assertEquals(OpenAlexClient.MAX_PAGE, builder.perPage());
+	}
+
+	@Test
 	public void openAlexChargesATextSearchOnceNotOncePerFilter() {
 		// measured against the live API: an ISSN filter ANDed with a text search costs
 		// 10 credits, not 11, and two text filters together cost 10, not 20. A request

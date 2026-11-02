@@ -9,7 +9,6 @@ tags:
 HAS_FEATURE:
 - feature:feat-001-expose-bibliographic-apis-over-mcp.md
 ---
-
 ## Feature
 
 [feat-001-expose-bibliographic-apis-over-mcp](/design/features/feat-001-expose-bibliographic-apis-over-mcp.md)
@@ -374,3 +373,77 @@ happened). Not a strict equality test (API results change over time).
 - [ ] `loom validate` → ok: true
 - [ ] MCP smoke test: `search` returns fewer records when more APIs are enabled
 - [ ] `collect_search` still populates session correctly
+
+## Status: implemented, and now actually asserted — 0.0.11
+
+The code this plan describes was already in `BiblioFacade` — `ScoredHit`,
+`dedupedSearch`, `UnionFind`, `dispatchSearch`, `rrfScore`, all as written here,
+with `search()` and `multiSearch()` replaced in place (option (a)). What was
+missing was the evidence: of the ten tests in the table above, only the
+`UnionFind` and `rrfScore` ones existed. The dedup itself — the thing the plan is
+about — had no test at all, and the live test had never run.
+
+Added, written from this plan's intent rather than from the code, and all passing:
+
+| test | asserts |
+|---|---|
+| `identicalDoiMerged` | one paper found by two APIs under one DOI is one record |
+| `doiPmidEquivalence` | a DOI record and a PMID record join through a mapping neither record carries |
+| `threeWayMerge` | DOI → PMID → PMCID chains into one group |
+| `noMappingKeepsSeparate` | a mapping between other papers joins nothing |
+| `mappingWithNoResults` | no mappings means no merging |
+| `corroboratedResultsRankAboveSingleApiOnes` | two APIs at ranks 2 and 5 beat one API at rank 1 |
+
+They drive `dedupedSearch` directly, with the identifier mappings supplied by a
+`BiblioFacade` subclass that overrides `mappings()`, so what is asserted is the
+grouping and not the network. `dedupedSearch` is package-visible for that reason.
+
+### Two things this plan worried about, resolved
+
+- **Europe PMC lite results** ("check the search return type"): `search(Query)`
+  returns `EuropePMCCoreResult`, which does override `getOtherIdentifiers()` with
+  its DOI, PMID and PMCID. The lite path is not used by search, so the gap the plan
+  anticipated is not there.
+- **`TestSearchDedupLive` read `inst/secrets.properties`**, a path that exists
+  nowhere in this repository, so the class threw before reaching an assertion and
+  had never run despite being ticked on the checklist. It now reads the path the
+  other live tests use, and carries the assertion this plan asked for: the
+  deduplicated total against the sum of the per-API totals.
+
+### K, with four search APIs
+
+`K = 5` was chosen here for three search APIs. OpenAlex makes four
+([plan-013](plan-013-openalex-client.md)), which this plan anticipated:
+"if more search APIs are added, K may need to increase". It has **not** been
+re-tuned or measured. Four is still far from the scale where the standard K = 60
+applies, and a corroborated paper still outranks a single-API one, so this is a
+question rather than a defect.
+
+### The live test, rescoped — and what it measures
+
+`TestSearchDedupLive` searched "SARS-CoV-2" with no limit and took minutes:
+hundreds of records per run, through an identifier-mapping phase that scales with
+them. It is now one author in one year (`Leon Danon`, 2018), which every API can
+answer in seconds and which they genuinely overlap on, and the cache is left on as
+in the other live tests. **9.5 s for the class, against roughly ten minutes.**
+
+What it reports, live:
+
+| API | records for that query |
+|---|---|
+| crossref | 20 — a fuzzy author match, filtered on deposit date by design (issue-008), and capped at Crossref's own default page |
+| entrez | 2 |
+| europepmc | 2 |
+| openalex | 4 |
+| **deduplicated** | **24, against 28 one API at a time** |
+
+Two things worth knowing about those numbers:
+
+- **Crossref dominates and is the least precise.** Its author search matches
+  loosely and its date filter is the deposit date, so it contributes 20 of the 28.
+  In one run it returned 0 instead of 20 — a transient failure that
+  `CachingApiClient` turns into an empty result (issue-013), which is why the
+  assertion is an inequality rather than a count.
+- **Only four of the 28 merged.** Little overlap is a fact about these APIs for
+  this author rather than a dedup failure, and the test says so in its output
+  rather than failing.

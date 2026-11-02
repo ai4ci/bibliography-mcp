@@ -87,6 +87,19 @@ public class OpenAlexClient extends CachingApiClient
 	public static final int MAX_PAGE = 200;
 
 	/**
+	 * What a search asks for when the caller named no limit.
+	 *
+	 * Deliberately not {@link #MAX_PAGE}. A search with no limit is someone looking rather than exporting, and asking for
+	 * the maximum made OpenAlex contribute ~200 records to a {@code BiblioFacade} search where Crossref contributed 20 —
+	 * ten times the weight in the reciprocal-rank fusion, and ten times the identifiers for the dedup to resolve, which
+	 * measured 11.7 s of identifier mapping against 2.4 s for a bounded query. A caller who wants more says so.
+	 *
+	 * Batched fetches are unaffected: they ask for {@link #MAX_PAGE} explicitly, because there the page size is how many
+	 * of the ids asked for come back in one credit.
+	 */
+	public static final int DEFAULT_PAGE = 25;
+
+	/**
 	 * shortcut: citation lists are paged to at most this many links per work, because a highly-cited work has tens of
 	 * thousands and each page is 1 credit of a finite daily budget. Raise it, or make it a parameter, when a crawl needs
 	 * whole inbound lists.
@@ -695,7 +708,7 @@ public class OpenAlexClient extends CachingApiClient
 
 		/** The page size this request would ask for. */
 		public int perPage() {
-			return this.limit == null ? MAX_PAGE : this.limit;
+			return this.limit == null ? DEFAULT_PAGE : this.limit;
 		}
 
 		@Override
@@ -731,10 +744,7 @@ public class OpenAlexClient extends CachingApiClient
 			if (this.filters.isEmpty()) return Optional.empty();
 			MultivaluedMap<String, String> params = this.client.defaultApiParams();
 			params.add("filter", this.filter());
-			params.add(
-					"per-page",
-					Integer.toString(this.limit == null ? MAX_PAGE : this.limit)
-			);
+			params.add("per-page", Integer.toString(this.perPage()));
 			return Optional.of(
 					this.client.call("works", params, this.cost)
 			);

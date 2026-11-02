@@ -34,11 +34,11 @@ public class TestCombinedApi {
 		);
 		// api.disableCache();
 
-		api.withSearchLimit(10);
 		var session = api.getSession();
 		session.collectSearch(
 			ImmutableQuery.builder()
 				.allFields("covid 19 database")
+				.limit(10)
 				.build()
 		);
 		session.getRecords()

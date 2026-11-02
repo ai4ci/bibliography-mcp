@@ -201,3 +201,16 @@ own copy, which `PdfFetcher` takes for nothing.
 
 Follow-ups 2 and 3 below are closed by this. Follow-up 1 is settled too: the
 OpenAlex client shipped as 0.0.10 and this gate as 0.0.11.
+
+### A default page size, after the search registration — 0.0.11
+
+`SearchQueryBuilder` asked for `MAX_PAGE` (200) whenever a query carried no
+limit. That was harmless while OpenAlex was not a search provider and wrong as
+soon as it was: on an unlimited facade search OpenAlex returned 199 records where
+Crossref returned 20, Europe PMC 2 and Entrez 1 — ten times the weight in the
+reciprocal-rank fusion, and ten times the identifiers for the dedup to resolve
+(11.7 s of mapping calls against 2.4 s for a bounded query).
+
+`DEFAULT_PAGE = 25` is now what a limitless search asks for; an explicit limit is
+honoured up to `MAX_PAGE`, and batched fetches still ask for `MAX_PAGE` because
+there the page size is how many of the ids asked for come back for one credit.

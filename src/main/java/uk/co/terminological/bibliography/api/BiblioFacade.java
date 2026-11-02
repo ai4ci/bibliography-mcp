@@ -24,10 +24,12 @@ import uk.co.terminological.bibliography.client.IdMapper;
 import uk.co.terminological.bibliography.client.Query;
 import uk.co.terminological.bibliography.client.RecordFetcher;
 import uk.co.terminological.bibliography.client.SearchBuilder;
+import uk.co.terminological.bibliography.record.IdType;
 import uk.co.terminological.bibliography.record.ImmutableRecordReference;
 import uk.co.terminological.bibliography.record.UnionFind;
 import uk.co.terminological.bibliography.client.Searcher;
 import uk.co.terminological.bibliography.mcp.Session;
+import uk.co.terminological.bibliography.record.Builder;
 import uk.co.terminological.bibliography.record.CitationLink;
 import uk.co.terminological.bibliography.record.CitationReference;
 import uk.co.terminological.bibliography.record.MergedRecord;
@@ -61,8 +63,6 @@ public class BiblioFacade
 	List<String> fetchApis = new ArrayList<>(defaultApis().get("fetch"));
 
 	List<String> idMapApis = new ArrayList<>(defaultApis().get("idMap"));
-
-	Optional<Integer> limit = Optional.of(50);
 
 	/**
 	 * The APIs {@link #dispatchSearch} can route a search to, in the order they are asked.
@@ -405,11 +405,6 @@ public class BiblioFacade
 
 	// Fluent configuration
 
-	public BiblioFacade withSearchLimit(int limit) {
-		this.limit = Optional.of(limit);
-		return this;
-	}
-
 	public BiblioFacade withSearchApis(List<String> apis) {
 		this.searchApis = apis;
 		return this;
@@ -509,8 +504,107 @@ public class BiblioFacade
 	 * 
 	 * @see #dedupedSearch(List)
 	 */
+	/** a DOI, in any of the spellings people paste: bare, prefixed, or as a resolver URL */
+	private static final java.util.regex.Pattern DOI = java.util.regex.Pattern
+		.compile(
+			"(?:https?://(?:dx\\.)?doi\\.org/|doi:)?(10\\.\\d{4,9}/\\S+)",
+			java.util.regex.Pattern.CASE_INSENSITIVE
+		);
+
+	private static final java.util.regex.Pattern PMCID = java.util.regex.Pattern
+		.compile("(?:https?://\\S+/)?(PMC\\d{4,})", java.util.regex.Pattern.CASE_INSENSITIVE);
+
+	private static final java.util.regex.Pattern OPENALEX = java.util.regex.Pattern
+		.compile("(?:https?://openalex\\.org/)?(W\\d{6,})", java.util.regex.Pattern.CASE_INSENSITIVE);
+
+	/** an explicit PMID, or a bare number long enough that it cannot be a year somebody typed */
+	private static final java.util.regex.Pattern PMID = java.util.regex.Pattern
+		.compile("(?:pmid:\\s*(\\d{1,8})|(\\d{7,8}))", java.util.regex.Pattern.CASE_INSENSITIVE);
+
+	/**
+	 * The record a query names, when the query is nothing but an identifier.
+	 *
+	 * A search matches text, and an identifier put through one matches every paper that mentions it — a DOI searched
+	 * rather than fetched returned 305 works where the caller wanted one. An identifier does not describe a paper, it
+	 * names one, so a query that carries nothing else is answered by {@link #fetch} instead.
+	 *
+	 * "Nothing else" is strict on purpose. A DOI alongside an author or a date window is a caller filtering rather than
+	 * looking something up, and a fetch cannot honour the rest of what they asked for, so that stays a search.
+	 *
+	 * A bare number is only read as a PMID at seven or eight digits. Shorter ones are years and quantities typed into a
+	 * search box, and turning those into a lookup would answer an ordinary search with nothing.
+	 */
+	static Optional<ImmutableRecordReference> identifierQuery(Query qry) {
+		if (!qry.getTitleAbstract()
+			.isEmpty() || !qry.getFullText()
+				.isEmpty() || !qry.getAuthors()
+					.isEmpty() || !qry.getJournal()
+						.isEmpty() || !qry.getNativeQuery()
+							.isEmpty() || !qry.getAfter()
+								.isEmpty() || !qry.getUntil()
+									.isEmpty())
+			return Optional.empty();
+		return qry.getAllFields()
+			.map(String::trim)
+			.flatMap(BiblioFacade::identifierIn);
+	}
+
+	private static Optional<ImmutableRecordReference> identifierIn(String term) {
+		// DOI first: a DOI contains digits that the PMID pattern would otherwise
+		// recognise, and the whole term has to match so that a title mentioning a DOI
+		// stays a search
+		var doi = DOI.matcher(term);
+		if (doi.matches()) return Optional.of(
+				Builder.recordReference(IdType.DOI, doi.group(1))
+		);
+		var pmcid = PMCID.matcher(term);
+		if (pmcid.matches()) return Optional.of(
+				Builder.recordReference(
+					IdType.PMCID,
+					pmcid.group(1)
+						.toUpperCase()
+				)
+		);
+		var openalex = OPENALEX.matcher(term);
+		if (openalex.matches()) return Optional.of(
+				Builder.recordReference(
+					IdType.OPENALEX,
+					openalex.group(1)
+						.toUpperCase()
+				)
+		);
+		var pmid = PMID.matcher(term);
+		if (pmid.matches()) return Optional.of(
+				Builder.recordReference(
+					IdType.PMID,
+					pmid.group(1) == null ? pmid.group(2) : pmid.group(1)
+				)
+		);
+		return Optional.empty();
+	}
+
 	@Override
 	public Collection<Record> search(Query qry) {
+		// An identifier names one record. Answering it with a text search is what put
+		// 305 works in front of a caller who asked for one paper (issue-023). There is
+		// deliberately no fallback to searching when the fetch finds nothing: a
+		// mistyped DOI returning nothing says so, where a list of papers that merely
+		// mention it would not.
+		var named = identifierQuery(qry);
+		if (named.isPresent()) {
+			log.info("Query names {}; fetching it rather than searching", named.get());
+			var fetched = this.fetch(List.of(named.get()))
+				.values();
+			if (fetched.isEmpty()) return List.of();
+			// One identifier was asked about, so everything that came back describes
+			// that one work — even where a client keyed its answer by an identifier of
+			// its own rather than by the one it was given (issue-024), which would
+			// otherwise hand the caller the same paper twice.
+			MergedRecord one = null;
+			for (Record r : fetched)
+				one = one == null ? MergedRecord.from(r) : one.merge(r);
+			return List.of(one);
+		}
 		List<ScoredHit> scoredHits = new ArrayList<>();
 		for (String api : this.searchApis) {
 			Collection<? extends Record> raw = dispatchSearch(api, qry);
@@ -563,7 +657,8 @@ public class BiblioFacade
 	 * Phase 4: group by equivalence and merge via {@link MergedRecord}.
 	 * Phase 5: compute RRF score per group and sort descending.
 	 */
-	private Collection<Record> dedupedSearch(List<ScoredHit> scoredHits) {
+	/** Visible for testing: the dedup is worth asserting without a search in front of it. */
+	Collection<Record> dedupedSearch(List<ScoredHit> scoredHits) {
 		if (scoredHits.isEmpty()) return List.of();
 
 		// Phase 2 — collect all identifiers

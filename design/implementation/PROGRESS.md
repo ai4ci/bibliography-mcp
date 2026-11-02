@@ -4,7 +4,8 @@ Handover note, 2026-11-02. Not part of the graph (no frontmatter, no loom type);
 delete or absorb it whenever the items below are dealt with.
 
 Branch `feat/mcp-usable-017-019-openalex-search`, off `main` at `6de0ec7`.
-`mvn -o clean test`: **212 tests, 0 failures**. `TestOpenAlexClientEndToEnd`
+`mvn -o clean test`: **232 tests, 0 failures**. `TestSearchDedupLive`: 4 tests in
+9.5 s, where the same class took roughly ten minutes before it was rescoped. `TestOpenAlexClientEndToEnd`
 (live): **14 tests, 0 failures**. `loom validate`: 0 errors. **`git push` is
 outstanding, and so is pushing the five commits already on `main`** — that is the
 developer's job.
@@ -81,6 +82,47 @@ be worked on:
 8. **debt-011 is partly overtaken but stays open**: `IdType.OPENALEX` is
    constructed now, while `OpenCitationsCitation.pidFromPids` still labels
    `openalex:` handles `UNK`. The other two items in that record are untouched.
+
+## Also in 0.0.11, from reviewing why a live test took ten minutes
+
+- **OpenAlex asked for a 200-record page** whenever a query carried no limit, so
+  it contributed 199 records to a facade search where Crossref contributed 20.
+  `DEFAULT_PAGE = 25` now.
+- **`BiblioFacade.withSearchLimit()` was a dead setter** — the field was written
+  and never read, exactly like issue-017's `withQuery`. Removed; the limit travels
+  in the `Query`, which is what the clients read.
+- **issue-023: a query that is nothing but an identifier is now a fetch.**
+  Searching `10.1136/bmj.n579` matched 305 works across the APIs — everything that
+  cites it — where the caller wanted one paper. No fallback to text search when
+  the identifier finds nothing.
+- **issue-024 (new, open): `fetch` answers under an id it chose.** Entrez keys its
+  answer by the PMID it resolved to while every other client keys by the reference
+  it was asked about, so one DOI comes back as two records. The identifier search
+  path merges them as a workaround; the fix belongs in `EntrezClient`.
+
+## plan-008 — search deduplication
+
+The code was already there; the evidence was not. `BiblioFacade` has had the
+dedup, the UnionFind and the RRF ranking since before this branch, with
+`search()`/`multiSearch()` replaced in place, but only the UnionFind and the
+scoring arithmetic were tested — the grouping that the plan is actually about had
+no test, and `TestSearchDedupLive` pointed at `inst/secrets.properties`, a path
+that exists nowhere, so it had never run.
+
+Six offline tests now drive `dedupedSearch` directly with the identifier mappings
+supplied rather than fetched, written from the plan's table rather than from the
+code; all six pass, so the implementation does what the plan intended. The live
+test reads the shared secrets path and carries the assertion the plan asked for.
+`K = 5` was tuned for three search APIs and there are now four — noted in the
+plan, not re-measured.
+
+## A trap when running the tests
+
+Two Maven JVMs at once fight over the EHCache directory: the second dies with
+`StateTransitionException: Persistence directory already locked by another
+process: ~/.cache/ehcache/entrez`. It looks like a test failure and is not one.
+Live tests are slow enough (no cache, four APIs, rate limits) that it is easy to
+start a second run while the first is still going.
 
 ## Version
 

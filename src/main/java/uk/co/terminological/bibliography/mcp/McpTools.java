@@ -382,7 +382,8 @@ public class McpTools {
 						", ", BiblioFacade.searchableApis()
 					) + ") for a query string. "
 							+ "OpenAlex is metered and drops out of the search when its daily credits run low; the others always answer. "
-							+ "Preprints are searched through europepmc, which indexes medRxiv and bioRxiv.",
+							+ "Preprints are searched through europepmc, which indexes medRxiv and bioRxiv. "
+							+ "A query that is nothing but an identifier (DOI, PMCID, pmid:NNNN, OpenAlex id) is looked up rather than text-matched.",
 					schema(
 						m,
 						"{\"type\":\"object\",\"properties\":{\"query\":{\"type\":\"string\"},"
@@ -402,7 +403,7 @@ public class McpTools {
 								+ "\"required\":[\"query\"]}"
 					), args -> {
 						optStringList(args, "apis").ifPresent(facade::withSearchApis);
-						optInt(args, "limit").ifPresent(facade::withSearchLimit);
+						// the limit travels in the Query, which is what each client reads
 						return recordsJson(
 							m,
 							facade,
