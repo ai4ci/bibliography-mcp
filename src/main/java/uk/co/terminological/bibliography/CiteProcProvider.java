@@ -64,7 +64,13 @@ public class CiteProcProvider extends ArrayList<CSLItemData>
 						.orElse(Stream.empty());
 				});
 		} catch (Exception e) {
-			// TODO: log this?
+			log.warn(
+				"could not build a bibliography in style '{}' for {} item(s): {}",
+				this.style,
+				this.size(),
+				e.getMessage() == null ? e.getClass()
+					.getSimpleName() : e.getMessage()
+			);
 			return Stream.empty();
 		}
 	}

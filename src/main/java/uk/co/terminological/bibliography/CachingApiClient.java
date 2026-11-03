@@ -406,7 +406,11 @@ public abstract class CachingApiClient {
 			if (!r.getClientResponseStatus()
 				.getFamily()
 				.equals(Status.Family.SUCCESSFUL)) {
-				logger.debug(
+				// WARN, not debug: this empty Optional is indistinguishable from "the
+				// API has nothing", so without a line here a rate limit, a 5xx or a
+				// moved endpoint all read as "no results" (issue-013, debt-013). The
+				// contract stays exception-free; the silence does not.
+				logger.warn(
 					"API call failed with status {} : {}",
 					r.getClientResponseStatus(),
 					wr.toString()

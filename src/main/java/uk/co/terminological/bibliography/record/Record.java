@@ -36,6 +36,16 @@ import uk.co.terminological.bibliography.CiteProcProvider.Format;
 public interface Record extends RecordReference {
 
 	/**
+	 * Where a failed render is reported.
+	 *
+	 * On the interface because {@link #render} is a default method and has nowhere else to put it. Named for what it
+	 * does rather than for the type, so a reader of a log line knows which of this interface's many implementations
+	 * is talking.
+	 */
+	org.slf4j.Logger RENDER_LOG = org.slf4j.LoggerFactory
+		.getLogger("uk.co.terminological.bibliography.record.Record.render");
+
+	/**
 	 * Other identifiers this source gave for the same work. The main route by which records from different APIs are
 	 * recognised as describing one work, alongside {@link RecordReferenceMapping}.
 	 */
@@ -91,6 +101,14 @@ public interface Record extends RecordReference {
 			.flatMap(Author::getFirstName);
 	}
 
+	/**
+	 * This record as a formatted citation, or empty when it cannot be rendered.
+	 *
+	 * Exception-free by design — callers treat an empty answer as "no citation" and the tool output simply omits the
+	 * field — but <strong>not silent</strong>. A render that fails and says nothing is indistinguishable from a record
+	 * nobody asked to render, which is how a citation engine broken in every built jar went unnoticed (issue-022,
+	 * debt-013). The failure is logged with the style and the record it was asked about.
+	 */
 	default Optional<String> render(String style) {
 		if (style == null) return Optional.of(Record.print(this));
 		try {
@@ -99,6 +117,14 @@ public interface Record extends RecordReference {
 					.getEntries()[0]
 			); // .replaceFirst("^\\[[0-9]+\\]", ""));
 		} catch (Exception e) {
+			RENDER_LOG.warn(
+				"could not render a citation in style '{}' for {}: {}",
+				style,
+				this.getIdentifier()
+					.orElse("a record with no identifier"),
+				e.getMessage() == null ? e.getClass()
+					.getSimpleName() : e.getMessage()
+			);
 			return Optional.empty();
 		}
 	}

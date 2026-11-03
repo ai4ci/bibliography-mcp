@@ -8,13 +8,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
 import org.junit.Test;
 
+import uk.co.terminological.bibliography.client.ImmutableQuery;
+import uk.co.terminological.bibliography.client.Query;
 import uk.co.terminological.bibliography.record.Author;
 import uk.co.terminological.bibliography.record.Builder;
+import uk.co.terminological.bibliography.record.CitationLink;
 import uk.co.terminological.bibliography.record.IdType;
 import uk.co.terminological.bibliography.record.Provenance;
 import uk.co.terminological.bibliography.record.Record;
@@ -401,6 +405,177 @@ public class TestSearchDedup {
 			scored.get(1)
 				.matchedApis()
 		);
+	}
+
+	// == one failing API ================================================
+	//
+	// issue-013: these are third-party network services, so rate limiting, 5xx and
+	// endpoint drift are operating conditions rather than exceptions. A search that
+	// loses everything because one source threw is worse than a search that says
+	// which source is missing.
+
+	/** a facade whose named API always throws, and whose others answer */
+	private static class OneBadApiFacade extends MappedFacade {
+		private final String broken;
+
+		OneBadApiFacade(String broken) throws IOException {
+			super(Set.of());
+			this.broken = broken;
+		}
+
+		@Override
+		Collection<? extends Record> dispatchSearch(String api, Query qry) {
+			if (api.equals(this.broken))
+				throw new IllegalStateException("429 Too Many Requests");
+			return List.of(
+				new StubRecord(IdType.DOI, "10.1/" + api, "Found by " + api, api)
+			);
+		}
+	}
+
+	@Test
+	public void aFailingApiDoesNotEmptyTheSearch() throws Exception {
+		var facade = new OneBadApiFacade("crossref")
+			.withSearchApis(List.of("crossref", "entrez", "europepmc"));
+
+		var outcome = facade.scoredSearch(
+			ImmutableQuery.builder()
+				.allFields("anything")
+				.build()
+		);
+
+		assertEquals(
+			"the two working APIs should still have answered", 2,
+			outcome.results()
+				.size()
+		);
+	}
+
+	@Test
+	public void theFailureIsReportedRatherThanOnlyLogged() throws Exception {
+		var facade = new OneBadApiFacade("crossref")
+			.withSearchApis(List.of("crossref", "entrez", "europepmc"));
+
+		var outcome = facade.scoredSearch(
+			ImmutableQuery.builder()
+				.allFields("anything")
+				.build()
+		);
+
+		// an agent that asked three APIs and silently got two cannot tell that its
+		// coverage was reduced, which matters for a literature search
+		assertEquals(1, outcome.failures()
+			.size());
+		assertEquals(
+			"crossref", outcome.failures()
+				.get(0)
+				.api()
+		);
+		assertTrue(
+			outcome.failures()
+				.get(0)
+				.reason(),
+			outcome.failures()
+				.get(0)
+				.reason()
+				.contains("429")
+		);
+	}
+
+	@Test
+	public void aSearchWhereEverythingFailsSaysSoRatherThanLookingEmpty()
+			throws Exception {
+		var facade = new OneBadApiFacade("crossref")
+			.withSearchApis(List.of("crossref"));
+
+		var outcome = facade.scoredSearch(
+			ImmutableQuery.builder()
+				.allFields("anything")
+				.build()
+		);
+
+		// the difference between "nothing matched" and "nothing answered"
+		assertTrue(
+			outcome.results()
+				.isEmpty()
+		);
+		assertEquals(1, outcome.failures()
+			.size());
+	}
+
+	@Test
+	public void aSearchThatWorksReportsNoFailures() throws Exception {
+		var facade = new OneBadApiFacade("nothing-is-broken")
+			.withSearchApis(List.of("entrez", "europepmc"));
+
+		var outcome = facade.scoredSearch(
+			ImmutableQuery.builder()
+				.allFields("anything")
+				.build()
+		);
+
+		assertEquals(2, outcome.results()
+			.size());
+		assertTrue(
+			outcome.failures()
+				.isEmpty()
+		);
+	}
+
+	@Test
+	public void aFailingApiDoesNotEmptyAFetch() throws Exception {
+		var facade = new MappedFacade(Set.of()) {
+			@Override
+			Map<ImmutableRecordReference, ? extends Record> fetchFrom(
+					String api, Collection<? extends RecordReference> ids
+			) {
+				if (api.equals("crossref"))
+					throw new IllegalStateException("503 Service Unavailable");
+				return Map.of(
+					Builder.recordReference(IdType.DOI, "10.1/x"),
+					new StubRecord(IdType.DOI, "10.1/x", "Found by " + api, api)
+				);
+			}
+		}.withFetchApis(List.of("crossref", "entrez", "europepmc"));
+
+		var fetched = facade
+			.fetch(List.of(Builder.recordReference(IdType.DOI, "10.1/x")));
+
+		// two sources answered and one did not; the record is still returned
+		assertEquals(1, fetched.size());
+		assertTrue(
+			fetched.values()
+				.iterator()
+				.next()
+				.getTitle()
+				.isPresent()
+		);
+	}
+
+	@Test
+	public void aFailingApiDoesNotEmptyACitationLookup() throws Exception {
+		var facade = new MappedFacade(Set.of()) {
+			@Override
+			Collection<? extends CitationLink> citesFrom(
+					String api, Collection<? extends RecordReference> refs
+			) {
+				if (api.equals("crossref"))
+					throw new IllegalStateException("the API refused");
+				return List.of(
+					Builder.citationLink(
+						Builder.recordReference(IdType.DOI, "10.1/citing"),
+						Builder.recordReference(IdType.DOI, "10.1/cited-by-" + api),
+						1
+					)
+				);
+			}
+		}.withCitesApis(List.of("crossref", "entrez", "europepmc"));
+
+		var links = facade.citesReferences(
+			List.of(Builder.recordReference(IdType.DOI, "10.1/citing"))
+		);
+
+		assertEquals("the two working sources should still answer", 2, links.size());
 	}
 
 	/** the least a Record can be: an identity, a title and where it came from */

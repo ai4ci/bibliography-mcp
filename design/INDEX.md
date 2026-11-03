@@ -40,7 +40,6 @@ fails the build instead of quietly lying.
 | --- | --- | --- | --- |
 | [Non doi citation links dropped](implementation/issues/issue-001-non-doi-citation-links-dropped.md) | Non doi citation links dropped | open | 0.2.0 |
 | [Third party api endpoint drift](implementation/issues/issue-002-third-party-api-endpoint-drift.md) | Third party api endpoint drift | open | 0.2.0 |
-| [One failing api empties a multi api search](implementation/issues/issue-013-one-failing-api-empties-a-multi-api-search.md) | One failing api empties a multi api search | open | 0.3.0 |
 | [Secrets are loaded into system properties](implementation/issues/issue-021-secrets-are-loaded-into-system-properties.md) | Secrets are loaded into system properties | open | unassigned |
 <!-- loom view: work_in_progress end -->
 
@@ -59,7 +58,6 @@ fails the build instead of quietly lying.
 | [Shared read timeout is a trap](implementation/debt/debt-009-shared-read-timeout-is-a-trap.md) | Shared read timeout is a trap | 0.4.0 |
 | [Unused record model surface](implementation/debt/debt-011-unused-record-model-surface.md) | Unused record model surface | 0.4.0 |
 | [Europepmc duplicates its citation loops](implementation/debt/debt-010-europepmc-duplicates-its-citation-loops.md) | Europepmc duplicates its citation loops | 0.5.0 |
-| [Record render swallows its failures](implementation/debt/debt-013-record-render-swallows-its-failures.md) | Record render swallows its failures | unassigned |
 | [Journal issue pubdate is not parsed](implementation/debt/debt-014-journal-issue-pubdate-is-not-parsed.md) | Journal issue pubdate is not parsed | unassigned |
 <!-- loom view: open_debt end -->
 

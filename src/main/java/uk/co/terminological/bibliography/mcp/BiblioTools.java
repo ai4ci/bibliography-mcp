@@ -123,11 +123,12 @@ public class BiblioTools {
 					: ctx.facade()
 						.withSearchApis(apis);
 
-				var scored = facade.scoredSearch(query.build());
+				var outcome = facade.scoredSearch(query.build());
+				var scored = outcome.results();
 				boolean collect = bool(args, "collect").orElse(false);
 				var style = string(args, "style").orElse(null);
 
-				var out = mapper.createArrayNode();
+				var records = mapper.createArrayNode();
 				for (var hit : scored) {
 					if (collect) {
 						ctx.store()
@@ -140,10 +141,29 @@ public class BiblioTools {
 					var matched = node.putArray("matchedApis");
 					hit.matchedApis()
 						.forEach(matched::add);
-					out.add(node);
+					records.add(node);
 				}
 				if (collect) log.info(
 					"search collected {} records into the repository", scored.size()
+				);
+				// An agent that asked four APIs and silently got three cannot tell
+				// its coverage was reduced (issue-013). When every source answered
+				// the shape is unchanged — a bare array of records — so the common
+				// case stays simple and a degraded search is visibly different.
+				if (outcome.complete()) return records.toString();
+				var out = mapper.createObjectNode();
+				out.set("records", records);
+				var failures = out.putArray("failures");
+				outcome.failures()
+					.forEach(f -> {
+						var row = failures.addObject();
+						row.put("api", f.api());
+						row.put("reason", f.reason());
+					});
+				out.put(
+					"note",
+					"some sources could not be asked, so this search is less"
+							+ " complete than it looks"
 				);
 				return out.toString();
 			}))

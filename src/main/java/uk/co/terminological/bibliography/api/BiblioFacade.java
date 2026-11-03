@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -220,6 +221,24 @@ public class BiblioFacade
 			Collection<CitationLink> out
 	) {
 		this.citesApis.forEach(citesApi -> {
+			Collection<? extends CitationLink> tmp = perApi(
+				citesApi, "cites", () -> citesFrom(citesApi, refs),
+				Collections.emptyList()
+			);
+			log.info(
+				"Cites search found {} references in {} for {} articles",
+				tmp.size(),
+				citesApi,
+				refs.size()
+			);
+			out.addAll(tmp);
+		});
+	}
+
+	/** Visible for testing, like {@link #dispatchSearch}: one API's part of the cites loop. */
+	Collection<? extends CitationLink> citesFrom(
+			String citesApi, Collection<? extends RecordReference> refs
+	) {
 			Collection<? extends CitationLink> tmp = Collections.emptyList();
 			if (citesApi.equals("crossref")) {
 				tmp = this.api.getCrossref()
@@ -240,14 +259,7 @@ public class BiblioFacade
 				tmp = this.api.getOpenAlex()
 					.citesReferences(refs);
 			}
-			log.info(
-				"Cites search found {} references in {} for {} articles",
-				tmp.size(),
-				citesApi,
-				refs.size()
-			);
-			out.addAll(tmp);
-		});
+			return tmp;
 	}
 
 	@Override
@@ -260,6 +272,25 @@ public class BiblioFacade
 		);
 		Collection<CitationLink> out = new ArrayList<>();
 		this.citedByApis.forEach(citesApi -> {
+			Collection<? extends CitationLink> tmp = perApi(
+				citesApi, "citedBy", () -> citedByFrom(citesApi, refs),
+				Collections.emptyList()
+			);
+			log.info(
+				"Cited by search found {} references in {} for {} articles",
+				tmp.size(),
+				citesApi,
+				refs.size()
+			);
+			out.addAll(tmp);
+		});
+		return out;
+	}
+
+	/** Visible for testing: one API's part of the citedBy loop. */
+	Collection<? extends CitationLink> citedByFrom(
+			String citesApi, Collection<? extends RecordReference> refs
+	) {
 			Collection<? extends CitationLink> tmp = Collections.emptyList();
 			if (citesApi.equals("entrez")) {
 				tmp = this.api.getEntrez()
@@ -274,15 +305,7 @@ public class BiblioFacade
 				tmp = this.api.getOpenAlex()
 					.referencesCiting(refs);
 			}
-			log.info(
-				"Cited by search found {} references in {} for {} articles",
-				tmp.size(),
-				citesApi,
-				refs.size()
-			);
-			out.addAll(tmp);
-		});
-		return out;
+			return tmp;
 	}
 
 	@Override
@@ -291,6 +314,26 @@ public class BiblioFacade
 	) {
 		Map<ImmutableRecordReference, MergedRecord> out = new HashMap<>();
 		this.fetchApis.forEach(fetchApi -> {
+			Map<ImmutableRecordReference, ? extends Record> tmp = perApi(
+				fetchApi, "fetch", () -> fetchFrom(fetchApi, ids), new HashMap<>()
+			);
+			log.info(
+				"Fetch found {} records in {} for {} ids",
+				tmp.size(),
+				fetchApi,
+				ids.size()
+			);
+			tmp.forEach((k, v) -> {
+				out.merge(k, MergedRecord.from(v), MergedRecord::merge);
+			});
+		});
+		return out;
+	}
+
+	/** Visible for testing: one API's part of the fetch loop. */
+	Map<ImmutableRecordReference, ? extends Record> fetchFrom(
+			String fetchApi, Collection<? extends RecordReference> ids
+	) {
 			Map<ImmutableRecordReference, ? extends Record> tmp = new HashMap<>();
 			if (fetchApi.equals("crossref")) {
 				tmp = this.api.getCrossref()
@@ -308,17 +351,7 @@ public class BiblioFacade
 				tmp = this.api.getOpenAlex()
 					.fetch(ids);
 			}
-			log.info(
-				"Fetch found {} records in {} for {} ids",
-				tmp.size(),
-				fetchApi,
-				ids.size()
-			);
-			tmp.forEach((k, v) -> {
-				out.merge(k, MergedRecord.from(v), MergedRecord::merge);
-			});
-		});
-		return out;
+			return tmp;
 	}
 
 	/**
@@ -332,22 +365,9 @@ public class BiblioFacade
 	) {
 		Map<String, List<Record>> out = new LinkedHashMap<>();
 		this.fetchApis.forEach(fetchApi -> {
-			Map<ImmutableRecordReference, ? extends Record> fetched;
-			if (fetchApi.equals("crossref")) {
-				fetched = this.api.getCrossref()
-					.fetch(ids);
-			} else if (fetchApi.equals("entrez")) {
-				fetched = this.api.getEntrez()
-					.fetch(ids);
-			} else if (fetchApi.equals("europepmc")) {
-				fetched = this.api.getEuropePMC()
-					.fetch(ids);
-			} else if (fetchApi.equals("openalex")) {
-				fetched = this.api.getOpenAlex()
-					.fetch(ids);
-			} else {
-				fetched = new HashMap<>();
-			}
+			Map<ImmutableRecordReference, ? extends Record> fetched = perApi(
+				fetchApi, "fetch", () -> fetchFrom(fetchApi, ids), new HashMap<>()
+			);
 			List<Record> records = new ArrayList<>();
 			fetched.values()
 				.forEach(records::add);
@@ -361,12 +381,31 @@ public class BiblioFacade
 		return out;
 	}
 
+
 	@Override
 	public Set<RecordReferenceMapping> mappings(
 			Collection<? extends RecordReference> ids
 	) {
 		Set<RecordReferenceMapping> out = new HashSet<>();
 		this.idMapApis.forEach(idMapApi -> {
+			Collection<? extends RecordReferenceMapping> tmp = perApi(
+				idMapApi, "id mapping", () -> mappingsFrom(idMapApi, ids),
+				Collections.emptyList()
+			);
+			log.info(
+				"Mapping id search found {} mappings in {} for {} ids",
+				tmp.size(),
+				idMapApi,
+				ids.size()
+			);
+			out.addAll(tmp);
+		});
+		return out;
+	}
+
+	private Collection<? extends RecordReferenceMapping> mappingsFrom(
+			String idMapApi, Collection<? extends RecordReference> ids
+	) {
 			Collection<? extends RecordReferenceMapping> tmp = Collections
 				.emptyList();
 			if (idMapApi.equals("entrez")) {
@@ -379,15 +418,7 @@ public class BiblioFacade
 				tmp = this.api.getOpenAlex()
 					.mappings(ids);
 			}
-			log.info(
-				"Mapping id search found {} mappings in {} for {} ids",
-				tmp.size(),
-				idMapApi,
-				ids.size()
-			);
-			out.addAll(tmp);
-		});
-		return out;
+			return tmp;
 	}
 
 	// Fluent configuration
@@ -564,6 +595,11 @@ public class BiblioFacade
 		return Optional.empty();
 	}
 
+	/**
+	 * Search every configured API and return the merged, ranked records.
+	 *
+	 * The plain form: a caller that also wants to know which sources failed asks {@link #scoredSearch} instead.
+	 */
 	@Override
 	public Collection<Record> search(Query qry) {
 		// An identifier names one record. Answering it with a text search is what put
@@ -587,23 +623,11 @@ public class BiblioFacade
 				one = one == null ? MergedRecord.from(r) : one.merge(r);
 			return List.of(one);
 		}
-		List<ScoredHit> scoredHits = new ArrayList<>();
-		for (String api : this.searchApis) {
-			Collection<? extends Record> raw = dispatchSearch(api, qry);
-			List<? extends Record> results = raw instanceof List
-				? (List<? extends Record>) raw
-				: new ArrayList<>(raw);
-			for (int i = 0; i < results.size(); i++) {
-				scoredHits.add(new ScoredHit(results.get(i), api, i + 1));
-			}
-			log.info(
-				"Search found {} hits in {} for '{}'",
-				results.size(),
-				api,
-				qry
-			);
-		}
-		return dedupedSearch(scoredHits);
+		// one path, so the failure handling cannot differ between the two forms
+		return scoredSearch(qry).results()
+			.stream()
+			.map(ScoredRecord::record)
+			.collect(Collectors.toList());
 	}
 
 	/**
@@ -613,7 +637,9 @@ public class BiblioFacade
 	public Collection<Record> multiSearch(Map<String, Query> searchByApi) {
 		List<ScoredHit> scoredHits = new ArrayList<>();
 		searchByApi.forEach((api, qry) -> {
-			Collection<? extends Record> raw = dispatchSearch(api, qry);
+			Collection<? extends Record> raw = perApi(
+				api, "search", () -> dispatchSearch(api, qry), List.of()
+			);
 			List<? extends Record> results = raw instanceof List
 				? (List<? extends Record>) raw
 				: new ArrayList<>(raw);
@@ -646,16 +672,31 @@ public class BiblioFacade
 	 * return. Callers that only want the records use {@code search}; the tool surface uses this, because a ranking an
 	 * agent cannot see is a ranking it has to take on trust.
 	 */
-	public List<ScoredRecord> scoredSearch(Query qry) {
+	public SearchOutcome scoredSearch(Query qry) {
 		var named = identifierQuery(qry);
 		if (named.isPresent()) {
-			return search(qry).stream()
-				.map(r -> new ScoredRecord(r, 0.0, List.of("fetch")))
-				.collect(Collectors.toList());
+			return SearchOutcome.of(
+				search(qry).stream()
+					.map(r -> new ScoredRecord(r, 0.0, List.of("fetch")))
+					.collect(Collectors.toList()),
+				List.of()
+			);
 		}
 		List<ScoredHit> scoredHits = new ArrayList<>();
+		List<SearchOutcome.ApiFailure> failures = new ArrayList<>();
 		for (String api : this.searchApis) {
-			Collection<? extends Record> raw = dispatchSearch(api, qry);
+			Collection<? extends Record> raw;
+			try {
+				raw = dispatchSearch(api, qry);
+			} catch (RuntimeException e) {
+				// one source refusing must not lose the others: that is how a
+				// one-line defect in the first client became a total search outage
+				log.warn("search failed in {}: {}", api, e.toString());
+				failures.add(
+					new SearchOutcome.ApiFailure(api, describe(e))
+				);
+				continue;
+			}
 			List<? extends Record> results = raw instanceof List
 				? (List<? extends Record>) raw
 				: new ArrayList<>(raw);
@@ -663,7 +704,30 @@ public class BiblioFacade
 				scoredHits.add(new ScoredHit(results.get(i), api, i + 1));
 			}
 		}
-		return scoredSearch(scoredHits);
+		return SearchOutcome.of(scoredSearch(scoredHits), failures);
+	}
+
+	/** a failure in the words a caller can act on, never an empty string */
+	private static String describe(RuntimeException e) {
+		var message = e.getMessage();
+		return message == null || message.isBlank() ? e.getClass()
+			.getSimpleName() : message;
+	}
+
+	/**
+	 * Run one API's part of a multi-API call, surviving its failure.
+	 *
+	 * Every loop over the configured APIs used to let an exception out, so one misbehaving source lost the results of
+	 * all the others (issue-013). The failure is logged against the API that caused it — the loops already report a
+	 * per-API count, so the seam was there — and the rest of the loop carries on.
+	 */
+	private <T> T perApi(String api, String what, Supplier<T> call, T whenItFails) {
+		try {
+			return call.get();
+		} catch (RuntimeException e) {
+			log.warn("{} failed in {}: {}", what, api, e.toString());
+			return whenItFails;
+		}
 	}
 
 	/** Visible for testing: the dedup is worth asserting without a search in front of it. */
@@ -771,7 +835,8 @@ public class BiblioFacade
 	/**
 	 * Route a search to the right API client by name.
 	 */
-	private Collection<? extends Record> dispatchSearch(String api, Query qry) {
+	/** Visible for testing: a test facade overrides this to make one API fail. */
+	Collection<? extends Record> dispatchSearch(String api, Query qry) {
 		if (api.equals("crossref")) return this.api.getCrossref()
 			.search(qry);
 		if (api.equals("entrez")) return this.api.getEntrez()

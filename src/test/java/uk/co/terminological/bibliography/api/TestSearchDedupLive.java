@@ -87,8 +87,12 @@ public class TestSearchDedupLive {
 	 */
 	@Test
 	public void overlappingResultsAreMergedRatherThanRepeated() {
-		var scored = facade.withSearchApis(BiblioFacade.searchableApis())
+		var outcome = facade.withSearchApis(BiblioFacade.searchableApis())
 			.scoredSearch(anAuthorInAYear());
+		var scored = outcome.results();
+		if (!outcome.complete()) System.out.println(
+			"INFO: some sources could not be asked: " + outcome.failures()
+		);
 
 		int rawHits = scored.stream()
 			.mapToInt(

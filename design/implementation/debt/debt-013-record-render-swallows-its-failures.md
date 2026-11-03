@@ -2,9 +2,9 @@
 class: debt
 id: debt-013-record-render-swallows-its-failures.md
 title: Record render swallows its failures
-status: open
+status: closed
 sinceVersion: 0.0.6
-targetVersion: unassigned
+targetVersion: 0.2.0
 tags:
 - error-handling
 - citation-formatting
@@ -41,3 +41,25 @@ the rest of the codebase depends on it (`recordJson` treats an empty render as
 
 Worth doing at the same time: `CiteProcProvider.streamReferences` has a bare
 `catch (Exception e) { // TODO: log this? }` with the same problem.
+
+## Closed — 0.2.0
+
+`Record.render` logs at WARN with the style and the record it failed on, and
+still returns `Optional.empty()`. The exception-free contract was never the
+problem — callers depend on it, and `recordJson` treats an empty render as "no
+citation field" — the silence was.
+
+`CiteProcProvider.streamReferences`'s `catch (Exception e) { // TODO: log this? }`
+is answered at the same time, with the style and the number of items it was
+building for.
+
+Pinned by `TestRenderFailsLoudly`, which captures what the code logs rather than
+inspecting a console: an unloadable style warns and names both the style and the
+record, a successful render stays quiet, and `render(null)` — the plain-text
+form — is not a failure at all.
+
+Worth recording why this mattered more than its size suggests: this silence is
+exactly how [issue-022](../issues/issue-022-shaded-jar-cannot-render-citations.md)
+hid a citation engine that was broken in **every built jar**, behind a JSON field
+that was merely absent. A capability that fails quietly is indistinguishable from
+one nobody asked for.
