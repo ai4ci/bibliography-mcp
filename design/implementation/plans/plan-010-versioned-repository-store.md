@@ -11,7 +11,6 @@ HAS_FEATURE:
 DEPENDS_ON:
 - plan:plan-008-search-deduplication.md
 ---
-
 # Plan 010 — Versioned repository store
 
 Replace `Session`'s Java serialization with a durable, queryable, versioned
@@ -129,3 +128,114 @@ to delegate: `add`, `merge`, `status`, `records`,
 - Is `MergePolicy` applied on `putRecord` (write-time merge, cheap to read) or
   on read (keeps provenance per source, expensive)? Write-time is what
   `MergedRecord` does today.
+
+## Decision — SQLite (option A), measured 2026-11-03
+
+Both options were built against the goals above and run at two scales. Writes
+are checkpointed every 1,000 records, as a crawl would; the query figures are
+from a *fresh* reader, which is the case that matters — a client asking for the
+top of the repository while the crawl that filled it is still running.
+
+**100,000 records, 300,000 edges**
+
+| | A: SQLite (WAL) | B: JSON lines + in-memory index |
+|---|---|---|
+| write | 516 ms | 101 ms |
+| index build / load | 151 ms | 195 ms (every process start) |
+| top 100 by score | 16 ms | 48 ms |
+| edges into one node | 12 ms | 0 ms |
+| **heap held to answer** | **~0** | **46 MB** |
+| read while another writes | yes | no |
+| file | 38.8 MB | 33.4 MB |
+
+**500,000 records, 2,000,000 edges**
+
+| | A: SQLite (WAL) | B: JSON lines + in-memory index |
+|---|---|---|
+| write | 3,110 ms | 290 ms |
+| index build / load | 1,105 ms | 959 ms (every process start) |
+| top 100 by score | 41 ms | 184 ms |
+| edges into one node | 73 ms | 0 ms |
+| **heap held to answer** | **~0** | **274 MB** |
+| read while another writes | yes | no |
+| file | 247 MB | 202 MB |
+
+### What the numbers say
+
+- **B is not slow; B is resident.** Its index costs ~550 bytes per record, and
+  that is a *minimal* index — score and inbound edges only. A real one carrying
+  titles, identifiers and the selection flag is several times that, in a process
+  that also runs a crawl and serves HTTP clients. 46 MB → 274 MB between the two
+  scales is the whole argument: the cost is linear in the repository and it is
+  paid whether or not anyone asks a question.
+- **A's write cost is irrelevant.** SQLite is 10× slower at writing and it does
+  not matter: 500,000 records cost 3 seconds of store time against hours of API
+  calls to produce them. The store is never the bottleneck in a crawl.
+- **B fails goal 1 by construction and goal 4 outright.** "Top 100 by score
+  without deserialising the lot" is exactly what an in-memory index cannot do,
+  and nothing coordinates two readers of an appending file.
+- **B's one real win** — 0 ms edge lookup from a prebuilt map — is available in A
+  too, by keeping a hot subgraph in memory when the analysis needs it. That is a
+  cache over a store, not a reason to choose the store.
+
+### Decided
+
+**SQLite via `org.xerial:sqlite-jdbc`**, WAL journal, `synchronous=NORMAL`, a
+`meta` table carrying `schemaVersion`. Option B is recorded here as the control
+it was, and is the fallback only if the driver becomes a problem on a platform
+this has to run on.
+
+Open questions this settles:
+
+- ~~Is `MergePolicy` applied on `putRecord` or on read?~~ **On write.** It is
+  what `MergedRecord` already does, and a read-time merge would mean loading
+  every contribution for a top-N query, which is the thing SQLite was chosen to
+  avoid.
+- ~~Does one store hold multiple named repositories, or one per file?~~ **One
+  repository per file**, under adr-005's directory. With the server now a
+  service started against one repository
+  ([adr-006](../../../architecture/decision-records/adr-006-adopt-mcp-sdk-over-http.md)), switching repositories
+  mid-session stops being a thing the tool surface has to express — which is why
+  `save` and `load` leave the surface in plan-012.
+
+## Built — `repository` package
+
+`RepositoryStore` with `SqliteRepositoryStore` behind it, `RepositoryMeta`,
+`RepositoryException`. Schema version 1, WAL, `synchronous=NORMAL`,
+`busy_timeout=5000`.
+
+Tables: `meta`, `record` (the merged view every query reads), `contribution`
+(what each source said), `author`, `identifier`, `citation`. Indexes on score,
+selection and citation target.
+
+The shape worth noting is the pair: **`putRecord` writes a contribution and
+re-materialises the merged view from all of them.** Queries read the materialised
+row and never merge; a third source merges with the first two rather than into
+their merged result; and the clean-up report keeps the per-source claims it
+needs. `getRecord` rebuilds the merged record from the contributions, which is a
+handful of rows, and `topByScore` takes its keys from the score index and
+hydrates only those — so "the top hundred" costs a hundred hydrations rather than
+a repository.
+
+Pinned by `TestRepositoryStore` (11 tests): survives the process, refuses a
+later schema version **naming both versions**, two sources become one record,
+contributions are kept, citations round-trip in the issue-007 direction, the same
+edge twice is one edge, selection is reversible and deletes nothing, 5,000
+records yield a top-10 from the index, and a second reader sees the repository
+while the first is still writing.
+
+## Two work items deliberately not done
+
+- **Item 4, `Session` delegating to the store.** The plan wrote it so that
+  `McpTools` need not change — but
+  [plan-012](plan-012-workflow-tool-surface.md) deletes `McpTools` and
+  [plan-014](plan-014-mcp-sdk-http-server.md) deletes the server around it.
+  Reworking `Session` into a delegating shell, to then delete it, is work that
+  exists only to be thrown away. `Session` stays exactly as it is until the new
+  server lands and takes it with it. **debt-001 therefore closes when `Session`
+  goes, not here.**
+- **Item 3, the `.ser` migration reader.** Worth building only if a `.ser`
+  repository exists that is worth keeping, and those files are already fragile to
+  every class change that has landed since they were written — which is what
+  debt-001 says. Left for the developer to say whether any exist; if none do,
+  this item should be struck rather than built.
