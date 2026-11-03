@@ -38,7 +38,6 @@ fails the build instead of quietly lying.
 
 | uri | title | status | targetVersion |
 | --- | --- | --- | --- |
-| [Non doi citation links dropped](implementation/issues/issue-001-non-doi-citation-links-dropped.md) | Non doi citation links dropped | open | 0.2.0 |
 | [Third party api endpoint drift](implementation/issues/issue-002-third-party-api-endpoint-drift.md) | Third party api endpoint drift | open | 0.2.0 |
 | [Secrets are loaded into system properties](implementation/issues/issue-021-secrets-are-loaded-into-system-properties.md) | Secrets are loaded into system properties | open | unassigned |
 <!-- loom view: work_in_progress end -->
@@ -49,7 +48,6 @@ fails the build instead of quietly lying.
 
 | uri | title | targetVersion |
 | --- | --- | --- |
-| [Opencitations queries dois only](implementation/debt/debt-002-opencitations-queries-dois-only.md) | Opencitations queries dois only | 0.2.0 |
 | [Analysis recomputes topic model per call](implementation/debt/debt-003-analysis-recomputes-topic-model-per-call.md) | Analysis recomputes topic model per call | 0.3.0 |
 | [Fetch is incomplete by id type](implementation/debt/debt-005-fetch-is-incomplete-by-id-type.md) | Fetch is incomplete by id type | 0.3.0 |
 | [Cached answers are never invalidated](implementation/debt/debt-006-cached-answers-are-never-invalidated.md) | Cached answers are never invalidated | 0.3.0 |

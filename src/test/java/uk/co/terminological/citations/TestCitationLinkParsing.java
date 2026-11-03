@@ -72,8 +72,10 @@ public class TestCitationLinkParsing {
 	@Test
 	public void anOpenCitationsPidListWithoutADoiStillGivesAnIdentifier()
 			throws Exception {
-		// "omid:br/061603886611 openalex:W4384133663" has no doi token; the link used to
-		// be built with a null identifier, so it was neither identifiable nor dedupable
+		// "omid:br/061603886611 openalex:W4384133663" has no doi token; the link used
+		// to be built with a null identifier, so it was neither identifiable nor
+		// dedupable. Of the two handles it does have, the OpenAlex one is the one
+		// this project can turn back into a record.
 		OpenCitationsCitation citation = new OpenCitationsCitation(
 				mapper.readTree(
 					"{\"oci\":\"061603886611-061301957054\","
@@ -87,7 +89,7 @@ public class TestCitationLinkParsing {
 				.isEmpty()
 		);
 		assertEquals(
-			"omid:br/061603886611",
+			"W4384133663",
 			citation.getSource()
 				.getIdentifier()
 				.get()
@@ -95,8 +97,18 @@ public class TestCitationLinkParsing {
 				.orElse(null)
 		);
 		assertEquals(
-			IdType.UNK,
+			"an OpenAlex handle is an OpenAlex identifier, not an unknown one",
+			IdType.OPENALEX,
 			citation.getSource()
+				.getIdentifier()
+				.get()
+				.getIdentifierType()
+		);
+		// the cited end has only an omid, which this project does not model: it
+		// keeps the whole handle rather than losing the link
+		assertEquals(
+			IdType.UNK,
+			citation.getTarget()
 				.getIdentifier()
 				.get()
 				.getIdentifierType()

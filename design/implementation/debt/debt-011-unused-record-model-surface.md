@@ -65,3 +65,15 @@ as `UNK` while the enum value that names it is in use elsewhere. One client
 constructing it does not make the other client's `UNK` right.
 
 `PrintRecordWithCitations`, `getBibliographicId()` and `IdType.MID` are untouched.
+
+## A third identifier question — 2026-11-03
+
+OpenCitations returns `arxiv:` handles for cited entities that have no DOI, and
+this project has no `IdType` for them, so they are kept whole as `UNK`
+(see [issue-001](../issues/issue-001-non-doi-citation-links-dropped.md)). Measured,
+that is about 1 in 120 cited entities — rare, but it is the *only* kind of
+citation endpoint this project now cannot name.
+
+It belongs with this record because it is the same question from the other side:
+`IdType` carries a value nothing constructs (`MID`) and lacks one several
+sources actually emit. Deciding either is deciding what the enum is for.

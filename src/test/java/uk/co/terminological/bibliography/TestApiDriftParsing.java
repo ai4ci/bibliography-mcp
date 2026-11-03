@@ -12,6 +12,7 @@ import org.junit.Test;
 import uk.co.terminological.bibliography.CachingApiClient;
 import uk.co.terminological.bibliography.api.europepmc.EuropePMCListResult;
 import uk.co.terminological.bibliography.api.opencitations.OpenCitationsCitation;
+import uk.co.terminological.bibliography.record.IdType;
 import uk.co.terminological.bibliography.api.pmcidconv.PMCIDResult;
 
 // [TESTS](/design/test-scripts/test-002-api-behaviour-tests.md)
@@ -129,11 +130,12 @@ public class TestApiDriftParsing {
 	}
 
 	@Test
-	public void openCitationsOmidOnlyLinkKeepsItsOmidAsAnIdentifier()
+	public void openCitationsLinkWithoutADoiIsNamedAsWellAsItCanBe()
 			throws Exception {
 		// this used to be an incomplete link with no identifier and no title, so a
-		// session dropped the citation entirely. The handle is a real identifier, we
-		// simply do not model its scheme (IdType.UNK).
+		// session dropped the citation entirely. Then it kept the omid as UNK. Now
+		// it prefers the OpenAlex handle over the omid, because one of those can be
+		// resolved into a record and the other cannot.
 		OpenCitationsCitation citation = new OpenCitationsCitation(
 				mapper.readTree(
 					"{\"citing\":\"omid:br/061603886611 openalex:W4384133663\","
@@ -150,12 +152,22 @@ public class TestApiDriftParsing {
 				.isPresent()
 		);
 		assertTrue(citation.isComplete());
+		var source = citation.getSource()
+			.getIdentifier()
+			.get();
+		assertEquals(IdType.OPENALEX, source.getIdentifierType());
 		assertEquals(
-			"omid:br/061603886611",
-			citation.getSource()
-				.getIdentifier()
-				.get()
-				.getIdentifier()
+			"W4384133663", source.getIdentifier()
+				.orElse(null)
+		);
+		// the cited end has only an omid, a scheme this project does not model: it
+		// keeps the whole handle so the link still points at something
+		var target = citation.getTarget()
+			.getIdentifier()
+			.get();
+		assertEquals(IdType.UNK, target.getIdentifierType());
+		assertEquals(
+			"omid:br/061301957054", target.getIdentifier()
 				.orElse(null)
 		);
 	}

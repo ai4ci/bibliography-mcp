@@ -30,6 +30,10 @@ import uk.co.terminological.bibliography.record.RecordReference;
 public class OpenCitationsClient extends CachingApiClient
 		implements CitedByMapper, CitesMapper {
 
+	private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory
+		.getLogger(OpenCitationsClient.class);
+
+
 	protected OpenCitationsClient(Optional<Path> optional) {
 		super(
 				optional, TokenBuckets.builder()
@@ -199,29 +203,68 @@ public class OpenCitationsClient extends CachingApiClient
 		oci, citing, cited, creation, timespan, journal_sc, author_sc;
 	}
 
+	/**
+	 * The schemes OpenCitations answers to, measured against the live API rather than taken from the documentation.
+	 *
+	 * {@code doi}, {@code pmid} and {@code isbn} return results; {@code pmcid} and {@code openalex} return
+	 * <strong>400</strong>, so asking about one spends a call to be refused. {@code omid} works too but this project
+	 * has no id type for it, so nothing can ask about one.
+	 */
+	private static final Map<IdType, String> ACCEPTED_SCHEMES = Map.of(
+		IdType.DOI, "doi:", IdType.PMID, "pmid:", IdType.ISBN, "isbn:"
+	);
+
+	/**
+	 * How to ask OpenCitations about this reference, or empty when it cannot be asked.
+	 *
+	 * The client used to query DOIs alone, so a record known only by its PMID got no citations and no explanation —
+	 * debt-002. OpenCitations answers to a PMID perfectly well.
+	 *
+	 * Visible for testing: which identifiers are askable is a fact about the API and worth pinning without a call.
+	 */
+	static Optional<String> queryIdFor(RecordReference ref) {
+		var scheme = ACCEPTED_SCHEMES.get(ref.getIdentifierType());
+		if (scheme == null) return Optional.empty();
+		return ref.getIdentifier()
+			.filter(id -> !id.isBlank())
+			.map(id -> scheme + id);
+	}
+
+	/** the references this API can be asked about, saying in the log what it cannot */
+	private List<String> askableIds(Collection<? extends RecordReference> refs) {
+		List<String> out = new ArrayList<>();
+		List<String> skipped = new ArrayList<>();
+		for (RecordReference ref : refs) {
+			var asked = queryIdFor(ref);
+			if (asked.isPresent()) out.add(asked.get());
+			else skipped.add(
+				ref.getIdentifierType() + ":"
+						+ ref.getIdentifier()
+							.orElse("?")
+			);
+		}
+		if (!skipped.isEmpty()) LOG.info(
+			"OpenCitations cannot be asked about {} of {} references ({}); it"
+					+ " answers to doi, pmid and isbn only",
+			skipped.size(),
+			refs.size(),
+			skipped.size() > 5 ? skipped.subList(0, 5) + "…" : skipped
+		);
+		return out;
+	}
+
 	@Override
 	public Set<? extends CitationLink> citesReferences(
 			Collection<? extends RecordReference> ref
 	) {
 		Set<CitationLink> out = new HashSet<>();
-		List<String> dois = ref.stream()
-			.filter(
-				r -> r.getIdentifierType()
-					.equals(IdType.DOI)
-			)
-			.flatMap(
-				r -> r.getIdentifier()
-					.stream()
-			)
-			.collect(Collectors.toList());
-		dois.stream()
-			.forEach(
-				doi -> this.buildQuery(Action.REFERENCES, doi)
-					.execute()
-					.stream()
-					.flatMap(lr -> lr.getCitations())
-					.forEach(e -> out.add(e))
-			);
+		askableIds(ref).forEach(
+			id -> this.buildQuery(Action.REFERENCES, id)
+				.execute()
+				.stream()
+				.flatMap(lr -> lr.getCitations())
+				.forEach(e -> out.add(e))
+		);
 		return out;
 	}
 
@@ -230,24 +273,13 @@ public class OpenCitationsClient extends CachingApiClient
 			Collection<? extends RecordReference> ref
 	) {
 		List<CitationLink> out = new ArrayList<>();
-		List<String> dois = ref.stream()
-			.filter(
-				r -> r.getIdentifierType()
-					.equals(IdType.DOI)
-			)
-			.flatMap(
-				r -> r.getIdentifier()
-					.stream()
-			)
-			.collect(Collectors.toList());
-		dois.stream()
-			.forEach(
-				doi -> this.buildQuery(Action.CITATIONS, doi)
-					.execute()
-					.stream()
-					.flatMap(lr -> lr.getCitations())
-					.forEach(e -> out.add(e))
-			);
+		askableIds(ref).forEach(
+			id -> this.buildQuery(Action.CITATIONS, id)
+				.execute()
+				.stream()
+				.flatMap(lr -> lr.getCitations())
+				.forEach(e -> out.add(e))
+		);
 		return out;
 	}
 }

@@ -68,17 +68,46 @@ public class OpenCitationsCitation extends ExtensibleJson
 	 * `openalex:` handle). OpenCitations gives handles and nothing else — no titles — so without this the link had neither
 	 * an identifier nor a title, and could be neither shown nor deduplicated.
 	 */
+	/**
+	 * The schemes this project can name, best first.
+	 *
+	 * Order is "how much of this project's graph it joins", not preference for its own sake. A DOI is understood by
+	 * every source here; a PMID by three; a PMCID by two; an OpenAlex handle by one — but that one can resolve it,
+	 * which is the whole reason this stopped being {@code UNK} (issue-001, debt-011). 40 of the 42 cited entities in
+	 * a real response carry an OpenAlex handle.
+	 */
+	private static final java.util.List<java.util.Map.Entry<String, IdType>> KNOWN_SCHEMES = java.util.List
+		.of(
+			java.util.Map.entry("doi:", IdType.DOI),
+			java.util.Map.entry("pmid:", IdType.PMID),
+			java.util.Map.entry("pmcid:", IdType.PMCID),
+			java.util.Map.entry("openalex:", IdType.OPENALEX),
+			java.util.Map.entry("isbn:", IdType.ISBN)
+		);
+
 	static Optional<Pid> pidFromPids(String response) {
 		var v = value(response);
-		for (String tok : v.split(";")) {
-			for (String pid : tok.trim()
-				.split("\\s+")) {
-				if (pid.startsWith("doi:"))
-					return Optional.of(new Pid(IdType.DOI, pid.substring(4)));
+		for (var scheme : KNOWN_SCHEMES) {
+			for (String tok : v.split(";")) {
+				for (String pid : tok.trim()
+					.split("\\s+")) {
+					if (pid.startsWith(scheme.getKey())) return Optional.of(
+							new Pid(
+									scheme.getValue(),
+									pid.substring(
+										scheme.getKey()
+											.length()
+									)
+							)
+					);
+				}
 			}
 		}
 		if (!v.contains(":")) return v.isEmpty() ? Optional.empty()
 			: Optional.of(new Pid(IdType.DOI, v));
+		// a scheme this project does not model — an omid or an arxiv id. Kept whole,
+		// scheme and all, because it still identifies the entity and a link with an
+		// identifier beats a link with none
 		for (String tok : v.split(";")) {
 			for (String pid : tok.trim()
 				.split("\\s+")) {
