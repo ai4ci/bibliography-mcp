@@ -1,8 +1,8 @@
 ---
 title: Entrez record dates are not publication dates
-status: open
+status: closed
 sinceVersion: 0.1.0
-targetVersion: 0.3.0
+targetVersion: 0.1.0
 tags:
 - entrez
 - model
@@ -11,7 +11,6 @@ tags:
 TESTED_BY:
 - test:java/uk/co/terminological/bibliography/api/entrez/TestEntrezExtraction.java
 ---
-
 ## Issue desc
 
 An `EntrezEntry` reports two different dates through the `Record` and
@@ -99,3 +98,45 @@ carries partial precision — a bare year, `2019 Jun`, or a `MedlineDate` like
 `2019 Jun-Jul` — which `Optional<LocalDate>` cannot represent. Records with no
 `ArticleDate` therefore still report the PubMed entry date. Closing this needs
 a decision about how partial dates are modelled, not just a parser.
+
+## Closed — stale, and it was fixed in the commit that wrote it
+
+`getDate()` reads `Article/ArticleDate` first and falls back to
+`PubMedPubDate[pubmed]`. That change landed in `5e4f773` — **the same commit
+that created this record** — so the description above has been out of date since
+the day it was written, and the worked example it is built on no longer holds.
+
+Checked live against that very example:
+
+| PMID | getDate() | ArticleDate | issue PubDate | PubMed received |
+|---|---|---|---|---|
+| 31285980 | **2015-03-23** | 2015 | 2019 Jun | 2019 |
+
+The four-year error is gone: `getDate()` now returns what `pdat` matched.
+
+### What remains, and why it is not this issue
+
+A record with **no** `ArticleDate` still falls back to the date PubMed received
+it, skipping `JournalIssue/PubDate`. Measured across four decades:
+
+| PMID | getDate() | issue PubDate | gap |
+|---|---|---|---|
+| 13678 | 1976-07-01 | 1976 | none visible |
+| 8554176 | 1995-10-01 | 1995 Oct | none |
+| 15841083 | 2005-04-21 | 2005 May | about a month early |
+
+So on the material that lacks an `ArticleDate` the received date tracks the
+issue date closely — PubMed creates the record around publication. The large
+error this issue was about belongs to **ahead-of-print** articles, and those are
+exactly the ones that have an `ArticleDate`, which is now preferred.
+
+The remaining imprecision is recorded as
+[debt-014](../debt/debt-014-journal-issue-pubdate-is-not-parsed.md), because what
+is left is a design question about partial dates rather than a wrong answer:
+`PubDate` can be a bare year, `2019 Jun`, or a `MedlineDate` like
+`2019 Jun-Jul`, none of which an `Optional<LocalDate>` can hold honestly.
+
+`getYear()` reading the journal issue year is **correct** and was never a
+defect: it is `PrintReference`'s coordinate — where the work sits in print —
+not a publication date, and the issue listing it as a symptom was wrong about
+that.
