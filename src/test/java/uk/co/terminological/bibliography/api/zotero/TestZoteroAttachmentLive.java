@@ -35,8 +35,14 @@ import uk.co.terminological.bibliography.PdfSink;
 @Category(LiveTest.class)
 public class TestZoteroAttachmentLive {
 
-	/** api-test: empty, sanctioned, and the only place these tests may write */
-	static final String TEST_COLLECTION = "TB35FFX6";
+	/**
+	 * The sanctioned region: everything named api-… and nothing else.
+	 *
+	 * A pattern rather than the key of {@code api-test}, because that is what the property means now and because the
+	 * live library is the only place the resolution — four matching collections, three of them nested, one root — can
+	 * actually be exercised.
+	 */
+	static final String TEST_COLLECTION = "api-*";
 
 	private static ZoteroClient writableClient() {
 		var properties = new Properties();
@@ -106,6 +112,21 @@ public class TestZoteroAttachmentLive {
 			attachment.getData()
 				.path("parentItem")
 				.asText()
+		);
+	}
+
+	@Test
+	public void theRegionResolvesToItsOneRoot() {
+		var zotero = writableClient();
+		zotero.checkAvailable();
+
+		var target = zotero.writeTarget();
+
+		// api-* matches api-test and three collections inside it; the root is where
+		// a new sub-collection belongs
+		assertEquals("api-test", target.getName());
+		assertTrue(
+			"the root of the region should be top level", target.isTopLevel()
 		);
 	}
 

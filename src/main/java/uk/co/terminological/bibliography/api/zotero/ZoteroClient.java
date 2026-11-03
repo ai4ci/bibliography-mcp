@@ -191,35 +191,39 @@ public class ZoteroClient {
 		}
 	}
 
-	/** writes may only touch the configured collection or something inside it */
+	/**
+	 * Writes may only touch the region {@code zotero-write-collection} describes.
+	 *
+	 * The property is a pattern over collection names and keys, so a collection is writable when it, or anything
+	 * above it, is in the region — which is what keeps a sub-collection the bridge created writable under a name of
+	 * its own. See {@link CollectionScope}.
+	 */
 	public void checkWriteTarget(String collectionKey) {
 		checkWritesAllowed();
-		if (collectionKey.equals(config.getWriteCollection())) return;
-		if (isDescendantOf(collectionKey, config.getWriteCollection())) return;
+		if (CollectionScope
+			.permits(config.getWriteCollection(), collectionKey, collections()))
+			return;
 		throw new ZoteroException(
 				"refusing to write to collection " + collectionKey
-						+ ": writes are confined to the configured collection ("
-						+ config.getWriteCollection() + ")"
+						+ ": writes are confined to collections matching '"
+						+ config.getWriteCollection() + "'"
 		);
 	}
 
-	private boolean isDescendantOf(String collectionKey, String ancestorKey) {
-		List<ZoteroCollection> all = collections();
-		String current = collectionKey;
-		for (int hops = 0; hops < 20 && current != null
-				&& !current.isEmpty(); hops++) {
-			String parent = null;
-			for (ZoteroCollection collection : all) {
-				if (current.equals(collection.getKey())) {
-					parent = collection.getParentCollection();
-					break;
-				}
-			}
-			if (parent == null) return false;
-			if (parent.equals(ancestorKey)) return true;
-			current = parent;
+	/**
+	 * The collection a new sub-collection hangs off: the top of the region the pattern describes.
+	 *
+	 * Refuses when the pattern matches nothing, and when it matches two unrelated collections — the first is usually a
+	 * typo and the second needs a decision this code is not entitled to make.
+	 */
+	public ZoteroCollection writeTarget() {
+		checkWritesAllowed();
+		try {
+			return CollectionScope
+				.requireSingleRoot(config.getWriteCollection(), collections());
+		} catch (IllegalStateException e) {
+			throw new ZoteroException(e.getMessage(), e);
 		}
-		return false;
 	}
 
 	/** create a sub-collection of the configured write target, and return its key */
@@ -227,7 +231,9 @@ public class ZoteroClient {
 		checkWritesAllowed();
 		ObjectNode collection = mapper.createObjectNode();
 		collection.put("name", name);
-		collection.put("parentCollection", config.getWriteCollection());
+		collection.put(
+				"parentCollection", writeTarget().getKey()
+		);
 		ArrayNode body = mapper.createArrayNode()
 			.add(collection);
 		JsonNode response = write(
@@ -712,6 +718,10 @@ public class ZoteroClient {
 
 		if (write && response.statusCode() == 401 && mayAuthorise) {
 			authoriseWrite();
+			// the retry carries the content type and headers of the original: the file
+			// sub-resource is form-encoded, and resending its body as json earns an
+			// "Invalid JSON provided" that looks like a protocol error rather than a
+			// lost header
 			return send(
 				method,
 				path,
@@ -719,7 +729,9 @@ public class ZoteroClient {
 				body,
 				true,
 				false,
-				versionPrecondition
+				versionPrecondition,
+				contentType,
+				extraHeaders
 			);
 		}
 		if (write && response.statusCode() == 428 && mayAuthorise) {
@@ -732,7 +744,9 @@ public class ZoteroClient {
 				body,
 				true,
 				false,
-				versionPrecondition
+				versionPrecondition,
+				contentType,
+				extraHeaders
 			);
 		}
 		return response;

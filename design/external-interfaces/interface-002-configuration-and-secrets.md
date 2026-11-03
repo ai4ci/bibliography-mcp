@@ -56,7 +56,34 @@ startup. Keys in the same properties file:
 | `zotero-base-url` | `http://localhost:23119/api` | where the local API lives |
 | `zotero-user-id` | `0` | `0` means the locally logged-in user, which the local API accepts |
 | `zotero-allow-writes` | `false` | writes are refused unless this is true |
-| `zotero-write-collection` | (none) | the **only** collection writes may touch; a sub-collection created by the bridge is always a child of it |
+| `zotero-write-collection` | (none) | the region of the library writes are confined to, as a glob over collection **names or keys** — `api-*`, or a bare key like `TB35FFX6`. A sub-collection created by the bridge is always a child of the region's root |
+
+### What the write region means
+
+`zotero-write-collection` began as a single collection key, which is precise and
+awkward: it names one collection, and someone who thinks of their library as
+"everything under `api-`" has to look a key up to say so. It is now a glob —
+`*` and `?`, matched without case, against a collection's name **or** its key —
+and it answers two different questions:
+
+- **May this write happen?** Yes if the collection, or anything above it, is in
+  the region. That is what keeps a sub-collection the bridge just created
+  writable under a name of its own.
+- **Where does a new sub-collection go?** Under the region's *root*: the
+  matching collection that is not itself inside another match. `api-*` against a
+  library holding `api-test` and three collections nested inside it has one root
+  and is unambiguous.
+
+Two refusals, both naming what they saw: a pattern matching nothing (usually a
+typo, or a collection not created yet), and a pattern matching two **unrelated**
+collections, which needs a decision this code is not entitled to make.
+
+A bare value with no wildcard still means exactly one thing, so a properties file
+written when this was a key keeps working.
+
+Everything in the glob is literal except `*` and `?` — a collection called
+`Smith (2024)` is a name, and reading it as a regular expression would quietly
+widen what a write may touch.
 
 Local write permission is not a key you can put here: Zotero asks the user at
 runtime (`POST /api/local/authorize`), naming the application. The key it returns
