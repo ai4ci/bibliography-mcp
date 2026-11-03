@@ -8,7 +8,7 @@ tags:
 - mcp
 - citation-formatting
 TESTED_BY:
-- test:java/uk/co/terminological/bibliography/mcp/TestCitationStyleTool.java
+- test:java/uk/co/terminological/bibliography/record/TestRecordModel.java
 ---
 ## Issue desc
 

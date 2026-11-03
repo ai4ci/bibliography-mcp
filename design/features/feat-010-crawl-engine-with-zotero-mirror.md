@@ -19,7 +19,6 @@ HAS_PROTOTYPE:
 HAS_TEST:
 - testscript:test-001-mcp-protocol-smoke-test.md
 ---
-
 ## Why this feature exists
 
 The MCP server today is a bag of 29 primitives. Everything is a synchronous
@@ -243,8 +242,8 @@ on the assumption they are the same feature.
   2026-11-03:** a persistent server is now the point. A durable repository and a
   crawl that outlives the request that started it make the process a service, so
   it listens on a loopback port and speaks MCP over HTTP through the official
-  SDK — see [adr-006](adr:adr-006-adopt-mcp-sdk-over-http.md) and
-  [plan-014](plan:plan-014-mcp-sdk-http-server.md). stdio is deleted. Still one
+  SDK — see [adr-006](../../architecture/decision-records/adr-006-adopt-mcp-sdk-over-http.md) and
+  [plan-014](../implementation/plans/plan-014-mcp-sdk-http-server.md). stdio is deleted. Still one
   process; no longer one client, and no longer one conversation.
 - Changing the `record` model or `MergePolicy`.
 - Anything that requires Zotero to be running in order to crawl, rank or
@@ -278,3 +277,34 @@ on the assumption they are the same feature.
   job must not share mutable state with the crawl thread.
 - **Zotero API limits.** Write paths are already batched with
   `leftForANextCall`; PDFs make that limit much hotter.
+
+## Status — 0.2.0: six of seven workflows
+
+Built: the durable repository ([plan-010](../implementation/plans/plan-010-versioned-repository-store.md)),
+the background crawl ([plan-011](../implementation/plans/plan-011-background-crawl-engine.md)), the
+six-tool surface ([plan-012](../implementation/plans/plan-012-workflow-tool-surface.md)) and the MCP
+server over HTTP ([plan-014](../implementation/plans/plan-014-mcp-sdk-http-server.md)).
+
+Against the success criteria at the top of this document:
+
+| criterion | state |
+|---|---|
+| a crawl runs with the server responsive | **yes** — the crawl is on its own thread and `crawl status` answers during it |
+| killing the server mid-crawl resumes from the frontier | **yes**, asserted offline |
+| `rank` and `search` return scores in the JSON | **yes** — `score` and `matchedApis` |
+| `zotero_sync` takes the selection and updates metadata | **partly** — it publishes and reports; **no PDFs** |
+| Zotero closed: everything else works | **yes**, asserted over the wire |
+| `Session`'s Java serialization gone, debt-001 closed | **yes** |
+| offline tier green, engine tested with a faked facade, live crawl test | **yes** |
+
+**Workflow 2's PDF half is the gap.** `PdfFetcher` still returns an
+`Optional<InputStream>` into the cache and writes no file, so neither Zotero
+attachments nor `prag`'s input directory exist yet. The Zotero prototype this
+needs — whether `POST /<lib>/import` is available in the developer's build, which
+decides whether an attachment is one call or three — is still unrun, and
+[prototype-003](../prototypes/prototype-003-zotero-attachment-paths.md) is where it
+belongs.
+
+The non-goal about a persistent server was revised rather than met: the server
+is now a service on a loopback port, which is what made workflows 3 and 4
+possible at all.

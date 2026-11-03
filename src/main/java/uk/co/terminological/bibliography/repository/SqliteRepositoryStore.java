@@ -472,6 +472,55 @@ public class SqliteRepositoryStore implements RepositoryStore {
 	}
 
 	@Override
+	public java.util.List<java.util.Map.Entry<Record, Long>> topByCitedBy(
+			int limit
+	) {
+		java.util.List<java.util.Map.Entry<Record, Long>> out = new ArrayList<>();
+		// grouped in the database rather than in memory: the whole point of the store
+		// is that "the most cited hundred" does not mean reading the edges
+		var sql = "SELECT tgtIdType, tgtId, count(*) AS n FROM citation"
+				+ " GROUP BY tgtIdType, tgtId ORDER BY n DESC LIMIT " + limit;
+		try (Statement s = this.connection.createStatement();
+				ResultSet rs = s.executeQuery(sql)) {
+			while (rs.next()) {
+				var ref = Builder.recordReference(
+					IdType.valueOf(rs.getString(1)), rs.getString(2)
+				);
+				long count = rs.getLong(3);
+				// a cited work the crawl never fetched has no record; report what is
+				// known of it rather than dropping it from the ranking
+				var record = getRecord(ref);
+				out.add(
+					new java.util.AbstractMap.SimpleEntry<>(
+							record.orElseGet(() -> placeholderFor(ref)), count
+					)
+				);
+			}
+		} catch (SQLException e) {
+			throw new RepositoryException("could not rank by citation count", e);
+		}
+		return out;
+	}
+
+	/**
+	 * A work the repository knows only as the end of an edge.
+	 *
+	 * Half the references in a reference list resolve to no record any API will return, so a ranking that dropped
+	 * them would quietly under-report the most-cited works in the corpus.
+	 */
+	private static Record placeholderFor(ImmutableRecordReference ref) {
+		return ImmutableRecord.builder()
+			.identifierType(ref.getIdentifierType())
+			.identifier(
+				ref.getIdentifier()
+					.orElse(null)
+			)
+			.provenance(Provenance.placeholder("citation"))
+			.licenses(Stream.empty())
+			.build();
+	}
+
+	@Override
 	public void markSelected(RecordReference ref, boolean selected) {
 		update(
 			"UPDATE record SET selected = ? WHERE idType = ? AND id = ?", ref,

@@ -268,7 +268,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>uk.co.terminological.bibliography.mcp.McpServer</mainClass>
+							<mainClass>uk.co.terminological.bibliography.mcp.McpHttpServer</mainClass>
 							<addClasspath>true</addClasspath>
 							<classpathPrefix>lib/</classpathPrefix>
 						</manifest>

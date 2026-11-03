@@ -442,17 +442,6 @@ public class BiblioFacade
 
 	public Session getSession() { return new Session(this); }
 
-	public Session loadSession(String filename)
-			throws IOException, ClassNotFoundException {
-		filename = filename.replaceFirst("^~", System.getProperty("user.home"));
-		var in = new java.io.FileInputStream(filename);
-		var s = new java.io.ObjectInputStream(in);
-		var out = (Session) s.readObject();
-		in.close();
-		out.setFacade(this);
-		return out;
-	}
-
 	@Override
 	public GenericSearchBuilder buildQuery() {
 		return new GenericSearchBuilder(this);
@@ -658,8 +647,42 @@ public class BiblioFacade
 	 * Phase 4: group by equivalence and merge via {@link MergedRecord}.
 	 * Phase 5: compute RRF score per group and sort descending.
 	 */
+	/**
+	 * Search, and report why each result is where it is.
+	 *
+	 * The same work as {@link #search}, keeping the score and the contributing APIs instead of discarding them at the
+	 * return. Callers that only want the records use {@code search}; the tool surface uses this, because a ranking an
+	 * agent cannot see is a ranking it has to take on trust.
+	 */
+	public List<ScoredRecord> scoredSearch(Query qry) {
+		var named = identifierQuery(qry);
+		if (named.isPresent()) {
+			return search(qry).stream()
+				.map(r -> new ScoredRecord(r, 0.0, List.of("fetch")))
+				.collect(Collectors.toList());
+		}
+		List<ScoredHit> scoredHits = new ArrayList<>();
+		for (String api : this.searchApis) {
+			Collection<? extends Record> raw = dispatchSearch(api, qry);
+			List<? extends Record> results = raw instanceof List
+				? (List<? extends Record>) raw
+				: new ArrayList<>(raw);
+			for (int i = 0; i < results.size(); i++) {
+				scoredHits.add(new ScoredHit(results.get(i), api, i + 1));
+			}
+		}
+		return scoredSearch(scoredHits);
+	}
+
 	/** Visible for testing: the dedup is worth asserting without a search in front of it. */
 	Collection<Record> dedupedSearch(List<ScoredHit> scoredHits) {
+		return scoredSearch(scoredHits).stream()
+			.map(ScoredRecord::record)
+			.collect(Collectors.toList());
+	}
+
+	/** Visible for testing: dedup, score and report, which is what the tool surface needs. */
+	List<ScoredRecord> scoredSearch(List<ScoredHit> scoredHits) {
 		if (scoredHits.isEmpty()) return List.of();
 
 		// Phase 2 — collect all identifiers
@@ -704,9 +727,16 @@ public class BiblioFacade
 		sorted.sort((a, b) -> Double.compare(rrfScore(hitsByRoot.get(b.getKey()), k),
 			rrfScore(hitsByRoot.get(a.getKey()), k)));
 
-		List<Record> out = new ArrayList<>(sorted.size());
-		for (var entry : sorted)
-			out.add(entry.getValue());
+		List<ScoredRecord> out = new ArrayList<>(sorted.size());
+		for (var entry : sorted) {
+			var hits = hitsByRoot.get(entry.getKey());
+			var apis = hits.stream()
+				.map(h -> h.api)
+				.distinct()
+				.sorted()
+				.collect(Collectors.toList());
+			out.add(new ScoredRecord(entry.getValue(), rrfScore(hits, k), apis));
+		}
 		return out;
 	}
 

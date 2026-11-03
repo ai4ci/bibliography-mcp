@@ -1,6 +1,6 @@
 ---
 title: Workflow shaped tool surface
-status: draft
+status: final
 targetVersion: unassigned
 tags:
 - mcp
@@ -228,3 +228,36 @@ Scores reach the JSON (work item A), structured search reaches the clients (B �
 names, and it happens in the same commit as the SDK server
 ([plan-014](plan-014-mcp-sdk-http-server.md)) rather than before it: the
 old server is deleted whole rather than renamed twice.
+
+## Built — 0.2.0, six tools
+
+`search`, `list_records`, `select`, `crawl`, `rank`, `zotero_sync`, in
+`BiblioTools`, served by [plan-014](plan-014-mcp-sdk-http-server.md)'s
+server. Thirty tools became six in one commit rather than by renaming twice: the
+old surface was deleted with the server it hung off.
+
+Work item A, the scores, is done at the source rather than at the boundary:
+`BiblioFacade.scoredSearch` returns `ScoredRecord` — the record, the RRF score
+and the APIs that found it — where `search` dropped all three at the return.
+`RecordJson` emits `score` and `matchedApis`, and `rank` writes its scores back
+to the store so `list_records` agrees with the ranking it was given.
+
+Two deviations from the plan above, both deliberate:
+
+- **`minCitations` and `incomplete` are not arguments of `list_records`.**
+  Filtering by citation count is what `rank(method=cited_by)` answers, and
+  putting it in two places would mean two implementations of the same count.
+  `list_records` filters `all` or `selected`, and nothing else.
+- **The citation style is an argument on `search`, `list_records` and `rank`**
+  rather than a tool. Naming a style on the call that returns records says what
+  `citation_style` said without a mode to set, and the static field that held it
+  is gone with `McpTools`.
+
+### Not built, and feat-010 says so
+
+**PDF materialisation (work item C) and Zotero attachments.** `zotero_sync`
+publishes metadata into a sub-collection and reports what the library already
+holds; it does not attach PDFs, because `PdfFetcher` still has no sink that
+writes a file. That is the one piece of feat-010's seven workflows that this
+release does not deliver, and the prototype it needs — whether Zotero's
+`/import` is available in the developer's build — is still unrun.

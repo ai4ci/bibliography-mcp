@@ -2,7 +2,7 @@
 class: plan
 id: plan-014-mcp-sdk-http-server.md
 title: Mcp sdk http server
-status: draft
+status: final
 targetVersion: unassigned
 tags:
 - mcp
@@ -107,3 +107,45 @@ Three things worth carrying forward:
 
 Java 17 with the SDK and Jetty on the classpath: `mvn clean test` 232 tests,
 0 failures. The spike is deleted; the server proper is built on the new surface.
+
+## Built — 0.2.0
+
+`McpHttpServer` on embedded Jetty, bound to `127.0.0.1`, serving the SDK's
+streamable HTTP transport at `/mcp`. `BiblioContext` holds the repository, the
+facade, the crawl engine and Zotero for the life of the server;
+`BiblioTools` builds the six tool specifications. `McpServer` and `McpTools` are
+deleted — 276 and 1,121 lines of hand-rolled JSON-RPC and primitives.
+
+Shutdown stops serving first, then stops the crawl, then closes the repository,
+so the crawl's last checkpoint is not racing a tool call that is still writing.
+
+`TestMcpHttpServer` drives the real server on an ephemeral port with the SDK's
+**own client**, so the handshake, session, SSE framing and schema validation are
+exercised rather than imitated. Twelve tests, offline.
+
+`scripts/mcp-smoke-test.sh` no longer pipes JSON-RPC into stdin. It starts the
+jar on a free port with a temporary repository and Zotero off, drives a real
+handshake with curl, and asserts the tool list is **exactly** the six — a
+surface that drifts fails the build gate.
+
+### Confirmed in the building, not assumed
+
+- **The SDK validates arguments before the handler.** A `select` without `ids`
+  comes back as a tool error naming the missing property. Every
+  `args.get("x") == null` check the old tools carried is gone.
+- **Both JSON libraries coexist.** The SDK resolved `JacksonMcpJsonMapper`
+  (Jackson 3) through its `ServiceLoader` while the project's Jackson 2.9.7
+  builds the tool payloads, with no configuration and no collision.
+- **stdio is gone, and so is its last user.** The smoke script was the only
+  thing that spawned the jar and talked down a pipe.
+
+## Still open
+
+- **Progress notifications.** The SDK supports them and `crawl` is the obvious
+  consumer, so polling `crawl status` could become a stream. Not done; nothing
+  here precludes it.
+- **Two servers on one repository.** Still nothing stops it. SQLite's WAL makes
+  concurrent *readers* safe, and two crawl engines writing to one repository is
+  not addressed.
+- **The MCP client configuration shape.** A URL rather than a command, and
+  whoever configures a client has to make that change by hand.

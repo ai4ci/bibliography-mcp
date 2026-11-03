@@ -1,6 +1,6 @@
 ---
 title: Mcp http transport
-status: draft
+status: final
 targetVersion: unassigned
 tags:
 - mcp
@@ -13,8 +13,8 @@ HAS_TEST:
 - testscript:test-001-mcp-protocol-smoke-test.md
 - testscript:test-002-api-behaviour-tests.md
 IMPLEMENTED_BY:
-- main:java/uk/co/terminological/bibliography/mcp/McpServer.java
-- main:java/uk/co/terminological/bibliography/mcp/McpTools.java
+- main:java/uk/co/terminological/bibliography/mcp/McpHttpServer.java
+- main:java/uk/co/terminological/bibliography/mcp/BiblioTools.java
 ---
 # MCP over streamable HTTP
 
@@ -78,7 +78,9 @@ this interface describes.
 
 | key | default | meaning |
 |-----|---------|---------|
-| `mcp-port` | `8089` | the loopback port to listen on |
+| `mcp-port` | `8089` | the loopback port to listen on; `0` takes whatever is free |
+| `repository-directory` | `${XDG_DATA_HOME:-~/.local/share}/bibliographic-api-client/repositories/` | the parent of the repositories, per [adr-005](adr:adr-005-repository-uses-xdg-data-home.md) |
+| `repository-name` | `default` | which repository under that parent this server serves |
 
 Worked examples for every workflow are in
 [skills/using-bibliographic-apis/references/mcp-call-sequences.md](/skills/using-bibliographic-apis/references/mcp-call-sequences.md),

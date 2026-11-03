@@ -43,11 +43,11 @@ import uk.co.terminological.datatypes.Tuple;
  * interface.) Long-lived; held in memory for the lifetime of an MCP server session, persisted via save/load.
  */
 // [IMPLEMENTS](/design/features/feat-002-explore-citation-networks-in-a-session.md)
-public class Session implements Serializable {
+public class Session {
 
 	static Logger log = LoggerFactory.getLogger(Session.class);
 
-	transient BiblioFacade facade;
+	BiblioFacade facade;
 	FluentMap<UUID, MergedRecord> records = new FluentMap<>();
 	FluentMap<ImmutableRecordReference, UUID> ids = new FluentMap<>();
 	Graph<ImmutableRecordReference, DefaultEdge> citations = new SimpleDirectedGraph<>(
@@ -322,16 +322,6 @@ public class Session implements Serializable {
 			this.citations.edgeSet()
 				.size()
 		);
-	}
-
-	public Session save(String filename) throws IOException {
-		filename = filename.replaceFirst("^~", System.getProperty("user.home"));
-		var f = new FileOutputStream(filename);
-		ObjectOutput s = new ObjectOutputStream(f);
-		s.writeObject(this);
-		s.flush();
-		s.close();
-		return this;
 	}
 
 	public Session addSingle(IdType idType, String id) {

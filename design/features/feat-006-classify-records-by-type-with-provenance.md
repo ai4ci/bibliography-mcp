@@ -14,7 +14,7 @@ HAS_TEST:
 IMPLEMENTED_BY:
 - main:java/uk/co/terminological/bibliography/api/crossref/CrossRefWork.java
 - main:java/uk/co/terminological/bibliography/api/europepmc/EuropePMCLiteResult.java
-- main:java/uk/co/terminological/bibliography/mcp/McpTools.java
+- main:java/uk/co/terminological/bibliography/mcp/BiblioTools.java
 - main:java/uk/co/terminological/bibliography/record/Record.java
 - main:java/uk/co/terminological/bibliography/record/MergedRecord.java
 - main:java/uk/co/terminological/bibliography/record/Provenance.java

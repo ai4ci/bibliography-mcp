@@ -54,7 +54,6 @@ fails the build instead of quietly lying.
 | uri | title | targetVersion |
 | --- | --- | --- |
 | [Opencitations queries dois only](implementation/debt/debt-002-opencitations-queries-dois-only.md) | Opencitations queries dois only | 0.2.0 |
-| [Session persistence uses java serialization](implementation/debt/debt-001-session-persistence-uses-java-serialization.md) | Session persistence uses java serialization | 0.3.0 |
 | [Analysis recomputes topic model per call](implementation/debt/debt-003-analysis-recomputes-topic-model-per-call.md) | Analysis recomputes topic model per call | 0.3.0 |
 | [Fetch is incomplete by id type](implementation/debt/debt-005-fetch-is-incomplete-by-id-type.md) | Fetch is incomplete by id type | 0.3.0 |
 | [Cached answers are never invalidated](implementation/debt/debt-006-cached-answers-are-never-invalidated.md) | Cached answers are never invalidated | 0.3.0 |

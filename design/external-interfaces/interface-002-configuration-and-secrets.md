@@ -9,7 +9,7 @@ HAS_FEATURE:
 - feature:feat-001-expose-bibliographic-apis-over-mcp.md
 IMPLEMENTED_BY:
 - main:java/uk/co/terminological/bibliography/api/BiblioFacade.java
-- main:java/uk/co/terminological/bibliography/mcp/McpServer.java
+- main:java/uk/co/terminological/bibliography/mcp/McpHttpServer.java
 - main:java/uk/co/terminological/bibliography/api/zotero/ZoteroConfig.java
 ---
 
@@ -74,6 +74,18 @@ Tagging six items one at a time would otherwise need six prompts and hit the lim
 When the local API preference is off, every Zotero request returns `403` and the
 tool message says which setting to change (Zotero Settings → Advanced → "Allow
 other applications on this computer to communicate with Zotero").
+
+## The server and its repository
+
+| key | default | meaning |
+|-----|---------|---------|
+| `mcp-port` | `8089` | the loopback port the MCP server listens on |
+| `repository-directory` | `${XDG_DATA_HOME:-~/.local/share}/bibliographic-api-client/repositories/` | the parent of the repositories ([adr-005](adr:adr-005-repository-uses-xdg-data-home.md)) |
+| `repository-name` | `default` | which repository under that parent this server serves |
+
+The repository is **not** the HTTP cache, and `repository-directory` must not be
+pointed at `cache-directory`: the cache is rebuildable and lives under `/tmp`,
+and the repository is the thing a crawl spent hours filling.
 
 ## OpenAlex credits
 

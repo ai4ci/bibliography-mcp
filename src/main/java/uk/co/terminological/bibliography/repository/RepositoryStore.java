@@ -81,6 +81,14 @@ public interface RepositoryStore extends AutoCloseable {
 	/** The highest-scoring works, merged, read from an index rather than by sorting the repository. */
 	Stream<Record> topByScore(int limit);
 
+	/**
+	 * The most-cited works in the repository, with how many of its records cite each.
+	 *
+	 * Counted over the edges the crawl actually collected, so it answers "most cited in this corpus" rather than
+	 * "most cited in the literature" — which is the question a crawl is in a position to answer honestly.
+	 */
+	java.util.List<java.util.Map.Entry<Record, Long>> topByCitedBy(int limit);
+
 	/** Mark or unmark a work as selected. Nothing is removed either way. */
 	void markSelected(RecordReference ref, boolean selected);
 

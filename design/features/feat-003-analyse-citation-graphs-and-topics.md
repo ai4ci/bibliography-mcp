@@ -11,7 +11,7 @@ HAS_TEST:
 - testscript:test-002-api-behaviour-tests.md
 IMPLEMENTED_BY:
 - main:java/uk/co/terminological/bibliography/mcp/Analysis.java
-- main:java/uk/co/terminological/bibliography/mcp/McpTools.java
+- main:java/uk/co/terminological/bibliography/mcp/BiblioTools.java
 ---
 
 A downstream agent can rank the records in a session by page rank over the

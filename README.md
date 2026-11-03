@@ -36,92 +36,86 @@ silently dropped resources that two of them publish at the same path, which brok
 citation rendering in the built server and nothing in the test suite could see it
 ([issue-022](design/implementation/issues/issue-022-shaded-jar-cannot-render-citations.md)).
 
-Register it in an MCP client (stdio transport). The first argument is the
-secrets file path (CrossRef/Entrez/OpenAlex API keys; falls back to the
-`BIBLIO_SECRETS_PATH` environment variable), the optional second argument is
-the EHCache directory:
+The server is a **long-lived local service**, not a command a client spawns. It
+holds a durable repository and a citation crawl that outlives the request that
+started it, so it listens on a loopback port and speaks MCP over streamable HTTP
+([ADR-006](architecture/decision-records/adr-006-adopt-mcp-sdk-over-http.md)):
+
+```bash
+java -jar target/bibliographic-api-client-0.2.0-SNAPSHOT.jar \
+     ~/.private/apis/secrets.prop
+# MCP server listening on http://127.0.0.1:8089/mcp
+```
+
+Register that URL in an MCP client:
 
 ```json
 {
   "mcpServers": {
     "bibliographic-api-client": {
-      "command": "java",
-      "args": [
-        "-jar", "/path/to/target/bibliographic-api-client-0.1.0-SNAPSHOT.jar",
-        "/path/to/.private/apis/secrets.prop",
-        "/tmp/ehcache/biblio"
-      ]
+      "url": "http://127.0.0.1:8089/mcp"
     }
   }
 }
 ```
 
-All logging goes to stderr; stdout is reserved for the protocol.
+The same properties file carries the API credentials, the Zotero settings,
+`mcp-port`, and where the repository lives — see
+[configuration](design/external-interfaces/interface-002-configuration-and-secrets.md).
+The listener binds to `127.0.0.1` only. There is no authentication: it is a
+service for the user who started it.
+
+**stdio is gone.** Until 0.1.0 the server was a hand-rolled JSON-RPC loop over a
+pipe; a client that spawned the jar now has to connect to a running one instead.
 
 ## Tools
 
-Core (stateless per call):
-* `search` — query crossref / entrez / europepmc / openalex with optional date range, limit and API filter
-* `fetch` — full record details for a list of ids (DOI, PMID, PMCID...)
-* `cites` / `cited_by` — citation graph queries
-* `map_ids` — alternate id types via id mapping APIs
-* `references_from_pdf` — download a pdf, extract and match its reference list
-* `citation_styles` — list the supported citation styles
-* `citation_style` — choose one; every record returned afterwards carries a rendered `citation`
+Six, each a step of a workflow rather than a library call:
 
-Session state (a long-lived repository held in memory):
-* `collect_search`, `collect_search_by_api`, `add_records`, `remove_records` — mutate the session
-* `fetch_missing` — fetch details for all ids lacking them
-* `expand_citation_graph` — expand the citation graph up/down with a size limit
-* `find_alternate_ids` — id mappings for all session records
-* `session_status`, `session_records`, `session_citations` — inspect the session
-* `save_repository`, `load_repository` — persist / restore a session
+| tool | does |
+|---|---|
+| `search` | search crossref / entrez / europepmc / openalex, ranked across them, each record carrying the score that ordered it and the APIs that found it. An identifier is looked up rather than text-matched. `collect` adds the results to the repository |
+| `list_records` | read the repository, everything or only what is selected; name a CSL style and each record carries a rendered citation |
+| `select` | mark records. A mark, never a delete: what is rejected stays in the citation graph so the metrics stay honest |
+| `crawl` | `start` a background citation crawl from seeds or the selection, ask its `status`, or `stop` it. It survives a restart |
+| `rank` | `page_rank`, `cited_by` or `rrf` over what the repository holds — "in this corpus", not "in the literature" |
+| `zotero_sync` | list `collections`, `report` what the library already holds, or `publish` the selection into a new sub-collection |
 
-Analysis:
-* `page_rank` — page rank over the session citation graph, joined with titles
-* `topic_model` — LDA topic model over the session records (title + abstract)
+Everything the deleted tools did is still in the library: `BiblioFacade` and the
+`client/` SPI keep `fetch`, `cites`, `cited_by` and `map_ids`. Deleting a tool is
+not deleting a capability; it is refusing to make the model schedule it.
 
-Zotero (optional; local API of a running desktop client):
-
-* `zotero_status`, `zotero_collections` — what library is on the other end
-* `zotero_import` — bring a collection, a search or the library into the session
-* `zotero_check` — which records the library already holds (DOI, ISBN, or
-  normalised title+year)
-* `zotero_publish` — create a sub-collection of the configured write target and add
-  only the records not already held (≤25 per call); nothing existing is modified
-* `zotero_tag` — union tags onto items inside the configured collection
-* `zotero_cleanup_report` — compare every item in a collection against the APIs,
-  field by field: agreements, gaps, conflicts, and items it could not check
-* `zotero_apply_updates` — apply an explicit `{itemKey, fields}` change set to
-  existing items, overwriting only those fields and reporting the old values
-
-Writes are off by default; see [Zotero configuration](design/external-interfaces/interface-002-configuration-and-secrets.md).
-
-### OpenAlex credits
-
-OpenAlex is the one metered source: a lookup by identifier is free, a filtered call
-costs 1 credit and a text search 10, against a daily allowance (10,000 with a key,
-a tenth of that without). Searching is therefore gated — `openalex-daily-credits`
-sets the ceiling and `openalex-search-credit-reserve` the part of it searching may
-not touch, so a day of searches cannot leave the citation and fetch calls, which no
-other source answers, unable to run. Below the reserve OpenAlex simply drops out of
-`search` and the free sources answer; it is never the reason a search fails. See
-[configuration](design/external-interfaces/interface-002-configuration-and-secrets.md).
+The repository is a SQLite file under
+`${XDG_DATA_HOME:-~/.local/share}/bibliographic-api-client/repositories/`, and a
+crawl writes into it as it goes.
 
 ## Plain-Java facade
 
 The same functionality is available programmatically without MCP, via
-`uk.co.terminological.bibliography.api.BiblioFacade` and
-`uk.co.terminological.bibliography.mcp.Session`:
+`BiblioFacade`, `RepositoryStore` and `CrawlEngine`:
 
 ```java
 BiblioFacade facade = new BiblioFacade(secretsPath, cacheDir);
-Session session = facade.getSession();
-session.collectSearch("machine learning");
-session.expandDownCitationGraph(60);
-session.fetchMissingRecords();
-Map<UUID, Double> rank = Analysis.pageRank(session);
+try (RepositoryStore store = SqliteRepositoryStore.open(repositoryPath);
+     CrawlEngine engine = new CrawlEngine(store, facade)) {
+
+    facade.scoredSearch(ImmutableQuery.builder()
+            .allFields("machine learning")
+            .limit(25)
+            .build())
+        .forEach(hit -> {
+            store.putRecord(hit.record());
+            store.setScore(hit.record(), hit.score());
+        });
+
+    CrawlJob job = engine.start(seeds, Direction.DOWN, 2, 5000);
+    // … returns immediately; job.getStatus() while it runs
+    Map<ImmutableRecordReference, Double> rank = Ranking.pageRank(store);
+}
 ```
+
+`Session` survives as an in-memory helper for the LDA topic model, and no longer
+serialises itself: a repository that outlives the process is the store's job.
 
 ## Smoke test
 

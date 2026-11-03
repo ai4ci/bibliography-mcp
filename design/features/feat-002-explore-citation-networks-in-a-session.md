@@ -11,7 +11,7 @@ HAS_INTERFACE:
 HAS_TEST:
 - testscript:test-002-api-behaviour-tests.md
 IMPLEMENTED_BY:
-- main:java/uk/co/terminological/bibliography/mcp/McpTools.java
+- main:java/uk/co/terminological/bibliography/mcp/BiblioTools.java
 - main:java/uk/co/terminological/bibliography/mcp/Session.java
 ---
 

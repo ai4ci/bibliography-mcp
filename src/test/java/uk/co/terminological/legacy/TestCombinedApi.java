@@ -89,10 +89,9 @@ public class TestCombinedApi {
 		System.out.println("PAGERANK");
 		System.out.println(Analysis.pageRank(session));
 
-		session.save("/tmp/testRepo.ser");
-
-		var session2 = api.loadSession("/tmp/testRepo.ser");
-		System.out.println(session2.status());
+		// the .ser round trip that used to be here is gone with Session's Java
+		// serialization (debt-001): a repository that outlives the process is the
+		// RepositoryStore's job now, and it is tested in TestRepositoryStore.
 
 		System.exit(0);
 	}

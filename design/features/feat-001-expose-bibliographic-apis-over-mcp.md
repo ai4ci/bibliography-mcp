@@ -15,8 +15,8 @@ HAS_TEST:
 - testscript:test-002-api-behaviour-tests.md
 IMPLEMENTED_BY:
 - main:java/uk/co/terminological/bibliography/api/BiblioFacade.java
-- main:java/uk/co/terminological/bibliography/mcp/McpServer.java
-- main:java/uk/co/terminological/bibliography/mcp/McpTools.java
+- main:java/uk/co/terminological/bibliography/mcp/McpHttpServer.java
+- main:java/uk/co/terminological/bibliography/mcp/BiblioTools.java
 ---
 
 A downstream agent can query several bibliographic APIs through one MCP

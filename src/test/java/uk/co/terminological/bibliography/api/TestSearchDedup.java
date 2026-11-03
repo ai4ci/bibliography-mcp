@@ -315,6 +315,56 @@ public class TestSearchDedup {
 		);
 	}
 
+	@Test
+	public void theScoreThatOrderedTheResultsIsReported() throws Exception {
+		// plan-012: the RRF score was computed, used to sort, and then dropped at the
+		// return, so an agent could not see why an order was chosen or how
+		// corroborated a hit was
+		var facade = new MappedFacade(
+				Set.of(mapping(IdType.DOI, "10.1/both", IdType.PMID, "12345"))
+		);
+		var bothByDoi = new StubRecord(
+				IdType.DOI, "10.1/both", "Corroborated", "crossref"
+		);
+		var bothByPmid = new StubRecord(
+				IdType.PMID, "12345", "Corroborated", "entrez"
+		);
+		var alone = new StubRecord(
+				IdType.DOI, "10.1/alone", "Uncorroborated", "crossref"
+		);
+
+		var scored = facade.scoredSearch(
+			hits(
+				"crossref", 2, bothByDoi, "crossref", 1, alone, "entrez", 5,
+				bothByPmid
+			)
+		);
+
+		assertEquals(2, scored.size());
+		var top = scored.get(0);
+		assertEquals(
+			Optional.of("Corroborated"),
+			top.record()
+				.getTitle()
+		);
+		assertTrue("a score should be reported", top.score() > 0);
+		assertEquals(
+			"the APIs that found it are the legible form of corroboration",
+			List.of("crossref", "entrez"),
+			top.matchedApis()
+		);
+		assertTrue(
+			"corroboration should outrank a single API's top hit",
+			top.score() > scored.get(1)
+				.score()
+		);
+		assertEquals(
+			List.of("crossref"),
+			scored.get(1)
+				.matchedApis()
+		);
+	}
+
 	/** the least a Record can be: an identity, a title and where it came from */
 	static class StubRecord implements Record {
 		private final IdType idType;

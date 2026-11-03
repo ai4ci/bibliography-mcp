@@ -10,7 +10,7 @@ tags:
 - mcp
 - search
 TESTED_BY:
-- test:java/uk/co/terminological/bibliography/mcp/TestMcpToolSurface.java
+- test:java/uk/co/terminological/bibliography/mcp/TestMcpHttpServer.java
 ---
 ## Issue desc
 

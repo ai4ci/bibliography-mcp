@@ -12,7 +12,7 @@ HAS_TEST:
 - testscript:test-004-metadata-cleanup-tests.md
 IMPLEMENTED_BY:
 - main:java/uk/co/terminological/bibliography/api/crossref/CrossRefWork.java
-- main:java/uk/co/terminological/bibliography/mcp/McpTools.java
+- main:java/uk/co/terminological/bibliography/mcp/BiblioTools.java
 - main:java/uk/co/terminological/bibliography/record/PlainText.java
 - main:java/uk/co/terminological/bibliography/api/zotero/MetadataComparison.java
 - main:java/uk/co/terminological/bibliography/api/zotero/ZoteroClient.java

@@ -17,7 +17,7 @@ import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import uk.co.terminological.bibliography.api.crossref.CrossRefWork;
 import uk.co.terminological.bibliography.api.europepmc.EuropePMCCoreResult;
 import uk.co.terminological.bibliography.api.europepmc.EuropePMCLiteResult;
-import uk.co.terminological.bibliography.mcp.McpTools;
+import uk.co.terminological.bibliography.mcp.RecordJson;
 
 /**
  * feat-006: a record can say what kind of work it is, who issued it, and where the claim came from.
@@ -262,7 +262,7 @@ public class TestRecordModel {
 				"journal-article", "BMJ"
 		);
 
-		var json = McpTools.recordJson(this.mapper, null, record);
+		var json = RecordJson.of(this.mapper, record);
 
 		assertEquals(
 			"article-journal",
@@ -300,7 +300,7 @@ public class TestRecordModel {
 				), "crossref", "journal-article", "BMJ"
 		);
 
-		var json = McpTools.recordJson(this.mapper, null, record);
+		var json = RecordJson.of(this.mapper, record);
 
 		var authors = json.get("authors");
 		assertEquals(2, authors.size());
@@ -341,7 +341,7 @@ public class TestRecordModel {
 			throws Exception {
 		Record record = new PrintStub("10.1/p", "Work", "377", "9775", "1234-40");
 
-		var json = McpTools.recordJson(this.mapper, null, record);
+		var json = RecordJson.of(this.mapper, record);
 
 		assertEquals(
 			"377",
@@ -368,7 +368,7 @@ public class TestRecordModel {
 				"journal-article", "BMJ"
 		);
 
-		var json = McpTools.recordJson(this.mapper, null, record);
+		var json = RecordJson.of(this.mapper, record);
 
 		assertTrue(json.get("volume") == null);
 		assertTrue(json.get("issue") == null);
@@ -383,7 +383,7 @@ public class TestRecordModel {
 				"10.1/n", "Work", IdType.DOI, List.of(), null, null, null
 		);
 
-		var json = McpTools.recordJson(this.mapper, null, record);
+		var json = RecordJson.of(this.mapper, record);
 
 		assertTrue(json.get("publicationType") == null);
 		assertTrue(json.get("publisher") == null);
