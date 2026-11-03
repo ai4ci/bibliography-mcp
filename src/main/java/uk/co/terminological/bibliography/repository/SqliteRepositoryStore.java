@@ -68,14 +68,30 @@ public class SqliteRepositoryStore implements RepositoryStore {
 
 	private final Connection connection;
 	private final Path file;
+	private final RepositoryLock lock;
 
-	private SqliteRepositoryStore(Connection connection, Path file) {
+	private SqliteRepositoryStore(
+			Connection connection, Path file, RepositoryLock lock
+	) {
 		this.connection = connection;
 		this.file = file;
+		this.lock = lock;
 	}
 
-	/** Open, creating the repository when the file does not exist yet. */
+	/** Open for reading, without claiming the repository. */
 	public static SqliteRepositoryStore open(Path file) {
+		return open(file, false);
+	}
+
+	/**
+	 * Open, creating the repository when the file does not exist yet.
+	 *
+	 * @param exclusive claim the repository for writing. A server does; a reader does not. SQLite's WAL already makes
+	 * concurrent readers safe, and says nothing about two crawl engines racing on the same records and spending two
+	 * API budgets at once — which is what this refuses.
+	 */
+	public static SqliteRepositoryStore open(Path file, boolean exclusive) {
+		RepositoryLock lock = null;
 		try {
 			var parent = file.toAbsolutePath()
 				.getParent();
@@ -88,13 +104,18 @@ public class SqliteRepositoryStore implements RepositoryStore {
 				s.execute("PRAGMA foreign_keys=ON");
 				s.execute("PRAGMA busy_timeout=5000");
 			}
-			var store = new SqliteRepositoryStore(connection, file);
+			if (exclusive) lock = RepositoryLock.claim(file);
+			var store = new SqliteRepositoryStore(connection, file, lock);
 			store.createOrCheckSchema();
 			return store;
 		} catch (SQLException | java.io.IOException e) {
+			if (lock != null) lock.release();
 			throw new RepositoryException(
 					"could not open the repository at " + file, e
 			);
+		} catch (RepositoryException e) {
+			if (lock != null) lock.release();
+			throw e;
 		}
 	}
 
@@ -1048,6 +1069,8 @@ public class SqliteRepositoryStore implements RepositoryStore {
 			this.connection.close();
 		} catch (SQLException e) {
 			throw new RepositoryException("could not close the repository", e);
+		} finally {
+			if (this.lock != null) this.lock.release();
 		}
 	}
 

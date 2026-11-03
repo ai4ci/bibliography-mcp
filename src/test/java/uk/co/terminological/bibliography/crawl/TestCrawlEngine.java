@@ -226,6 +226,44 @@ public class TestCrawlEngine {
 		}
 	}
 
+	// ---- telling someone about it ----
+
+	@Test
+	public void aCrawlReportsItsProgressAsItGoes() {
+		this.source.cites("a", "b", "c");
+		this.source.cites("b", "d");
+		var seen = new ArrayList<String>();
+
+		var job = CrawlJob.of(seeds("a"), Direction.DOWN, 2, 1000);
+		this.engine.onProgress(j -> seen.add(j.getStatus() + ":" + j.getVisited()
+			.size()));
+		this.engine.runSynchronously(job);
+
+		assertFalse("nothing was reported at all", seen.isEmpty());
+		// the last word is always the finished job, so a listener that only ever
+		// hears one thing still learns the crawl ended
+		assertTrue(
+			seen.toString(), seen.get(seen.size() - 1)
+				.startsWith("DONE")
+		);
+	}
+
+	@Test
+	public void aListenerThatThrowsDoesNotStopTheCrawl() {
+		this.source.cites("a", "b");
+
+		this.engine.onProgress(j -> {
+			throw new IllegalStateException("the client went away");
+		});
+		var job = this.engine.runSynchronously(
+			CrawlJob.of(seeds("a"), Direction.DOWN, 1, 100)
+		);
+
+		// a crawl is hours of API budget; a client that disconnected must not cost it
+		assertEquals(JobStatus.DONE, job.getStatus());
+		assertEquals(Set.of("a", "b"), visitedIds(job));
+	}
+
 	// ---- what reaches the repository ----
 
 	@Test

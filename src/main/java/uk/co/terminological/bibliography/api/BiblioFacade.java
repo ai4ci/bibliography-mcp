@@ -80,6 +80,21 @@ public class BiblioFacade
 	 * interface cannot be reached from here; preprints are searched through Europe PMC, which indexes both servers
 	 * essentially completely (issue-015).
 	 */
+	/**
+	 * The smoothing constant in the reciprocal rank fusion, {@code score = Σ 1/(K + rank)}.
+	 *
+	 * K sets how deep a corroborated result can be and still beat a single API's top hit: two APIs agreeing at rank
+	 * <em>r</em> outrank one API at rank 1 when {@code K > r - 2}. It was 5, tuned for three search APIs, which put
+	 * that crossover at rank 7 — and Crossref answers an author search with a page of about twenty loosely matched
+	 * results, so its rank 1 is weak evidence while two APIs agreeing at rank 10 is strong. 20 moves the crossover to
+	 * about rank 22, which covers a typical page.
+	 *
+	 * Measured against a live four-API search before changing it: the ordering is identical at 5, 10, 20 and 60, so
+	 * this is not a re-ranking of the ordinary case. It changes the marginal case it exists for, and stays far enough
+	 * below the textbook K=60 that position still separates equally corroborated results.
+	 */
+	public static final int RRF_K = 20;
+
 	public static List<String> searchableApis() {
 		return List.of("crossref", "entrez", "europepmc", "openalex");
 	}
@@ -373,35 +388,6 @@ public class BiblioFacade
 			out.addAll(tmp);
 		});
 		return out;
-	}
-
-	public Set<CrossRefWork> getReferencesFromPdf(String pdfUrl)
-			throws IOException {
-
-		var ois = this.api.getPdfFetcher()
-			.getPdfFromUrl(pdfUrl);
-		if (ois.isPresent()) {
-
-			var refs = this.api.getPdfFetcher()
-				.extractArticleRefs(pdfUrl, ois.get());
-			log.debug("Found {} references for {}", refs.size(), pdfUrl);
-
-			Set<CrossRefWork> works = refs.stream()
-				.flatMap(
-					ref -> this.api.getCrossref()
-						.findWorkByCitationString(ref)
-						.stream()
-				)
-				.collect(Collectors.toSet());
-
-			ois.get()
-				.close();
-			return works;
-
-		} else {
-			log.warn("Could not get pdf from {}", pdfUrl);
-			return Collections.emptySet();
-		}
 	}
 
 	// Fluent configuration
@@ -725,7 +711,7 @@ public class BiblioFacade
 		}
 
 		// Phase 5 — rank by RRF and sort
-		int k = 5;
+		int k = RRF_K;
 		List<Map.Entry<ImmutableRecordReference, MergedRecord>> sorted = new ArrayList<>(
 			merged.entrySet()
 		);

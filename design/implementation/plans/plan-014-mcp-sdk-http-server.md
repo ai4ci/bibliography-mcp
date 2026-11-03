@@ -149,3 +149,26 @@ surface that drifts fails the build gate.
   not addressed.
 - **The MCP client configuration shape.** A URL rather than a command, and
   whoever configures a client has to make that change by hand.
+
+## Progress notifications — done, with the shape the protocol forces
+
+`crawl` takes a `waitSeconds`, and with a `progressToken` the client hears the
+crawl as it happens:
+
+```
+heard [DONE: visited 40, frontier 0, errors 0 (recordCeiling)]
+```
+
+The open question above assumed polling could simply become a stream. It cannot,
+and the measurement is worth keeping: **a progress notification belongs to a
+request that is still in flight.** Notifications emitted after `crawl start`
+returned were not delivered — not over 90 seconds, not with the client holding
+the standalone stream open, although the token was received, the listener fired
+and the crawl ran. So a background job and a notification stream are two
+different shapes, and the tool now offers both rather than pretending one is the
+other.
+
+The engine takes a listener (`CrawlEngine.onProgress`) and reports at each
+checkpoint and on finish. A listener that throws is logged and ignored: a crawl
+is hours of API budget and a client that disconnected must not be able to stop
+it.

@@ -59,6 +59,27 @@ is therefore whatever the SDK's version supports, rather than the five methods
 the hand-rolled server recognised. What this project defines is the **tool
 surface** — see [plan-012](../implementation/plans/plan-012-workflow-tool-surface.md).
 
+## Following a crawl
+
+A crawl outlives the call that starts it, and **a progress notification belongs
+to a request that is still in flight**. Once `crawl start` has returned there is
+no stream to put one on: measured, notifications sent after the response are not
+delivered, with or without the client holding the standalone stream open. So
+there are two ways to follow a crawl and they are different shapes:
+
+| | |
+|---|---|
+| `crawl start` then `crawl status` | returns at once; the client polls. The background case, and what a long crawl wants |
+| `crawl start` with `waitSeconds` and a `progressToken` | the call stays open that long and progress arrives as it happens, ending with the finished job |
+
+A client that wants the notifications must send a `progressToken` — without one
+there is nothing to address them to and none are sent — and must hold the
+standalone stream (`openConnectionOnStartup`) if it also wants anything sent
+outside a call.
+
+A crawl that finishes *inside* the call is simply answered by the response,
+which is why the offline tier asserts the result rather than a notification.
+
 ## Security
 
 An HTTP transport is reachable in ways a pipe is not, and the SDK validates

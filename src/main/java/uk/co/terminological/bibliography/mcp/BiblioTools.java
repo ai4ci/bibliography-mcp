@@ -104,7 +104,7 @@ public class BiblioTools {
 			.build();
 		return SyncToolSpecification.builder()
 			.tool(tool)
-			.callHandler(handler(ctx, (request, mapper) -> {
+			.callHandler(handler(ctx, (exchange, request, mapper) -> {
 				var args = request.arguments();
 				var query = ImmutableQuery.builder();
 				string(args, "query").ifPresent(query::allFields);
@@ -172,7 +172,7 @@ public class BiblioTools {
 			.build();
 		return SyncToolSpecification.builder()
 			.tool(tool)
-			.callHandler(handler(ctx, (request, mapper) -> {
+			.callHandler(handler(ctx, (exchange, request, mapper) -> {
 				var args = request.arguments();
 				var filter = string(args, "filter").orElse("all");
 				var top = integer(args, "top");
@@ -227,7 +227,7 @@ public class BiblioTools {
 			.build();
 		return SyncToolSpecification.builder()
 			.tool(tool)
-			.callHandler(handler(ctx, (request, mapper) -> {
+			.callHandler(handler(ctx, (exchange, request, mapper) -> {
 				var args = request.arguments();
 				boolean value = bool(args, "value").orElse(true);
 				var refs = references(args.get("ids"));
@@ -272,13 +272,14 @@ public class BiblioTools {
 						+ "\"direction\":{\"type\":\"string\",\"enum\":[\"UP\",\"DOWN\",\"BOTH\"],\"default\":\"DOWN\"},"
 						+ "\"depth\":{\"type\":\"integer\",\"default\":1},"
 						+ "\"maxRecords\":{\"type\":\"integer\",\"default\":1000},"
+						+ "\"waitSeconds\":{\"type\":\"integer\",\"description\":\"stay on the call this long, reporting progress, instead of returning at once\"},"
 						+ "\"job\":{\"type\":\"string\"}"
 						+ "},\"required\":[\"action\"]}"
 			)
 			.build();
 		return SyncToolSpecification.builder()
 			.tool(tool)
-			.callHandler(handler(ctx, (request, mapper) -> {
+			.callHandler(handler(ctx, (exchange, request, mapper) -> {
 				var args = request.arguments();
 				var action = string(args, "action").orElse("status");
 				switch (action) {
@@ -299,6 +300,12 @@ public class BiblioTools {
 									"a crawl needs seeds, or fromSelection"
 							);
 						}
+						// A crawl outlives the call that started it, so a client that
+						// wants to follow it would otherwise have to poll. Registered
+						// before the job starts, because a crawl with nothing to do
+						// finishes before a listener added afterwards would hear it.
+						reportProgressTo(ctx, exchange, request);
+						var wait = integer(args, "waitSeconds").orElse(0);
 						var job = ctx.crawl()
 							.start(
 								seeds,
@@ -309,6 +316,12 @@ public class BiblioTools {
 								integer(args, "depth").orElse(1),
 								integer(args, "maxRecords").orElse(1000)
 							);
+						// A progress notification belongs to a request that is still
+						// in flight: once this call returns there is no stream to put
+						// one on, which is why a background crawl is followed by
+						// polling status. waitSeconds is the other choice — stay on
+						// the call, and the progress arrives as it happens.
+						if (wait > 0) awaitCrawl(ctx, job, wait);
 						return jobJson(mapper, job, ctx)
 							.toString();
 					}
@@ -418,7 +431,7 @@ public class BiblioTools {
 			.build();
 		return SyncToolSpecification.builder()
 			.tool(tool)
-			.callHandler(handler(ctx, (request, mapper) -> {
+			.callHandler(handler(ctx, (exchange, request, mapper) -> {
 				var args = request.arguments();
 				var method = string(args, "method").orElse("page_rank");
 				int top = integer(args, "top").orElse(25);
@@ -507,7 +520,7 @@ public class BiblioTools {
 			.build();
 		return SyncToolSpecification.builder()
 			.tool(tool)
-			.callHandler(handler(ctx, (request, mapper) -> {
+			.callHandler(handler(ctx, (exchange, request, mapper) -> {
 				var args = request.arguments();
 				var action = string(args, "action").orElse("report");
 				var zotero = ctx.requireZotero();
@@ -626,6 +639,63 @@ public class BiblioTools {
 			.build();
 	}
 
+	/** Stay with a running crawl for a while, so its progress reaches a client that is listening. */
+	private static void awaitCrawl(BiblioContext ctx, CrawlJob job, int seconds) {
+		var deadline = System.currentTimeMillis() + seconds * 1000L;
+		while (!job.isFinished() && System.currentTimeMillis() < deadline) {
+			try {
+				Thread.sleep(250);
+			} catch (InterruptedException e) {
+				Thread.currentThread()
+					.interrupt();
+				return;
+			}
+		}
+	}
+
+	/**
+	 * Send the crawl's progress to the client that asked for it.
+	 *
+	 * Only when the caller included a {@code progressToken}, which is how MCP says "tell me as you go". Without one
+	 * there is nothing to address a notification to, and a client that did not ask is not told.
+	 *
+	 * The message carries what {@code crawl status} would have said, so following a crawl and asking about it give
+	 * the same picture.
+	 */
+	private static void reportProgressTo(
+			BiblioContext ctx, McpSyncServerExchange exchange,
+			CallToolRequest request
+	) {
+		var meta = request.meta();
+		var token = meta == null ? null : meta.get("progressToken");
+		if (token == null) {
+			ctx.crawl()
+				.onProgress(null);
+			return;
+		}
+		ctx.crawl()
+			.onProgress(job -> {
+				var message = job.getStatus() + ": visited "
+						+ job.getVisited()
+							.size()
+						+ ", frontier " + job.getFrontier()
+							.size()
+						+ ", errors " + job.getErrors()
+						+ job.getStoppedBy()
+							.map(s -> " (" + s + ")")
+							.orElse("");
+				exchange.progressNotification(
+					new io.modelcontextprotocol.spec.McpSchema.ProgressNotification(
+							token, (double) job.getVisited()
+								.size(),
+							// no total: a crawl does not know how big its graph is
+							// until it has drained the frontier
+							null, message
+					)
+				);
+			});
+	}
+
 	/**
 	 * Download a record's open-access PDF and attach it to the item just created.
 	 *
@@ -666,7 +736,7 @@ public class BiblioTools {
 	/** What a handler does: turn arguments into a JSON string, or throw. */
 	interface Body {
 		String apply(
-				CallToolRequest request,
+				McpSyncServerExchange exchange, CallToolRequest request,
 				com.fasterxml.jackson.databind.ObjectMapper mapper
 		) throws Exception;
 	}
@@ -683,7 +753,7 @@ public class BiblioTools {
 		return (exchange, request) -> {
 			try {
 				return CallToolResult.builder()
-					.addTextContent(body.apply(request, ctx.mapper()))
+					.addTextContent(body.apply(exchange, request, ctx.mapper()))
 					.isError(false)
 					.build();
 			} catch (IllegalStateException | IllegalArgumentException e) {

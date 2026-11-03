@@ -43,8 +43,7 @@ public class BibliographicApis {
 
 	public static BibliographicApis create(Path filePath) throws IOException {
 
-		Properties prop = System.getProperties();
-		prop.load(Files.newInputStream(filePath));
+		Properties prop = read(filePath);
 
 		String xrefToken = prop.getProperty("crossref-clickthroughtoken");
 		String developerEmail = prop.getProperty("developer-email");
@@ -72,6 +71,23 @@ public class BibliographicApis {
 			);
 		}
 
+	}
+
+	/**
+	 * Read the configuration into a table of its own.
+	 *
+	 * Not {@code System.getProperties()}, which is the live system property table rather than a copy: loading into it
+	 * made every API key a JVM-wide property, readable by any library in the process and printed by anything that
+	 * dumps system properties into a log, and let one configuration's values bleed into the next (issue-021).
+	 *
+	 * The stream is closed, which the version this replaced also did not do.
+	 */
+	private static Properties read(Path filePath) throws IOException {
+		Properties properties = new Properties();
+		try (var in = Files.newInputStream(filePath)) {
+			properties.load(in);
+		}
+		return properties;
 	}
 
 	/**
@@ -116,8 +132,7 @@ public class BibliographicApis {
 
 	public static BibliographicApis create(Path filePath, Path cacheDir)
 			throws IOException {
-		Properties prop = System.getProperties();
-		prop.load(Files.newInputStream(filePath));
+		Properties prop = read(filePath);
 
 		String xrefToken = prop.getProperty("crossref-clickthroughtoken");
 		String developerEmail = prop.getProperty("developer-email");

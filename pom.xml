@@ -122,11 +122,6 @@
 			<artifactId>token-bucket</artifactId>
 			<version>1.6</version>
 		</dependency>
-		<dependency>
-			<groupId>pl.edu.icm.cermine</groupId>
-			<artifactId>cermine-impl</artifactId>
-			<version>1.13</version>
-		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.ehcache/ehcache -->
 		<dependency>
 			<groupId>org.ehcache</groupId>
@@ -183,11 +178,6 @@
 <!--		    <id>jitpack.io</id>-->
 <!--		    <url>https://jitpack.io</url>-->
 <!--		</repository>-->
-		<repository>
-			<id>icm</id>
-			<name>ICM repository</name>
-			<url>https://maven.icm.edu.pl/artifactory/repo</url>
-		</repository>
 		<!-- <repository>
 			<id>oss-snapshots-repo</id>
 			<name>Sonatype OSS Maven Repository</name>

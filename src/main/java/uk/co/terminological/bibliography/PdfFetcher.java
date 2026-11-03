@@ -27,11 +27,15 @@ import com.sun.jersey.api.client.config.DefaultClientConfig;
 import com.sun.jersey.api.client.filter.ClientFilter;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 
-import pl.edu.icm.cermine.ContentExtractor;
-import pl.edu.icm.cermine.bibref.model.BibEntry;
-import pl.edu.icm.cermine.bibref.model.BibEntryType;
 
 public class PdfFetcher extends CachingApiClient {
+
+	// Reference extraction used to live here, on top of cermine. It was retired in
+	// 0.2.0: PDFs are not central to this project, and cermine is published only by
+	// a repository whose certificate has expired, so depending on it meant a build
+	// that no clean machine could complete (issue-025). What remains is downloading,
+	// which is what Zotero attachments and a pdf directory actually need.
+
 
 	static Logger logger = LoggerFactory.getLogger(PdfFetcher.class);
 
@@ -146,35 +150,5 @@ public class PdfFetcher extends CachingApiClient {
 	protected MultivaluedMap<String, String> defaultApiParams() {
 		return new MultivaluedMapImpl();
 	}
-
-	public List<String> extractArticleRefs(String doi, InputStream is) {
-		String key = "cermine_refs_" + doi;
-		Optional<ArrayList<String>> references = this
-			.cachedObject(key, false, k -> {
-				ContentExtractor extractor = new ContentExtractor();
-				extractor.setPDF(is);
-				List<BibEntry> refs = extractor.getReferences();
-				logger.info("Found {} references for {}", refs.size(), key);
-				ArrayList<String> out = new ArrayList<>();
-				refs.stream()
-					.filter(
-						ref -> Arrays
-							.asList(
-								BibEntryType.ARTICLE,
-								BibEntryType.INPROCEEDINGS,
-								BibEntryType.PROCEEDINGS
-							)
-							.contains(ref.getType())
-					)
-					.map(bib -> bib.getText())
-					.forEach(s -> out.add(s));
-				return out;
-			});
-		return references.orElse(new ArrayList<>());
-		// TODO: get mapped metadata
-	}
-
-	// TODO: Stream<Citation> getCitations(Record sourceWithDoi) {
-	// USing BibEntryFieldType / BibEntry
 
 }

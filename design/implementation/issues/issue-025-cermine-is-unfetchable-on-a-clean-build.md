@@ -2,9 +2,9 @@
 class: issue
 id: issue-025-cermine-is-unfetchable-on-a-clean-build.md
 title: Cermine is unfetchable on a clean build
-status: open
+status: closed
 sinceVersion: 0.0.6
-targetVersion: unassigned
+targetVersion: 0.2.0
 tags:
 - build
 - dependencies
@@ -66,3 +66,49 @@ build reproducible; neither changes what the code does. Whichever is chosen,
 Changing `pom.xml`'s repositories or vendoring artifacts is a build-policy
 decision for the developer, and the workaround (`mvn -o` against a warm
 `~/.m2`) is what this project already does by default.
+
+## Closed — 0.2.0, by retiring cermine
+
+None of the options above was taken. The developer's call: **PDFs are not central
+to this project, and this is a problem**, so the dependency goes rather than
+being vendored or worked around.
+
+Removed: `pl.edu.icm.cermine:cermine-impl`, `PdfFetcher.extractArticleRefs`,
+`BiblioFacade.getReferencesFromPdf`, and the `icm` repository itself. The three
+artifacts no public repository could serve all came from that one subtree —
+cermine plus `edu.umass.cs.mallet:mallet` and `grmm-deps` — so they went with
+it, along with itextpdf and libsvm.
+
+What survives is what PDFs are actually for here: downloading one to a file, for
+a Zotero attachment or an indexing directory. A work's reference list is better
+asked of an API that already has one, which is what the crawl does.
+
+`cc.mallet` is still on the classpath through `nlp-tools`, so the topic model is
+unaffected. 285 tests pass.
+
+### What this does not fix
+
+The **ICM repository is gone, so it can no longer slow or break a build** — that
+is the whole of what this issue was about, and it is fixed. But a cold build is
+still not self-service:
+
+| artifact | Central | note |
+|---|---|---|
+| `io.github.terminological:nlp-tools:master-SNAPSHOT` | **404** | GitHub Packages, 401 without credentials — and a `master-SNAPSHOT`, so it is not a reproducible coordinate either |
+| `io.github.terminological:exotic-datatypes:1.0.0` | **404** | GitHub Packages, 401 without credentials |
+| `io.github.terminological:fluentxml:2.1.0` | 200 | fine |
+| `io.github.terminological:m2repo:0.0.6` (parent) | 200 | fine |
+
+That is a different and much milder situation: cermine could be fetched by
+**nobody**, where these can be fetched by anyone holding a token for the
+developer's own packages — which CI running in that org plausibly does. Worth a
+separate record if a build outside it is ever wanted, and worth noting that a
+`master-SNAPSHOT` dependency makes any build unrepeatable whoever runs it.
+
+### One wrinkle when the repository went
+
+Maven records in `_remote.repositories` which repository each cached artifact
+came from, and refuses it offline once that repository is undeclared. Several
+unrelated artifacts had been fetched through `icm`, so the first build after this
+change has to be online; it then re-records them against Central and offline
+builds work again.

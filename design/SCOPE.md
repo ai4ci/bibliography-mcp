@@ -10,7 +10,7 @@ tags:
 
 A Java MCP (Model Context Protocol) server exposing clients for multiple
 bibliographic APIs (Entrez/PubMed, CrossRef, Europe PMC, OpenCitations,
-OpenAlex, medRxiv/bioRxiv, PMC IDConverter, Cermine PDF parsing) behind a
+OpenAlex, medRxiv/bioRxiv, PMC IDConverter) behind a
 unified record format, plus a plain-Java facade over the same functionality.
 
 This document says what the project is. What is *built* and what is *intended*
@@ -32,7 +32,18 @@ becomes a feature, plan, issue or debt record.
 | OpenAlex | `api/openalex/OpenAlexClient` | search, fetch, both citation directions, identifier mapping, open-access PDF location |
 | medRxiv / bioRxiv | `api/medrxiv/MedrxivClient` | preprint search and fetch |
 | PMC ID Converter | `api/pmcidconv/PMCIDClient` | DOI ↔ PMCID ↔ PMID mapping |
-| Cermine | `PdfFetcher` (root package) | parse references out of a PDF |
+| — | `PdfFetcher`, `PdfSink` (root package) | download an open-access pdf to a file |
+
+## Retired
+
+* **Reference extraction from PDF content** (cermine). PDFs are not central to
+  this project — what it needs from one is that it exists and can be attached —
+  and cermine is published only by a repository whose TLS certificate expired,
+  so depending on it meant a build no clean machine could complete
+  ([issue-025](/design/implementation/issues/issue-025-cermine-is-unfetchable-on-a-clean-build.md)).
+  Retired in 0.2.0 along with `references_from_pdf`, `PdfFetcher.extractArticleRefs`
+  and `BiblioFacade.getReferencesFromPdf`. A reference list for a work is better
+  asked of an API that already has one — which is what the crawl does.
 
 ## Not in scope
 

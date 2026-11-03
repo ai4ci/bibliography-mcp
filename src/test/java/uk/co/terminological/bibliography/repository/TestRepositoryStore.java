@@ -39,7 +39,9 @@ public class TestRepositoryStore {
 	@Before
 	public void open() throws Exception {
 		this.dir = Files.createTempDirectory("biblio-store-test");
-		this.store = SqliteRepositoryStore.open(this.dir.resolve("repo.db"));
+		// exclusive, as a server opens it: the lock tests need a holder
+		this.store = SqliteRepositoryStore
+			.open(this.dir.resolve("repo.db"), true);
 	}
 
 	@After
@@ -361,6 +363,70 @@ public class TestRepositoryStore {
 				reader.records()
 					.count()
 			);
+		}
+	}
+
+	// ---- one writer ----
+
+	@Test
+	public void aSecondServerOnTheSameRepositoryIsRefused() throws Exception {
+		// two crawl engines writing to one repository would race on the same records
+		// and spend two API budgets at once. SQLite's WAL makes concurrent readers
+		// safe and says nothing about that.
+		try {
+			SqliteRepositoryStore.open(this.dir.resolve("repo.db"), true)
+				.close();
+			fail("a second writer should not have been allowed in");
+		} catch (RepositoryException e) {
+			assertTrue(
+				e.getMessage(), e.getMessage()
+					.contains("already")
+			);
+			// the message has to say what to do about it, because the usual cause is
+			// a server the developer forgot is running
+			assertTrue(
+				e.getMessage(), e.getMessage()
+					.toLowerCase()
+					.contains("pid")
+			);
+		}
+	}
+
+	@Test
+	public void aReaderIsStillWelcome() throws Exception {
+		// the lock is on writing, not on looking: a second process reading while a
+		// crawl runs is the case the store was chosen for
+		try (var reader = SqliteRepositoryStore
+			.open(this.dir.resolve("repo.db"), false)) {
+			assertEquals(0, reader.recordCount());
+		}
+	}
+
+	@Test
+	public void theLockGoesWhenTheServerDoes() throws Exception {
+		this.store.close();
+		this.store = null;
+
+		// closing releases it, so a restart is not blocked by its own last run
+		try (var next = SqliteRepositoryStore
+			.open(this.dir.resolve("repo.db"), true)) {
+			assertEquals(0, next.recordCount());
+		}
+	}
+
+	@Test
+	public void aLockLeftBehindByADeadProcessDoesNotBlockForever()
+			throws Exception {
+		this.store.close();
+		this.store = null;
+		// what a kill -9 leaves: a lock file naming a pid that is no longer running
+		Files.writeString(
+			this.dir.resolve("repo.db.lock"), "999999" + System.lineSeparator()
+		);
+
+		try (var next = SqliteRepositoryStore
+			.open(this.dir.resolve("repo.db"), true)) {
+			assertEquals(0, next.recordCount());
 		}
 	}
 

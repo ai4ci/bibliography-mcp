@@ -162,14 +162,16 @@ public class TestMcpHttpServer {
 	}
 
 	@Test
-	public void askingForTheCrawlBeforeOneHasRunSaysSoRatherThanFailing()
-			throws Exception {
+	public void askingForTheCrawlStatusAlwaysAnswers() throws Exception {
 		var result = call("crawl", Map.of("action", "status"));
 
 		assertFalse(textOf(result), result.isError());
+		// either no crawl has been run in this repository, or one has and it is
+		// described — never a failure, and never nothing
+		var text = textOf(result);
 		assertTrue(
-			textOf(result), textOf(result)
-				.contains("no crawl has been run")
+			text,
+			text.contains("no crawl has been run") || text.contains("\"job\"")
 		);
 	}
 
@@ -251,6 +253,34 @@ public class TestMcpHttpServer {
 		assertTrue(
 			"the score it was ordered by should be reported", json.get(0)
 				.has("score")
+		);
+	}
+
+	@Test
+	public void aCrawlThatFinishesInsideTheCallIsReportedByTheCall()
+			throws Exception {
+		// maxRecords 0 ends the crawl before it fetches anything, so this stays
+		// offline. It also makes the point the progress notifications cannot: a job
+		// that finishes while the call is still in flight is answered by the
+		// response, and a client learns its fate without hearing a notification at
+		// all.
+		var result = call(
+			"crawl",
+			Map.of(
+				"action", "start", "seeds", List.of(Map.of("id", "10.1/seed")),
+				"maxRecords", 0
+			)
+		);
+
+		assertFalse(textOf(result), result.isError());
+		var status = JSON.readTree(
+			textOf(call("crawl", Map.of("action", "status")))
+		);
+		assertEquals("DONE", status.get("status")
+			.asText());
+		assertEquals(
+			"recordCeiling", status.get("stoppedBy")
+				.asText()
 		);
 	}
 

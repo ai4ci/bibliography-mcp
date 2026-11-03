@@ -12,7 +12,9 @@
 * Graph and analysis: jgrapht (page rank), nlp-tools (corpus, LDA).
 * References and citation styles: citeproc-java with the citationstyles
   `styles`/`locales` artefacts.
-* PDF parsing: cermine.
+* PDF handling: download only (`PdfSink`). Reference extraction, which ran on
+  cermine, was retired in 0.2.0 — see
+  [issue-025](/design/implementation/issues/issue-025-cermine-is-unfetchable-on-a-clean-build.md).
 * Logging: SLF4J API with the log4j 1.2 backend; the MCP server routes all
   logging to stderr because stdout is the protocol channel.
 * MCP transport: hand-rolled newline-delimited JSON-RPC 2.0 over stdio

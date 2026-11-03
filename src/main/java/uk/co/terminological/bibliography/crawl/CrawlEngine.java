@@ -54,6 +54,7 @@ public class CrawlEngine implements AutoCloseable {
 	private final CrawlSource source;
 	private final ExecutorService worker;
 	private final AtomicReference<CrawlJob> current = new AtomicReference<>();
+	private final AtomicReference<java.util.function.Consumer<CrawlJob>> progress = new AtomicReference<>();
 
 	public CrawlEngine(RepositoryStore store, CrawlSource source) {
 		this.store = store;
@@ -64,6 +65,30 @@ public class CrawlEngine implements AutoCloseable {
 			t.setDaemon(true);
 			return t;
 		});
+	}
+
+	/**
+	 * Be told as the crawl advances, at each checkpoint and when it ends.
+	 *
+	 * One listener, replaced rather than added to, because there is one crawl at a time and one client that started
+	 * it. A crawl is hours of API budget, so a listener that throws is logged and ignored: a client that disconnected
+	 * must not be able to stop it.
+	 */
+	public void onProgress(java.util.function.Consumer<CrawlJob> listener) {
+		this.progress.set(listener);
+	}
+
+	private void report(CrawlJob job) {
+		var listener = this.progress.get();
+		if (listener == null) return;
+		try {
+			listener.accept(job);
+		} catch (RuntimeException e) {
+			log.debug(
+				"a crawl progress listener threw, and the crawl carries on: {}",
+				e.getMessage()
+			);
+		}
 	}
 
 	/**
@@ -143,10 +168,14 @@ public class CrawlEngine implements AutoCloseable {
 				if (++sinceCheckpoint >= CHECKPOINT_EVERY) {
 					this.store.putJob(job);
 					sinceCheckpoint = 0;
+					report(job);
 				}
 			}
 		} finally {
 			this.store.putJob(job);
+			// always the last word, so a listener that hears nothing else still
+			// learns the crawl ended and why
+			report(job);
 		}
 		log.info(
 			"crawl {} {}: visited {}, frontier {}, errors {}",

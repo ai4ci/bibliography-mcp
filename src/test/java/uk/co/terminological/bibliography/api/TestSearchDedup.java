@@ -130,6 +130,44 @@ public class TestSearchDedup {
 	}
 
 	@Test
+	public void twoApisAgreeingDeepBeatOneApisTopHit() {
+		// the case K decides, and the reason it changed when a fourth search API
+		// arrived. Crossref answers an author search with a page of ~20 fuzzy
+		// matches, so its rank 1 is not evidence of much; two APIs agreeing at rank
+		// 10 is. Corroboration beats position down to about rank K+2.
+		var corroborated = new ArrayList<BiblioFacade.ScoredHit>();
+		corroborated.add(new BiblioFacade.ScoredHit(null, "entrez", 10));
+		corroborated.add(new BiblioFacade.ScoredHit(null, "europepmc", 10));
+		var alone = List
+			.of(new BiblioFacade.ScoredHit(null, "crossref", 1));
+
+		assertTrue(
+			"two APIs at rank 10 should outrank one API at rank 1",
+			BiblioFacade.rrfScore(corroborated, BiblioFacade.RRF_K) > BiblioFacade
+				.rrfScore(alone, BiblioFacade.RRF_K)
+		);
+	}
+
+	@Test
+	public void positionStillMattersAmongEquallyCorroboratedResults() {
+		// K must not be so large that rank stops counting: of two papers both found
+		// by the same two APIs, the one they ranked higher wins
+		var high = List.of(
+			new BiblioFacade.ScoredHit(null, "entrez", 1),
+			new BiblioFacade.ScoredHit(null, "europepmc", 2)
+		);
+		var low = List.of(
+			new BiblioFacade.ScoredHit(null, "entrez", 15),
+			new BiblioFacade.ScoredHit(null, "europepmc", 18)
+		);
+
+		assertTrue(
+			BiblioFacade.rrfScore(high, BiblioFacade.RRF_K) > BiblioFacade
+				.rrfScore(low, BiblioFacade.RRF_K)
+		);
+	}
+
+	@Test
 	public void rrfScoreIsZeroForEmptyHits() {
 		assertEquals("Empty hit list should score 0",
 			0.0, BiblioFacade.rrfScore(List.of(), 5), 1e-9);

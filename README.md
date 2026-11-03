@@ -9,7 +9,7 @@ A Java MCP (Model Context Protocol) server exposing clients for various bibliogr
 * Europe PMC
 * Open Citations
 * PMC IDConverter API
-* Open access PDF retrieval and reference extraction including Cermine integration
+* Open access PDF retrieval, written to a plain directory for Zotero and for indexing
 * medRxiv and bioRxiv — preprint metadata, their reference lists from the JATS full
   text, and which journal article a preprint became. Their own search interface is
   not reachable programmatically (bioRxiv serves a Cloudflare challenge), so

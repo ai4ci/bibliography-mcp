@@ -104,7 +104,9 @@ public class McpHttpServer implements AutoCloseable {
 
 		var repository = repositoryFile(properties);
 		log.info("repository: {}", repository);
-		var store = SqliteRepositoryStore.open(repository);
+		// exclusive: a server owns its repository, because two crawl engines on one
+		// would race on the same records and spend two API budgets at once
+		var store = SqliteRepositoryStore.open(repository, true);
 
 		var zoteroConfig = ZoteroConfig.from(properties);
 		var zotero = zoteroConfig.isEnabled() ? new ZoteroClient(zoteroConfig)
