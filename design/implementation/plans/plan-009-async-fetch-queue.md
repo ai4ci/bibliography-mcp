@@ -1,13 +1,12 @@
 ---
 title: Async fetch queue
-status: draft
+status: deprecated
 targetVersion: unassigned
 HAS_FEATURE:
 - feature:feat-001-expose-bibliographic-apis-over-mcp.md
 DEPENDS_ON:
 - plan:plan-008-search-deduplication.md
 ---
-
 # Plan 009 — Async queue-based fetch
 
 > **Superseded by
@@ -172,3 +171,15 @@ private Map<ImmutableRecordReference, ? extends Record> fetchFromApi(
 - If the thread pool is unbounded, many concurrent requests could trigger
   rate-limiting that a sequential loop would avoid. The queue model should
   rate-limit per API, not amplify load.
+
+## Superseded — 0.2.0
+
+Absorbed by [plan-011](plan-011-background-crawl-engine.md), as
+[feat-010](../../features/feat-010-crawl-engine-with-zotero-mirror.md) said it would
+be. This plan solved fetch latency for a single call; the crawl needed a durable
+job anyway, and building both would have been building the same executor twice.
+
+Its six open questions were answered in plan-011 rather than here — completeness
+threshold, concurrency, cancellation, batch size, timeouts and queue structure —
+and the answers are recorded there against a working engine instead of a
+proposal.

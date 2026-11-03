@@ -1,7 +1,7 @@
 ---
 title: Background crawl engine
-status: draft
-targetVersion: unassigned
+status: final
+targetVersion: 0.2.0
 tags:
 - citations
 - crawl

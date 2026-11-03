@@ -27,9 +27,9 @@ fails the build instead of quietly lying.
 - [Zotero curated repository bridge](features/feat-005-zotero-curated-repository-bridge.md)
 - [Classify records by type with provenance](features/feat-006-classify-records-by-type-with-provenance.md)
 - [Predictable record merging](features/feat-007-predictable-record-merging.md)
+- [Crawl engine with Zotero mirror](features/feat-010-crawl-engine-with-zotero-mirror.md)
 - [Clean up collection metadata](features/feat-008-clean-up-collection-metadata.md)
 - [Preprint clients](features/feat-009-preprint-clients.md)
-- [Crawl engine with Zotero mirror](features/feat-010-crawl-engine-with-zotero-mirror.md)
 <!-- loom:links end -->
 
 ## Work in progress
@@ -70,6 +70,6 @@ fails the build instead of quietly lying.
 
 | status | features |
 | --- | --- |
-| draft | 3 |
-| final | 8 |
+| draft | 2 |
+| final | 9 |
 <!-- loom view: features_by_state end -->

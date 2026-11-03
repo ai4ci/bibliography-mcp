@@ -1,7 +1,7 @@
 ---
 title: Versioned repository store
-status: draft
-targetVersion: unassigned
+status: final
+targetVersion: 0.2.0
 tags:
 - persistence
 - repository

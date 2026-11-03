@@ -1,7 +1,7 @@
 ---
 title: Crawl engine with Zotero mirror
-status: draft
-targetVersion: unassigned
+status: final
+targetVersion: 0.2.0
 tags:
 - mcp
 - citations
