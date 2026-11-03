@@ -442,6 +442,11 @@ public class BiblioFacade
 
 	public Session getSession() { return new Session(this); }
 
+	/** The pdf fetcher, for a caller that wants a file rather than a reference list. */
+	public uk.co.terminological.bibliography.PdfFetcher pdfFetcher() {
+		return this.api.getPdfFetcher();
+	}
+
 	@Override
 	public GenericSearchBuilder buildQuery() {
 		return new GenericSearchBuilder(this);

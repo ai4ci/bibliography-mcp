@@ -29,6 +29,37 @@ public class ZoteroItemWriter {
 
 	private static final ObjectMapper MAPPER = new ObjectMapper();
 
+	/**
+	 * The child attachment item that will hold a PDF.
+	 *
+	 * Deliberately carries no {@code collections}: Zotero refuses a child attachment that names one, because an
+	 * attachment belongs to its parent and the parent is what sits in a collection.
+	 *
+	 * {@code md5} and {@code mtime} are null here and filled in by the upload. Sending a hash before the bytes exist
+	 * is what Zotero refuses — the sequence is item, then authorisation, then bytes, then registration
+	 * (prototype-003).
+	 */
+	public static ObjectNode toAttachment(String parentKey, java.nio.file.Path file) {
+		if (!java.nio.file.Files.isRegularFile(file))
+			throw new IllegalArgumentException(
+					"there is no file to attach at " + file
+			);
+		ObjectNode item = MAPPER.createObjectNode();
+		item.put("itemType", "attachment");
+		item.put("parentItem", parentKey);
+		item.put("linkMode", "imported_file");
+		item.put("title", "Full Text PDF");
+		item.put(
+				"filename", file.getFileName()
+					.toString()
+		);
+		item.put("contentType", "application/pdf");
+		item.putNull("md5");
+		item.putNull("mtime");
+		item.putArray("tags");
+		return item;
+	}
+
 	public static ObjectNode toItem(
 			Record record, String collectionKey, List<String> tags
 	) {

@@ -253,6 +253,14 @@ public class ZoteroClient {
 	/** what a batch write actually did, so a partial success is never lost */
 	public static class WriteResult {
 		public final List<String> created = new ArrayList<>();
+		/**
+		 * created keys by their position in the submitted batch.
+		 *
+		 * Zotero answers a batch write with an object keyed by the index of each item sent, which is the only thing
+		 * that ties a created key back to the record it was made from — and a caller that wants to attach a PDF to
+		 * what it just created needs exactly that.
+		 */
+		public final Map<Integer, String> createdByIndex = new LinkedHashMap<>();
 		public final List<String> failures = new ArrayList<>();
 		/** for an update, the values that were there before, per item key */
 		public final Map<String, Map<String, String>> previous = new LinkedHashMap<>();
@@ -270,7 +278,15 @@ public class ZoteroClient {
 				.subList(start, Math.min(items.size(), start + MAX_PER_WRITE));
 			ArrayNode body = mapper.createArrayNode();
 			batch.forEach(body::add);
-			collect(write("POST", userPath("/items"), body.toString()), result);
+			WriteResult batchResult = new WriteResult();
+			collect(write("POST", userPath("/items"), body.toString()), batchResult);
+			result.created.addAll(batchResult.created);
+			result.failures.addAll(batchResult.failures);
+			// Zotero indexes its answer within the batch, so the offset makes the
+			// index mean the same thing across several of them
+			final int offset = start;
+			batchResult.createdByIndex
+				.forEach((i, key) -> result.createdByIndex.put(offset + i, key));
 		}
 		return result;
 	}
@@ -373,8 +389,16 @@ public class ZoteroClient {
 					String key = value.isTextual() ? value.asText()
 						: value.path("key")
 							.asText(null);
-					result.created
-						.add(key == null || key.isEmpty() ? entry.getKey() : key);
+					String resolved = key == null || key.isEmpty() ? entry.getKey()
+						: key;
+					result.created.add(resolved);
+					try {
+						result.createdByIndex
+							.put(Integer.parseInt(entry.getKey()), resolved);
+					} catch (NumberFormatException e) {
+						// a response keyed by something other than the batch index is
+						// still a created item; it just cannot be tied back to one
+					}
 				});
 		}
 		response.path("failed")
@@ -463,6 +487,139 @@ public class ZoteroClient {
 	}
 
 	/** a write with preconditions; JZotero requires Zotero-Server-ID and, from 10+, a local API key */
+	/**
+	 * Attach a PDF to an item, by the four-call local protocol prototype-003 measured.
+	 *
+	 * Create the child attachment item, ask for upload authorisation, POST the bytes to the local url Zotero hands
+	 * back, then register the upload. There is no S3 step — the remote Web API's upload dance does not apply to a
+	 * local library, and the upload url points at Zotero itself.
+	 *
+	 * <p><strong>POST, not PUT</strong>, on the upload url: {@code PUT} is what the remote protocol uses and the local
+	 * endpoint answers it with {@code 400 Endpoint does not support method}.
+	 *
+	 * <p>Confined like every other write: the parent item has to be inside the configured write collection, because an
+	 * attachment inherits its place from its parent and a child written to the wrong parent is a write outside the
+	 * sanctioned collection by another route.
+	 *
+	 * @return the key of the attachment item created
+	 */
+	public String attachPdf(
+			String parentKey, String parentCollectionKey, java.nio.file.Path file
+	) {
+		checkWriteTarget(parentCollectionKey);
+		ensureServerId();
+		byte[] bytes;
+		try {
+			bytes = java.nio.file.Files.readAllBytes(file);
+		} catch (java.io.IOException e) {
+			throw new ZoteroException("could not read " + file, e);
+		}
+		if (bytes.length == 0) throw new ZoteroException(
+				"refusing to attach an empty file: " + file
+		);
+		String md5 = md5Of(bytes);
+		long mtime = System.currentTimeMillis();
+
+		JsonNode created = write(
+			"POST",
+			userPath("/items"),
+			mapper.createArrayNode()
+				.add(ZoteroItemWriter.toAttachment(parentKey, file))
+				.toString()
+		);
+		String attachmentKey = firstCreatedKey(created);
+		if (attachmentKey == null) throw new ZoteroException(
+				"Zotero did not report a created attachment: "
+						+ truncate(created.toString())
+		);
+
+		String filename = file.getFileName()
+			.toString();
+		String form = "md5=" + md5 + "&filename="
+				+ java.net.URLEncoder.encode(filename, java.nio.charset.StandardCharsets.UTF_8)
+				+ "&filesize=" + bytes.length + "&mtime=" + mtime + "&params=1";
+		JsonNode authorisation = form(
+			userPath("/items/" + attachmentKey + "/file"), form
+		);
+		if (authorisation.path("exists")
+			.asInt(0) == 1) return attachmentKey;
+
+		String uploadUrl = authorisation.path("url")
+			.asText(null);
+		String uploadKey = authorisation.path("uploadKey")
+			.asText(null);
+		if (uploadUrl == null || uploadKey == null) throw new ZoteroException(
+				"Zotero did not authorise the upload: "
+						+ truncate(authorisation.toString())
+		);
+		uploadBytes(uploadUrl, bytes);
+		form(userPath("/items/" + attachmentKey + "/file"), "upload=" + uploadKey);
+		return attachmentKey;
+	}
+
+	/** a form-encoded write to the file sub-resource, which is not the json surface the rest of the client uses */
+	private JsonNode form(String path, String body) {
+		HttpResponse<String> response = send(
+			"POST", path, null, body, true, true, null, "application/x-www-form-urlencoded",
+			Map.of("If-None-Match", "*")
+		);
+		requireSuccess(response, "POST " + path);
+		if (response.body() == null || response.body()
+			.isBlank()) return mapper.createObjectNode();
+		try {
+			return mapper.readTree(response.body());
+		} catch (Exception e) {
+			return mapper.createObjectNode();
+		}
+	}
+
+	private void uploadBytes(String url, byte[] bytes) {
+		HttpRequest request = HttpRequest.newBuilder(URI.create(url))
+			.timeout(Duration.ofSeconds(120))
+			.header("Zotero-API-Version", API_VERSION)
+			.header("Content-Type", "application/pdf")
+			.header("Zotero-Server-ID", serverId == null ? "" : serverId)
+			.header("Zotero-API-Key", writeKey == null ? "" : writeKey)
+			.POST(HttpRequest.BodyPublishers.ofByteArray(bytes))
+			.build();
+		try {
+			HttpResponse<String> response = http
+				.send(request, HttpResponse.BodyHandlers.ofString());
+			if (response.statusCode() / 100 != 2) throw new ZoteroException(
+					"Zotero refused the upload with " + response.statusCode() + ": "
+							+ truncate(response.body())
+			);
+		} catch (ZoteroException e) {
+			throw e;
+		} catch (Exception e) {
+			if (e instanceof InterruptedException) Thread.currentThread()
+				.interrupt();
+			throw new ZoteroException("could not upload the file to Zotero", e);
+		}
+	}
+
+	private static String firstCreatedKey(JsonNode response) {
+		JsonNode successful = response.path("successful");
+		if (!successful.isObject() || successful.size() == 0) return null;
+		JsonNode first = successful.elements()
+			.next();
+		return first.path("key")
+			.asText(null);
+	}
+
+	private static String md5Of(byte[] bytes) {
+		try {
+			byte[] digest = java.security.MessageDigest.getInstance("MD5")
+				.digest(bytes);
+			StringBuilder out = new StringBuilder();
+			for (byte b : digest)
+				out.append(String.format("%02x", b));
+			return out.toString();
+		} catch (java.security.NoSuchAlgorithmException e) {
+			throw new ZoteroException("this jvm has no md5", e);
+		}
+	}
+
 	private JsonNode write(String method, String path, String body) {
 		ensureServerId();
 		HttpResponse<String> response = send(
@@ -497,10 +654,22 @@ public class ZoteroClient {
 			String method, String path, String query, String body, boolean write,
 			boolean mayAuthorise, Long versionPrecondition
 	) {
+		return send(
+			method, path, query, body, write, mayAuthorise, versionPrecondition,
+			"application/json", Map.of()
+		);
+	}
+
+	private HttpResponse<String> send(
+			String method, String path, String query, String body, boolean write,
+			boolean mayAuthorise, Long versionPrecondition, String contentType,
+			Map<String, String> extraHeaders
+	) {
 		HttpRequest.Builder builder = HttpRequest.newBuilder(uri(path, query))
 			.timeout(Duration.ofSeconds(30))
 			.header("Zotero-API-Version", API_VERSION)
 			.header("Accept", "application/json");
+		extraHeaders.forEach(builder::header);
 		if (write) {
 			if (serverId != null) builder.header("Zotero-Server-ID", serverId);
 			if (writeKey != null) builder.header("Zotero-API-Key", writeKey);
@@ -511,7 +680,7 @@ public class ZoteroClient {
 		}
 		if ("POST".equals(method) || "PATCH".equals(method)
 				|| "PUT".equals(method)) {
-			builder.header("Content-Type", "application/json");
+			builder.header("Content-Type", contentType);
 			builder.method(
 				method,
 				HttpRequest.BodyPublishers.ofString(body == null ? "" : body)

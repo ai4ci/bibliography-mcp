@@ -110,7 +110,9 @@ public class McpHttpServer implements AutoCloseable {
 		var zotero = zoteroConfig.isEnabled() ? new ZoteroClient(zoteroConfig)
 			: null;
 
-		var context = new BiblioContext(store, facade, zotero);
+		var pdfDirectory = repository.getParent()
+			.resolve("pdfs");
+		var context = new BiblioContext(store, facade, zotero, pdfDirectory);
 		var json = McpJsonDefaults.getMapper();
 		var transport = HttpServletStreamableServerTransportProvider.builder()
 			.jsonMapper(json)

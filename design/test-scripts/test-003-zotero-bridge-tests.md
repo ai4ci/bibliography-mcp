@@ -12,6 +12,8 @@ TESTED_BY:
 - test:java/uk/co/terminological/bibliography/api/zotero/TestZoteroItemWriter.java
 - test:java/uk/co/terminological/bibliography/api/zotero/TestZoteroLibraryIndex.java
 - test:java/uk/co/terminological/bibliography/api/zotero/TestZoteroMapping.java
+- test:java/uk/co/terminological/bibliography/api/zotero/TestZoteroAttachment.java
+- test:java/uk/co/terminological/bibliography/api/zotero/TestZoteroAttachmentLive.java
 ---
 
 ### 1) Mapping and matching (offline)

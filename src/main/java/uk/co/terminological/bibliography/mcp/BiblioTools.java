@@ -500,6 +500,7 @@ public class BiblioTools {
 						+ "\"action\":{\"type\":\"string\",\"enum\":[\"collections\",\"report\",\"publish\"]},"
 						+ "\"collection\":{\"type\":\"string\",\"description\":\"name for the sub-collection to publish into\"},"
 						+ "\"tags\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}},"
+						+ "\"includePdf\":{\"type\":\"boolean\",\"description\":\"download each open-access pdf and attach it\"},"
 						+ "\"limit\":{\"type\":\"integer\",\"description\":\"most items to create in one call (default 25)\"}"
 						+ "},\"required\":[\"action\"]}"
 			)
@@ -580,15 +581,38 @@ public class BiblioTools {
 
 				String target = null;
 				int created = 0;
+				int attached = 0;
+				var pdfProblems = mapper.createArrayNode();
 				if (!toWrite.isEmpty()) {
 					target = zotero.createSubCollection(name);
 					List<com.fasterxml.jackson.databind.JsonNode> items = new ArrayList<>();
 					for (Record record : toWrite)
 						items.add(ZoteroItemWriter.toItem(record, target, tags));
-					created = zotero.createItems(items, target).created.size();
+					var result = zotero.createItems(items, target);
+					created = result.created.size();
+
+					if (bool(args, "includePdf").orElse(false)) {
+						// the index is what ties a created key back to the record it was
+						// made from, and therefore to the pdf that belongs to it
+						for (var entry : result.createdByIndex.entrySet()) {
+							var record = toWrite.get(entry.getKey());
+							var problem = attachPdf(
+								ctx, zotero, record, entry.getValue(), target
+							);
+							if (problem == null) attached++;
+							else {
+								var row = pdfProblems.addObject();
+								record.getIdentifier()
+									.ifPresent(v -> row.put("id", v));
+								row.put("reason", problem);
+							}
+						}
+					}
 				}
 
 				var out = mapper.createObjectNode();
+				out.put("pdfsAttached", attached);
+				if (pdfProblems.size() > 0) out.set("pdfsNotAttached", pdfProblems);
 				out.put(
 					"collection", target == null ? "(nothing to publish)" : target
 				);
@@ -600,6 +624,41 @@ public class BiblioTools {
 				return out.toString();
 			}))
 			.build();
+	}
+
+	/**
+	 * Download a record's open-access PDF and attach it to the item just created.
+	 *
+	 * Returns null when it worked, and why not when it did not. A missing PDF is the ordinary case rather than a
+	 * failure: `best_oa_location` points at the publisher for most records, and publishers refuse programmatic
+	 * clients often enough that a crawl attaches PDFs for a minority of what it collects (prototype-003).
+	 */
+	private static String attachPdf(
+			BiblioContext ctx, uk.co.terminological.bibliography.api.zotero.ZoteroClient zotero,
+			Record record, String itemKey, String collectionKey
+	) {
+		var uri = record.getPdfUri();
+		if (uri.isEmpty()) return "no open-access pdf is known for it";
+		try {
+			var destination = uk.co.terminological.bibliography.PdfSink
+				.pathFor(ctx.pdfDirectory(), record);
+			var file = ctx.facade()
+				.pdfFetcher()
+				.fetchTo(
+					uri.get()
+						.toString(),
+					destination
+				);
+			if (file.isEmpty()) return "the publisher returned nothing for "
+					+ uri.get();
+			zotero.attachPdf(itemKey, collectionKey, file.get());
+			return null;
+		} catch (java.io.IOException e) {
+			// PdfSink refuses an html paywall page, which is the usual way this fails
+			return e.getMessage();
+		} catch (RuntimeException e) {
+			return e.getMessage();
+		}
 	}
 
 	// ---- plumbing -----------------------------------------------------------

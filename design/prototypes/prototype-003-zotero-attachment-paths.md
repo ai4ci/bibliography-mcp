@@ -1,7 +1,7 @@
 ---
 title: How to put a PDF into the local Zotero
-status: draft
-targetVersion: unassigned
+status: final
+targetVersion: 0.2.0
 tags:
 - zotero
 - pdf
@@ -171,3 +171,78 @@ Unchanged from above, and now blocking: `zotero-allow-writes` and
 `zotero-write-collection` are **still unset** in the properties file, and the
 first write of a session raises a dialog in the Zotero window that times out
 after 120 s. Nothing can finish this prototype without someone at the keyboard.
+
+## Probed for real, 2026-11-03 — path B works, and here is the protocol
+
+Run against the live library, everything inside `api-test` (`TB35FFX6`). The
+write dialog was approved by the developer at the keyboard.
+
+**Four calls, all local. The upload URL Zotero hands back points at Zotero
+itself** — there is no S3 step, which is the part of the Web API protocol that
+does not apply here.
+
+```
+1. POST /users/0/items
+   [{itemType:attachment, parentItem:<key>, linkMode:imported_file,
+     title, filename, contentType:application/pdf, md5:null, mtime:null}]
+   -> 200 successful.0.key = <attachmentKey>
+
+2. POST /users/0/items/<attachmentKey>/file        If-None-Match: *
+   md5=…&filename=…&filesize=…&mtime=…&params=1    (form-encoded)
+   -> 200 {"url":"http://127.0.0.1:23119/api/local/uploads/<uploadKey>",
+           "uploadKey":"<uploadKey>", "params":{"key":"<md5>"}}
+
+3. POST <that url>                                 Content-Type: application/pdf
+   <the bytes>
+   -> 201
+
+4. POST /users/0/items/<attachmentKey>/file        If-None-Match: *
+   upload=<uploadKey>
+   -> 204
+```
+
+**`POST`, not `PUT`.** The first attempt used `PUT` on the upload URL, as the
+remote Web API does, and got `400 Endpoint does not support method`. That is the
+single detail that would have cost an afternoon if the production code had been
+written against the published protocol without probing.
+
+### Probe 3: Zotero takes ownership of the bytes
+
+```
+GET /users/0/items/<attachmentKey>
+  filename: probe.pdf      contentType: application/pdf
+  md5: d02cc99fc65b940a0fe4910e85b4d0dc      <- exactly what was uploaded
+  enclosure: file:///home/vp22681/Zotero%20copy/storage/2VASBFD9/probe.pdf
+  enclosure length: 6364369                  <- exactly the file size
+```
+
+So Zotero copied the file into its own storage and recorded the hash itself. The
+data directory is `~/Zotero copy`, which **the sandbox cannot see** — the file
+was verified through the API rather than on disk, which is the stronger check
+anyway: it is Zotero's own record of what it holds.
+
+### Probe 5: a metadata update does not clobber a child
+
+`PATCH` of the parent's title and date returned **204**, the attachment survived
+with its md5 intact, and the child count was unchanged. The clean-up report's
+premise holds.
+
+It also turned up a requirement: **`PATCH` without `If-Unmodified-Since-Version`
+is refused with 428**. `ZoteroClient.send` already takes a version precondition,
+so the production path is fine; a probe written without one is not.
+
+### Probe 4 was not run, deliberately
+
+The plan was to try `saveItems`/`saveAttachment` and see where the item lands,
+to disqualify path A for good. Path B now works, so the only thing probe 4 could
+add is a demonstration — and the way it demonstrates is by creating an item
+somewhere, most likely the **root of a 2,060-item library**. That is a bad trade
+for documentation of a path already rejected on safety grounds. Left undone, on
+purpose, and the recommendation stands on B's own evidence rather than on A's
+failure.
+
+### Left behind in api-test
+
+`8NSKXPDW` (parent, "api-test bridge check") and `2VASBFD9` (its attachment,
+probe.pdf, 6.3 MB). They are inside the sanctioned test collection and are left
+for inspection rather than tidied away.

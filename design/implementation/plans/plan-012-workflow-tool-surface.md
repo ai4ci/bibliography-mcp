@@ -253,6 +253,26 @@ Two deviations from the plan above, both deliberate:
   `citation_style` said without a mode to set, and the static field that held it
   is gone with `McpTools`.
 
+### Work item C is done — 0.2.0
+
+`PdfSink` writes the file, `PdfFetcher.fetchTo` downloads into it,
+`ZoteroItemWriter.toAttachment` builds the child item, and
+`ZoteroClient.attachPdf` runs prototype-003's four-call protocol — confined by
+`checkWriteTarget`, because an attachment inherits its place from its parent and
+a child written to the wrong parent is a write outside the sanctioned collection
+by another route. `zotero_sync(includePdf: true)` ties them together and reports
+`pdfsAttached` with a `pdfsNotAttached` list that says *why* for each one.
+
+Proven live against the developer's library, writing only inside `api-test`:
+an item and its attachment created through the production client, Zotero
+recording our md5, and a write aimed outside the collection refused by name.
+
+**A PDF is attached for a minority of a crawl, and that is the expected state.**
+`best_oa_location` points at the publisher for most records; measured the same
+day, arXiv serves a PDF while BMJ answers its own `.full.pdf` with 403 and PMC
+refuses. `PdfSink` rejects a body that is not a PDF, so a paywall page never
+lands in the library looking like a success.
+
 ### Not built, and feat-010 says so
 
 **Zotero attachments.** `zotero_sync` publishes metadata into a sub-collection

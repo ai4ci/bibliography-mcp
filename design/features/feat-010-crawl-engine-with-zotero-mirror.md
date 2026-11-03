@@ -292,12 +292,23 @@ Against the success criteria at the top of this document:
 | a crawl runs with the server responsive | **yes** — the crawl is on its own thread and `crawl status` answers during it |
 | killing the server mid-crawl resumes from the frontier | **yes**, asserted offline |
 | `rank` and `search` return scores in the JSON | **yes** — `score` and `matchedApis` |
-| `zotero_sync` takes the selection and updates metadata | **partly** — it publishes and reports; **no PDFs** |
+| `zotero_sync` takes the selection and updates metadata | **yes**, including PDF attachments |
 | Zotero closed: everything else works | **yes**, asserted over the wire |
 | `Session`'s Java serialization gone, debt-001 closed | **yes** |
 | offline tier green, engine tested with a faked facade, live crawl test | **yes** |
 
-**Workflow 2's PDF half is the gap, and it is now half closed.** `PdfSink` and
+**Workflow 2 is closed.** `PdfSink`, `PdfFetcher.fetchTo` and
+`ZoteroClient.attachPdf` are built and proven against the live library, so
+`zotero_sync(includePdf: true)` publishes the selection *with* its PDFs, and the
+directory `prag` needs exists and fills itself. All seven workflows are now
+delivered.
+
+What remains is a fact about the literature rather than a gap in the code: a PDF
+is attachable for a **minority** of a crawl, because `best_oa_location` points at
+publishers who refuse programmatic clients. The sync reports which records got
+one and why the others did not.
+
+~~**Workflow 2's PDF half is the gap, and it is now half closed.**~~ `PdfSink` and
 `PdfFetcher.fetchTo` write a real file — verified against a live 6.3 MB
 open-access PDF — so the directory `prag` needs exists in all but name. What is
 missing is the Zotero attachment, whose shape

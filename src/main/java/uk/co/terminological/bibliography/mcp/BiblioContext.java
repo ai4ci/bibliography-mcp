@@ -20,19 +20,30 @@ public class BiblioContext implements AutoCloseable {
 	private final BiblioFacade facade;
 	private final CrawlEngine crawl;
 	private final ZoteroClient zotero;
+	private final java.nio.file.Path pdfDirectory;
 	private final ObjectMapper mapper = new ObjectMapper()
 		.registerModule(new Jdk8Module());
 
 	public BiblioContext(
-			RepositoryStore store, BiblioFacade facade, ZoteroClient zotero
+			RepositoryStore store, BiblioFacade facade, ZoteroClient zotero,
+			java.nio.file.Path pdfDirectory
 	) {
 		this.store = store;
 		this.facade = facade;
 		this.zotero = zotero;
+		this.pdfDirectory = pdfDirectory;
 		this.crawl = new CrawlEngine(store, facade);
 	}
 
 	public RepositoryStore store() { return this.store; }
+
+	/**
+	 * Where downloaded PDFs land: a sibling of the repository, per ADR-005.
+	 *
+	 * A plain directory on purpose — Zotero reads a file from it, and so can anything that indexes PDF content,
+	 * neither of which should need to know this project exists.
+	 */
+	public java.nio.file.Path pdfDirectory() { return this.pdfDirectory; }
 	public BiblioFacade facade() { return this.facade; }
 	public CrawlEngine crawl() { return this.crawl; }
 	public ObjectMapper mapper() { return this.mapper; }
