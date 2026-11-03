@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -886,10 +887,19 @@ public class EntrezClient extends CachingApiClient
 	}
 
 	@Override
+	/**
+	 * Fetch by whatever identifier the caller has, answering under that identifier.
+	 *
+	 * PubMed answers to a PMID and nothing else, so a DOI is resolved through the id converter first. The answers are
+	 * then matched back to the references they were asked about: keying them by the PMID Entrez resolved to would be
+	 * a key no other source uses, which {@code BiblioFacade.fetch} turns into a second entry for the same paper
+	 * (issue-024). The PMID is not lost — it is the record's own identifier, and reaches a caller through
+	 * {@link EntrezEntry#getIdentifier()} and the id mappings.
+	 */
 	public Map<ImmutableRecordReference, EntrezEntry> fetch(
 			Collection<? extends RecordReference> ref
 	) {
-		Map<ImmutableRecordReference, EntrezEntry> out = new HashMap<>();
+		Map<ImmutableRecordReference, EntrezEntry> out = new LinkedHashMap<>();
 
 		Set<String> pmids = this.idLookup.mappings(ref)
 			.stream()
@@ -906,9 +916,49 @@ public class EntrezClient extends CachingApiClient
 			.map(s -> s.replaceFirst("PMC", ""))
 			.collect(Collectors.toSet());
 
-		this.getPMEntriesByPMIds(pmids)
-			.forEach(ee -> out.put(Builder.recordReference(ee), ee));
+		// a Set, not a Stream: it is read once per asked identifier below
+		Set<EntrezEntry> entries = this.getPMEntriesByPMIds(pmids);
+		for (RecordReference asked : ref) {
+			if (asked.getIdentifier()
+				.isEmpty()) continue;
+			entries.stream()
+				.filter(entry -> names(entry, asked))
+				.findFirst()
+				.ifPresent(entry -> out.putIfAbsent(asked.asId(), entry));
+		}
 		return out;
+	}
+
+	/**
+	 * Whether this entry is the work that identifier names.
+	 *
+	 * Compared across everything the entry knows itself by, and a PMC id without its prefix on either side: PubMed
+	 * publishes it as {@code PMC13141338} while other sources hand us the bare number, and an answer that never
+	 * reaches the key it was asked under is the same as no answer at all.
+	 */
+	private static boolean names(EntrezEntry entry, RecordReference asked) {
+		var wanted = asked.asId();
+		return entry.getIdentifiers()
+			.stream()
+			.anyMatch(
+				held -> held.equals(wanted)
+						|| (held.getIdentifierType() == wanted.getIdentifierType()
+								&& sameIdentifier(held, wanted))
+			);
+	}
+
+	private static boolean sameIdentifier(
+			RecordReference held, RecordReference wanted
+	) {
+		var a = held.getIdentifier()
+			.orElse("");
+		var b = wanted.getIdentifier()
+			.orElse("");
+		if (held.getIdentifierType() == IdType.PMCID)
+			return a.replaceFirst("^PMC", "")
+				.equals(b.replaceFirst("^PMC", ""));
+		// a DOI is case insensitive by specification, and sources disagree about it
+		return a.equalsIgnoreCase(b);
 	}
 
 	@Override

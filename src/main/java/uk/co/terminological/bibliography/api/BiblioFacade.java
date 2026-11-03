@@ -578,9 +578,10 @@ public class BiblioFacade
 				.values();
 			if (fetched.isEmpty()) return List.of();
 			// One identifier was asked about, so everything that came back describes
-			// that one work — even where a client keyed its answer by an identifier of
-			// its own rather than by the one it was given (issue-024), which would
-			// otherwise hand the caller the same paper twice.
+			// that one work. Since issue-024 every client answers under the key it
+			// was given, so there is normally one entry here; this keeps the
+			// guarantee at the caller's edge rather than resting it on five clients
+			// continuing to behave.
 			MergedRecord one = null;
 			for (Record r : fetched)
 				one = one == null ? MergedRecord.from(r) : one.merge(r);

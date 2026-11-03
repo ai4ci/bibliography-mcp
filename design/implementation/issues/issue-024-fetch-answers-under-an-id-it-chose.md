@@ -2,14 +2,16 @@
 class: issue
 id: issue-024-fetch-answers-under-an-id-it-chose.md
 title: Fetch answers under an id it chose
-status: open
+status: closed
 sinceVersion: 0.0.6
-targetVersion: unassigned
+targetVersion: 0.2.0
 tags:
 - bug
 - fetch
 - entrez
 - model
+TESTED_BY:
+- test:java/uk/co/terminological/bibliography/api/TestFetcherContractLive.java
 ---
 ## Issue desc
 
@@ -59,3 +61,39 @@ Until then `BiblioFacade.search`'s identifier path merges whatever `fetch`
 returns into one record, because one identifier was asked about and everything
 returned describes that one work. That workaround becomes redundant when this is
 fixed, and harmless.
+
+## Closed — 0.2.0
+
+Fixed where the plan said: on the contract and in the one client that broke it,
+not in the facade.
+
+**`RecordFetcher.fetch` now says what the key means** — the reference the caller
+passed, exactly as passed — and why, since an implementation that answers under
+an identifier of its own looks correct in isolation and only breaks when merged
+with another's. Identifiers discovered along the way belong in
+`getOtherIdentifiers()`, where the dedup and the merge already look.
+
+**`EntrezClient.fetch` matches its answers back to the references it was asked
+about** rather than keying them by the PMID it resolved to. The PMID is not lost:
+it is the record's own identifier and still reaches callers through the record
+and the id mappings. The match tolerates a PMC id with or without its prefix, and
+compares DOIs without case, because sources disagree about both.
+
+Measured before and after, asking every client for the same DOI:
+
+| client | before | after |
+|---|---|---|
+| crossref | the DOI | the DOI |
+| europepmc | the DOI | the DOI |
+| openalex | the DOI | the DOI |
+| medrxiv | knows nothing of it | knows nothing of it |
+| **entrez** | **PMID 41888721** | **the DOI** |
+| **the facade** | **two records** | **one record** |
+
+`TestFetcherContractLive` asks all five the same question, because no single
+client's tests can state a contract about how clients agree. It also pins that
+the PMID Entrez resolved to still reaches the caller.
+
+The workaround in `BiblioFacade.search`'s identifier path stays, with its comment
+rewritten: it now keeps the one-identifier-one-record guarantee at the caller's
+edge rather than resting it on five clients continuing to behave.

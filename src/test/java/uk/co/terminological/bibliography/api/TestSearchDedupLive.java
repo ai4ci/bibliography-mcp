@@ -75,40 +75,66 @@ public class TestSearchDedupLive {
 	}
 
 	/**
-	 * The assertion this class exists for: asking several APIs at once returns fewer records than asking them one at a
-	 * time and adding up, because the overlap is merged rather than repeated.
+	 * The assertion this class exists for: overlapping results are merged rather than repeated.
 	 *
-	 * An inequality rather than an exact count, because what each API returns changes over time. A run with no overlap at
-	 * all would be equality, and is reported rather than failed: that would mean the APIs disagree about this author's
-	 * 2018, which is a finding about the APIs rather than a dedup failure.
+	 * Measured in <strong>one pass</strong>. An earlier version asked each API separately, then asked them together,
+	 * and compared the counts — which compares two different sets of API calls. Crossref answered 20 in one pass and
+	 * 0 in the other on the same day (a transient failure that {@code CachingApiClient} turns into an empty result,
+	 * issue-013), and the test failed on a difference that said nothing about dedup.
+	 *
+	 * {@code scoredSearch} reports which APIs found each record, so the raw hit count and the deduplicated count come
+	 * out of the same search and cannot disagree about what the APIs did.
 	 */
 	@Test
 	public void overlappingResultsAreMergedRatherThanRepeated() {
-		var qry = anAuthorInAYear();
+		var scored = facade.withSearchApis(BiblioFacade.searchableApis())
+			.scoredSearch(anAuthorInAYear());
 
-		int separately = 0;
-		for (String api : BiblioFacade.searchableApis()) {
-			int found = facade.withSearchApis(List.of(api))
-				.search(qry)
-				.size();
-			System.out.println("INFO:   " + api + " alone -> " + found);
-			separately += found;
-		}
-
-		var together = everyApi().search(qry);
+		int rawHits = scored.stream()
+			.mapToInt(
+				hit -> hit.matchedApis()
+					.size()
+			)
+			.sum();
+		long corroborated = scored.stream()
+			.filter(
+				hit -> hit.matchedApis()
+					.size() > 1
+			)
+			.count();
 		System.out.println(
-			"INFO: together -> " + together.size() + " deduplicated, against "
-					+ separately + " one API at a time"
+			"INFO: " + scored.size() + " records from " + rawHits
+					+ " raw hits; " + corroborated + " found by more than one API"
 		);
+		scored.stream()
+			.limit(3)
+			.forEach(
+				hit -> System.out.println(
+					"INFO:   " + hit.matchedApis() + " " + hit.record()
+						.getTitle()
+						.orElse("?")
+				)
+			);
 
-		assertTrue(
-			"deduplicated " + together.size() + " should not exceed the "
-					+ separately + " found one API at a time",
-			together.size() <= separately
+		assertFalse("the search found nothing at all", scored.isEmpty());
+		assertEquals(
+			"every raw hit must end up in exactly one record",
+			rawHits - (int) scored.stream()
+				.mapToLong(
+					hit -> hit.matchedApis()
+						.size() - 1
+				)
+				.sum(),
+			scored.size()
 		);
-		if (together.size() == separately) {
+		if (corroborated == 0) {
 			System.out.println(
 				"INFO: no result appeared in more than one API for this query"
+			);
+		} else {
+			assertTrue(
+				"records found by several APIs should have been merged",
+				scored.size() < rawHits
 			);
 		}
 	}

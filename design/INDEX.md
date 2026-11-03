@@ -43,7 +43,6 @@ fails the build instead of quietly lying.
 | [One failing api empties a multi api search](implementation/issues/issue-013-one-failing-api-empties-a-multi-api-search.md) | One failing api empties a multi api search | open | 0.3.0 |
 | [Entrez record dates are not publication dates](implementation/issues/issue-014-entrez-record-dates-are-not-publication-dates.md) | Entrez record dates are not publication dates | open | 0.3.0 |
 | [Secrets are loaded into system properties](implementation/issues/issue-021-secrets-are-loaded-into-system-properties.md) | Secrets are loaded into system properties | open | unassigned |
-| [Fetch answers under an id it chose](implementation/issues/issue-024-fetch-answers-under-an-id-it-chose.md) | Fetch answers under an id it chose | open | unassigned |
 <!-- loom view: work_in_progress end -->
 
 ## Open debt

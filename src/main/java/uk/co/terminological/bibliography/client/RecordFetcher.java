@@ -24,12 +24,26 @@ import uk.co.terminological.bibliography.record.RecordReference;
 public interface RecordFetcher {
 
 	/**
-	 * Fetch records for a batch of identifiers, keyed by the identifier that found each one.
+	 * Fetch records for a batch of identifiers, keyed by <strong>the identifier that was asked about</strong>.
 	 *
 	 * The argument is named {@code equivalentIds} because the usual caller passes several identifiers believed to name
 	 * the <em>same</em> work (a DOI and its PMID, say), and an API may answer to one and not another. The result is a
 	 * map rather than a collection so the caller can tell which key produced which answer, and an identifier that
 	 * resolved to nothing is simply absent rather than mapped to null.
+	 *
+	 * <h2>Answer under the key you were given</h2>
+	 *
+	 * An implementation that resolves a DOI to a PMID and answers under the PMID looks correct on its own — the record
+	 * is right and so is the key — and breaks as soon as its answer is merged with another API's.
+	 * {@code BiblioFacade.fetch} merges by key, so a key no other source uses becomes a <em>second entry</em>: the
+	 * caller is handed one paper twice, and the merge policy never sees that source's contribution beside the others,
+	 * so the record under the asked-for key is poorer than it should be. That was issue-024.
+	 *
+	 * So: the key is the reference the caller passed, exactly as passed. Identifiers discovered along the way belong
+	 * in {@link Record#getOtherIdentifiers()}, which is where the dedup and the merge already look for them, and
+	 * nothing is lost by putting them there.
+	 *
+	 * An implementation may return fewer entries than it was asked for; it may not return entries nobody asked for.
 	 */
 	Map<ImmutableRecordReference, ? extends Record> fetch(
 			Collection<? extends RecordReference> equivalentIds
