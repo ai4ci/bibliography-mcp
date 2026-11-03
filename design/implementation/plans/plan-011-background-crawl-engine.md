@@ -11,7 +11,6 @@ HAS_FEATURE:
 DEPENDS_ON:
 - plan:plan-010-versioned-repository-store.md
 ---
-
 # Plan 011 — Background crawl engine
 
 Depth-restricted citation traversal that runs in the background, survives a
@@ -168,3 +167,63 @@ Live, `@Category(LiveTest.class)`, one small job:
   revisit the defaults here rather than inheriting OpenCitations-era ones.
 - Single job at a time is decided; does that need to be a lock on the store, in
   case two server processes open the same repository?
+
+## Built — `crawl` package
+
+`Direction`, `JobStatus`, `CrawlJob`, `CrawlSource`, `CrawlEngine`. Job
+persistence is in the store: a `job` table for the scalars and `job_node` for
+the frontier, as rows rather than a blob so that a frontier is streamed back
+rather than parsed whole.
+
+`CrawlSource` is the engine's whole view of the outside world — edges each way
+and records at the ends of them — and `BiblioFacade` implements it unchanged.
+The engine never learns which APIs answered, so the budget gates and the
+per-client direction conventions stay where they already are, and the traversal
+can be exercised over a citation graph declared in a test.
+
+Pinned by `TestCrawlEngine` (10 offline tests, written from the list above):
+depth 1 stops at the neighbours, depth 2 reaches their neighbours, a node
+reached shallower is expanded exactly once, `BOTH` is one hop, the ceiling stops
+the job with `stoppedBy=recordCeiling`, one throwing identifier is counted and
+the crawl carries on, cancelling halts within a record, a second crawl is
+refused naming the running one, edges and records reach the repository, and a
+job killed mid-frontier **resumes from the same frontier and visited set** in a
+new process.
+
+### Live — 2 seeds, depth 1, DOWN
+
+```
+CrawlJob[… DONE visited=98 frontier=0] stoppedBy=frontierDrained calls={cites=2}
+repository holds 51 records and 129 citations
+```
+
+Two things that measurement says. **Two calls expanded two seeds** — the
+reference lists come back whole, which is why `DOWN` is the cheap direction and
+why OpenAlex's `referenced_works` mattered to the cost model. And **98 nodes
+yielded 51 records**: half the references in a reference list do not resolve to
+a record any API will return. The graph is therefore always larger than the
+repository, which is the honest state of affairs rather than a gap to close.
+
+## Open questions, resolved
+
+- **Does the crawl fetch a record for every node it visits, or only for the ones
+  that survive?** It fetches **every** node, in batches of 100. The plan
+  recommended the opposite — keep the reference, backfill later — on the
+  arithmetic of 10⁴–10⁵ calls. [feat-011](../../features/feat-011-openalex-as-a-provider.md)
+  changed that arithmetic: a batched fetch is 100 identifiers for one credit, so
+  the fetch is no longer the expensive part of a hop. A repository of references
+  with no records cannot be ranked, selected from or synced, which would push
+  the cost onto every later step instead of removing it.
+- **Is one job at a time a lock on the store?** Not yet. The engine refuses a
+  second job in the same process; two server processes on one repository is
+  still open, and is the same question plan-010 and
+  [adr-006](../../../architecture/decision-records/adr-006-adopt-mcp-sdk-over-http.md) leave standing.
+
+## Not done here
+
+Work items 4, 5 and 6 — the server owning the executor, the `crawl` tool
+handlers, and deleting `expand_citation_graph` with the rest of `McpTools` —
+belong to the commit that stands up the SDK server
+([plan-014](plan-014-mcp-sdk-http-server.md)), for the same reason plan-010
+did not rework `Session`: they would be written against a server that is about
+to be deleted.

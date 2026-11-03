@@ -12,10 +12,17 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Stream;
 
+import uk.co.terminological.bibliography.crawl.CrawlJob;
+import uk.co.terminological.bibliography.crawl.Direction;
+import uk.co.terminological.bibliography.crawl.JobStatus;
 import uk.co.terminological.bibliography.record.Author;
 import uk.co.terminological.bibliography.record.Builder;
 import uk.co.terminological.bibliography.record.CitationLink;
@@ -151,6 +158,23 @@ public class SqliteRepositoryStore implements RepositoryStore {
 						+ " tgtIdType TEXT NOT NULL, tgtId TEXT NOT NULL,"
 						+ " idx INTEGER, srcTitle TEXT, tgtTitle TEXT,"
 						+ " PRIMARY KEY (srcIdType, srcId, tgtIdType, tgtId))"
+			);
+			// a crawl job and its frontier. The nodes are rows rather than a blob so
+			// that a frontier of 10^5 is streamed back rather than parsed whole
+			s.execute(
+				"CREATE TABLE IF NOT EXISTS job ("
+						+ "id TEXT PRIMARY KEY, direction TEXT NOT NULL, depth INTEGER NOT NULL,"
+						+ " maxRecords INTEGER NOT NULL, status TEXT NOT NULL,"
+						+ " errors INTEGER NOT NULL DEFAULT 0, stoppedBy TEXT,"
+						+ " startedAt TEXT, finishedAt TEXT, callsPerApi TEXT)"
+			);
+			s.execute(
+				"CREATE TABLE IF NOT EXISTS job_node ("
+						+ "jobId TEXT NOT NULL, idType TEXT NOT NULL, id TEXT NOT NULL,"
+						+ " depth INTEGER NOT NULL, seed INTEGER NOT NULL DEFAULT 0,"
+						+ " visited INTEGER NOT NULL DEFAULT 0,"
+						+ " queued INTEGER NOT NULL DEFAULT 0, position INTEGER,"
+						+ " PRIMARY KEY (jobId, idType, id))"
 			);
 			s.execute("CREATE INDEX IF NOT EXISTS idx_score ON record (score DESC)");
 			s.execute(
@@ -729,6 +753,196 @@ public class SqliteRepositoryStore implements RepositoryStore {
 		} catch (SQLException ignored) {
 			// likewise
 		}
+	}
+
+	// ---- crawl jobs ---------------------------------------------------------
+
+	@Override
+	public void putJob(CrawlJob job) {
+		try {
+			this.connection.setAutoCommit(false);
+			try (PreparedStatement p = this.connection.prepareStatement(
+				"INSERT INTO job (id, direction, depth, maxRecords, status, errors,"
+						+ " stoppedBy, startedAt, finishedAt, callsPerApi)"
+						+ " VALUES (?,?,?,?,?,?,?,?,?,?)"
+						+ " ON CONFLICT (id) DO UPDATE SET status=excluded.status,"
+						+ " errors=excluded.errors, stoppedBy=excluded.stoppedBy,"
+						+ " startedAt=excluded.startedAt, finishedAt=excluded.finishedAt,"
+						+ " callsPerApi=excluded.callsPerApi"
+			)) {
+				p.setString(1, job.getId());
+				p.setString(2, job.getDirection()
+					.name());
+				p.setInt(3, job.getDepth());
+				p.setInt(4, job.getMaxRecords());
+				p.setString(5, job.getStatus()
+					.name());
+				p.setInt(6, job.getErrors());
+				p.setString(
+						7, job.getStoppedBy()
+							.orElse(null)
+				);
+				p.setString(
+						8, job.getStartedAt()
+							.map(Object::toString)
+							.orElse(null)
+				);
+				p.setString(
+						9, job.getFinishedAt()
+							.map(Object::toString)
+							.orElse(null)
+				);
+				p.setString(10, encodeCalls(job.getCallsPerApi()));
+				p.executeUpdate();
+			}
+			// the frontier is rewritten rather than diffed: it is a few thousand rows
+			// at the scales this runs at, and a diff is a chance to lose a node
+			try (PreparedStatement d = this.connection
+				.prepareStatement("DELETE FROM job_node WHERE jobId = ?")) {
+				d.setString(1, job.getId());
+				d.executeUpdate();
+			}
+			try (PreparedStatement p = this.connection.prepareStatement(
+				"INSERT OR REPLACE INTO job_node (jobId, idType, id, depth, seed,"
+						+ " visited, queued, position) VALUES (?,?,?,?,?,?,?,?)"
+			)) {
+				var queued = new ArrayList<>(job.getFrontier());
+				for (var entry : job.getDepthOf()
+					.entrySet()) {
+					var ref = entry.getKey();
+					int position = queued.indexOf(ref);
+					p.setString(1, job.getId());
+					p.setString(2, ref.getIdentifierType()
+						.name());
+					p.setString(
+							3, ref.getIdentifier()
+								.orElse("")
+					);
+					p.setInt(4, entry.getValue());
+					p.setInt(
+							5, job.getSeeds()
+								.contains(ref) ? 1 : 0
+					);
+					p.setInt(
+							6, job.getVisited()
+								.contains(ref) ? 1 : 0
+					);
+					p.setInt(7, position >= 0 ? 1 : 0);
+					if (position >= 0) p.setInt(8, position);
+					else p.setNull(8, java.sql.Types.INTEGER);
+					p.addBatch();
+				}
+				p.executeBatch();
+			}
+			this.connection.commit();
+		} catch (SQLException e) {
+			rollback();
+			throw new RepositoryException(
+					"could not checkpoint crawl job " + job.getId(), e
+			);
+		} finally {
+			autoCommit();
+		}
+	}
+
+	@Override
+	public Optional<CrawlJob> job(String id) {
+		try (PreparedStatement p = this.connection.prepareStatement(
+			"SELECT direction, depth, maxRecords, status, errors, stoppedBy,"
+					+ " startedAt, finishedAt, callsPerApi FROM job WHERE id = ?"
+		)) {
+			p.setString(1, id);
+			try (ResultSet rs = p.executeQuery()) {
+				if (!rs.next()) return Optional.empty();
+				return Optional.of(readJob(id, rs));
+			}
+		} catch (SQLException e) {
+			throw new RepositoryException("could not read crawl job " + id, e);
+		}
+	}
+
+	@Override
+	public Stream<CrawlJob> jobs() {
+		List<String> ids = new ArrayList<>();
+		try (Statement s = this.connection.createStatement();
+				ResultSet rs = s.executeQuery(
+					"SELECT id FROM job ORDER BY coalesce(startedAt, '') DESC"
+				)) {
+			while (rs.next())
+				ids.add(rs.getString(1));
+		} catch (SQLException e) {
+			throw new RepositoryException("could not list the crawl jobs", e);
+		}
+		return ids.stream()
+			.map(this::job)
+			.filter(Optional::isPresent)
+			.map(Optional::get);
+	}
+
+	private CrawlJob readJob(String id, ResultSet rs) throws SQLException {
+		var direction = Direction.valueOf(rs.getString("direction"));
+		int depth = rs.getInt("depth");
+		int maxRecords = rs.getInt("maxRecords");
+		var status = JobStatus.valueOf(rs.getString("status"));
+		int errors = rs.getInt("errors");
+		var stoppedBy = rs.getString("stoppedBy");
+		var startedAt = rs.getString("startedAt");
+		var finishedAt = rs.getString("finishedAt");
+		var calls = decodeCalls(rs.getString("callsPerApi"));
+
+		Map<ImmutableRecordReference, Integer> depthOf = new LinkedHashMap<>();
+		Set<ImmutableRecordReference> seeds = new LinkedHashSet<>();
+		Set<ImmutableRecordReference> visited = new LinkedHashSet<>();
+		List<ImmutableRecordReference> frontier = new ArrayList<>();
+		try (PreparedStatement p = this.connection.prepareStatement(
+			"SELECT idType, id, depth, seed, visited, queued FROM job_node"
+					+ " WHERE jobId = ? ORDER BY coalesce(position, 1 << 30), rowid"
+		)) {
+			p.setString(1, id);
+			try (ResultSet nodes = p.executeQuery()) {
+				while (nodes.next()) {
+					var ref = Builder.recordReference(
+						IdType.valueOf(nodes.getString("idType")), nodes.getString("id")
+					);
+					depthOf.put(ref, nodes.getInt("depth"));
+					if (nodes.getInt("seed") == 1) seeds.add(ref);
+					if (nodes.getInt("visited") == 1) visited.add(ref);
+					if (nodes.getInt("queued") == 1) frontier.add(ref);
+				}
+			}
+		}
+		var job = new CrawlJob(id, seeds, direction, depth, maxRecords);
+		job.restore(
+			depthOf, frontier, visited, status, errors, stoppedBy,
+			startedAt == null ? null : Instant.parse(startedAt),
+			finishedAt == null ? null : Instant.parse(finishedAt), calls
+		);
+		return job;
+	}
+
+	/** api=count pairs; a map small enough that a format of its own would be ceremony */
+	private static String encodeCalls(Map<String, Integer> calls) {
+		return calls.entrySet()
+			.stream()
+			.map(e -> e.getKey() + "=" + e.getValue())
+			.collect(java.util.stream.Collectors.joining(";"));
+	}
+
+	private static Map<String, Integer> decodeCalls(String encoded) {
+		Map<String, Integer> out = new LinkedHashMap<>();
+		if (encoded == null || encoded.isBlank()) return out;
+		for (String pair : encoded.split(";")) {
+			int eq = pair.lastIndexOf('=');
+			if (eq < 0) continue;
+			try {
+				out.put(
+					pair.substring(0, eq), Integer.parseInt(pair.substring(eq + 1))
+				);
+			} catch (NumberFormatException e) {
+				// a call count that cannot be read is not worth failing a resume for
+			}
+		}
+		return out;
 	}
 
 	@Override

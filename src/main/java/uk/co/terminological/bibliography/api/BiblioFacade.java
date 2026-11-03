@@ -45,7 +45,8 @@ import uk.co.terminological.bibliography.record.RecordReferenceMapping;
 // [IMPLEMENTS](/design/external-interfaces/interface-002-configuration-and-secrets.md)
 
 public class BiblioFacade
-		implements Searcher, CitedByMapper, CitesMapper, RecordFetcher, IdMapper {
+		implements Searcher, CitedByMapper, CitesMapper, RecordFetcher, IdMapper,
+		uk.co.terminological.bibliography.crawl.CrawlSource {
 
 	// TODO: implement CachingApiClient and sllow setup to create persistent id mapping
 	// inbuilt resolvers to map between different id schemes to persistent internal id

@@ -87,6 +87,20 @@ public interface RepositoryStore extends AutoCloseable {
 	/** The selected works, merged. */
 	Stream<Record> selected();
 
+	/**
+	 * Store a crawl job, frontier and all.
+	 *
+	 * The job is its own checkpoint: a crawl writes itself here as it goes, so killing the process resumes from the
+	 * frontier rather than from the seeds. Called often, so it replaces the job rather than appending to a history.
+	 */
+	void putJob(uk.co.terminological.bibliography.crawl.CrawlJob job);
+
+	/** A crawl job as it was last checkpointed. */
+	Optional<uk.co.terminological.bibliography.crawl.CrawlJob> job(String id);
+
+	/** Every job this repository knows about, most recently started first. */
+	Stream<uk.co.terminological.bibliography.crawl.CrawlJob> jobs();
+
 	@Override
 	void close();
 
