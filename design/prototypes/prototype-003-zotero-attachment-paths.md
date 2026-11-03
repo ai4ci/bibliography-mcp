@@ -9,7 +9,6 @@ tags:
 HAS_FEATURE:
 - feature:feat-010-crawl-engine-with-zotero-mirror.md
 ---
-
 # Prototype 003 — the two ways to attach a PDF, and which one is safe
 
 Plan-012 assumed `zotero_sync` would need either one `/import` call or a
@@ -128,3 +127,47 @@ write of a session, rather than letting the user meet it as an unexplained pause
   `zotero-write-collection`; the code refuses that combination, and the refusal
   is load-bearing.
 - Do not treat the 400 from `/connector/import` as proof the endpoint works.
+
+## Re-probed 2026-11-03, still read-only
+
+The library is where it was: Zotero 10.0.1, 129 collections, `Zotero-Server-ID`
+present, and `api-test` (`TB35FFX6`) still **0 items** with its two
+sub-collections. Nothing below wrote anything.
+
+Two things worth adding to the record.
+
+**The `/file` sub-resource is implemented locally, for reads.**
+
+```
+GET /api/users/0/items/MBKG4LRG/file
+  302, Location: file:///home/vp22681/Zotero%20copy/storage/MBKG4LRG/2608.html
+```
+
+So the local API does serve the file surface path B uses, and it redirects into
+Zotero's own storage rather than proxying bytes. That is evidence the surface
+exists, not proof that its *write* half (upload authorisation, upload, register)
+is implemented — which still needs probe 2 below. Note also the data directory
+is `~/Zotero copy`, not `~/Zotero`.
+
+**An open-access link is not a fetchable one**, which matters more than it
+sounds. The sink is built and works, and the two obvious places to get this
+project's own fixture paper both refuse a programmatic client:
+
+| source | result |
+|---|---|
+| `arxiv.org/pdf/…` | **200**, 6.3 MB, a real pdf |
+| `qualitysafety.bmj.com/…full.pdf` | **403** with an html body |
+| `ncbi.nlm.nih.gov/pmc/articles/…/pdf` | nothing |
+
+`best_oa_location.pdf_url` points at the publisher for most records, so workflow
+2 will be attaching PDFs for a *minority* of a crawl, not for all of it.
+`PdfSink` refuses a body that is not a pdf precisely so that a 403 page never
+lands in the library looking like a success — but the planning should assume
+partial coverage rather than treat a missing PDF as a defect.
+
+## The write probes still need a human
+
+Unchanged from above, and now blocking: `zotero-allow-writes` and
+`zotero-write-collection` are **still unset** in the properties file, and the
+first write of a session raises a dialog in the Zotero window that times out
+after 120 s. Nothing can finish this prototype without someone at the keyboard.

@@ -27,6 +27,8 @@ TESTED_BY:
 - test:java/uk/co/terminological/bibliography/client/TestQueryTranslation.java
 - test:java/uk/co/terminological/bibliography/api/openalex/TestOpenAlexBudget.java
 - test:java/uk/co/terminological/bibliography/api/TestGenericSearchBuilder.java
+- test:java/uk/co/terminological/bibliography/TestPdfSink.java
+- test:java/uk/co/terminological/bibliography/TestPdfSinkLive.java
 ---
 
 ### 1) Citation network and analysis end to end

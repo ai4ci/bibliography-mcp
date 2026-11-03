@@ -255,9 +255,18 @@ Two deviations from the plan above, both deliberate:
 
 ### Not built, and feat-010 says so
 
-**PDF materialisation (work item C) and Zotero attachments.** `zotero_sync`
-publishes metadata into a sub-collection and reports what the library already
-holds; it does not attach PDFs, because `PdfFetcher` still has no sink that
-writes a file. That is the one piece of feat-010's seven workflows that this
-release does not deliver, and the prototype it needs — whether Zotero's
-`/import` is available in the developer's build — is still unrun.
+**Zotero attachments.** `zotero_sync` publishes metadata into a sub-collection
+and reports what the library already holds; it does not attach PDFs. That is the
+one piece of feat-010's seven workflows this release does not deliver.
+
+Work item C, the PDF sink, **is** built: `PdfSink` plus `PdfFetcher.fetchTo`,
+verified against a live 6.3 MB open-access PDF. What remains is the Zotero side,
+and [prototype-003](../prototypes/prototype-003-zotero-attachment-paths.md)
+already chose its shape — the local Web API rather than the connector protocol,
+because every call then goes through a path this code constructs and
+`checkWriteTarget` keeps confining writes to the sanctioned collection.
+
+An earlier note here said that prototype was unrun and might delete a third of
+this plan. Both were wrong. It ran on 2026-11-02, read-only, and it says the
+optimism was misplaced: the file has to be fetched and named either way, so what
+a one-call import would remove is the md5/register code, not the plan.

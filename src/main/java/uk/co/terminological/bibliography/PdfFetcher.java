@@ -119,6 +119,29 @@ public class PdfFetcher extends CachingApiClient {
 			.get();
 	}
 
+	/**
+	 * Download a pdf and write it to a file.
+	 *
+	 * The stream form above hands back a view of a cache blob, which no other process can read: Zotero cannot attach
+	 * it and nothing can index it. This is the same download, landing somewhere a file actually is.
+	 *
+	 * A body that is empty or is not a pdf — a paywall page answering an open-access link, usually — is refused by
+	 * {@link PdfSink} and leaves nothing behind, so a failure here never produces an attachment that looks fine until
+	 * someone opens it.
+	 *
+	 * @return the file written, or empty when the url gave nothing at all
+	 * @throws java.io.IOException when something arrived and it was not a pdf
+	 */
+	public Optional<java.nio.file.Path> fetchTo(
+			String url, java.nio.file.Path destination
+	) throws java.io.IOException {
+		var stream = this.getPdfFromUrl(url);
+		if (stream.isEmpty()) return Optional.empty();
+		try (var in = stream.get()) {
+			return Optional.of(PdfSink.write(in, destination));
+		}
+	}
+
 	@Override
 	protected MultivaluedMap<String, String> defaultApiParams() {
 		return new MultivaluedMapImpl();

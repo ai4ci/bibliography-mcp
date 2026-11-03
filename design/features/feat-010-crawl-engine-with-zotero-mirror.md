@@ -297,13 +297,14 @@ Against the success criteria at the top of this document:
 | `Session`'s Java serialization gone, debt-001 closed | **yes** |
 | offline tier green, engine tested with a faked facade, live crawl test | **yes** |
 
-**Workflow 2's PDF half is the gap.** `PdfFetcher` still returns an
-`Optional<InputStream>` into the cache and writes no file, so neither Zotero
-attachments nor `prag`'s input directory exist yet. The Zotero prototype this
-needs — whether `POST /<lib>/import` is available in the developer's build, which
-decides whether an attachment is one call or three — is still unrun, and
-[prototype-003](../prototypes/prototype-003-zotero-attachment-paths.md) is where it
-belongs.
+**Workflow 2's PDF half is the gap, and it is now half closed.** `PdfSink` and
+`PdfFetcher.fetchTo` write a real file — verified against a live 6.3 MB
+open-access PDF — so the directory `prag` needs exists in all but name. What is
+missing is the Zotero attachment, whose shape
+[prototype-003](../prototypes/prototype-003-zotero-attachment-paths.md) settled
+on 2026-11-02: the local Web API rather than the connector protocol, so that
+`checkWriteTarget` keeps confining every write. Its five remaining probes all
+write, and each needs a human to approve a dialog in the Zotero window.
 
 The non-goal about a persistent server was revised rather than met: the server
 is now a service on a loopback port, which is what made workflows 3 and 4
