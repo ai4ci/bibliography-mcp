@@ -13,7 +13,7 @@ HAS_PLAN:
 - plan:plan-011-background-crawl-engine.md
 - plan:plan-012-workflow-tool-surface.md
 HAS_INTERFACE:
-- interface:interface-001-mcp-stdio-protocol.md
+- interface:interface-001-mcp-http-transport.md
 HAS_PROTOTYPE:
 - prototype:prototype-003-zotero-attachment-paths.md
 HAS_TEST:
@@ -239,7 +239,13 @@ on the assumption they are the same feature.
 
 - Multi-job concurrency. One crawl at a time; the queue can come later.
 - Bidirectional Zotero sync. Mirror is one-way out.
-- A web UI or a persistent server. Still stdio, still one process.
+- A web UI. ~~A persistent server. Still stdio, still one process.~~ **Revised
+  2026-11-03:** a persistent server is now the point. A durable repository and a
+  crawl that outlives the request that started it make the process a service, so
+  it listens on a loopback port and speaks MCP over HTTP through the official
+  SDK — see [adr-006](adr:adr-006-adopt-mcp-sdk-over-http.md) and
+  [plan-014](plan:plan-014-mcp-sdk-http-server.md). stdio is deleted. Still one
+  process; no longer one client, and no longer one conversation.
 - Changing the `record` model or `MergePolicy`.
 - Anything that requires Zotero to be running in order to crawl, rank or
   select.

@@ -44,6 +44,7 @@ fails the build instead of quietly lying.
 | [Entrez record dates are not publication dates](implementation/issues/issue-014-entrez-record-dates-are-not-publication-dates.md) | Entrez record dates are not publication dates | open | 0.3.0 |
 | [Secrets are loaded into system properties](implementation/issues/issue-021-secrets-are-loaded-into-system-properties.md) | Secrets are loaded into system properties | open | unassigned |
 | [Fetch answers under an id it chose](implementation/issues/issue-024-fetch-answers-under-an-id-it-chose.md) | Fetch answers under an id it chose | open | unassigned |
+| [Cermine is unfetchable on a clean build](implementation/issues/issue-025-cermine-is-unfetchable-on-a-clean-build.md) | Cermine is unfetchable on a clean build | open | unassigned |
 <!-- loom view: work_in_progress end -->
 
 ## Open debt

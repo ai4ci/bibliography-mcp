@@ -13,7 +13,6 @@ DEPENDS_ON:
 - plan:plan-010-versioned-repository-store.md
 - plan:plan-011-background-crawl-engine.md
 ---
-
 # Plan 012 — Workflow shaped tool surface
 
 Collapse 29 tools into 12, surface the scores that are already computed, make
@@ -168,3 +167,64 @@ fail on the first rename, which is the only proof it works.
   different today (reference extraction vs. parsing and indexing) — do not merge
   them on the assumption they are the same feature, but do keep them adjacent so
   the handoff is obvious.
+
+## Revision — six tools, not twelve
+
+The developer's instruction is the minimum surface that supports the use case,
+and this plan's own open question is the right test of it: *the win is fewer
+sequences, not fewer names*. A `repository(action=…)` with nine branches and
+nine argument sets fails that test as badly as nine tools do.
+
+Twelve becomes six, and every one of the seven workflows is one or two calls:
+
+| tool | arguments | workflow |
+|---|---|---|
+| `search` | `query`, `title`, `author`, `journal`, `year`, `from`, `to`, `apis[]`, `limit`, `collect` | 1 |
+| `list_records` | `filter`: `all` \| `selected` \| `incomplete`, `top`, `minCitations`, `sort`, `style` | 1, 6 |
+| `select` | `ids[]`, `value` | 6 |
+| `crawl` | `action`: `start` \| `status` \| `stop`, `seeds[]` \| `fromSelection`, `direction`, `depth`, `maxRecords`, `job` | 3, 4 |
+| `rank` | `method`: `page_rank` \| `rrf` \| `cited_by`, `top`, `minCitations`, `onlySelected` | 5 |
+| `zotero_sync` | `action`: `collections` \| `report` \| `publish`, `collection`, `includePdf`, `limit` | 2, 7 |
+
+### What the durable store deletes outright
+
+- **`save` and `load` stop existing.** Writes land in the store as they happen,
+  so there is nothing to save; and the server is started against one repository,
+  so there is nothing to load. A pair of tools disappears because plan-010
+  removed the reason for them, which is the best kind of surface reduction.
+- **`add_records` stops existing.** Since
+  [issue-023](../issues/issue-023-identifier-queries-are-text-searched.md) an
+  identifier-shaped query is a lookup, so `search(query: "10.1136/bmj.n579",
+  collect: true)` is how a known paper enters the repository. One behaviour
+  serving two purposes rather than two tools.
+- **`remove_records` stops existing.** Selection is a mark and rejected records
+  stay in the graph, which is what makes PageRank meaningful and the decision
+  reversible; a delete contradicts that.
+
+### What becomes a library call rather than a tool
+
+`enrich` (backfill is a phase of `search` and `crawl`, not a thing to schedule),
+`analyse`/`topic_model` (the LDA is real but no workflow asks for it),
+`pdf_references`, `fetch`, `cites`, `cited_by`, `map_ids`. Deleting a tool is
+not deleting a capability — `BiblioFacade` and the `client/` SPI keep all of it.
+
+### One deliberate removal to confirm
+
+`citation_style` and `citation_styles` shipped in 0.1.0 and are **not** in the
+six. Rendering is presentation, Zotero does citations, and no workflow asks for
+one. The capability survives as a `style` argument on `list_records`: name a CSL
+style and the records come back with a `citation` field, which is the same
+behaviour without a tool whose only job is to set a mode. If a style is never
+named, nothing renders.
+
+That is a removal of something the developer asked for two days ago, so it is
+flagged rather than assumed.
+
+### Still true from the original plan
+
+Scores reach the JSON (work item A), structured search reaches the clients (B —
+`withQuery` was fixed in 0.1.0), the PDF sink is needed for workflows 2 and 7
+(C), and selection is a column (D). The collapse (E) is now a collapse onto six
+names, and it happens in the same commit as the SDK server
+([plan-014](plan-014-mcp-sdk-http-server.md)) rather than before it: the
+old server is deleted whole rather than renamed twice.

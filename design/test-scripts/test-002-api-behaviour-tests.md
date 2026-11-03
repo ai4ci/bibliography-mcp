@@ -15,7 +15,7 @@ HAS_FEATURE:
 - feature:feat-007-predictable-record-merging.md
 - feature:feat-011-openalex-as-a-provider.md
 HAS_INTERFACE:
-- interface:interface-001-mcp-stdio-protocol.md
+- interface:interface-001-mcp-http-transport.md
 TESTED_BY:
 - scripts:run-live-tests.sh
 - test:java/uk/co/terminological/bibliography/TestApiDriftParsing.java

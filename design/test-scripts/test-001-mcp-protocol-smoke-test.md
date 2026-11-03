@@ -8,7 +8,7 @@ tags:
 HAS_FEATURE:
 - feature:feat-001-expose-bibliographic-apis-over-mcp.md
 HAS_INTERFACE:
-- interface:interface-001-mcp-stdio-protocol.md
+- interface:interface-001-mcp-http-transport.md
 TESTED_BY:
 - scripts:mcp-smoke-test.sh
 - test:java/uk/co/terminological/bibliography/mcp/TestCitationStyleTool.java

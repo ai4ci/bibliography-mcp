@@ -6,7 +6,7 @@ tags:
 - mcp
 - api-client
 HAS_INTERFACE:
-- interface:interface-001-mcp-stdio-protocol.md
+- interface:interface-001-mcp-http-transport.md
 - interface:interface-002-configuration-and-secrets.md
 HAS_PLAN:
 - plan:plan-007-api-test-coverage.md

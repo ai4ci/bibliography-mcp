@@ -1,9 +1,8 @@
 ---
 title: Hand rolled mcp protocol
-status: final
+status: deprecated
 targetVersion: 0.1.0
 ---
-
 # Hand-roll the MCP protocol rather than adopt an SDK
 
 ## Context
@@ -42,3 +41,15 @@ Hand-roll the protocol in `McpServer` using Jackson, with tool definitions in
 * The protocol's correctness rests on a hand-written smoke test
   ([test-001](/design/test-scripts/test-001-mcp-protocol-smoke-test.md)) rather
   than a conformance suite.
+
+## Superseded — 0.2.0
+
+Replaced by [adr-006](adr-006-adopt-mcp-sdk-over-http.md): the MCP Java SDK
+over HTTP, with the hand-rolled loop and the stdio transport deleted.
+
+The reasoning here was not wrong when it was written; its premises expired. The
+server became a background service rather than a per-conversation front-end
+(feat-010), and the two costs this record weighed — a large dependency tree and
+an offline `~/.m2` — fell when the jar stopped being shaded in 0.1.0 and the
+build gained network access. The Java 11 constraint is simply overruled: the SDK
+is compiled for 17.

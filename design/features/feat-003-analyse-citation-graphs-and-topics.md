@@ -6,7 +6,7 @@ tags:
 - mcp
 - analysis
 HAS_INTERFACE:
-- interface:interface-001-mcp-stdio-protocol.md
+- interface:interface-001-mcp-http-transport.md
 HAS_TEST:
 - testscript:test-002-api-behaviour-tests.md
 IMPLEMENTED_BY:
