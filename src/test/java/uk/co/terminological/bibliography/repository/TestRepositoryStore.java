@@ -246,6 +246,75 @@ public class TestRepositoryStore {
 		);
 	}
 
+	@Test
+	public void aWorkIsFoundByAnyIdentifierItIsKnownBy() {
+		// the crawl stores a record under the identifier it fetched by, while an edge
+		// names the same work by whichever identifier the citing source happened to
+		// use. The store already records the equivalence; it has to use it, or the
+		// most-cited works in a crawl come back as anonymous placeholders.
+		var record = uk.co.terminological.bibliography.record.ImmutableRecord
+			.builder()
+			.identifierType(IdType.DOI)
+			.identifier("10.1/known")
+			.provenance(
+				uk.co.terminological.bibliography.record.Provenance
+					.of("crossref", "journal-article")
+			)
+			.licenses(java.util.stream.Stream.empty())
+			.title(Optional.of("Known by two names"))
+			.addOtherIdentifiers(Builder.recordReference(IdType.PMID, "99999"))
+			.build();
+		this.store.putRecord(record);
+
+		var byPmid = this.store
+			.getRecord(Builder.recordReference(IdType.PMID, "99999"));
+
+		assertTrue(
+			"a work stored by DOI was not found by the PMID it is also known by",
+			byPmid.isPresent()
+		);
+		assertEquals(
+			Optional.of("Known by two names"),
+			byPmid.flatMap(Record::getTitle)
+		);
+	}
+
+	@Test
+	public void theMostCitedWorkIsNamedRatherThanAnonymous() {
+		var cited = uk.co.terminological.bibliography.record.ImmutableRecord
+			.builder()
+			.identifierType(IdType.DOI)
+			.identifier("10.1/cited")
+			.provenance(
+				uk.co.terminological.bibliography.record.Provenance
+					.of("crossref", "journal-article")
+			)
+			.licenses(java.util.stream.Stream.empty())
+			.title(Optional.of("The work everyone cites"))
+			.addOtherIdentifiers(
+				Builder.recordReference(IdType.OPENALEX, "W123")
+			)
+			.build();
+		this.store.putRecord(cited);
+		// the edge names it the way the citing source did
+		this.store.putCitation(
+			Builder.citationLink(
+				Builder.recordReference(IdType.DOI, "10.1/citing"),
+				Builder.recordReference(IdType.OPENALEX, "W123"), 1
+			)
+		);
+
+		var top = this.store.topByCitedBy(1);
+
+		assertEquals(1, top.size());
+		assertEquals(
+			Optional.of("The work everyone cites"),
+			top.get(0)
+				.getKey()
+				.getTitle()
+		);
+	}
+
 	// ---- the query the store exists for ----
 
 	@Test

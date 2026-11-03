@@ -532,7 +532,8 @@ public class SqliteRepositoryStore implements RepositoryStore {
 		void bind(PreparedStatement p) throws SQLException;
 	}
 
-	private void update(String sql, RecordReference ref, Binder first) {
+	private void update(String sql, RecordReference reference, Binder first) {
+		var ref = canonical(reference);
 		try (PreparedStatement p = this.connection.prepareStatement(sql)) {
 			first.bind(p);
 			p.setString(2, ref.getIdentifierType()
@@ -555,8 +556,55 @@ public class SqliteRepositoryStore implements RepositoryStore {
 			.map(r -> (Record) r);
 	}
 
+	/**
+	 * The identifier a work is actually stored under.
+	 *
+	 * A record is stored under the identifier it was fetched by, while a citation edge names the same work by
+	 * whichever identifier the citing source used — a DOI here, an OpenAlex id there. The store already records those
+	 * equivalences; this is where it uses them. Without it the most-cited works in a crawl come back as anonymous
+	 * placeholders, because the edge and the record name the same paper differently.
+	 */
+	private ImmutableRecordReference canonical(RecordReference ref) {
+		var asked = ref.asId();
+		try (PreparedStatement p = this.connection.prepareStatement(
+			"SELECT 1 FROM contribution WHERE idType = ? AND id = ? LIMIT 1"
+		)) {
+			p.setString(1, asked.getIdentifierType()
+				.name());
+			p.setString(
+					2, asked.getIdentifier()
+						.orElse("")
+			);
+			try (ResultSet rs = p.executeQuery()) {
+				if (rs.next()) return asked;
+			}
+		} catch (SQLException e) {
+			throw new RepositoryException("could not resolve an identifier", e);
+		}
+		try (PreparedStatement p = this.connection.prepareStatement(
+			"SELECT idType, id FROM identifier WHERE otherIdType = ? AND otherId = ?"
+					+ " LIMIT 1"
+		)) {
+			p.setString(1, asked.getIdentifierType()
+				.name());
+			p.setString(
+					2, asked.getIdentifier()
+						.orElse("")
+			);
+			try (ResultSet rs = p.executeQuery()) {
+				if (rs.next()) return Builder.recordReference(
+						IdType.valueOf(rs.getString(1)), rs.getString(2)
+				);
+			}
+		} catch (SQLException e) {
+			throw new RepositoryException("could not resolve an identifier", e);
+		}
+		return asked;
+	}
+
 	@Override
-	public Collection<Record> contributions(RecordReference ref) {
+	public Collection<Record> contributions(RecordReference reference) {
+		var ref = canonical(reference);
 		List<Record> out = new ArrayList<>();
 		try (PreparedStatement p = this.connection.prepareStatement(
 			"SELECT source, nativeType, curated, title, abstract, journal, date,"

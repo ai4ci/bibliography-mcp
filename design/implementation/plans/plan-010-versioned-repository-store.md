@@ -239,3 +239,32 @@ while the first is still writing.
   every class change that has landed since they were written — which is what
   debt-001 says. Left for the developer to say whether any exist; if none do,
   this item should be struck rather than built.
+
+## A work is found by any identifier it is known by
+
+Found by driving the built server end to end: `rank(method=cited_by)` returned
+its top three works as anonymous placeholders — `citedBy=2 (no record fetched)` —
+although the crawl had fetched and stored them.
+
+The cause is that a record is stored under the identifier it was **fetched** by,
+while a citation edge names the same work by whichever identifier the **citing
+source** used: a DOI from Crossref, an OpenAlex id from `referenced_works`. The
+store recorded the equivalence in `identifier` and then did not use it, so
+`getRecord` missed by one name and the ranking lost exactly the works it was
+meant to surface.
+
+`getRecord`, `contributions`, `setScore` and `markSelected` now resolve through
+that table before giving up. Pinned by `aWorkIsFoundByAnyIdentifierItIsKnownBy`
+and `theMostCitedWorkIsNamedRatherThanAnonymous`, both proven to fail first.
+
+The same crawl after the fix:
+
+```
+rank cited_by  ->  citedBy=2 Observational Studies: Matching or Regression?
+                   citedBy=2 Factors associated with COVID-19-related death…
+                   citedBy=2 Deep Mutational Scanning of SARS-CoV-2 Receptor…
+```
+
+Worth noting what this is not: it is not identifier *mapping*. The store joins
+only equivalences a record already carried, and finding that two records are the
+same work when neither names the other is still `IdMapper`'s job, at search time.
