@@ -179,7 +179,7 @@ Twelve becomes six, and every one of the seven workflows is one or two calls:
 
 | tool | arguments | workflow |
 |---|---|---|
-| `search` | `query`, `title`, `author`, `journal`, `year`, `from`, `to`, `apis[]`, `limit`, `collect` | 1 |
+| `search` | `query`, `title`, `author`, `journal`, `year`, `from`, `to`, `apis[]`, `limit`, `collect`, `style`, `refresh` | 1 |
 | `list_records` | `filter`: `all` \| `selected` \| `incomplete`, `top`, `minCitations`, `sort`, `style` | 1, 6 |
 | `select` | `ids[]`, `value` | 6 |
 | `crawl` | `action`: `start` \| `status` \| `stop`, `seeds[]` \| `fromSelection`, `direction`, `depth`, `maxRecords`, `job` | 3, 4 |

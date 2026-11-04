@@ -141,10 +141,9 @@ public class OpenAlexClient extends CachingApiClient
 		);
 		this.apiKey = apiKey;
 		this.developerEmail = developerEmail;
-		// The shared 3 s read timeout is not enough: a full 200-record page measures
-		// 2.4 s from here, so the default would fail the largest and most valuable
-		// requests first, and a timeout here looks like "the API has nothing".
-		this.setReadTimeout(8000);
+		// A full 200-record page measures 2.4 s from here. The shared default now
+		// allows for that with room to spare, so this client no longer sets its own:
+		// an override lower than the default would reintroduce debt-009 the other way up.
 		if (apiKey != null) {
 			this.client.addFilter(
 				new ClientFilter() {

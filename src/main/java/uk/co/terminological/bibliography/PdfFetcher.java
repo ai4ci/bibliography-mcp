@@ -57,8 +57,10 @@ public class PdfFetcher extends CachingApiClient {
 			.put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, true);
 		client = Client.create(config);
 		client.setFollowRedirects(true);
-		client.setConnectTimeout(1000);
-		client.setReadTimeout(4000);
+		// this client is built by hand rather than inherited, so it states the shared
+		// defaults explicitly; a PDF is the largest thing this project downloads
+		client.setConnectTimeout(DEFAULT_CONNECT_TIMEOUT_MS);
+		client.setReadTimeout(DEFAULT_READ_TIMEOUT_MS);
 		client.addFilter(new ClientFilter() {
 			@Override
 			public ClientResponse handle(ClientRequest request)

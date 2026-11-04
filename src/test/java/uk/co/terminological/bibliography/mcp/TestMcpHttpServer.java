@@ -302,6 +302,24 @@ public class TestMcpHttpServer {
 	}
 
 	@Test
+	public void aCachedAnswerCanBeAskedForAgain() {
+		// a wrong or stale cached answer used to need a human to delete a directory,
+		// because nothing an agent could say reached past the cache (debt-006)
+		var search = client.listTools()
+			.tools()
+			.stream()
+			.filter(t -> "search".equals(t.name()))
+			.findFirst()
+			.orElseThrow();
+
+		assertTrue(
+			"search should offer a way past the cache: " + search.inputSchema(),
+			String.valueOf(search.inputSchema())
+				.contains("refresh")
+		);
+	}
+
+	@Test
 	public void zoteroBeingOffIsAClearRefusalAndNotAStackTrace() {
 		// the server was started with zotero-mode=off, and everything else still works
 		var result = call("zotero_sync", Map.of("action", "collections"));

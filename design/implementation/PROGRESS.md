@@ -1,13 +1,13 @@
 # Working notes — where things stand
 
-Handover note, 2026-11-02. Not part of the graph (no frontmatter, no loom type);
-delete or absorb it whenever the items below are dealt with.
+Handover note, started 2026-11-02 and kept current. Not part of the graph (no
+frontmatter, no loom type); delete or absorb it whenever the items below are
+dealt with.
 
-`pom.xml` is **`0.1.0-SNAPSHOT`**. `mvn -o clean test`: **232 tests, 0 failures**.
-`scripts/mcp-smoke-test.sh` passes, including the citation render check.
-`TestSearchDedupLive`: 4 tests in 9.5 s. `TestOpenAlexClientEndToEnd`: 14 tests,
-0 failures. `loom validate`: 0 errors. **`git push` is outstanding** — that is the
-developer's job, and CI has not run on any of this.
+As of 2026-11-04: `pom.xml` is **`0.2.0-SNAPSHOT`**. `mvn -o clean test`:
+**322 tests, 0 failures**. `scripts/mcp-smoke-test.sh` passes, including the
+citation render check. `loom validate`: 0 errors. **`git push` is outstanding**
+— that is the developer's job, and CI has not run on any of this.
 
 ## 0.1.0 — "MCP server usable"
 

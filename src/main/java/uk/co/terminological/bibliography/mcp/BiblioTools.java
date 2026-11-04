@@ -23,6 +23,7 @@ import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
 import io.modelcontextprotocol.spec.McpSchema.Tool;
 
 import uk.co.terminological.bibliography.api.BiblioFacade;
+import uk.co.terminological.bibliography.api.SearchOutcome;
 import uk.co.terminological.bibliography.api.zotero.ZoteroItemWriter;
 import uk.co.terminological.bibliography.client.ImmutableQuery;
 import uk.co.terminological.bibliography.crawl.CrawlJob;
@@ -79,6 +80,8 @@ public class BiblioTools {
 						+ " and the APIs that found it. A query that is nothing but an identifier (DOI, PMCID,"
 						+ " pmid:NNNN, OpenAlex id) is looked up rather than text-matched."
 						+ " Set collect to add the results to the repository."
+						+ " Set refresh to ask the APIs again rather than reuse a cached answer,"
+						+ " which is the thing to do when a result looks wrong or stale."
 			)
 			.inputSchema(
 				json,
@@ -98,6 +101,7 @@ public class BiblioTools {
 						+ "]}},"
 						+ "\"limit\":{\"type\":\"integer\"},"
 						+ "\"collect\":{\"type\":\"boolean\",\"description\":\"add the results to the repository\"},"
+						+ "\"refresh\":{\"type\":\"boolean\",\"description\":\"bypass the cache and ask the APIs again\"},"
 						+ "\"style\":{\"type\":\"string\",\"description\":\"a CSL style name to render a citation with\"}"
 						+ "}}"
 			)
@@ -123,7 +127,24 @@ public class BiblioTools {
 					: ctx.facade()
 						.withSearchApis(apis);
 
-				var outcome = facade.scoredSearch(query.build());
+				// Without this an answer cached before an upstream gap closed could only
+				// be corrected by a human deleting a directory — the agent that got the
+				// wrong answer had no way to ask again (debt-006). The flag is per call
+				// and always put back, so a refreshed search does not make the next one
+				// uncached.
+				boolean refresh = bool(args, "refresh").orElse(false);
+				SearchOutcome outcome;
+				if (refresh) {
+					log.info("search is bypassing the cache at the caller's request");
+					facade.disableCache();
+					try {
+						outcome = facade.scoredSearch(query.build());
+					} finally {
+						facade.enableCache();
+					}
+				} else {
+					outcome = facade.scoredSearch(query.build());
+				}
 				var scored = outcome.results();
 				boolean collect = bool(args, "collect").orElse(false);
 				var style = string(args, "style").orElse(null);

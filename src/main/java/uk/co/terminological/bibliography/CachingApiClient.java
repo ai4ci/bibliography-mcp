@@ -42,76 +42,36 @@ public abstract class CachingApiClient {
 	protected boolean debug = false;
 	protected boolean noCache = false;
 
+	/**
+	 * How long to wait for an answer before giving up on a call.
+	 *
+	 * Deliberately generous. The old default was three seconds, which is comfortable for most bibliographic APIs and
+	 * wrong for several of them — OpenCitations, {@code api.biorxiv.org} and the arXiv API all answer in 3-6 seconds —
+	 * and being wrong is silent: every call times out, the API looks like it has no data, and the symptom is an empty
+	 * result set rather than an error. A client that is slower still raises its own with {@link #setReadTimeout(int)},
+	 * which is a thing to remember, but forgetting it now costs latency rather than correctness (debt-009).
+	 */
+	public static final int DEFAULT_READ_TIMEOUT_MS = 15_000;
+
+	/** How long to wait for the connection itself. A host that will not talk to us at all is a different failure. */
+	public static final int DEFAULT_CONNECT_TIMEOUT_MS = 5_000;
+
+	/**
+	 * The longest a "permanent" answer is served before being asked again.
+	 *
+	 * The cache named {@code forever} used not to expire at all, so a successful-but-wrong answer — an upstream gap at
+	 * fetch time — was pinned for the life of the directory, and the only cure was a human deleting it. Bibliographic
+	 * metadata does not change often enough to want a short life, but nothing should be permanent (debt-006).
+	 */
+	private static final Duration LONG_LIVED = Duration.ofDays(180);
+
 	protected CachingApiClient(
 			Optional<Path> optional, TokenBucket ratelimiter
 	) {
 		this.client = Client.create();
-		this.client.setConnectTimeout(1000);
-		this.client.setReadTimeout(3000);
-		if (optional.isPresent()) {
-			StreamExceptions
-				.tryRethrow(t -> Files.createDirectories(optional.get()));
-			this.cacheManager = CacheManagerBuilder.newCacheManagerBuilder()
-				.with(
-					CacheManagerBuilder.persistence(
-						optional.get()
-							.toFile()
-					)
-				)
-				.withCache(
-					"forever",
-					CacheConfigurationBuilder
-						.newCacheConfigurationBuilder(
-							String.class,
-							BinaryData.class,
-							ResourcePoolsBuilder.heap(10000)
-								.disk(400, MemoryUnit.MB, true)
-						)
-						.withExpiry(ExpiryPolicyBuilder.noExpiration())
-				)
-				.withCache(
-					"week",
-					CacheConfigurationBuilder
-						.newCacheConfigurationBuilder(
-							String.class,
-							BinaryData.class,
-							ResourcePoolsBuilder.heap(1000)
-								.disk(40, MemoryUnit.MB, true)
-						)
-						.withExpiry(
-							ExpiryPolicyBuilder
-								.timeToLiveExpiration(Duration.ofDays(7))
-						)
-				)
-				.build();
-		} else {
-			this.cacheManager = CacheManagerBuilder.newCacheManagerBuilder()
-				.withCache(
-					"forever",
-					CacheConfigurationBuilder
-						.newCacheConfigurationBuilder(
-							String.class,
-							BinaryData.class,
-							ResourcePoolsBuilder.heap(10000)
-						)
-						.withExpiry(ExpiryPolicyBuilder.noExpiration())
-				)
-				.withCache(
-					"week",
-					CacheConfigurationBuilder
-						.newCacheConfigurationBuilder(
-							String.class,
-							BinaryData.class,
-							ResourcePoolsBuilder.heap(10000)
-						)
-						.withExpiry(
-							ExpiryPolicyBuilder
-								.timeToLiveExpiration(Duration.ofDays(7))
-						)
-				)
-				.build();
-		}
-		this.cacheManager.init();
+		this.client.setConnectTimeout(DEFAULT_CONNECT_TIMEOUT_MS);
+		this.client.setReadTimeout(DEFAULT_READ_TIMEOUT_MS);
+		this.cacheManager = openCache(optional);
 		Runtime.getRuntime()
 			.addShutdownHook(new Thread() {
 				@Override
@@ -127,6 +87,119 @@ public abstract class CachingApiClient {
 				}
 			});
 		this.rateLimiter = ratelimiter;
+	}
+
+	/**
+	 * Open the cache, rebuilding it from empty if this build cannot read what is already there.
+	 *
+	 * A persistent EHCache store is written with Java serialization, so any change to the shape of {@link BinaryData}
+	 * changes its computed {@code serialVersionUID} and makes every existing entry unreadable. That used to be
+	 * <em>fatal</em>: {@code init()} threw, the exception surfaced from {@code BibliographicApis.create}, and the server
+	 * would not start until someone found and deleted a cache directory — a configuration-shaped error with a
+	 * housekeeping cause (debt-007).
+	 *
+	 * The cache is disposable: everything in it can be fetched again. So an unreadable one is cleared and recreated,
+	 * loudly, and the only cost is the saved calls.
+	 */
+	private static CacheManager openCache(Optional<Path> dir) {
+		if (dir.isPresent())
+			StreamExceptions.tryRethrow(t -> Files.createDirectories(dir.get()));
+		var manager = cacheManagerFor(dir);
+		try {
+			manager.init();
+			return manager;
+		} catch (RuntimeException e) {
+			// an in-memory cache has nothing stale to blame, so a failure there is real
+			if (dir.isEmpty()) throw e;
+			logger.warn(
+				"Could not open the cache at {} ({}); clearing and rebuilding it."
+						+ " The cache is disposable — nothing is lost but the calls it saved.",
+				dir.get(),
+				e.toString()
+			);
+			try {
+				manager.close();
+			} catch (RuntimeException ignored) {
+				// a half-initialised manager may refuse to close; the lock files go with the directory
+			}
+			empty(dir.get());
+			var rebuilt = cacheManagerFor(dir);
+			rebuilt.init();
+			return rebuilt;
+		}
+	}
+
+	private static CacheManager cacheManagerFor(Optional<Path> dir) {
+		if (dir.isPresent()) return CacheManagerBuilder.newCacheManagerBuilder()
+			.with(
+				CacheManagerBuilder.persistence(
+					dir.get()
+						.toFile()
+				)
+			)
+			.withCache(
+				"forever",
+				configure(
+					ResourcePoolsBuilder.heap(10000)
+						.disk(400, MemoryUnit.MB, true),
+					LONG_LIVED
+				)
+			)
+			.withCache(
+				"week",
+				configure(
+					ResourcePoolsBuilder.heap(1000)
+						.disk(40, MemoryUnit.MB, true),
+					Duration.ofDays(7)
+				)
+			)
+			.build();
+		return CacheManagerBuilder.newCacheManagerBuilder()
+			.withCache(
+				"forever",
+				configure(ResourcePoolsBuilder.heap(10000), LONG_LIVED)
+			)
+			.withCache(
+				"week",
+				configure(ResourcePoolsBuilder.heap(10000), Duration.ofDays(7))
+			)
+			.build();
+	}
+
+	private static CacheConfigurationBuilder<String, BinaryData> configure(
+			ResourcePoolsBuilder pools, Duration life
+	) {
+		return CacheConfigurationBuilder
+			.newCacheConfigurationBuilder(String.class, BinaryData.class, pools)
+			.withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(life));
+	}
+
+	/** Remove everything under a cache directory, leaving the directory itself. */
+	private static void empty(Path dir) {
+		StreamExceptions.<Path, Exception>tryRethrow(dir, d -> {
+			try (var walk = Files.walk(d)) {
+				for (Path p : walk.sorted(java.util.Comparator.reverseOrder())
+					.collect(Collectors.toList())) {
+					if (!p.equals(d)) Files.deleteIfExists(p);
+				}
+			}
+		});
+	}
+
+	/**
+	 * Whether a response body is worth keeping.
+	 *
+	 * An empty or blank body carries nothing a caller can use, and caching one turns a momentary upstream gap into a
+	 * lasting "no data" for that request (debt-006). It is cheaper to ask again than to be permanently wrong.
+	 *
+	 * Public for testing.
+	 */
+	public static boolean worthCaching(byte[] body) {
+		if (body == null || body.length == 0) return false;
+		for (byte b : body) {
+			if (b < 0 || !Character.isWhitespace(b)) return true;
+		}
+		return false;
 	}
 
 	protected Cache<String, BinaryData> permanentCache() {
@@ -184,6 +257,18 @@ public abstract class CachingApiClient {
 	 */
 	protected void setReadTimeout(int millis) {
 		this.client.setReadTimeout(millis);
+		this.readTimeoutMs = millis;
+	}
+
+	/** what {@link #setReadTimeout(int)} last set, so a timeout can say what it waited for */
+	private int readTimeoutMs = DEFAULT_READ_TIMEOUT_MS;
+
+	/** Whether this failure was us running out of patience rather than the API answering badly. */
+	private static boolean timedOut(Throwable e) {
+		for (Throwable t = e; t != null; t = t.getCause()) {
+			if (t instanceof java.net.SocketTimeoutException) return true;
+		}
+		return false;
 	}
 
 	protected void rateLimit(int cost) {
@@ -440,15 +525,32 @@ public abstract class CachingApiClient {
 				return Optional.empty();
 			}
 			var out = operation.apply(data.inputStream());
-			cache.put(key, data);
+			if (worthCaching(data.byteArray)) {
+				cache.put(key, data);
+			} else {
+				// an empty body is a gap, not an answer, and caching it would make the
+				// gap permanent for this request (debt-006)
+				logger.warn("Empty response body from {}; not cached", wr.toString());
+			}
 			return Optional.of(out);
 		} catch (Exception e) {
 			if (this.debug) { e.printStackTrace(); }
-			logger.warn(
-				"Could not parse API result {} because of {}",
-				wr.toString(),
-				e.getMessage()
-			);
+			if (timedOut(e)) {
+				// said separately because it is not a parse failure and not an empty API:
+				// it is this client being too impatient for this one (debt-009)
+				logger.warn(
+					"API call to {} timed out after {}ms; raise this client's read timeout"
+							+ " if it is always this slow",
+					wr.toString(),
+					this.readTimeoutMs
+				);
+			} else {
+				logger.warn(
+					"Could not parse API result {} because of {}",
+					wr.toString(),
+					e.getMessage()
+				);
+			}
 			return Optional.empty();
 		}
 	}
@@ -467,7 +569,7 @@ public abstract class CachingApiClient {
 		}
 		try {
 			var data = BinaryData.from(supplier.apply(key));
-			cache.put(key, data);
+			if (worthCaching(data.byteArray)) cache.put(key, data);
 			return Optional.of(data.inputStream());
 		} catch (Exception e) {
 			if (this.debug) { e.printStackTrace(); }
@@ -492,7 +594,7 @@ public abstract class CachingApiClient {
 		}
 		try {
 			var data = BinaryData.from(supplier.apply(key));
-			cache.put(key, data);
+			if (worthCaching(data.byteArray)) cache.put(key, data);
 			return Optional.of(data.toString());
 		} catch (Exception e) {
 			if (this.debug) { e.printStackTrace(); }
@@ -520,7 +622,7 @@ public abstract class CachingApiClient {
 		}
 		try {
 			var data = BinaryData.from(supplier.apply(key));
-			cache.put(key, data);
+			if (worthCaching(data.byteArray)) cache.put(key, data);
 			return Optional.of(data.toObject());
 		} catch (Exception e) {
 			if (this.debug) { e.printStackTrace(); }

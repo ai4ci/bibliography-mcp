@@ -75,8 +75,8 @@ public class MedrxivClient extends CachingApiClient
 					.withFixedIntervalRefillStrategy(2, 1, TimeUnit.SECONDS)
 					.build()
 		);
-		// api.biorxiv.org takes 3-6 seconds: the shared 3s read timeout turns every
-		// call into a timeout, which looks exactly like "this preprint has no data"
+		// api.biorxiv.org takes 3-6 seconds and the JATS fetch much longer; a timeout
+		// here looks exactly like "this preprint has no data"
 		this.setReadTimeout(30_000);
 	}
 

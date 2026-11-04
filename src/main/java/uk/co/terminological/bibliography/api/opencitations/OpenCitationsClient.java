@@ -43,7 +43,8 @@ public class OpenCitationsClient extends CachingApiClient
 					.build()
 		);
 		// Docs: rate-limited to 180 requests/minute per IP (api.opencitations.net/index/v2).
-		// ponytail: shared 3s read timeout is too short — this API responds in 3-6s
+		// this API responds in 3-6s, and occasionally much worse on a large citation
+		// set, so it asks for more than the shared default
 		this.setReadTimeout(30_000);
 	}
 
