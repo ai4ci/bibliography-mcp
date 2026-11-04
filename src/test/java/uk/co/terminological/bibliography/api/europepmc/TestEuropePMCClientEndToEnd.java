@@ -18,6 +18,7 @@ import uk.co.terminological.bibliography.api.BibliographicApis;
 import uk.co.terminological.bibliography.api.europepmc.EuropePMCClient;
 import uk.co.terminological.bibliography.api.europepmc.EuropePMCCoreResult;
 import uk.co.terminological.bibliography.record.Author;
+import uk.co.terminological.bibliography.record.Builder;
 import uk.co.terminological.bibliography.record.IdType;
 
 /**
@@ -43,6 +44,48 @@ public class TestEuropePMCClientEndToEnd {
 			Paths.get("/tmp/ehcache/europepmc-e2e-test")
 		);
 		europePMC = apis.getEuropePMC();
+	}
+
+	@Test
+	public void theSamePaperGivesTheSameReferencesByEveryIdentifier() {
+		// debt-010 collapsed six near-identical loops into one dispatch. The thing
+		// that must survive it is this: Europe PMC is asked about a PMID, a PMCID and
+		// a DOI by three different routes — two direct, one through a search that
+		// resolves the DOI to EPMC's own source — and the three have to agree.
+		var byPmid = europePMC.citesReferences(
+			List.of(Builder.recordReference(IdType.PMID, PMID))
+		);
+		var byPmcid = europePMC.citesReferences(
+			List.of(Builder.recordReference(IdType.PMCID, PMCID))
+		);
+		var byDoi = europePMC.citesReferences(
+			List.of(Builder.recordReference(IdType.DOI, PUBLISHED_DOI))
+		);
+
+		assertTrue(
+			"this paper should have references in Europe PMC", byPmid.size() > 10
+		);
+		assertEquals(
+			"a PMCID should reach the same reference list as a PMID", byPmid.size(),
+			byPmcid.size()
+		);
+		assertEquals(
+			"a DOI should reach the same reference list as a PMID — this is the gap"
+					+ " that made a preprint's references look absent",
+			byPmid.size(),
+			byDoi.size()
+		);
+	}
+
+	@Test
+	public void anIdentifierEuropePmcCannotBeAskedAboutCostsNothing() {
+		// an ISBN has no Europe PMC source, so it is not a question; before the
+		// dispatch was in one place this depended on each loop remembering
+		var out = europePMC.citesReferences(
+			List.of(Builder.recordReference(IdType.ISBN, "978-0-19-852663-6"))
+		);
+
+		assertTrue("an ISBN is not a Europe PMC question", out.isEmpty());
 	}
 
 	@Test

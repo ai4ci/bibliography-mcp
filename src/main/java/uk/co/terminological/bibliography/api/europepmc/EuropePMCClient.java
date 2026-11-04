@@ -394,32 +394,46 @@ public class EuropePMCClient extends CachingApiClient
 	public enum DataSources { AGR, CBA, CTX, ETH, HIR, MED, NBK, PAT, PMC, PPR }
 
 	/**
-	 * The references of a work known by DOI.
+	 * The Europe PMC source that answers to this identifier type without being asked first.
 	 *
-	 * Europe PMC indexes preprints as `PPR` and journal articles as `MED`, so a DOI has to be resolved to EPMC's own source
-	 * and id before its reference list can be asked for. A DOI reference used to be ignored entirely, which made a
-	 * preprint's references look absent even though the API held them.
+	 * A PMID is a Medline record and a PMCID a full-text one, and both are true by construction. A DOI is not: Europe PMC
+	 * indexes preprints as {@code PPR} and journal articles as {@code MED}, so which source holds a DOI can only be
+	 * discovered by searching for it — see {@link #epmcTarget}. Everything else has no Europe PMC source at all.
+	 *
+	 * Visible for testing: which identifiers this API answers to is a fact about the API and worth pinning without a call.
 	 */
-	private List<EuropePMCReference> referencesForDoi(String doi) {
-		return this.resolveDoi(doi)
-			.map(
-				resolved -> this
-					.references(resolved.getFirst(), resolved.getSecond())
-					.getItems()
-					.collect(Collectors.toList())
-			)
-			.orElseGet(List::of);
+	static Optional<DataSources> directSource(IdType type) {
+		if (IdType.PMID.equals(type)) return Optional.of(DataSources.MED);
+		if (IdType.PMCID.equals(type)) return Optional.of(DataSources.PMC);
+		return Optional.empty();
 	}
 
-	private List<EuropePMCCitation> citationsForDoi(String doi) {
-		return this.resolveDoi(doi)
-			.map(
-				resolved -> this
-					.citations(resolved.getFirst(), resolved.getSecond())
-					.getItems()
-					.collect(Collectors.toList())
-			)
-			.orElseGet(List::of);
+	/** Whether Europe PMC can be asked about this kind of identifier at all. */
+	static boolean canBeAskedAbout(IdType type) {
+		return directSource(type).isPresent() || IdType.DOI.equals(type);
+	}
+
+	/**
+	 * Europe PMC's own source and id for a reference, or empty when it cannot be asked about one.
+	 *
+	 * This is the whole of the identifier handling for both citation directions. It used to be written out once per
+	 * identifier type in each direction — six near-identical loops — which is why a DOI branch was missing from both for
+	 * so long: the same gap had to be noticed and fixed twice, and was not noticed at all until a preprint's references
+	 * came back empty while the API held 31 (debt-010). An identifier type is now added here, once.
+	 *
+	 * Package-visible so the dispatch can be tested without a call.
+	 */
+	Optional<Tuple<DataSources, String>> epmcTarget(RecordReference ref) {
+		var id = ref.getIdentifier()
+			.filter(s -> !s.isBlank());
+		if (id.isEmpty()) return Optional.empty();
+		var direct = directSource(ref.getIdentifierType());
+		if (direct.isPresent())
+			return Optional.of(Tuple.create(direct.get(), id.get()));
+		// a DOI costs a search to place; everything else EPMC simply cannot be asked
+		if (IdType.DOI.equals(ref.getIdentifierType()))
+			return this.resolveDoi(id.get());
+		return Optional.empty();
 	}
 
 	/** EPMC's own source and id for a work known by DOI, or empty if it has neither */
@@ -452,112 +466,46 @@ public class EuropePMCClient extends CachingApiClient
 	public Collection<? extends CitationLink> citesReferences(
 			Collection<? extends RecordReference> sources
 	) {
-
-		// The source cites a target
-		// The relationship is source --> target
-
+		// the source cites the target, so the link runs source --> target
 		Set<CitationLink> out = new HashSet<>();
-
 		for (RecordReference source : sources) {
-
-			if (source.getIdentifierType()
-				.equals(IdType.PMID)) {
-				var i = 0;
-				for (EuropePMCReference target : this
-					.references(
-						DataSources.MED,
-						source.getIdentifier()
-							.get()
-					)
-					.getItems()
-					.collect(Collectors.toList())) {
-					out.add(Builder.citationLink(source, target, i));
-				}
-			}
-
-			if (source.getIdentifierType()
-				.equals(IdType.DOI)) {
-				var i = 0;
-				for (EuropePMCReference target : this.referencesForDoi(
-					source.getIdentifier()
-						.get()
-				)) {
-					out.add(Builder.citationLink(source, target, i));
-				}
-			}
-			if (source.getIdentifierType()
-				.equals(IdType.PMCID)) {
-				var i = 0;
-				for (EuropePMCReference target : this
-					.references(
-						DataSources.PMC,
-						source.getIdentifier()
-							.get()
-					)
-					.getItems()
-					.collect(Collectors.toList())) {
-					out.add(Builder.citationLink(source, target, i));
-				}
-			}
+			this.epmcTarget(source)
+				.ifPresent(at -> {
+					// the index is the position in the reference list and is left at
+					// zero for every link here, which is wrong and is not this change
+					// to fix — see issue-026
+					var i = 0;
+					for (EuropePMCReference target : this
+						.references(at.getFirst(), at.getSecond())
+						.getItems()
+						.collect(Collectors.toList())) {
+						out.add(Builder.citationLink(source, target, i));
+					}
+				});
 		}
-
 		return out;
-
 	}
 
 	@Override
 	public Collection<? extends CitationLink> referencesCiting(
 			Collection<? extends RecordReference> sources
 	) {
-
-		// The articles (target) that site this source
-		// The link should be target --> source
-
+		// the articles that cite this source, so the link runs target --> source
 		Set<CitationLink> out = new HashSet<>();
-
 		for (RecordReference source : sources) {
-
-			if (source.getIdentifierType()
-				.equals(IdType.PMID)) {
-				var i = 0;
-				for (EuropePMCCitation target : this
-					.citations(
-						DataSources.MED,
-						source.getIdentifier()
-							.get()
-					)
-					.getItems()
-					.collect(Collectors.toList())) {
-					out.add(Builder.citationLink(target, source, i));
-				}
-			}
-
-			if (source.getIdentifierType()
-				.equals(IdType.DOI)) {
-				var i = 0;
-				for (EuropePMCCitation target : this.citationsForDoi(
-					source.getIdentifier()
-						.get()
-				)) {
-					out.add(Builder.citationLink(target, source, i));
-				}
-			}
-			if (source.getIdentifierType()
-				.equals(IdType.PMCID)) {
-				var i = 0;
-				for (EuropePMCCitation target : this
-					.citations(
-						DataSources.PMC,
-						source.getIdentifier()
-							.get()
-					)
-					.getItems()
-					.collect(Collectors.toList())) {
-					out.add(Builder.citationLink(target, source, i));
-				}
-			}
+			this.epmcTarget(source)
+				.ifPresent(at -> {
+					// a "cited by" answer is not a reference list, so these links should
+					// carry no index at all — see issue-026
+					var i = 0;
+					for (EuropePMCCitation target : this
+						.citations(at.getFirst(), at.getSecond())
+						.getItems()
+						.collect(Collectors.toList())) {
+						out.add(Builder.citationLink(target, source, i));
+					}
+				});
 		}
-
 		return out;
 	}
 
