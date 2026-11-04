@@ -76,6 +76,27 @@ public class TestFetcherContractLive {
 		);
 	}
 
+	private static ImmutableRecordReference pmid() {
+		return Builder.recordReference(IdType.PMID, TestPaperFixtures.PMID);
+	}
+
+	@Test
+	public void aFetchByPmidReachesTheSameSourcesAsAFetchByDoi() {
+		// debt-005. Two of the five fetch sources are keyed by DOI, so an agent
+		// holding only a PMID gets a merged record that is quietly thinner — and
+		// nothing in the answer says a source was skipped.
+		var byDoi = facade.fetchBySource(List.of(doi()))
+			.keySet();
+		var byPmid = facade.fetchBySource(List.of(pmid()))
+			.keySet();
+
+		System.out.println("INFO: by DOI  " + byDoi);
+		System.out.println("INFO: by PMID " + byPmid);
+		assertEquals(
+			"a PMID should reach every source a DOI reaches", byDoi, byPmid
+		);
+	}
+
 	@Test
 	public void crossrefAnswersUnderTheAskedIdentifier() {
 		answersUnderTheIdentifierItWasAsked("crossref", apis.getCrossref());

@@ -313,6 +313,7 @@ public class BiblioFacade
 			Collection<? extends RecordReference> ids
 	) {
 		Map<ImmutableRecordReference, MergedRecord> out = new HashMap<>();
+		Map<ImmutableRecordReference, Set<String>> answeredBy = new HashMap<>();
 		this.fetchApis.forEach(fetchApi -> {
 			Map<ImmutableRecordReference, ? extends Record> tmp = perApi(
 				fetchApi, "fetch", () -> fetchFrom(fetchApi, ids), new HashMap<>()
@@ -325,6 +326,28 @@ public class BiblioFacade
 			);
 			tmp.forEach((k, v) -> {
 				out.merge(k, MergedRecord.from(v), MergedRecord::merge);
+				answeredBy.computeIfAbsent(k, x -> new HashSet<>())
+					.add(fetchApi);
+			});
+		});
+		secondAsk(out, answeredBy).forEach((fetchApi, byDoi) -> {
+			Map<ImmutableRecordReference, ? extends Record> tmp = perApi(
+				fetchApi, "fetch by learned DOI",
+				() -> fetchFrom(fetchApi, byDoi.keySet()), new HashMap<>()
+			);
+			log.info(
+				"Second ask found {} records in {} for {} DOIs learned from the"
+						+ " sources that could answer",
+				tmp.size(),
+				fetchApi,
+				byDoi.size()
+			);
+			tmp.forEach((k, v) -> {
+				var asked = byDoi.get(k);
+				// a source answering under something nobody asked about is a contract
+				// breach of its own, and is not quietly absorbed here
+				if (asked == null) return;
+				out.merge(asked, MergedRecord.from(v), MergedRecord::merge);
 			});
 		});
 		return out;
@@ -355,6 +378,44 @@ public class BiblioFacade
 	}
 
 	/**
+	 * Which sources to ask again, and with which DOI, after a first pass has been made.
+	 *
+	 * Not every source can be asked about every kind of identifier. CrossRef is keyed by DOI and has no {@code pmid}
+	 * filter at all — {@code filter=pmid:…} is refused outright — so a work the caller named by PMID used to come back
+	 * without CrossRef's publisher, type or licence, and nothing in the answer said a source had been skipped (debt-005).
+	 * Measured: a fetch by DOI reaches crossref, entrez, europepmc and openalex; the same work by PMID reaches all but
+	 * crossref.
+	 *
+	 * This costs no id-mapping round trip, which is what made the obvious fix unattractive. The sources that <em>can</em>
+	 * answer to a PMID hand back the DOI among the record's other identifiers, so by the time the first pass is done the
+	 * facade is already holding what the silent source needed. Only silent sources are asked, only about works whose DOI
+	 * was learned rather than given, and the answer is carried back under the identifier the caller actually asked about
+	 * — so {@link RecordFetcher}'s contract survives the detour (issue-024).
+	 *
+	 * @return source name to (the DOI to ask it about, the identifier that DOI stands for)
+	 */
+	private Map<String, Map<ImmutableRecordReference, ImmutableRecordReference>> secondAsk(
+			Map<ImmutableRecordReference, ? extends Record> found,
+			Map<ImmutableRecordReference, Set<String>> answeredBy
+	) {
+		Map<String, Map<ImmutableRecordReference, ImmutableRecordReference>> again =
+				new LinkedHashMap<>();
+		found.forEach((asked, record) -> {
+			if (IdType.DOI.equals(asked.getIdentifierType())) return;
+			var doi = record.getIdentifier(IdType.DOI)
+				.map(id -> Builder.recordReference(IdType.DOI, id));
+			if (doi.isEmpty()) return;
+			for (String fetchApi : this.fetchApis) {
+				if (answeredBy.getOrDefault(asked, Collections.emptySet())
+					.contains(fetchApi)) continue;
+				again.computeIfAbsent(fetchApi, x -> new LinkedHashMap<>())
+					.put(doi.get(), asked);
+			}
+		});
+		return again;
+	}
+
+	/**
 	 * The per-API records, unmerged, keyed by source name. The merged view is what most callers want, but it keeps only the
 	 * winning value and one provenance, so a caller that needs to attribute each value to the API that asserted it (the
 	 * metadata clean-up report, for instance) needs the contributions separately.
@@ -364,14 +425,33 @@ public class BiblioFacade
 			Collection<? extends RecordReference> ids
 	) {
 		Map<String, List<Record>> out = new LinkedHashMap<>();
+		Map<ImmutableRecordReference, MergedRecord> merged = new HashMap<>();
+		Map<ImmutableRecordReference, Set<String>> answeredBy = new HashMap<>();
 		this.fetchApis.forEach(fetchApi -> {
 			Map<ImmutableRecordReference, ? extends Record> fetched = perApi(
 				fetchApi, "fetch", () -> fetchFrom(fetchApi, ids), new HashMap<>()
 			);
 			List<Record> records = new ArrayList<>();
-			fetched.values()
-				.forEach(records::add);
+			fetched.forEach((k, v) -> {
+				records.add(v);
+				merged.merge(k, MergedRecord.from(v), MergedRecord::merge);
+				answeredBy.computeIfAbsent(k, x -> new HashSet<>())
+					.add(fetchApi);
+			});
 			if (!records.isEmpty()) { out.put(fetchApi, records); }
+		});
+		// the same second ask the merged fetch makes: a source keyed by DOI is no
+		// less missing from an unmerged answer than from a merged one (debt-005)
+		secondAsk(merged, answeredBy).forEach((fetchApi, byDoi) -> {
+			Map<ImmutableRecordReference, ? extends Record> tmp = perApi(
+				fetchApi, "fetch by learned DOI",
+				() -> fetchFrom(fetchApi, byDoi.keySet()), new HashMap<>()
+			);
+			tmp.forEach((k, v) -> {
+				if (byDoi.containsKey(k)) out
+					.computeIfAbsent(fetchApi, x -> new ArrayList<>())
+					.add(v);
+			});
 		});
 		log.info(
 			"Unmerged fetch returned {} sources for {} ids",
