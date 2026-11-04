@@ -251,6 +251,27 @@
 				</executions>
 			</plugin>
 
+			<!-- The record model's interfaces refer to the Immutable* classes the
+			     Immutables processor generates, and javadoc does not run annotation
+			     processors, so without the generated sources on its path every such
+			     reference is "cannot find symbol" and the goal stops (debt-012).
+			     The goal therefore needs a prior `mvn compile` for those sources to
+			     exist; it is not bound to a phase because the whole of this javadoc
+			     would be rebuilt on every package.
+			     doclint is off deliberately: this project's javadoc is prose, with no
+			     @param or @return tags anywhere, and the default doclint warns on
+			     every one of them — several hundred lines that bury anything real. -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.12.0</version>
+				<configuration>
+					<sourcepath>${project.basedir}/src/main/java:${project.build.directory}/generated-sources/annotations</sourcepath>
+					<doclint>none</doclint>
+					<quiet>true</quiet>
+				</configuration>
+			</plugin>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
