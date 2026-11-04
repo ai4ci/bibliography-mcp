@@ -6,8 +6,7 @@ targetVersion: 0.3.0
 tags:
 - persistence
 - serialization
-IMPACTS:
-- main:java/uk/co/terminological/bibliography/mcp/Session.java
+IMPACTS: []
 ---
 `Session` is persisted with plain Java serialization
 ([Session.save](/src/main/java/uk/co/terminological/bibliography/mcp/Session.java)).

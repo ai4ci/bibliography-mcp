@@ -8,7 +8,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
-import org.apache.commons.io.IOUtils;
 
 import uk.co.terminological.bibliography.api.BibliographicApiException;
 
@@ -27,7 +26,7 @@ public class BinaryData implements Serializable {
 	public static BinaryData from(InputStream is)
 			throws BibliographicApiException {
 		try {
-			return new BinaryData(IOUtils.toByteArray(is));
+			return new BinaryData(is.readAllBytes());
 		} catch (IOException e) {
 			throw new BibliographicApiException("Could not read api response", e);
 		}

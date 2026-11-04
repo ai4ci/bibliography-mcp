@@ -29,7 +29,6 @@ import uk.co.terminological.bibliography.record.IdType;
 import uk.co.terminological.bibliography.record.ImmutableRecordReference;
 import uk.co.terminological.bibliography.record.UnionFind;
 import uk.co.terminological.bibliography.client.Searcher;
-import uk.co.terminological.bibliography.mcp.Session;
 import uk.co.terminological.bibliography.record.Builder;
 import uk.co.terminological.bibliography.record.CitationLink;
 import uk.co.terminological.bibliography.record.CitationReference;
@@ -537,7 +536,6 @@ public class BiblioFacade
 		}
 	}
 
-	public Session getSession() { return new Session(this); }
 
 	/** The pdf fetcher, for a caller that wants a file rather than a reference list. */
 	public uk.co.terminological.bibliography.PdfFetcher pdfFetcher() {

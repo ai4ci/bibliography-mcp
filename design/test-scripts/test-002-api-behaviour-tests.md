@@ -19,7 +19,6 @@ HAS_INTERFACE:
 TESTED_BY:
 - scripts:run-live-tests.sh
 - test:java/uk/co/terminological/bibliography/TestApiDriftParsing.java
-- test:java/uk/co/terminological/legacy/TestCombinedApi.java
 - test:java/uk/co/terminological/bibliography/record/TestRecordMerge.java
 - test:java/uk/co/terminological/bibliography/record/TestRecordModel.java
 - test:java/uk/co/terminological/bibliography/api/openalex/TestOpenAlexExtraction.java

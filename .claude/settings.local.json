@@ -1,0 +1,9 @@
+{
+  "enabledMcpjsonServers": [
+    "eclipse-ide",
+    "eclipse-coder",
+    "eclipse-context",
+    "eclipse-runner",
+    "eclipse-git"
+  ]
+}
