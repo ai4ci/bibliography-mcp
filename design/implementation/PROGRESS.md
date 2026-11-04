@@ -44,41 +44,41 @@ What it contains, in the order it happened:
 
 ## Loose ends, in the order they are worth taking
 
-1. **issue-024 — `fetch` answers under an id it chose.** `EntrezClient` keys its
-   answer by the PMID it resolved to while every other client keys by the
-   reference it was asked about, so one DOI comes back as two records and the
-   Entrez contribution never reaches the merge policy beside the others. The MCP
-   `fetch` tool has this too, not only search. `BiblioFacade.search`'s identifier
-   path merges them as a workaround.
-2. **issue-021 — the secrets file is loaded into `System.getProperties()`.** Every
+Updated 2026-11-04 after the debt pass. Items 1-3, 8 and 11 of the old list are
+done; the rest stand, plus what the debt pass itself found.
+
+1. **issue-021 — the secrets file is loaded into `System.getProperties()`.** Every
    API key becomes a JVM-wide system property, and values bleed between successive
    `BibliographicApis.create` calls. Two-line fix.
-3. **debt-013 — `Record.render` swallows every exception and logs nothing.** One
-   WARN line. It is what let issue-022 hide a comprehensively broken citation
-   engine behind a missing JSON field.
-4. **Crossref dominates a search and is its least precise contributor.** On the
+2. **issue-002 — third-party API endpoint drift.** Open by design: the test
+   (`TestApiDriftParsing`) is the sentinel, and it fails when an API changes shape
+   under it. Its `targetVersion: 0.2.0` is aspirational, not scheduled.
+3. **Crossref dominates a search and is its least precise contributor.** On the
    live dedup query it supplies 20 of 28 records through fuzzy author matching and
    a deposit-date filter, and in one run it returned 0 instead of 20 — a transient
-   failure that `CachingApiClient` turns into an empty result (issue-013).
-5. **`MergePolicy` ranks OpenAlex only via `FALLBACK` and `PDF`**, which matters
+   failure that now warns instead of vanishing (issue-013 is closed; the warning
+   is in `CachingApiClient.call`).
+4. **`MergePolicy` ranks OpenAlex only via `FALLBACK` and `PDF`**, which matters
    more now that OpenAlex contributes search hits that merge with the others.
    Still unmeasured.
-6. **RRF `K = 5` was tuned for three search APIs** and there are now four. Noted in
-   plan-008, not re-measured.
-7. **issue-013 — one failing API empties `multiSearch`/`fetch`.** Still open, still
-   deliberate; (4) is what it costs in practice.
-8. **issue-014 — `EntrezEntry.getDate()` is the date PubMed *received* the
-   record**, not a publication date.
-9. **`EuropePMCClient.getById` prefixes an id it expects bare** (`:114-115`) while
+5. **RRF `K = 20` was chosen by measurement over four APIs** in the 0.2.0 work and
+   is documented in `BiblioFacade`; re-measure if a source is added.
+6. **issue-026 — Europe PMC citation links carry the wrong index.** Every link
+   gets 0 (the counter is declared and never incremented) and a "cited by" link
+   should carry no index at all. Written up with a suggested fix and a caution
+   about `CitationLink` equality; deliberately not fixed inside the debt-010
+   refactor.
+7. **`EuropePMCClient.getById` prefixes an id it expects bare** while
    `citesReferences`/`referencesCiting` pass already-prefixed ids into
-   `references(DataSources.PMC, id)`, which prefixes again → `PMCPMC13141338`.
+   `references(DataSources.PMC, id)` which prefixes again → `PMCPMC13141338`.
    Pre-existing, still not written up as an issue.
-10. **`EuropePMCCoreResult.getVolume()`/`getIssue()`** — the flat-vs-nested check
-    that closed issue-012 for `getJournal()` was never repeated for these two.
-    More visible now that issue-018 puts volume and issue in the tool output.
-11. **debt-011 is partly overtaken but stays open**: `IdType.OPENALEX` is
-    constructed now, while `OpenCitationsCitation.pidFromPids` still labels
-    `openalex:` handles `UNK`.
+8. **`EuropePMCCoreResult.getVolume()`/`getIssue()`** — the flat-vs-nested check
+   that closed issue-012 for `getJournal()` was never repeated for these two.
+   More visible now that issue-018 puts volume and issue in the tool output.
+9. **feature/topic-modelling branch** holds `Analysis`, `Session`, `getSession`
+   and the `nlp-tools` snapshot dependency, deleted from main with debt-003's
+   closure. feat-012 says what reinstating topic modelling would mean. The branch
+   will drift from main; the files it owns are ones main no longer touches.
 
 ## A trap when running the tests
 
