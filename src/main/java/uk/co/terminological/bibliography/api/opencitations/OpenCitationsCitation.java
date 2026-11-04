@@ -82,7 +82,8 @@ public class OpenCitationsCitation extends ExtensibleJson
 			java.util.Map.entry("pmid:", IdType.PMID),
 			java.util.Map.entry("pmcid:", IdType.PMCID),
 			java.util.Map.entry("openalex:", IdType.OPENALEX),
-			java.util.Map.entry("isbn:", IdType.ISBN)
+			java.util.Map.entry("isbn:", IdType.ISBN),
+			java.util.Map.entry("arxiv:", IdType.ARXIV)
 		);
 
 	static Optional<Pid> pidFromPids(String response) {
@@ -105,9 +106,9 @@ public class OpenCitationsCitation extends ExtensibleJson
 		}
 		if (!v.contains(":")) return v.isEmpty() ? Optional.empty()
 			: Optional.of(new Pid(IdType.DOI, v));
-		// a scheme this project does not model — an omid or an arxiv id. Kept whole,
-		// scheme and all, because it still identifies the entity and a link with an
-		// identifier beats a link with none
+		// a scheme this project does not model — an omid, at time of writing. Kept
+		// whole, scheme and all, because it still identifies the entity and a link
+		// with an identifier beats a link with none
 		for (String tok : v.split(";")) {
 			for (String pid : tok.trim()
 				.split("\\s+")) {

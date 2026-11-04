@@ -11,6 +11,10 @@ package uk.co.terminological.bibliography.record;
  * handles that this model does not model, and keeping such a handle as an unknown-scheme identifier is better than
  * dropping the reference that carried it.
  *
- * {@code MID} and {@code OPENALEX} are declared but unused — see debt-011.
+ * The principle behind the membership, argued once in
+ * {@code uk.co.terminological.bibliography.api.opencitations.TestIdTypeMembership}: <strong>these are the schemes
+ * sources actually emit</strong> — nothing speculative. {@code MID} was declared and constructed by nothing, and a
+ * value that exists for nothing costs every reader of this enum a question; it is gone, and a reference with no
+ * identifier says {@code UNK} like every other scheme-less case (debt-011).
  */
-public enum IdType { PMCID, PMID, DOI, ISBN, MID, OPENALEX, UNK }
+public enum IdType { PMCID, PMID, DOI, ISBN, OPENALEX, ARXIV, UNK }

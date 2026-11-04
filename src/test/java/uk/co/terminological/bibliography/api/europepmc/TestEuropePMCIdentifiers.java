@@ -58,10 +58,10 @@ public class TestEuropePMCIdentifiers {
 
 	@Test
 	public void whatEuropePmcCannotBeAskedAbout() {
-		// ISBN, OpenAlex ids and MIDs have no Europe PMC source; asking spends a call
+		// ISBN, OpenAlex ids and arXiv ids have no Europe PMC source; asking spends a call
 		// to be refused, and the caller should be able to tell that apart from "no
 		// citations"
-		for (IdType type : new IdType[] { IdType.ISBN, IdType.OPENALEX, IdType.MID,
+		for (IdType type : new IdType[] { IdType.ISBN, IdType.OPENALEX, IdType.ARXIV,
 				IdType.UNK }) {
 			assertFalse(
 				type + " should not be askable", EuropePMCClient.canBeAskedAbout(type)

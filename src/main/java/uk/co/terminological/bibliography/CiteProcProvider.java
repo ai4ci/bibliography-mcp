@@ -115,6 +115,86 @@ public class CiteProcProvider extends ArrayList<CSLItemData>
 		);
 	}
 
+	/**
+	 * A reference-list entry as CSL, from whatever the entry carries.
+	 *
+	 * Half of what the citation APIs return is an entry with no identifier — "Smith J et al. Lancet 2011;377:1234-42"
+	 * — and {@link uk.co.terminological.bibliography.record.CitationReference} exists so such entries survive parsing.
+	 * Its print coordinates were carried but never read, so the one thing this processor needed to render them never
+	 * arrived (debt-011). They arrive now.
+	 */
+	public static CSLItemData fromCitationReference(
+			uk.co.terminological.bibliography.record.CitationReference entry, String id
+	) {
+		CSLItemDataBuilder builder = new CSLItemDataBuilder().id(id)
+			.type(CSLType.ARTICLE_JOURNAL);
+		entry.getTitle()
+			.ifPresent(
+				t -> builder.title(
+					t.replace('\n', ' ')
+						.trim()
+				)
+			);
+		if (entry.getBibliographicId()
+			.isPresent()) {
+			var print = entry.getBibliographicId()
+				.get();
+			print.getFirstAuthorName()
+				.ifPresent(
+					name -> builder.author(
+							new de.undercouch.citeproc.csl.CSLNameBuilder()
+								.family(name.replace('\n', ' ')
+									.trim())
+								.build()
+					)
+				);
+			print.getJournal()
+				.ifPresent(builder::containerTitle);
+			print.getVolume()
+				.ifPresent(builder::volume);
+			print.getIssue()
+				.ifPresent(builder::issue);
+			print.getPage()
+				.ifPresent(builder::page);
+			print.getYear()
+				.ifPresent(y -> builder.issued(y.intValue()));
+		}
+		entry.getIdentifier()
+			.ifPresent(ref -> buildIds(builder, ref.getIdentifierType(), ref.getIdentifier()));
+		return builder.build();
+	}
+
+	/**
+	 * Render CSL items in a style, or empty when the style cannot be honoured.
+	 *
+	 * The exception-free entry point for rendering entries that are not {@link Record}s — a reference-list entry has no
+	 * record to call {@code render} on. Same contract as {@link Record#render}: empty, but logged, never thrown.
+	 */
+	public static java.util.Optional<String> render(
+			java.util.List<CSLItemData> items, String style
+	) {
+		try {
+			var bib = CSL.makeAdhocBibliography(
+				style,
+				Format.text.toString(),
+				items.toArray(new CSLItemData[] {})
+			);
+			if (bib.getEntries().length == 0) return java.util.Optional.empty();
+			return java.util.Optional.of(
+					bib.getEntries()[0].trim().replace("\n", " ")
+			);
+		} catch (Exception e) {
+			log.warn(
+					"could not render {} citation entr{} in style '{}': {}",
+					items.size(),
+					items.size() == 1 ? "y" : "ies",
+					style,
+					e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()
+			);
+			return java.util.Optional.empty();
+		}
+	}
+
 	public static CSLItemData fromRecord(Record record, String id) {
 		CSLItemDataBuilder builder = new CSLItemDataBuilder().id(id)
 			.type(CSLType.ARTICLE_JOURNAL);

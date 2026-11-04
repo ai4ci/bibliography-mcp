@@ -119,15 +119,26 @@ public class TestOpenCitationsIdentifiers {
 
 	@Test
 	public void aSchemeThisProjectDoesNotModelKeepsItsWholeHandle() {
-		// an omid or an arxiv id cannot be resolved here, but it still identifies
-		// the entity, and a link with an identifier beats a link with none
-		var found = pid("omid:br/0612345 arxiv:2103.00300");
+		// an omid cannot be resolved here, but it still identifies the entity, and
+		// a link with an identifier beats a link with none
+		var found = pid("omid:br/0612345");
 
 		assertEquals(IdType.UNK, found.orElseThrow().type);
 		assertTrue(
 			found.orElseThrow().value, found.orElseThrow().value
 				.contains(":")
 		);
+	}
+
+	@Test
+	public void anArxivHandleIsNamedRatherThanUnknown() {
+		// arxiv: handles are typed rather than UNK now — debt-011's third
+		// identifier question, and the last kind of citation endpoint this project
+		// could not name
+		var found = pid("arxiv:2103.00300");
+
+		assertEquals(IdType.ARXIV, found.orElseThrow().type);
+		assertEquals("2103.00300", found.orElseThrow().value);
 	}
 
 	@Test

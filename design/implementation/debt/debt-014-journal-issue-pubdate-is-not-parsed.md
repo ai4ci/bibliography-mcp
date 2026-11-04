@@ -2,7 +2,7 @@
 class: debt
 id: debt-014-journal-issue-pubdate-is-not-parsed.md
 title: Journal issue pubdate is not parsed
-status: open
+status: closed
 sinceVersion: 0.1.0
 targetVersion: unassigned
 tags:
@@ -55,3 +55,29 @@ reasoning kept. If the model grows a way to say "2019, month unknown", then
 Until then the behaviour is correct for the common case and imprecise by about a
 month for pre-electronic material, which is better than the alternative of a
 confident wrong day.
+
+## Closed — 0.2.0 — won't fix, with the reasoning kept
+
+The decision, taken deliberately: **invent nothing**.
+
+`Record.getDate()` returns `Optional<LocalDate>`, and `LocalDate` cannot say
+"2019, month unknown". Parsing `2019` into `2019-01-01` invents a day and a
+month; a reader of the merged record cannot tell an invented January from a real
+one, and nothing downstream — Zotero, the citation renderer, the RRF ranking —
+knows the difference either. A model that grows a precision field or a
+partial-date type is a change to `Record` that every source and every consumer
+pays for, made here for the benefit of pre-electronic Entrez records measured at
+roughly a month's imprecision.
+
+Until such a type exists, the fallback order stays as it is: `ArticleDate`
+first, then the received date. The behaviour is correct for the common case —
+every modern record carries an `ArticleDate` — and imprecise by about a month
+for material old enough not to, which the record's own table shows. That is
+better than a confident wrong day.
+
+The measurement stays because it is the argument: three PMIDs, three fallback
+dates, all landing in the right year, the worst within a month.
+
+Reopening this is a model decision, not an Entrez one: if a partial-date type
+ever lands in `Record`, `PubDate` becomes the middle fallback and the received
+date moves to last, and the parsing itself is an afternoon.

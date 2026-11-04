@@ -5,7 +5,7 @@ frontmatter, no loom type); delete or absorb it whenever the items below are
 dealt with.
 
 As of 2026-11-04: `pom.xml` is **`0.2.0-SNAPSHOT`**. `mvn -o clean test`:
-**333 tests, 0 failures**. `scripts/mcp-smoke-test.sh` passes, including the
+**340 tests, 0 failures**. `scripts/mcp-smoke-test.sh` passes, including the
 citation render check. `loom validate`: 0 errors. **`git push` is outstanding**
 — that is the developer's job, and CI has not run on any of this.
 

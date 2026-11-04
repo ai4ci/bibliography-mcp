@@ -1,6 +1,6 @@
 ---
 title: Unused record model surface
-status: open
+status: closed
 sinceVersion: 0.1.0
 targetVersion: 0.4.0
 tags:
@@ -9,7 +9,7 @@ tags:
 IMPACTS:
 - main:java/uk/co/terminological/bibliography/record/CitationReference.java
 - main:java/uk/co/terminological/bibliography/record/IdType.java
-- main:java/uk/co/terminological/bibliography/record/PrintRecordWithCitations.java
+- main:java/uk/co/terminological/bibliography/CiteProcProvider.java
 ---
 ## Debt desc
 
@@ -77,3 +77,43 @@ citation endpoint this project now cannot name.
 It belongs with this record because it is the same question from the other side:
 `IdType` carries a value nothing constructs (`MID`) and lacks one several
 sources actually emit. Deciding either is deciding what the enum is for.
+
+## Closed — 0.2.0 — each half decided independently
+
+**Identifiers: the enum now has a principle.** "These are the schemes sources
+actually emit" — nothing speculative. Three decisions, all measured rather than
+assumed:
+
+- **`IdType.MID` is deleted.** Constructed by nothing. The comment in
+  `CrossRefReference` that hedged its meaning — "MID is a manuscript identifier,
+  not a something-else bucket" — already answers the only question anyone asked
+  of it: a reference with no identifier says `UNK`, like every other scheme-less
+  case.
+- **`arxiv:` handles are typed.** `IdType.ARXIV` joins `KNOWN_SCHEMES`, below
+  ISBN because OpenCitations pairs it with a DOI essentially always — it is
+  reached only when nothing better is in the PID list, which is exactly the
+  1-in-120 the record measured. `Provenance.ARXIV` already named the source, so
+  the enum and the provenance now agree.
+- **The OpenAlex half of the record was already overtaken** and is now fully
+  so: `KNOWN_SCHEMES` carries `openalex:`, and the tests assert it.
+
+`TestIdTypeMembership` states the membership and the reason each member earns
+its place, so the next value anyone adds has to name the source that emits it.
+
+**Model surface: delete one, wire the other, as chosen.**
+
+- **`PrintRecordWithCitations` is deleted.** No implementation, no consumer,
+  and the combination it describes — pagination plus citation list in one
+  payload — is not one any configured source returns. The lattice gap is gone
+  rather than documented.
+- **`CitationReference.getBibliographicId()` is wired in, not deleted.** The
+  record called a written-but-unread field the worst of the options, and the
+  unread-ness was the real gap: the print coordinates are the only usable
+  description of an unidentified reference-list entry, roughly half of what the
+  citation APIs return, and `CiteProcProvider` could not render one without
+  them. `fromCitationReference` maps the coordinates into CSL, and `render`
+  gives entries that are not `Record`s the same exception-free-but-logged
+  contract `Record.render` has.
+
+`TestUnidentifiedReferenceRendering` pins it: an entry that is nothing but
+"Smith, Lancet 377(9775):1234-42, 2011" renders as a citation naming all four.

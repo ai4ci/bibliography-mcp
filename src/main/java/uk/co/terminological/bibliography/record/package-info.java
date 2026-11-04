@@ -50,7 +50,6 @@
  *
  * {@link uk.co.terminological.bibliography.record.PrintRecord} is the intersection of {@code Record} and {@code
  * PrintReference}, for sources that give pagination along with the metadata (Entrez and the Europe PMC core shape).
- * {@link uk.co.terminological.bibliography.record.PrintRecordWithCitations} is the all-three combination.
  *
  * {@link uk.co.terminological.bibliography.record.MergedRecord} is the odd one out: the only implementation that is not
  * any single API's view. It holds every contributing record and answers each field through {@link
