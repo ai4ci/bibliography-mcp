@@ -25,16 +25,15 @@ Design principles: respecting rate limits; multi-thread support; extensive cachi
 Build it:
 
 ```bash
-mvn package -DskipTests
+mvn package
 ```
 
-That produces `target/bibliographic-api-client-<version>.jar` and
-`target/lib/`, which holds the dependencies. The jar's manifest names them by
-relative path, so **`lib/` has to stay beside the jar** — copy both, or neither.
-It is deliberately not a fat jar: merging the dependencies into one archive
-silently dropped resources that two of them publish at the same path, which broke
-citation rendering in the built server and nothing in the test suite could see it
-([issue-022](design/implementation/issues/issue-022-shaded-jar-cannot-render-citations.md)).
+Requires Java 17 or later. That produces one executable artifact: `target/bibliographic-api-client-<version>.jar`.
+Its dependencies are nested as separate jars inside the archive, so this single
+file can be copied or downloaded and run with `java -jar`; no sibling `lib/`
+directory is needed. The dependencies are not flattened together: shading once
+silently dropped duplicate GraalJS/regex language registrations and broke citation
+rendering ([issue-022](design/implementation/issues/issue-022-shaded-jar-cannot-render-citations.md)).
 
 The server is a **long-lived local service**, not a command a client spawns. It
 holds a durable repository and a citation crawl that outlives the request that
@@ -113,9 +112,6 @@ try (RepositoryStore store = SqliteRepositoryStore.open(repositoryPath);
     Map<ImmutableRecordReference, Double> rank = Ranking.pageRank(store);
 }
 ```
-
-`Session` survives as an in-memory helper for the LDA topic model, and no longer
-serialises itself: a repository that outlives the process is the store's job.
 
 ## Smoke test
 

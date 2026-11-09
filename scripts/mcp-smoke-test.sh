@@ -13,6 +13,9 @@ JAR=${1:-$(ls target/bibliographic-api-client-*.jar 2>/dev/null | head -1)}
 JAR=$(realpath "$JAR")
 
 WORK=$(mktemp -d)
+mkdir -p "$WORK/isolated"
+cp "$JAR" "$WORK/isolated/bibliographic-api-client.jar"
+JAR="$WORK/isolated/bibliographic-api-client.jar"
 PORT=$(python3 -c 'import socket;s=socket.socket();s.bind(("127.0.0.1",0));print(s.getsockname()[1]);s.close()')
 cat > "$WORK/smoke.prop" <<EOF
 zotero-mode=off
@@ -79,6 +82,10 @@ print(f"MCP smoke test PASSED: {len(tools)} tools over HTTP, protocol round trip
 PY
 
 # Rendering a citation goes through a javascript engine whose language registration
-# lives in a dependency's resources, so it is the packaging rather than the code that
-# decides whether it works — and the test suite cannot tell (issue-022).
-java -cp "$JAR" scripts/RenderCheck.java
+# lives in dependency resources. Run against the individual nested dependency jars so
+# the check catches packaging that drops either Truffle language (issue-022).
+mkdir -p "$WORK/package-check"
+(cd "$WORK/package-check" && jar xf "$JAR" BOOT-INF/classes BOOT-INF/lib)
+test -d "$WORK/package-check/BOOT-INF/classes"
+test -d "$WORK/package-check/BOOT-INF/lib"
+java -cp "$WORK/package-check/BOOT-INF/classes:$WORK/package-check/BOOT-INF/lib/*" scripts/RenderCheck.java

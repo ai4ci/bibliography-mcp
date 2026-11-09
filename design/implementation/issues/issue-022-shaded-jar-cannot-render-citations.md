@@ -103,6 +103,11 @@ is replaced by `maven-dependency-plugin` copying the runtime dependencies to
 `Main-Class` plus a `Class-Path` of `lib/*`. `java -jar target/<jar>` works as
 before; `lib/` has to stay beside the jar.
 
+The 2026 release packaging replaces the sibling `lib/` directory with a single
+Spring Boot executable archive, nesting the unchanged dependency jars under
+`BOOT-INF/lib`. It still does not shade; the smoke test verifies both standalone
+startup and citation rendering from those preserved jars.
+
 Each dependency keeps its own archive, so each keeps its own
 `META-INF/truffle/language`, and the `regex` language is registered again. The
 artefact also went from ~122 MB to ~460 KB plus 82 dependency jars. The size was

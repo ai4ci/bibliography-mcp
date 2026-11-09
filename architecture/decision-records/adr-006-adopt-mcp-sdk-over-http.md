@@ -61,9 +61,10 @@ transport from an embedded Jetty, bound to loopback. Delete the hand-rolled
 - **The dependency cost is smaller than ADR-002 feared, and the build changed
   underneath it.** `mcp-core` pulls slf4j, jackson-annotations, reactor-core and
   a *provided* servlet API — not a framework. ADR-002's real constraint was an
-  offline `~/.m2` and a shaded jar that merged everything into one archive; the
-  jar stopped being shaded in 0.1.0 (issue-022), so dependencies now sit beside
-  it in `lib/` and a wider tree costs little.
+  offline `~/.m2` and a shaded jar that merged everything into one archive. The
+  jar stopped being shaded in 0.1.0 (issue-022); dependencies first sat beside
+  it in `lib/`, and the current executable artifact nests those intact jars in
+  `BOOT-INF/lib` so one downloaded file is runnable without merging resources.
 - **Jackson 3 keeps the migration honest.** The SDK's Jackson 2 binding wants
   `jackson-databind` 2.21.1 against this project's 2.9.7. The Jackson 3 binding
   lives under `tools.jackson.*` and cannot collide with `com.fasterxml.*`, so

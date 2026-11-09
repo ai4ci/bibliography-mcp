@@ -29,10 +29,12 @@ What it contains, in the order it happened:
    record that carries print coordinates.
 4. **issue-019** — a `citation_style` tool chooses the style; records returned
    afterwards carry a rendered `citation`.
-5. **issue-022** — the build no longer shades. The dependencies live in
-   `target/lib/` and the manifest names them, so each keeps its own resources and
-   GraalJS gets its `regex` language back. This is what made (4) visible at all:
-   before it, every `Record.render` in the built server returned empty, silently.
+5. **issue-022** — the build no longer shades. The 0.1.0 package put dependencies
+   in `target/lib/`; the current executable package nests the dependency jars in
+   `BOOT-INF/lib`, preserving each jar's resources while allowing one-file
+   distribution. GraalJS gets its `regex` language back. This is what made (4)
+   visible at all: before it, every `Record.render` in the built server returned
+   empty, silently.
 6. **issue-020** — `BiblioFacade.searchableApis()` is the one list of what can be
    searched, and the tool schema builds its enum from it.
 7. **issue-023** — a query that is nothing but an identifier is fetched rather

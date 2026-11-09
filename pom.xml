@@ -1,21 +1,15 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	
 	<parent>
 		<groupId>io.github.terminological</groupId>
 		<artifactId>m2repo</artifactId>
 		<version>0.0.6</version>
 	</parent>
-	
 	<version>0.2.0-SNAPSHOT</version>
 	<artifactId>bibliographic-api-client</artifactId>
 	<packaging>jar</packaging>
-	
-
 	<name>Pubmed client</name>
-	
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<!-- 17 because the MCP Java SDK is compiled for it (class file major 61).
@@ -31,7 +25,6 @@
 		     overrides this to empty to run only the live tier. -->
 		<test.excludedGroups>uk.co.terminological.bibliography.LiveTest</test.excludedGroups>
 	</properties>
-
 	<dependencies>
 		<!-- The repository store. SQLite was measured against a JSON-lines log in
 		     plan-010: both are fast, but the log's index costs ~550 bytes a record
@@ -74,7 +67,7 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-<!-- 			<groupId>com.github.terminological</groupId> -->
+			<!-- 			<groupId>com.github.terminological</groupId> -->
 			<groupId>io.github.terminological</groupId>
 			<artifactId>exotic-datatypes</artifactId>
 			<version>1.0.0</version>
@@ -149,30 +142,26 @@
 			<version>1.4.0</version>
 		</dependency>
 		<dependency>
-		    <groupId>org.immutables</groupId>
-		    <artifactId>value-annotations</artifactId>
-		    <version>${immutables.version}</version>
-		    <scope>provided</scope> <!-- compile only -->
+			<groupId>org.immutables</groupId>
+			<artifactId>value-annotations</artifactId>
+			<version>${immutables.version}</version>
+			<scope>provided</scope>
+			<!-- compile only -->
 		</dependency>
 	</dependencies>
-
-	
-	
-
 	<!-- Resolve maven plugin on github -->
-<!--	<pluginRepositories>-->
-<!--		<pluginRepository>-->
-<!--		    <id>jitpack.io</id>-->
-<!--		    <url>https://jitpack.io</url>-->
-<!--		</pluginRepository>-->
-<!--	</pluginRepositories>-->
-	
+	<!--	<pluginRepositories>-->
+	<!--		<pluginRepository>-->
+	<!--		    <id>jitpack.io</id>-->
+	<!--		    <url>https://jitpack.io</url>-->
+	<!--		</pluginRepository>-->
+	<!--	</pluginRepositories>-->
 	<repositories>
-	<!-- Resolve runtime library on github -->
-<!--		<repository>-->
-<!--		    <id>jitpack.io</id>-->
-<!--		    <url>https://jitpack.io</url>-->
-<!--		</repository>-->
+		<!-- Resolve runtime library on github -->
+		<!--		<repository>-->
+		<!--		    <id>jitpack.io</id>-->
+		<!--		    <url>https://jitpack.io</url>-->
+		<!--		</repository>-->
 		<!-- <repository>
 			<id>oss-snapshots-repo</id>
 			<name>Sonatype OSS Maven Repository</name>
@@ -194,15 +183,15 @@
 					<source>${maven.compiler.source}</source>
 					<target>${maven.compiler.target}</target>
 					<annotationProcessorPaths>
-			          <path>
-			            <groupId>org.immutables</groupId>
-			            <artifactId>value</artifactId> <!-- contains the annotation processor -->
-			            <version>${immutables.version}</version>
-			          </path>
-			        </annotationProcessorPaths>
+						<path>
+							<groupId>org.immutables</groupId>
+							<artifactId>value</artifactId>
+							<!-- contains the annotation processor -->
+							<version>${immutables.version}</version>
+						</path>
+					</annotationProcessorPaths>
 				</configuration>
 			</plugin>
-
 			<!-- Default build is offline + deterministic: live API query tests carry
 			     @Category(LiveTest.class) and are excluded here. Run them with
 			     ./scripts/run-live-tests.sh (see plan-007-api-test-coverage). -->
@@ -217,35 +206,9 @@
 					<excludedGroups>${test.excludedGroups}</excludedGroups>
 				</configuration>
 			</plugin>
-
-			<!-- The runnable artefact is a thin jar beside target/lib, not a fat one.
-			     maven-shade used to flatten every dependency into one jar, which silently
-			     dropped resources that two jars publish at the same path: GraalJS and its
-			     regex language both register through META-INF/truffle/language, only one
-			     survived, and every citation render in the built server failed as a result
-			     (issue-022). Keeping the dependency jars intact keeps their resources
-			     intact, and `java -jar` still works because the manifest names them. -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<version>3.7.0</version>
-				<executions>
-					<execution>
-						<id>copy-runtime-dependencies</id>
-						<phase>prepare-package</phase>
-						<goals>
-							<goal>copy-dependencies</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${project.build.directory}/lib</outputDirectory>
-							<includeScope>runtime</includeScope>
-							<overWriteReleases>false</overWriteReleases>
-							<overWriteSnapshots>true</overWriteSnapshots>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-
+			<!-- Repackage with dependencies nested as separate jars. Do not shade them:
+			     flattening loses duplicate META-INF/truffle/language registrations and
+			     breaks citation rendering (issue-022). -->
 			<!-- The record model's interfaces refer to the Immutable* classes the
 			     Immutables processor generates, and javadoc does not run annotation
 			     processors, so without the generated sources on its path every such
@@ -266,23 +229,47 @@
 					<quiet>true</quiet>
 				</configuration>
 			</plugin>
-
+			<!-- Declare the normal jar plugin first; Spring Boot repackages its output. -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
 				<version>3.4.2</version>
+			</plugin>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<version>4.1.2</version>
 				<configuration>
-					<archive>
-						<manifest>
-							<mainClass>uk.co.terminological.bibliography.mcp.McpHttpServer</mainClass>
-							<addClasspath>true</addClasspath>
-							<classpathPrefix>lib/</classpathPrefix>
-						</manifest>
-					</archive>
+					<mainClass>uk.co.terminological.bibliography.mcp.McpHttpServer</mainClass>
+					<includeTools>false</includeTools>
+					<excludes>
+						<exclude>
+							<groupId>org.immutables</groupId>
+							<artifactId>value-annotations</artifactId>
+						</exclude>
+					</excludes>
+					<layers>
+						<enabled>false</enabled>
+					</layers>
 				</configuration>
-			</plugin>			
+				<executions>
+					<execution>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<version>3.3.1</version>
+				<configuration>
+					<!-- Customise your tag format (e.g., v1.0.0 instead of artifactId-1.0.0) -->
+					<tagNameFormat>v@{project.version}</tagNameFormat>
+					<autoVersionSubmodules>true</autoVersionSubmodules>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 </project>
-
-

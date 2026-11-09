@@ -17,8 +17,9 @@ MCP SDK 2.1.0 on Jetty), and renders citations from the built artefact. Live
 test tier: `./scripts/run-live-tests.sh -Dtest=<Class>` — the default build
 excludes `@Category(LiveTest.class)`. `loom validate`: 0 errors.
 
-**The shape of it.** One fat thin jar plus `target/lib` (shading is gone;
-issue-022). `BiblioFacade` is the front door — `searchableApis()` is the one
+**The shape of it.** One executable jar with dependencies nested as separate
+jars (not shaded, to preserve issue-022's Truffle resources). `BiblioFacade`
+is the front door — `searchableApis()` is the one
 list of what can be searched, `scoredSearch(Query)` the one search, `fetch`
 merged and re-keyed, identifier-shaped queries routed to fetch. Five APIs
 (crossref, entrez, europepmc, openalex, medrxiv) plus opencitations and the
