@@ -39,24 +39,18 @@ fails the build instead of quietly lying.
 | uri | title | status | targetVersion |
 | --- | --- | --- | --- |
 | [Third party api endpoint drift](implementation/issues/issue-002-third-party-api-endpoint-drift.md) | Third party api endpoint drift | open | 0.2.0 |
+| [EuropePMC citation links carry the wrong index](implementation/issues/issue-026-europepmc-citation-links-carry-the-wrong-index.md) | EuropePMC citation links carry the wrong index | open | 0.3.0 |
 | [Secrets are loaded into system properties](implementation/issues/issue-021-secrets-are-loaded-into-system-properties.md) | Secrets are loaded into system properties | open | unassigned |
+| [PDF merge priority names a source that never answers](implementation/issues/issue-027-pdf-merge-priority-names-a-source-that-never-answers.md) | PDF merge priority names a source that never answers | open | unassigned |
+| [PdfFetcher singleton ignores a second cache path](implementation/issues/issue-028-pdffetcher-singleton-ignores-a-second-cache-path.md) | PdfFetcher singleton ignores a second cache path | open | unassigned |
+| [Downloaded PDFs share a cache sized by entry count](implementation/issues/issue-029-downloaded-pdfs-share-a-cache-sized-by-entry-count.md) | Downloaded PDFs share a cache sized by entry count | open | unassigned |
 <!-- loom view: work_in_progress end -->
 
 ## Open debt
 
 <!-- loom view: open_debt -->
 
-| uri | title | targetVersion |
-| --- | --- | --- |
-| [Analysis recomputes topic model per call](implementation/debt/debt-003-analysis-recomputes-topic-model-per-call.md) | Analysis recomputes topic model per call | 0.3.0 |
-| [Fetch is incomplete by id type](implementation/debt/debt-005-fetch-is-incomplete-by-id-type.md) | Fetch is incomplete by id type | 0.3.0 |
-| [Cached answers are never invalidated](implementation/debt/debt-006-cached-answers-are-never-invalidated.md) | Cached answers are never invalidated | 0.3.0 |
-| [Cache stores break on cached class changes](implementation/debt/debt-007-cache-stores-break-on-cached-class-changes.md) | Cache stores break on cached class changes | 0.3.0 |
-| [Javadoc build cannot see generated sources](implementation/debt/debt-012-javadoc-build-cannot-see-generated-sources.md) | Javadoc build cannot see generated sources | 0.3.0 |
-| [Shared read timeout is a trap](implementation/debt/debt-009-shared-read-timeout-is-a-trap.md) | Shared read timeout is a trap | 0.4.0 |
-| [Unused record model surface](implementation/debt/debt-011-unused-record-model-surface.md) | Unused record model surface | 0.4.0 |
-| [Europepmc duplicates its citation loops](implementation/debt/debt-010-europepmc-duplicates-its-citation-loops.md) | Europepmc duplicates its citation loops | 0.5.0 |
-| [Journal issue pubdate is not parsed](implementation/debt/debt-014-journal-issue-pubdate-is-not-parsed.md) | Journal issue pubdate is not parsed | unassigned |
+_(no results)_
 <!-- loom view: open_debt end -->
 
 
