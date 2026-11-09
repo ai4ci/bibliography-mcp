@@ -39,8 +39,6 @@ fails the build instead of quietly lying.
 | uri | title | status | targetVersion |
 | --- | --- | --- | --- |
 | [Third party api endpoint drift](implementation/issues/issue-002-third-party-api-endpoint-drift.md) | Third party api endpoint drift | open | 0.2.0 |
-| [EuropePMC citation links carry the wrong index](implementation/issues/issue-026-europepmc-citation-links-carry-the-wrong-index.md) | EuropePMC citation links carry the wrong index | open | 0.3.0 |
-| [Secrets are loaded into system properties](implementation/issues/issue-021-secrets-are-loaded-into-system-properties.md) | Secrets are loaded into system properties | open | unassigned |
 | [PDF merge priority names a source that never answers](implementation/issues/issue-027-pdf-merge-priority-names-a-source-that-never-answers.md) | PDF merge priority names a source that never answers | open | unassigned |
 | [PdfFetcher singleton ignores a second cache path](implementation/issues/issue-028-pdffetcher-singleton-ignores-a-second-cache-path.md) | PdfFetcher singleton ignores a second cache path | open | unassigned |
 | [Downloaded PDFs share a cache sized by entry count](implementation/issues/issue-029-downloaded-pdfs-share-a-cache-sized-by-entry-count.md) | Downloaded PDFs share a cache sized by entry count | open | unassigned |

@@ -470,18 +470,15 @@ public class EuropePMCClient extends CachingApiClient
 		Set<CitationLink> out = new HashSet<>();
 		for (RecordReference source : sources) {
 			this.epmcTarget(source)
-				.ifPresent(at -> {
-					// the index is the position in the reference list and is left at
-					// zero for every link here, which is wrong and is not this change
-					// to fix — see issue-026
-					var i = 0;
-					for (EuropePMCReference target : this
-						.references(at.getFirst(), at.getSecond())
-						.getItems()
-						.collect(Collectors.toList())) {
-						out.add(Builder.citationLink(source, target, i));
-					}
-				});
+				.ifPresent(
+					at -> out.addAll(
+						referenceList(
+							source, this.references(at.getFirst(), at.getSecond())
+								.getItems()
+								.collect(Collectors.toList())
+						)
+					)
+				);
 		}
 		return out;
 	}
@@ -494,17 +491,55 @@ public class EuropePMCClient extends CachingApiClient
 		Set<CitationLink> out = new HashSet<>();
 		for (RecordReference source : sources) {
 			this.epmcTarget(source)
-				.ifPresent(at -> {
-					// a "cited by" answer is not a reference list, so these links should
-					// carry no index at all — see issue-026
-					var i = 0;
-					for (EuropePMCCitation target : this
-						.citations(at.getFirst(), at.getSecond())
-						.getItems()
-						.collect(Collectors.toList())) {
-						out.add(Builder.citationLink(target, source, i));
-					}
-				});
+				.ifPresent(
+					at -> out.addAll(
+						citedByList(
+							source, this.citations(at.getFirst(), at.getSecond())
+								.getItems()
+								.collect(Collectors.toList())
+						)
+					)
+				);
+		}
+		return out;
+	}
+
+	/**
+	 * A work's reference list as links, numbered from one.
+	 *
+	 * The index is the position in the citing work's reference list, so it counts from the first reference rather than
+	 * from zero, matching {@code OpenAlexClient.citesReferences}. It also has to differ per link for a second reason:
+	 * {@link CitationLink} is an Immutables value type whose index is part of its {@code equals}, and these are
+	 * collected into a set, so a list numbered entirely zero collapses to a single entry (issue-026).
+	 *
+	 * Package private so the numbering can be tested without asking the API.
+	 */
+	static Set<CitationLink> referenceList(
+			RecordReference citing, Collection<? extends RecordReference> cited
+	) {
+		Set<CitationLink> out = new HashSet<>();
+		Integer i = 1;
+		for (RecordReference target : cited) {
+			out.add(Builder.citationLink(citing, target, i));
+			i += 1;
+		}
+		return out;
+	}
+
+	/**
+	 * What cites a work, as links carrying no index.
+	 *
+	 * A "cited by" answer is not a reference list and has no position in one to report, which is what {@code
+	 * CitationLink.getIndex()} documents and what {@code EntrezLinks} and {@code OpenAlexClient.referencesCiting} both
+	 * already do (issue-026). The direction is unchanged: the work asked about is the target, because the link runs from
+	 * the citing work to the cited one (issue-007).
+	 */
+	static Set<CitationLink> citedByList(
+			RecordReference cited, Collection<? extends RecordReference> citing
+	) {
+		Set<CitationLink> out = new HashSet<>();
+		for (RecordReference source : citing) {
+			out.add(Builder.citationLink(source, cited, null));
 		}
 		return out;
 	}

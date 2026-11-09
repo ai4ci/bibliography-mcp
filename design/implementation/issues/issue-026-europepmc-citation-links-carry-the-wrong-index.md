@@ -2,9 +2,11 @@
 class: issue
 id: issue-026-europepmc-citation-links-carry-the-wrong-index.md
 title: EuropePMC citation links carry the wrong index
-status: open
+status: closed
 sinceVersion: 0.1.0
-targetVersion: 0.3.0
+targetVersion: 0.2.0
+TESTED_BY:
+- test:java/uk/co/terminological/bibliography/api/europepmc/TestEuropePMCCitationIndex.java
 ---
 `CitationLink.getIndex()` is documented as the "position in the citing work's
 reference list, where the source supplied one", and "only meaningful for links
@@ -38,3 +40,33 @@ the index is part of its `equals`. Both methods collect into a `HashSet`, and
 making the index vary could change what is considered a duplicate — in practice
 the source and target already differ per link, so the set size should not move,
 but the live citation counts are the thing to compare before and after.
+
+## Resolution — 0.2.0
+
+Fixed as suggested, with the numbering lifted out of the API loops into two
+package-private helpers on `EuropePMCClient` so it can be tested without a call:
+
+- `referenceList(citing, cited)` numbers from 1 and increments per reference,
+  matching `OpenAlexClient.citesReferences`.
+- `citedByList(cited, citing)` passes `null`, matching `EntrezLinks` and
+  `OpenAlexClient.referencesCiting`. The direction is unchanged — the work asked
+  about is the target (issue-007).
+
+`citesReferences` and `referencesCiting` now each fetch and delegate, and the
+comments pointing here are gone.
+
+The equality caution above turned out to matter, in the opposite direction to
+the worry: because `CitationLink`'s index is part of its `equals` and these are
+collected into a `HashSet`, a reference list numbered entirely zero **collapsed
+duplicate-looking links**, and varying the index can only increase the set size,
+never decrease it. `everyReferenceKeepsItsOwnPlace` in the test below pins that.
+
+Proved by `TestEuropePMCCitationIndex` (4 tests, offline): a reference list is
+numbered 1..n, three positions are three distinct links, a "cited by" link has no
+index, and a "cited by" link runs from the citing work. The whole offline suite
+is 344 tests, 0 failures.
+
+The live counts were not compared before and after, because the live tier is
+opt-in and rate-limit-sensitive; the set-size reasoning above says a count can
+only rise, and `TestEuropePMCClientEndToEnd.theSamePaperGivesTheSameReferencesByEveryIdentifier`
+compares the three identifier routes to each other whenever it is run.

@@ -2,9 +2,9 @@
 class: issue
 id: issue-021-secrets-are-loaded-into-system-properties.md
 title: Secrets are loaded into system properties
-status: open
+status: closed
 sinceVersion: 0.0.6
-targetVersion: unassigned
+targetVersion: 0.2.0
 tags:
 - bug
 - security
@@ -54,3 +54,17 @@ should be closed either way — the current code leaks it.
 
 Worth a test that two `create` calls with different files do not see each other's
 keys, which is the behaviour anyone would assume.
+
+## Resolution — 0.2.0
+
+Fixed as suggested. `BibliographicApis.read(Path)` loads into a fresh
+`Properties` inside a try-with-resources, and both `create(Path)` overloads go
+through it; nothing is written back to the system table and the stream is closed.
+The fallback-to-system-properties option was not taken — the file is the whole
+configuration, and a default arriving from the JVM's command line would be the
+same invisible coupling in a smaller form.
+
+Proved by `TestConfigurationIsolation` (offline): a key in the file does not
+appear in `System.getProperty`, and a second `create` with a sparser file sees
+the OpenAlex credit defaults rather than the first file's values. Whole offline
+suite: 344 tests, 0 failures.
