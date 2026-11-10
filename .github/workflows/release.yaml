@@ -5,7 +5,7 @@ on:
     branches:
       - main
     tags:
-      - 'v[0-9]+.[0-9]+.0'
+      - 'v[0-9]+.[0-9]+.[0-9]+'
 # tags syntax see https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#filter-pattern-cheat-sheet
 
 # --- CONCURRENCY LOCK ---

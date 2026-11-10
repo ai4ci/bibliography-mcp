@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.github.ai4ci</groupId>
-	<version>0.2.0</version>
+	<version>0.2.1</version>
 	<artifactId>bibliography-mcp</artifactId>
 	<packaging>jar</packaging>
 	<name>Bibliographic APIs MCP</name>
@@ -79,6 +79,11 @@
 			<name>GitHub Apache Maven Packages</name>
 			<url>https://maven.pkg.github.com/${git.m2repo}</url>
 		</snapshotRepository>
+		<repository>
+			<id>github</id>
+			<name>GitHub Apache Maven Packages</name>
+			<url>https://maven.pkg.github.com/${git.m2repo}</url>
+		</repository>
 	</distributionManagement>
 	<dependencies>
 		<!-- The repository store. SQLite was measured against a JSON-lines log in
