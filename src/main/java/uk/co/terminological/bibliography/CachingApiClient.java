@@ -33,8 +33,8 @@ import com.sun.jersey.api.client.filter.LoggingFilter;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 
 import uk.co.terminological.bibliography.api.BibliographicApiException;
-import uk.co.terminological.datatypes.StreamExceptions;
-import uk.co.terminological.datatypes.StreamExceptions.FunctionWithException;
+import uk.co.terminological.bibliography.client.StreamExceptions;
+import uk.co.terminological.bibliography.client.StreamExceptions.FunctionWithException;
 
 public abstract class CachingApiClient {
 
@@ -45,11 +45,11 @@ public abstract class CachingApiClient {
 	/**
 	 * How long to wait for an answer before giving up on a call.
 	 *
-	 * Deliberately generous. The old default was three seconds, which is comfortable for most bibliographic APIs and
-	 * wrong for several of them — OpenCitations, {@code api.biorxiv.org} and the arXiv API all answer in 3-6 seconds —
-	 * and being wrong is silent: every call times out, the API looks like it has no data, and the symptom is an empty
-	 * result set rather than an error. A client that is slower still raises its own with {@link #setReadTimeout(int)},
-	 * which is a thing to remember, but forgetting it now costs latency rather than correctness (debt-009).
+	 * Deliberately generous. The old default was three seconds, which is comfortable for most bibliographic APIs and wrong
+	 * for several of them — OpenCitations, {@code api.biorxiv.org} and the arXiv API all answer in 3-6 seconds — and being
+	 * wrong is silent: every call times out, the API looks like it has no data, and the symptom is an empty result set
+	 * rather than an error. A client that is slower still raises its own with {@link #setReadTimeout(int)}, which is a
+	 * thing to remember, but forgetting it now costs latency rather than correctness (debt-009).
 	 */
 	public static final int DEFAULT_READ_TIMEOUT_MS = 15_000;
 
@@ -95,15 +95,16 @@ public abstract class CachingApiClient {
 	 * A persistent EHCache store is written with Java serialization, so any change to the shape of {@link BinaryData}
 	 * changes its computed {@code serialVersionUID} and makes every existing entry unreadable. That used to be
 	 * <em>fatal</em>: {@code init()} threw, the exception surfaced from {@code BibliographicApis.create}, and the server
-	 * would not start until someone found and deleted a cache directory — a configuration-shaped error with a
-	 * housekeeping cause (debt-007).
+	 * would not start until someone found and deleted a cache directory — a configuration-shaped error with a housekeeping
+	 * cause (debt-007).
 	 *
 	 * The cache is disposable: everything in it can be fetched again. So an unreadable one is cleared and recreated,
 	 * loudly, and the only cost is the saved calls.
 	 */
 	private static CacheManager openCache(Optional<Path> dir) {
-		if (dir.isPresent())
+		if (dir.isPresent()) {
 			StreamExceptions.tryRethrow(t -> Files.createDirectories(dir.get()));
+		}
 		var manager = cacheManagerFor(dir);
 		try {
 			manager.init();
@@ -180,7 +181,7 @@ public abstract class CachingApiClient {
 			try (var walk = Files.walk(d)) {
 				for (Path p : walk.sorted(java.util.Comparator.reverseOrder())
 					.collect(Collectors.toList())) {
-					if (!p.equals(d)) Files.deleteIfExists(p);
+					if (!p.equals(d)) { Files.deleteIfExists(p); }
 				}
 			}
 		});
@@ -242,8 +243,8 @@ public abstract class CachingApiClient {
 		.getLogger(CachingApiClient.class);
 	protected Client client;
 	/**
-	 * The bucket that paces this client. Protected so a client can replace it with the budget the
-	 * API actually reports (OpenAlex meters credits rather than requests).
+	 * The bucket that paces this client. Protected so a client can replace it with the budget the API actually reports
+	 * (OpenAlex meters credits rather than requests).
 	 */
 	protected TokenBucket rateLimiter;
 
@@ -265,7 +266,7 @@ public abstract class CachingApiClient {
 
 	/** Whether this failure was us running out of patience rather than the API answering badly. */
 	private static boolean timedOut(Throwable e) {
-		for (Throwable t = e; t != null; t = t.getCause()) {
+		for (var t = e; t != null; t = t.getCause()) {
 			if (t instanceof java.net.SocketTimeoutException) return true;
 		}
 		return false;
@@ -530,7 +531,8 @@ public abstract class CachingApiClient {
 			} else {
 				// an empty body is a gap, not an answer, and caching it would make the
 				// gap permanent for this request (debt-006)
-				logger.warn("Empty response body from {}; not cached", wr.toString());
+				logger
+					.warn("Empty response body from {}; not cached", wr.toString());
 			}
 			return Optional.of(out);
 		} catch (Exception e) {
@@ -569,7 +571,7 @@ public abstract class CachingApiClient {
 		}
 		try {
 			var data = BinaryData.from(supplier.apply(key));
-			if (worthCaching(data.byteArray)) cache.put(key, data);
+			if (worthCaching(data.byteArray)) { cache.put(key, data); }
 			return Optional.of(data.inputStream());
 		} catch (Exception e) {
 			if (this.debug) { e.printStackTrace(); }
@@ -594,7 +596,7 @@ public abstract class CachingApiClient {
 		}
 		try {
 			var data = BinaryData.from(supplier.apply(key));
-			if (worthCaching(data.byteArray)) cache.put(key, data);
+			if (worthCaching(data.byteArray)) { cache.put(key, data); }
 			return Optional.of(data.toString());
 		} catch (Exception e) {
 			if (this.debug) { e.printStackTrace(); }
@@ -622,7 +624,7 @@ public abstract class CachingApiClient {
 		}
 		try {
 			var data = BinaryData.from(supplier.apply(key));
-			if (worthCaching(data.byteArray)) cache.put(key, data);
+			if (worthCaching(data.byteArray)) { cache.put(key, data); }
 			return Optional.of(data.toObject());
 		} catch (Exception e) {
 			if (this.debug) { e.printStackTrace(); }

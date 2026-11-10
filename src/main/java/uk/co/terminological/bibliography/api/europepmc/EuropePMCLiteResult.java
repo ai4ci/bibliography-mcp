@@ -1,6 +1,6 @@
 package uk.co.terminological.bibliography.api.europepmc;
 
-import static uk.co.terminological.datatypes.StreamExceptions.ignoreRuntime;
+import static uk.co.terminological.bibliography.client.StreamExceptions.ignoreRuntime;
 
 import java.util.Arrays;
 import java.util.Optional;

@@ -32,13 +32,13 @@ import uk.co.terminological.bibliography.client.Query;
 import uk.co.terminological.bibliography.client.RecordFetcher;
 import uk.co.terminological.bibliography.client.SearchBuilder;
 import uk.co.terminological.bibliography.client.Searcher;
+import uk.co.terminological.bibliography.client.Tuple;
 import uk.co.terminological.bibliography.record.Builder;
 import uk.co.terminological.bibliography.record.CitationLink;
 import uk.co.terminological.bibliography.record.IdType;
 import uk.co.terminological.bibliography.record.ImmutableRecordReference;
 import uk.co.terminological.bibliography.record.Record;
 import uk.co.terminological.bibliography.record.RecordReference;
-import uk.co.terminological.datatypes.Tuple;
 
 public class EuropePMCClient extends CachingApiClient
 		implements Searcher, RecordFetcher, CitesMapper, CitedByMapper {
@@ -417,9 +417,9 @@ public class EuropePMCClient extends CachingApiClient
 	 * Europe PMC's own source and id for a reference, or empty when it cannot be asked about one.
 	 *
 	 * This is the whole of the identifier handling for both citation directions. It used to be written out once per
-	 * identifier type in each direction — six near-identical loops — which is why a DOI branch was missing from both for
-	 * so long: the same gap had to be noticed and fixed twice, and was not noticed at all until a preprint's references
-	 * came back empty while the API held 31 (debt-010). An identifier type is now added here, once.
+	 * identifier type in each direction — six near-identical loops — which is why a DOI branch was missing from both for so
+	 * long: the same gap had to be noticed and fixed twice, and was not noticed at all until a preprint's references came
+	 * back empty while the API held 31 (debt-010). An identifier type is now added here, once.
 	 *
 	 * Package-visible so the dispatch can be tested without a call.
 	 */
@@ -473,7 +473,8 @@ public class EuropePMCClient extends CachingApiClient
 				.ifPresent(
 					at -> out.addAll(
 						referenceList(
-							source, this.references(at.getFirst(), at.getSecond())
+							source,
+							this.references(at.getFirst(), at.getSecond())
 								.getItems()
 								.collect(Collectors.toList())
 						)
@@ -494,7 +495,8 @@ public class EuropePMCClient extends CachingApiClient
 				.ifPresent(
 					at -> out.addAll(
 						citedByList(
-							source, this.citations(at.getFirst(), at.getSecond())
+							source,
+							this.citations(at.getFirst(), at.getSecond())
 								.getItems()
 								.collect(Collectors.toList())
 						)
@@ -507,10 +509,10 @@ public class EuropePMCClient extends CachingApiClient
 	/**
 	 * A work's reference list as links, numbered from one.
 	 *
-	 * The index is the position in the citing work's reference list, so it counts from the first reference rather than
-	 * from zero, matching {@code OpenAlexClient.citesReferences}. It also has to differ per link for a second reason:
-	 * {@link CitationLink} is an Immutables value type whose index is part of its {@code equals}, and these are
-	 * collected into a set, so a list numbered entirely zero collapses to a single entry (issue-026).
+	 * The index is the position in the citing work's reference list, so it counts from the first reference rather than from
+	 * zero, matching {@code OpenAlexClient.citesReferences}. It also has to differ per link for a second reason:
+	 * {@link CitationLink} is an Immutables value type whose index is part of its {@code equals}, and these are collected
+	 * into a set, so a list numbered entirely zero collapses to a single entry (issue-026).
 	 *
 	 * Package private so the numbering can be tested without asking the API.
 	 */

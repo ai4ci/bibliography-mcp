@@ -29,13 +29,13 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
 import uk.co.terminological.bibliography.BinaryData;
 import uk.co.terminological.bibliography.CachingApiClient;
 import uk.co.terminological.bibliography.api.BibliographicApiException;
+import uk.co.terminological.bibliography.client.FluentSet;
 import uk.co.terminological.bibliography.client.IdMapper;
 import uk.co.terminological.bibliography.record.Builder;
 import uk.co.terminological.bibliography.record.IdType;
 import uk.co.terminological.bibliography.record.ImmutableRecordReference;
 import uk.co.terminological.bibliography.record.RecordReference;
 import uk.co.terminological.bibliography.record.RecordReferenceMapping;
-import uk.co.terminological.datatypes.FluentSet;
 
 public class PMCIDClient extends CachingApiClient implements IdMapper {
 

@@ -12,6 +12,7 @@ import java.util.stream.Stream;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import uk.co.terminological.bibliography.ExtensibleJson;
+import uk.co.terminological.bibliography.client.StreamExceptions;
 import uk.co.terminological.bibliography.record.Author;
 import uk.co.terminological.bibliography.record.Builder;
 import uk.co.terminological.bibliography.record.CitationLink;
@@ -21,7 +22,6 @@ import uk.co.terminological.bibliography.record.Provenance;
 import uk.co.terminological.bibliography.record.PublicationTypes;
 import uk.co.terminological.bibliography.record.RecordReference;
 import uk.co.terminological.bibliography.record.RecordWithCitations;
-import uk.co.terminological.datatypes.StreamExceptions;
 
 /**
  * One {@code works[]} entry: everything OpenAlex asserts about one work.
@@ -42,15 +42,12 @@ public class OpenAlexRecord extends ExtensibleJson
 	/**
 	 * The OpenAlex id, which is the tail of a URL: {@code https://openalex.org/W7140411570} names {@code W7140411570}.
 	 *
-	 * The top-level {@code id} is read as well as {@code ids.openalex} because they always carry the same value, and a
-	 * work whose {@code ids} block is missing is still a work with a name.
+	 * The top-level {@code id} is read as well as {@code ids.openalex} because they always carry the same value, and a work
+	 * whose {@code ids} block is missing is still a work with a name.
 	 */
 	private Optional<String> openAlexId() {
 		return Stream
-			.concat(
-				this.streamPath("ids", "openalex"),
-				this.streamPath("id")
-			)
+			.concat(this.streamPath("ids", "openalex"), this.streamPath("id"))
 			.map(ExtensibleJson::asString)
 			.filter(s -> !s.isEmpty())
 			.findFirst()
@@ -63,20 +60,15 @@ public class OpenAlexRecord extends ExtensibleJson
 		// here; the OpenAlex id is a handle within one vendor's graph and is offered as
 		// an alternate in getOtherIdentifiers() instead.
 		return this.getDOI()
-			.or(
-				this::openAlexId
-			);
+			.or(this::openAlexId);
 	}
 
 	@Override
 	public IdType getIdentifierType() {
 		return this.getDOI()
-			.isPresent()
-				? IdType.DOI
+			.isPresent() ? IdType.DOI
 				: this.openAlexId()
-					.isPresent()
-						? IdType.OPENALEX
-						: IdType.UNK;
+					.isPresent() ? IdType.OPENALEX : IdType.UNK;
 	}
 
 	private Optional<String> getDOI() {
@@ -142,8 +134,10 @@ public class OpenAlexRecord extends ExtensibleJson
 	@Override
 	public Optional<String> getPublicationType() {
 		return this.asString("type")
-			.map(t -> PublicationTypes.fromOpenAlex(t)
-				.orElse(t));
+			.map(
+				t -> PublicationTypes.fromOpenAlex(t)
+					.orElse(t)
+			);
 	}
 
 	/** The host organisation of the container: a journal's publisher, a repository's operator. */
@@ -158,11 +152,13 @@ public class OpenAlexRecord extends ExtensibleJson
 	/**
 	 * Journal for a published work, repository name for a preprint.
 	 *
-	 * For a preprint there is no container, but {@code MergePolicy} treats posted content as owned by its preprint
-	 * server, so the server name has to be reachable through this accessor or that rule has nothing to compare.
+	 * For a preprint there is no container, but {@code MergePolicy} treats posted content as owned by its preprint server,
+	 * so the server name has to be reachable through this accessor or that rule has nothing to compare.
 	 */
 	@Override
-	public Optional<String> getJournal() { return this.sourceField("display_name"); }
+	public Optional<String> getJournal() {
+		return this.sourceField("display_name");
+	}
 
 	private Optional<String> sourceField(String field) {
 		return this.streamPath("primary_location", "source", field)
@@ -213,7 +209,8 @@ public class OpenAlexRecord extends ExtensibleJson
 				.map(ExtensibleJson::asString),
 			this.streamPath("locations", "license_id")
 				.map(ExtensibleJson::asString)
-		).filter(s -> s != null)
+		)
+			.filter(s -> s != null)
 			.distinct();
 	}
 
@@ -239,24 +236,23 @@ public class OpenAlexRecord extends ExtensibleJson
 	 * The abstract, reassembled from OpenAlex's inverted index.
 	 *
 	 * The payload gives word to positions, so joining the keys in map order reads as fluent nonsense rather than failing.
-	 * The words are placed by position, which also restores repeats: this corpus uses the same word in several slots
-	 * (179 distinct words fill 321 positions), and a word that appears twice must appear twice here.
+	 * The words are placed by position, which also restores repeats: this corpus uses the same word in several slots (179
+	 * distinct words fill 321 positions), and a word that appears twice must appear twice here.
 	 */
 	@Override
 	public Optional<String> getAbstract() {
-		JsonNode index = this.getRaw()
+		var index = this.getRaw()
 			.get("abstract_inverted_index");
-		if (index == null || !index.isObject() || index.size() == 0) return Optional.empty();
+		if (index == null || !index.isObject() || index.size() == 0)
+			return Optional.empty();
 
-		TreeMap<Integer, String> words = new TreeMap<>();
+		var words = new TreeMap<Integer, String>();
 		index.fields()
-			.forEachRemaining(
-				e -> {
-					for (JsonNode position : e.getValue()) {
-						words.put(position.asInt(), e.getKey());
-					}
+			.forEachRemaining(e -> {
+				for (JsonNode position : e.getValue()) {
+					words.put(position.asInt(), e.getKey());
 				}
-			);
+			});
 		if (words.isEmpty()) return Optional.empty();
 		return Optional.of(String.join(" ", words.values()));
 	}
@@ -285,15 +281,16 @@ public class OpenAlexRecord extends ExtensibleJson
 	/**
 	 * This work's own reference list, as edges pointing away from it.
 	 *
-	 * The referenced works come back as OpenAlex ids only, so an edge's target is a node in OpenAlex's graph rather than
-	 * a work the caller can name: {@code OpenAlexClient.citesReferences} resolves the batch to DOIs and PMIDs so the edges
+	 * The referenced works come back as OpenAlex ids only, so an edge's target is a node in OpenAlex's graph rather than a
+	 * work the caller can name: {@code OpenAlexClient.citesReferences} resolves the batch to DOIs and PMIDs so the edges
 	 * join the ones the other APIs produce.
 	 */
 	@Override
 	public List<CitationLink> getCitations() {
 		List<CitationLink> tmp = new ArrayList<>();
 		Integer i = 1;
-		for (RecordReference ref : (Iterable<RecordReference>) this.getReferencedWorks()::iterator) {
+		for (RecordReference ref : (Iterable<RecordReference>) this
+			.getReferencedWorks()::iterator) {
 			tmp.add(Builder.citationLink(this, ref, i));
 			i += 1;
 		}
@@ -301,9 +298,13 @@ public class OpenAlexRecord extends ExtensibleJson
 	}
 
 	@Override
-	public Optional<Long> getCitedByCount() { return this.asLong("cited_by_count"); }
+	public Optional<Long> getCitedByCount() {
+		return this.asLong("cited_by_count");
+	}
 
 	@Override
-	public Optional<Long> getReferencesCount() { return this.asLong("referenced_works_count"); }
+	public Optional<Long> getReferencesCount() {
+		return this.asLong("referenced_works_count");
+	}
 
 }

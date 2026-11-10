@@ -13,6 +13,7 @@ import java.util.stream.Stream;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import uk.co.terminological.bibliography.ExtensibleJson;
+import uk.co.terminological.bibliography.client.StreamExceptions;
 import uk.co.terminological.bibliography.record.Author;
 import uk.co.terminological.bibliography.record.Builder;
 import uk.co.terminological.bibliography.record.CitationLink;
@@ -24,7 +25,6 @@ import uk.co.terminological.bibliography.record.Provenance;
 import uk.co.terminological.bibliography.record.PublicationTypes;
 import uk.co.terminological.bibliography.record.RecordReference;
 import uk.co.terminological.bibliography.record.RecordWithCitations;
-import uk.co.terminological.datatypes.StreamExceptions;
 
 // [IMPLEMENTS](/design/features/feat-006-classify-records-by-type-with-provenance.md)
 // [IMPLEMENTS](/design/features/feat-008-clean-up-collection-metadata.md)

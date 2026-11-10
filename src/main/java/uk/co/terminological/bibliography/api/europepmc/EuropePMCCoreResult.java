@@ -1,8 +1,8 @@
 package uk.co.terminological.bibliography.api.europepmc;
 
+import static uk.co.terminological.bibliography.client.StreamExceptions.ignoreFunction;
+import static uk.co.terminological.bibliography.client.StreamExceptions.ignoreRuntime;
 import static uk.co.terminological.bibliography.record.Builder.recordReference;
-import static uk.co.terminological.datatypes.StreamExceptions.ignoreFunction;
-import static uk.co.terminological.datatypes.StreamExceptions.ignoreRuntime;
 
 import java.net.URI;
 import java.time.LocalDate;

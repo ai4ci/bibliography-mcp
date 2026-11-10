@@ -1,7 +1,6 @@
 package uk.co.terminological.bibliography;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -20,12 +19,12 @@ import de.undercouch.citeproc.csl.CSLItemData;
 import de.undercouch.citeproc.csl.CSLItemDataBuilder;
 import de.undercouch.citeproc.csl.CSLType;
 import de.undercouch.citeproc.output.Bibliography;
+import uk.co.terminological.bibliography.client.StreamExceptions;
+import uk.co.terminological.bibliography.client.Tuple;
 import uk.co.terminological.bibliography.record.Author;
 import uk.co.terminological.bibliography.record.IdType;
 import uk.co.terminological.bibliography.record.PrintReference;
 import uk.co.terminological.bibliography.record.Record;
-import uk.co.terminological.datatypes.StreamExceptions;
-import uk.co.terminological.datatypes.Tuple;
 
 public class CiteProcProvider extends ArrayList<CSLItemData>
 		implements ItemDataProvider {
@@ -43,24 +42,25 @@ public class CiteProcProvider extends ArrayList<CSLItemData>
 	}
 
 	public static CiteProcProvider create(String style, Format output) {
-		CiteProcProvider out = new CiteProcProvider();
+		var out = new CiteProcProvider();
 		out.format = output;
-		if (CSL.supportsStyle(style))
+		if (CSL.supportsStyle(style)) {
 			out.style = style;
-		else
+		} else {
 			log.warn("Unsupported style " + style + " defaulting to ieee");
+		}
 		return out;
 	}
 
 	public Stream<Tuple<String, String>> streamReferences() {
 		try {
-			if (bib == null) orderedCitations();
+			if (this.bib == null) { this.orderedCitations(); }
 			return this.stream()
 				.flatMap(it -> {
-					int i = this.indexOf(it);
-					Optional<String> tmp = getReference(it.getId());
-					return tmp.map(r -> Tuple.create(ids.get(i), r))
-						.map(t -> Stream.of(t))
+					var i = this.indexOf(it);
+					var tmp = this.getReference(it.getId());
+					return tmp.map(r -> Tuple.create(this.ids.get(i), r))
+						.map(Stream::of)
 						.orElse(Stream.empty());
 				});
 		} catch (Exception e) {
@@ -78,9 +78,9 @@ public class CiteProcProvider extends ArrayList<CSLItemData>
 	@Override
 	public CSLItemData retrieveItem(String id) {
 		try {
-			int i = ids.indexOf(id);
+			var i = this.ids.indexOf(id);
 			if (i == -1) return null;
-			CSLItemData out = this.get(i);
+			var out = this.get(i);
 			return out;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -89,18 +89,18 @@ public class CiteProcProvider extends ArrayList<CSLItemData>
 	}
 
 	public void add(Record rec) {
-		bib = null;
-		add(fromRecord(rec, Integer.toString(size())));
-		ids.add(Integer.toString(size()));
+		this.bib = null;
+		this.add(fromRecord(rec, Integer.toString(this.size())));
+		this.ids.add(Integer.toString(this.size()));
 	}
 
 	public void add(Record rec, String id) {
-		bib = null;
-		if (ids.contains(id)) {
-			this.set(ids.indexOf(id), fromRecord(rec, id));
+		this.bib = null;
+		if (this.ids.contains(id)) {
+			this.set(this.ids.indexOf(id), fromRecord(rec, id));
 		} else {
-			add(fromRecord(rec, id));
-			ids.add(id);
+			this.add(fromRecord(rec, id));
+			this.ids.add(id);
 		}
 	}
 
@@ -118,15 +118,16 @@ public class CiteProcProvider extends ArrayList<CSLItemData>
 	/**
 	 * A reference-list entry as CSL, from whatever the entry carries.
 	 *
-	 * Half of what the citation APIs return is an entry with no identifier — "Smith J et al. Lancet 2011;377:1234-42"
-	 * — and {@link uk.co.terminological.bibliography.record.CitationReference} exists so such entries survive parsing.
-	 * Its print coordinates were carried but never read, so the one thing this processor needed to render them never
-	 * arrived (debt-011). They arrive now.
+	 * Half of what the citation APIs return is an entry with no identifier — "Smith J et al. Lancet 2011;377:1234-42" — and
+	 * {@link uk.co.terminological.bibliography.record.CitationReference} exists so such entries survive parsing. Its print
+	 * coordinates were carried but never read, so the one thing this processor needed to render them never arrived
+	 * (debt-011). They arrive now.
 	 */
 	public static CSLItemData fromCitationReference(
-			uk.co.terminological.bibliography.record.CitationReference entry, String id
+			uk.co.terminological.bibliography.record.CitationReference entry,
+			String id
 	) {
-		CSLItemDataBuilder builder = new CSLItemDataBuilder().id(id)
+		var builder = new CSLItemDataBuilder().id(id)
 			.type(CSLType.ARTICLE_JOURNAL);
 		entry.getTitle()
 			.ifPresent(
@@ -142,10 +143,12 @@ public class CiteProcProvider extends ArrayList<CSLItemData>
 			print.getFirstAuthorName()
 				.ifPresent(
 					name -> builder.author(
-							new de.undercouch.citeproc.csl.CSLNameBuilder()
-								.family(name.replace('\n', ' ')
-									.trim())
-								.build()
+						new de.undercouch.citeproc.csl.CSLNameBuilder()
+							.family(
+								name.replace('\n', ' ')
+									.trim()
+							)
+							.build()
 					)
 				);
 			print.getJournal()
@@ -160,7 +163,13 @@ public class CiteProcProvider extends ArrayList<CSLItemData>
 				.ifPresent(y -> builder.issued(y.intValue()));
 		}
 		entry.getIdentifier()
-			.ifPresent(ref -> buildIds(builder, ref.getIdentifierType(), ref.getIdentifier()));
+			.ifPresent(
+				ref -> buildIds(
+					builder,
+					ref.getIdentifierType(),
+					ref.getIdentifier()
+				)
+			);
 		return builder.build();
 	}
 
@@ -181,22 +190,24 @@ public class CiteProcProvider extends ArrayList<CSLItemData>
 			);
 			if (bib.getEntries().length == 0) return java.util.Optional.empty();
 			return java.util.Optional.of(
-					bib.getEntries()[0].trim().replace("\n", " ")
+				bib.getEntries()[0].trim()
+					.replace("\n", " ")
 			);
 		} catch (Exception e) {
 			log.warn(
-					"could not render {} citation entr{} in style '{}': {}",
-					items.size(),
-					items.size() == 1 ? "y" : "ies",
-					style,
-					e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()
+				"could not render {} citation entr{} in style '{}': {}",
+				items.size(),
+				items.size() == 1 ? "y" : "ies",
+				style,
+				e.getMessage() == null ? e.getClass()
+					.getSimpleName() : e.getMessage()
 			);
 			return java.util.Optional.empty();
 		}
 	}
 
 	public static CSLItemData fromRecord(Record record, String id) {
-		CSLItemDataBuilder builder = new CSLItemDataBuilder().id(id)
+		var builder = new CSLItemDataBuilder().id(id)
 			.type(CSLType.ARTICLE_JOURNAL);
 		record.getTitle()
 			.ifPresent(
@@ -259,7 +270,7 @@ public class CiteProcProvider extends ArrayList<CSLItemData>
 			.ifPresent(p -> builder.URL(p.toString()));
 
 		if (record instanceof PrintReference) {
-			PrintReference print = (PrintReference) record;
+			var print = (PrintReference) record;
 
 			print.getIssue()
 				.ifPresent(i -> builder.issue(i));
@@ -286,34 +297,37 @@ public class CiteProcProvider extends ArrayList<CSLItemData>
 		}
 	}
 
-	public String[] getIds() { return ids.toArray(new String[] {}); }
+	@Override
+	public String[] getIds() { return this.ids.toArray(new String[] {}); }
 
 	public Bibliography orderedCitations(String style, Format format)
 			throws IOException {
-		bib = CSL.makeAdhocBibliography(
+		this.bib = CSL.makeAdhocBibliography(
 			style,
 			format.toString(),
 			this.toArray(new CSLItemData[] {})
 		);
-		return bib;
+		return this.bib;
 	}
 
 	public Bibliography orderedCitations() throws IOException {
-		bib = CSL.makeAdhocBibliography(
-			style,
-			format.toString(),
+		this.bib = CSL.makeAdhocBibliography(
+			this.style,
+			this.format.toString(),
 			this.toArray(new CSLItemData[] {})
 		);
-		return bib;
+		return this.bib;
 	}
 
 	public Optional<String> getReference(String id) {
 		try {
-			if (bib == null) orderedCitations();
-			int index = this.ids.indexOf(id);
-			String tmp = bib.getEntries()[index];
-			if (this.format.equals(Format.text)) tmp = tmp.trim()
-				.replace("\n", " ");
+			if (this.bib == null) { this.orderedCitations(); }
+			var index = this.ids.indexOf(id);
+			var tmp = this.bib.getEntries()[index];
+			if (this.format.equals(Format.text)) {
+				tmp = tmp.trim()
+					.replace("\n", " ");
+			}
 			return Optional.ofNullable(tmp);
 		} catch (Exception e) {
 			return Optional.empty();
@@ -327,21 +341,22 @@ public class CiteProcProvider extends ArrayList<CSLItemData>
 			style,
 			format.toString(),
 			Stream.of(record)
-				.map(r -> fromRecord(r))
+				.map(CiteProcProvider::fromRecord)
 				.collect(Collectors.toList())
 				.toArray(new CSLItemData[] {})
 		);
 	}
 
-	public static enum Format { html, text, asciidoc, fo, rtf }
+	public enum Format { html, text, asciidoc, fo, rtf }
 
 	// TODO: this is buggy and won't catch all sorts of cases
 	public void writeToFile(Path path) throws IOException {
-		OutputStream os = Files.newOutputStream(path);
+		var os = Files.newOutputStream(path);
 		os.write("id\treference\n".getBytes());
-		streamReferences().forEach(StreamExceptions.rethrow(kv -> {
-			os.write((kv.getKey() + "\t" + kv.getValue() + "\n").getBytes());
-		}));
+		this.streamReferences()
+			.forEach(StreamExceptions.rethrow(kv -> {
+				os.write((kv.getKey() + "\t" + kv.getValue() + "\n").getBytes());
+			}));
 		os.close();
 	}
 }

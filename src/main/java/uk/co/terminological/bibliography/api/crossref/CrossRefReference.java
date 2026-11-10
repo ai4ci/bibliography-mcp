@@ -10,13 +10,13 @@ import java.util.stream.Stream;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import uk.co.terminological.bibliography.ExtensibleJson;
+import uk.co.terminological.bibliography.client.StreamExceptions;
 import uk.co.terminological.bibliography.record.Author;
 import uk.co.terminological.bibliography.record.IdType;
 import uk.co.terminological.bibliography.record.PrintReference;
 import uk.co.terminological.bibliography.record.Provenance;
 import uk.co.terminological.bibliography.record.Record;
 import uk.co.terminological.bibliography.record.RecordReference;
-import uk.co.terminological.datatypes.StreamExceptions;
 
 public class CrossRefReference extends ExtensibleJson
 		implements RecordReference, PrintReference, Record {

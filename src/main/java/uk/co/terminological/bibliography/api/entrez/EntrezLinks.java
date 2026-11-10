@@ -7,11 +7,11 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import uk.co.terminological.bibliography.api.entrez.EntrezClient.Database;
+import uk.co.terminological.bibliography.client.FluentMap;
 import uk.co.terminological.bibliography.record.Builder;
 import uk.co.terminological.bibliography.record.CitationLink;
 import uk.co.terminological.bibliography.record.IdType;
 import uk.co.terminological.bibliography.record.Raw;
-import uk.co.terminological.datatypes.FluentMap;
 import uk.co.terminological.fluentxml.XmlElement;
 import uk.co.terminological.fluentxml.XmlException;
 
