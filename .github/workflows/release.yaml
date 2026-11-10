@@ -6,6 +6,7 @@ on:
       - main
     tags:
       - 'v[0-9]+.[0-9]+.0'
+# tags syntax see https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#filter-pattern-cheat-sheet
 
 # --- CONCURRENCY LOCK ---
 # Groups runs by the branch/ref. If multiple tags are pushed,
@@ -43,10 +44,8 @@ jobs:
           retention-days: 1
       - uses: marvinpinto/action-automatic-releases@latest
         with:
-          repo_token: "${{ github.token }}"
-          automatic_release_tag: "${{ github.run_number }}"
-          title: "Automated Build ${{ github.run_number }}"
-          prerelease: true
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          prerelease: false
           files: staging/*.jar
 
 

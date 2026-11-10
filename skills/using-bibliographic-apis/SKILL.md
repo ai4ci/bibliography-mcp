@@ -1,21 +1,41 @@
 ---
 name: using-bibliographic-apis
-description: 'Use this skill for literature search and citation-graph exploration with PubMed/Entrez, Crossref, Europe PMC, OpenAlex, OpenCitations, medRxiv or bioRxiv; or when using the bibliographic-api-client MCP server, its SQLite repository, crawl/rank tools, Zotero sync, or Java facade. Triggers: "search the literature", "find papers on", "citation network", "who cites this", "PubMed search", "Crossref", "Europe PMC", "OpenAlex", "OpenCitations", "map identifiers", "bibliographic API", "bibliographic-api-client". Not for general web search, arbitrary Zotero library edits, or non-bibliographic API work.'
+description: 'Use this skill for literature search and citation-graph exploration with PubMed/Entrez, Crossref, Europe PMC, OpenAlex, OpenCitations, medRxiv or bioRxiv; or when using the bibliography-mcp MCP server, its SQLite repository, crawl/rank tools, Zotero sync, or Java facade. Triggers: "search the literature", "find papers on", "citation network", "who cites this", "PubMed search", "Crossref", "Europe PMC", "OpenAlex", "OpenCitations", "map identifiers", "bibliographic API", "bibliography-mcp". Not for general web search, arbitrary Zotero library edits, or non-bibliographic API work.'
 license: MIT
 metadata:
   author: Rob Challen
-  project: bibliographic-api-client
+  project: bibliography-mcp
 ---
 
 # Using Bibliographic APIs
 
-Use the bibliographic-api-client for API-backed literature search, citation-graph exploration, ranking, and a controlled sync of selected records to Zotero. The server exposes a durable SQLite-backed repository; it is not a stateless stdio process.
+Use the bibliography-mcp for API-backed literature search, citation-graph exploration, ranking, and a controlled sync of selected records to Zotero. The server exposes a durable SQLite-backed repository; it is not a stateless stdio process.
 
 ## Setup and connection
 
 The server requires Java 17 or later. Build and packaging instructions are in the repository [README](../../README.md). The default endpoint is `http://127.0.0.1:8089/mcp` and the listener binds to loopback only. Register that URL as an MCP streamable-HTTP server; do not configure it as a command/stdio server. There is no authentication, so do not expose the listener beyond the local machine.
 
-The server reads a Java properties file from its first command-line argument, otherwise `BIBLIO_SECRETS_PATH`, otherwise `~/.private/apis/secrets.prop`. The same file holds API keys and settings such as `mcp-port`, `repository-directory`, `repository-name`, `cache-directory`, and Zotero configuration. See [configuration and secrets](../../design/external-interfaces/interface-002-configuration-and-secrets.md). Logs go to stderr. Java callers can use `BiblioFacade`, `RepositoryStore`, and `CrawlEngine` directly; see the README for a code example.
+The server reads a Java properties file from its first command-line argument, otherwise `BIBLIO_SECRETS_PATH`, otherwise `~/.private/apis/secrets.prop`. The same file holds API keys and settings such as `mcp-port`, `repository-directory`, `repository-name`, `cache-directory`, and Zotero configuration. See [configuration and secrets](references/configuration-and-secrets.md). Logs go to stderr. Java callers can use `BiblioFacade`, `RepositoryStore`, and `CrawlEngine` directly; see the README for a code example.
+
+```
+# app-id can be anything 
+app-id=test
+cache-directory=~/.cache/ehcache
+
+developer-email=<email-associated-with-keys>
+pubmed-apikey=<pubmed-key>
+elsevier-apikey=<elsevier-key>
+crossref-clickthroughtoken=<crossref-key>
+openalex-apikey=<openalex-key>
+
+# OpenAlex provides $1 worth of credit every day 
+openalex-daily-credits=10000
+
+# Zotero writes can be scoped to particular collections of unscoped with `*`
+zotero-allow-writes=true
+zotero-write-collection=api-*
+
+```
 
 Zotero is optional. Set `zotero-mode=off` to disable it. Writes are refused unless `zotero-allow-writes=true` and a `zotero-write-collection` scope are configured; existing Zotero items are not overwritten.
 
@@ -42,7 +62,7 @@ Do not rely on removed MCP tool names such as `fetch`, `collect_search`, `expand
 4. Use `rank` and `list_records` to inspect and review the repository. `rank` writes ranking scores back to the repository; `list_records` can return all records or only selected ones.
 5. Before any Zotero write, use `zotero_sync` with `action="report"`. Publish only after confirming the destination collection and configured write scope; `action="publish"` requires a collection name and will not overwrite records Zotero already holds.
 
-A crawl and its records persist in the SQLite repository across server restarts. The default repository is under `${XDG_DATA_HOME:-~/.local/share}/bibliographic-api-client/repositories/default/`; configure another directory/name for a separate corpus. The repository is durable user data, not the rebuildable HTTP cache.
+A crawl and its records persist in the SQLite repository across server restarts. The default repository is under `${XDG_DATA_HOME:-~/.local/share}/bibliography-mcp/repositories/default/`; configure another directory/name for a separate corpus. The repository is durable user data, not the rebuildable HTTP cache.
 
 ## API coverage and guidance
 
