@@ -10,6 +10,16 @@
 	<artifactId>bibliographic-api-client</artifactId>
 	<packaging>jar</packaging>
 	<name>Pubmed client</name>
+	<scm>
+		<!-- The connection used by developer tools to push or pull changes (Recommended: SSH) -->
+		<developerConnection>scm:git:git@github.com:ai4ci/bibliography-mcp.git</developerConnection>
+		<!-- The read-only connection used by automated tools to pull code -->
+		<connection>scm:git:https://github.com</connection>
+		<!-- The user-friendly web URL to browse the code online -->
+		<url>https://github.com</url>
+		<!-- Keeps the current HEAD as the default tag reference -->
+		<tag>HEAD</tag>
+	</scm>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<!-- 17 because the MCP Java SDK is compiled for it (class file major 61).
@@ -272,8 +282,7 @@
 			</plugin>
 		</plugins>
 	</build>
-
-  <scm>
-    <tag>v0.2.0</tag>
-  </scm>
+	<scm>
+		<tag>v0.2.0</tag>
+	</scm>
 </project>
