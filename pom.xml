@@ -6,7 +6,7 @@
 		<artifactId>m2repo</artifactId>
 		<version>0.0.6</version>
 	</parent>
-	<version>0.2.0-SNAPSHOT</version>
+	<version>0.2.0</version>
 	<artifactId>bibliographic-api-client</artifactId>
 	<packaging>jar</packaging>
 	<name>Pubmed client</name>
@@ -272,4 +272,8 @@
 			</plugin>
 		</plugins>
 	</build>
+
+  <scm>
+    <tag>v0.2.0</tag>
+  </scm>
 </project>
